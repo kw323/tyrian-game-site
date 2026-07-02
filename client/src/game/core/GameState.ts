@@ -7,6 +7,9 @@ export class GameState {
     public isPaused: boolean = false;
     public levelComplete: boolean = false;
     public showLevelScreen: boolean = false;
+    public levelStartTime: number = 0;
+    public levelDuration: number = 60; // seconds per level (60 + 10 per level)
+    public levelTimeElapsed: number = 0;
 
     public addScore(points: number): void {
         this.score += points;
@@ -29,12 +32,23 @@ export class GameState {
     }
 
     public completeLevelCheck(enemiesRequiredForLevel: number): boolean {
-        if (this.enemiesDefeated >= enemiesRequiredForLevel) {
-            this.levelComplete = true;
-            this.showLevelScreen = true;
-            return true;
-        }
+        // This method is deprecated - use time-based progression instead
         return false;
+    }
+
+    public updateLevelTime(currentTime: number): void {
+        if (this.levelStartTime === 0) {
+            this.levelStartTime = currentTime;
+        }
+        this.levelTimeElapsed = currentTime - this.levelStartTime;
+    }
+
+    public isLevelComplete(): boolean {
+        return this.levelTimeElapsed >= this.levelDuration;
+    }
+
+    public getLevelTimeRemaining(): number {
+        return Math.max(0, this.levelDuration - this.levelTimeElapsed);
     }
 
     public nextLevel(): void {
@@ -42,6 +56,10 @@ export class GameState {
         this.levelComplete = false;
         this.showLevelScreen = false;
         this.enemiesDefeated = 0;
+        this.levelStartTime = 0;
+        this.levelTimeElapsed = 0;
+        // Increase level duration: 60 + (level * 10) seconds
+        this.levelDuration = 60 + (this.level * 10);
     }
 
     public togglePause(): void {
@@ -57,5 +75,8 @@ export class GameState {
         this.isPaused = false;
         this.levelComplete = false;
         this.showLevelScreen = false;
+        this.levelStartTime = 0;
+        this.levelTimeElapsed = 0;
+        this.levelDuration = 60;
     }
 }

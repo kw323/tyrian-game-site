@@ -198,8 +198,12 @@ export function GameContainer() {
                     }
                 });
 
-                // Check if level is complete
-                gameState.completeLevelCheck(enemySpawner.getEnemiesRequiredForLevel());
+                // Update level time and check if level is complete
+                gameState.updateLevelTime(performance.now() / 1000);
+                if (gameState.isLevelComplete()) {
+                    gameState.levelComplete = true;
+                    gameState.showLevelScreen = true;
+                }
             };
 
             // Override render
@@ -221,13 +225,19 @@ export function GameContainer() {
                 ctx.fillText(`Score: ${gameState.score}`, 20, 30);
                 ctx.fillText(`Health: ${player.health}/${player.maxHealth}`, 20, 55);
                 ctx.fillText(`Level: ${gameState.level}`, 20, 80);
-                ctx.fillText(`Enemies: ${gameState.enemiesDefeated}/${enemySpawner.getEnemiesRequiredForLevel()}`, 20, 105);
+                // Display level timer instead of enemy count
+                const timeRemaining = gameState.getLevelTimeRemaining();
+                const timeMinutes = Math.floor(timeRemaining / 60);
+                const timeSeconds = Math.floor(timeRemaining % 60);
+                const timeDisplay = `${timeMinutes}:${timeSeconds.toString().padStart(2, '0')}`;
+                ctx.fillText(`Level Time: ${timeDisplay}`, 20, 105);
+                ctx.fillText(`Enemies Killed: ${gameState.enemiesDefeated}`, 20, 130);
 
                 // Draw shield bar
                 const barWidth = 150;
                 const barHeight = 12;
                 const barX = 20;
-                const barY = 125;
+                const barY = 150;
                 ctx.fillStyle = '#333333';
                 ctx.fillRect(barX, barY, barWidth, barHeight);
                 const shieldPercent = player.shield / player.maxShield;
@@ -266,7 +276,12 @@ export function GameContainer() {
 
                     ctx.fillStyle = '#FFD700';
                     ctx.font = 'bold 24px Arial';
-                    ctx.fillText(`Level ${gameState.level} Score: ${gameState.score}`, game.getCanvas().width / 2, game.getCanvas().height / 2 - 20);
+                    ctx.fillText(`Level ${gameState.level} Complete!`, game.getCanvas().width / 2, game.getCanvas().height / 2 - 20);
+                    ctx.font = 'bold 16px Arial';
+                    ctx.fillText(`Score: ${gameState.score} | Enemies Killed: ${gameState.enemiesDefeated}`, game.getCanvas().width / 2, game.getCanvas().height / 2 + 10);
+                    ctx.fillStyle = '#00FF88';
+                    ctx.font = 'bold 14px Arial';
+                    ctx.fillText(`Next Level Duration: ${gameState.levelDuration + 10} seconds`, game.getCanvas().width / 2, game.getCanvas().height / 2 + 35);
                     
                     ctx.fillStyle = '#00CCDD';
                     ctx.font = 'bold 16px Arial';
