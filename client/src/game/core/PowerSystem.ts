@@ -56,7 +56,7 @@ export class PowerSystem {
         this.currentPower = Math.min(this.currentPower + output, maxPower);
     }
 
-    public upgradGenerator(): number {
+    public upgradeGenerator(): number {
         // Returns cost in points for upgrading generator
         const costs = [0, 500, 1000, 1500, 2000, 2500];
         if (this.generatorLevel < costs.length - 1) {

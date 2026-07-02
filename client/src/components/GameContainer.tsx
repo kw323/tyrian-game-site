@@ -6,7 +6,7 @@ import { Bullet } from '@/game/entities/Bullet';
 import { HomingBullet } from '@/game/entities/HomingBullet';
 import { HeavyBullet } from '@/game/entities/HeavyBullet';
 import { Enemy } from '@/game/entities/Enemy';
-import { EnemyAdvanced } from '@/game/entities/EnemyType';
+import { EnemyAdvanced } from '@/game/entities/EnemyAdvanced';
 import { EnemyBullet } from '@/game/entities/EnemyBullet';
 import { Explosion } from '@/game/entities/Explosion';
 import { WeaponUpgradeSystem, WeaponType } from '@/game/core/WeaponUpgradeSystem';
@@ -464,6 +464,15 @@ export function GameContainer() {
                             gameState.score += downgradeInfo.refund;
                             const stats = weaponSystem.getCurrentWeaponStats();
                             if (stats) player.setWeapon('heavy', weaponSystem.getCurrentLevel(WeaponType.HEAVY), stats.fireRate, stats.damage);
+                        }
+                    } else if (e.key === 'g' || e.key === 'G') {
+                        e.preventDefault();
+                        if (powerSystem.canUpgradeGenerator()) {
+                            const cost = 500 + (powerSystem.generatorLevel * 500);
+                            if (gameState.score >= cost) {
+                                gameState.score -= cost;
+                                powerSystem.upgradeGenerator();
+                            }
                         }
                     } else if (e.key === ' ') {
                         e.preventDefault();

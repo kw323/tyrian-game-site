@@ -1,4 +1,4 @@
-import { EnemyAdvanced, EnemyType } from '../entities/EnemyType';
+import { EnemyAdvanced, EnemyMovementType } from '../entities/EnemyAdvanced';
 
 export class EnemySpawner {
     private spawnRate: number = 1.5; // seconds between spawns
@@ -16,29 +16,66 @@ export class EnemySpawner {
             this.lastSpawnTime = currentTime;
             this.waveCount++;
 
-            // Spawn wave of enemies with different types based on level
+            // Spawn wave of enemies with different types and movement patterns based on level
             for (let i = 0; i < this.enemiesPerWave; i++) {
                 const x = 100 + i * 250;
                 const y = -50;
-                let type = EnemyType.STRAIGHT;
-                let speed = 2;
+                
+                // Determine movement type based on level
+                let movementType = EnemyMovementType.STRAIGHT_DOWN;
+                let health = 1 + Math.floor(level / 2); // Health increases with level
+                let speed = 2 + (level - 1) * 0.3;
+                let difficulty = Math.min(1 + Math.floor(level / 3), 5);
 
-                // Vary enemy types based on level
+                // Level-based enemy variety
                 if (level >= 2) {
                     const typeRandom = Math.random();
-                    if (typeRandom < 0.3) {
-                        type = EnemyType.HOMING;
-                    } else if (typeRandom < 0.6) {
-                        type = EnemyType.ZIGZAG;
-                    } else if (typeRandom < 0.9) {
-                        type = EnemyType.SWEEPER;
+                    
+                    if (level < 3) {
+                        // Levels 2: Introduce zigzag
+                        if (typeRandom < 0.5) {
+                            movementType = EnemyMovementType.ZIGZAG;
+                        }
+                    } else if (level < 5) {
+                        // Levels 3-4: Add circles and spirals
+                        if (typeRandom < 0.3) {
+                            movementType = EnemyMovementType.ZIGZAG;
+                        } else if (typeRandom < 0.6) {
+                            movementType = EnemyMovementType.CIRCLE;
+                        } else if (typeRandom < 0.8) {
+                            movementType = EnemyMovementType.SPIRAL;
+                        }
+                    } else {
+                        // Levels 5+: All movement types
+                        const rand = Math.random();
+                        if (rand < 0.2) {
+                            movementType = EnemyMovementType.ZIGZAG;
+                        } else if (rand < 0.4) {
+                            movementType = EnemyMovementType.CIRCLE;
+                        } else if (rand < 0.6) {
+                            movementType = EnemyMovementType.SPIRAL;
+                        } else if (rand < 0.8) {
+                            movementType = EnemyMovementType.CENTER_ORBIT;
+                        } else {
+                            movementType = EnemyMovementType.HOVER;
+                        }
                     }
                 }
 
-                // Increase speed with level
-                speed = 2 + (level - 1) * 0.5;
+                // Increase health with difficulty
+                health = 1 + difficulty;
 
-                const enemy = new EnemyAdvanced(x, y, 30, 25, speed, 2, type);
+                const enemy = new EnemyAdvanced(
+                    x,
+                    y,
+                    30,
+                    25,
+                    speed,
+                    health,
+                    movementType,
+                    difficulty
+                );
+                
                 newEnemies.push(enemy);
                 this.totalEnemiesSpawned++;
             }
