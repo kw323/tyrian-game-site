@@ -95,7 +95,7 @@ export class WeaponUpgradeSystem {
         return levels[level] || null;
     }
 
-    public upgradeWeapon(type: WeaponType): { cost: number; refund: number } | null {
+    public upgradeWeapon(type: WeaponType, score: number): { cost: number; refund: number } | null {
         const currentLevel = this.currentLevel.get(type);
         const actualLevel = currentLevel !== undefined ? currentLevel : -1;
         const levels = this.weaponLevels.get(type);
@@ -105,6 +105,7 @@ export class WeaponUpgradeSystem {
         // If not owned yet, buy first level
         if (actualLevel === -1) {
             const firstLevel = levels[0];
+            if (score < firstLevel.cost) return null; // Not enough score
             this.currentLevel.set(type, 0);
             return { cost: firstLevel.cost, refund: 0 };
         }
@@ -112,6 +113,7 @@ export class WeaponUpgradeSystem {
         // If already owned, upgrade to next level
         if (actualLevel + 1 < levels.length) {
             const nextLevel = levels[actualLevel + 1];
+            if (score < nextLevel.cost) return null; // Not enough score
             const currentLevelStats = levels[actualLevel];
             const refund = Math.floor(currentLevelStats.cost * 0.5); // Get 50% back
             this.currentLevel.set(type, actualLevel + 1);
@@ -121,14 +123,40 @@ export class WeaponUpgradeSystem {
         return null; // Already at max level
     }
 
-    public canUpgrade(type: WeaponType): boolean {
+    public canUpgrade(type: WeaponType, score: number): boolean {
         const currentLevel = this.currentLevel.get(type);
         const actualLevel = currentLevel !== undefined ? currentLevel : -1;
         const levels = this.weaponLevels.get(type);
         if (!levels) return false;
 
-        if (actualLevel === -1) return true; // Can buy first level
-        return actualLevel + 1 < levels.length; // Can upgrade to next level
+        if (actualLevel === -1) {
+            // Can buy first level if have enough score
+            return score >= levels[0].cost;
+        }
+        // Can upgrade to next level if have enough score
+        if (actualLevel + 1 < levels.length) {
+            return score >= levels[actualLevel + 1].cost;
+        }
+        return false;
+    }
+
+    public canDowngrade(type: WeaponType): boolean {
+        const currentLevel = this.currentLevel.get(type);
+        const actualLevel = currentLevel !== undefined ? currentLevel : -1;
+        return actualLevel > 0; // Can downgrade if above level 0
+    }
+
+    public downgradeWeapon(type: WeaponType): { refund: number } | null {
+        const currentLevel = this.currentLevel.get(type);
+        const actualLevel = currentLevel !== undefined ? currentLevel : -1;
+        const levels = this.weaponLevels.get(type);
+
+        if (!levels || actualLevel <= 0) return null; // Can't downgrade
+
+        const currentLevelStats = levels[actualLevel];
+        const refund = Math.floor(currentLevelStats.cost * 0.5); // Get 50% back
+        this.currentLevel.set(type, actualLevel - 1);
+        return { refund };
     }
 
     public getUpgradeInfo(type: WeaponType): { current: WeaponLevel | null; next: WeaponLevel | null } {

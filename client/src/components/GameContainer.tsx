@@ -14,6 +14,7 @@ import { StarField } from '@/game/systems/StarField';
 import { InputManager } from '@/game/systems/InputManager';
 import { CollisionSystem } from '@/game/systems/CollisionSystem';
 import { EnemySpawner } from '@/game/systems/EnemySpawner';
+import { PowerSystem } from '@/game/core/PowerSystem';
 
 export function GameContainer() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -37,6 +38,7 @@ export function GameContainer() {
             const collisionSystem = new CollisionSystem();
             const enemySpawner = new EnemySpawner();
             const weaponSystem = new WeaponUpgradeSystem();
+            const powerSystem = new PowerSystem();
 
             // Create player
             const player = new Player(
@@ -65,22 +67,35 @@ export function GameContainer() {
                 // Update player
                 player.updateWithInput(deltaTime, keys, game.getCanvas().width, game.getCanvas().height);
 
+                // Generate power
+                powerSystem.generatePower(deltaTime);
+
+                // Reduce player speed if power is low
+                if (powerSystem.currentPower < 20) {
+                    player.speed = 15 * 0.5; // Half speed when power is low
+                } else {
+                    player.speed = 15; // Normal speed
+                }
+
                 // Handle player shooting
-                if (keys.Space && player.canShoot(performance.now() / 1000)) {
+                if (keys.Space && player.canShoot(performance.now() / 1000) && powerSystem.canShoot(player.weaponType, player.weaponLevel)) {
                     const bulletPositions = player.shoot(performance.now() / 1000);
+                    const weaponCost = powerSystem.getWeaponCost(player.weaponType, player.weaponLevel);
+                    powerSystem.consumePower(weaponCost);
+                    
                     bulletPositions.forEach((bulletData: any) => {
                         if (bulletData.type === 'straight') {
-                            const bullet = new Bullet(bulletData.x, bulletData.y, 8, 8, 25, player.weaponDamage, '#FFD700');
+                            const bullet = new Bullet(bulletData.x, bulletData.y, 8, 8, 25, player.weaponDamage, '#FFD700', bulletData.angle || 0);
                             game.addEntity(bullet);
                         } else if (bulletData.type === 'spread') {
-                            const bullet = new Bullet(bulletData.x, bulletData.y, 8, 8, 25, player.weaponDamage, '#FFD700');
+                            const bullet = new Bullet(bulletData.x, bulletData.y, 8, 8, 25, player.weaponDamage, '#FFD700', bulletData.angle || 0);
                             game.addEntity(bullet);
                         } else if (bulletData.type === 'homing') {
                             // Find nearest enemy
                             let nearestEnemy: any = null;
                             let nearestDist = Infinity;
                             game['entities'].forEach((entity: any) => {
-                                if (entity instanceof Enemy || entity instanceof EnemyAdvanced) {
+                                if ((entity instanceof Enemy || entity instanceof EnemyAdvanced) && entity.isActive) {
                                     const dist = Math.sqrt((entity.x - bulletData.x) ** 2 + (entity.y - bulletData.y) ** 2);
                                     if (dist < nearestDist) {
                                         nearestDist = dist;
@@ -225,6 +240,20 @@ export function GameContainer() {
                 ctx.font = '12px Arial';
                 ctx.fillText('Shield: ' + Math.floor(player.shield) + '/' + player.maxShield, barX + 160, barY + 10);
 
+                // Draw power bar
+                const powerBarY = 145;
+                ctx.fillStyle = '#333333';
+                ctx.fillRect(barX, powerBarY, barWidth, barHeight);
+                const powerPercent = powerSystem.currentPower / powerSystem.getMaxPower();
+                const powerColor = powerPercent > 0.5 ? 'rgb(255, ' + Math.floor(200 * powerPercent) + ', 0)' : 'rgb(255, 0, 0)';
+                ctx.fillStyle = powerColor;
+                ctx.fillRect(barX, powerBarY, barWidth * powerPercent, barHeight);
+                ctx.strokeStyle = '#FFD700';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(barX, powerBarY, barWidth, barHeight);
+                ctx.fillStyle = '#FFD700';
+                ctx.fillText('Power: ' + Math.floor(powerSystem.currentPower) + '/' + Math.floor(powerSystem.getMaxPower()), barX + 160, powerBarY + 10);
+
                 // Level complete screen
                 if (gameState.showLevelScreen) {
                     ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
@@ -253,21 +282,37 @@ export function GameContainer() {
                         { key: '4', name: 'Heavy Cannon', type: WeaponType.HEAVY }
                     ];
                     
+                    // Display generator upgrade option
+                    const generatorYPos = game.getCanvas().height / 2 + 10 + (weaponOptions.length * 25);
+                    const generatorCost = powerSystem.generatorLevel < 5 ? 500 + (powerSystem.generatorLevel * 500) : 0;
+                    const canUpgradeGenerator = powerSystem.canUpgradeGenerator() && gameState.score >= generatorCost;
+                    const generatorColor = canUpgradeGenerator ? '#00FF88' : '#FF6666';
+                    const generatorText = powerSystem.canUpgradeGenerator() 
+                        ? `G. Generator Upgrade [Lvl ${powerSystem.generatorLevel}] (${generatorCost} pts)`
+                        : `G. Generator Upgrade [MAX]`;
+                    ctx.fillStyle = generatorColor;
+                    ctx.font = '14px Arial';
+                    ctx.fillText('  ' + generatorText, 70, generatorYPos);
+                    
                     weaponOptions.forEach((weapon, index) => {
                         const yPos = game.getCanvas().height / 2 + 10 + (index * 25);
                         const upgradeInfo = weaponSystem.getUpgradeInfo(weapon.type);
                         const currentLevel = weaponSystem.getCurrentLevel(weapon.type);
                         const isSelected = weaponSystem.getCurrentWeapon() === weapon.type;
+                        const canAfford = weaponSystem.canUpgrade(weapon.type, gameState.score);
+                        const canDowngrade = weaponSystem.canDowngrade(weapon.type);
                         
                         // Determine display text
                         let displayText = `${weapon.key}. ${weapon.name}`;
                         let cost = 0;
+                        let affordabilityColor = '#00CCDD';
                         
                         if (currentLevel === -1) {
                             // Not owned yet
                             if (upgradeInfo.next) {
                                 cost = upgradeInfo.next.cost;
                                 displayText += ` (${cost} pts)`;
+                                affordabilityColor = canAfford ? '#00FF88' : '#FF6666';
                             }
                         } else {
                             // Already owned
@@ -275,6 +320,10 @@ export function GameContainer() {
                             if (upgradeInfo.next && currentLevel + 1 < 5) {
                                 cost = upgradeInfo.next.cost;
                                 displayText += ` -> Upgrade (${cost} pts)`;
+                                affordabilityColor = canAfford ? '#00FF88' : '#FF6666';
+                                if (canDowngrade) {
+                                    displayText += ` | Shift+${weapon.key} to downgrade`;
+                                }
                             } else {
                                 displayText += ` [MAX]`;
                             }
@@ -285,7 +334,7 @@ export function GameContainer() {
                             ctx.fillStyle = '#00FF88';
                             ctx.fillText('► ' + displayText, 70, yPos);
                         } else {
-                            ctx.fillStyle = '#00CCDD';
+                            ctx.fillStyle = affordabilityColor;
                             ctx.fillText('  ' + displayText, 70, yPos);
                         }
                     });
@@ -293,6 +342,11 @@ export function GameContainer() {
                     ctx.fillStyle = '#FFD700';
                     ctx.font = '12px Arial';
                     ctx.fillText('Press SPACE to continue', 50, game.getCanvas().height / 2 + 130);
+                    
+                    ctx.fillStyle = '#00FF88';
+                    ctx.font = '11px Arial';
+                    ctx.fillText('Green = Affordable | Red = Not enough points', 50, game.getCanvas().height / 2 + 150);
+                    ctx.fillText('Shift+Number to downgrade and get 50% refund', 50, game.getCanvas().height / 2 + 165);
                 }
 
                 // Game over screen
@@ -319,6 +373,38 @@ export function GameContainer() {
 
             // Handle key presses for weapon selection and level progression
             const handleKeyDown = (e: KeyboardEvent) => {
+                // Weapon selection available anytime (except game over)
+                if (!gameState.gameOver && !gameState.showLevelScreen) {
+                    if (e.key === '1') {
+                        e.preventDefault();
+                        weaponSystem.setCurrentWeapon(WeaponType.STRAIGHT);
+                        const stats = weaponSystem.getCurrentWeaponStats();
+                        if (stats) player.setWeapon('straight', weaponSystem.getCurrentLevel(WeaponType.STRAIGHT), stats.fireRate, stats.damage);
+                        return;
+                    } else if (e.key === '2') {
+                        e.preventDefault();
+                        if (weaponSystem.setCurrentWeapon(WeaponType.SPREAD)) {
+                            const stats = weaponSystem.getCurrentWeaponStats();
+                            if (stats) player.setWeapon('spread', weaponSystem.getCurrentLevel(WeaponType.SPREAD), stats.fireRate, stats.damage);
+                        }
+                        return;
+                    } else if (e.key === '3') {
+                        e.preventDefault();
+                        if (weaponSystem.setCurrentWeapon(WeaponType.HOMING)) {
+                            const stats = weaponSystem.getCurrentWeaponStats();
+                            if (stats) player.setWeapon('homing', weaponSystem.getCurrentLevel(WeaponType.HOMING), stats.fireRate, stats.damage);
+                        }
+                        return;
+                    } else if (e.key === '4') {
+                        e.preventDefault();
+                        if (weaponSystem.setCurrentWeapon(WeaponType.HEAVY)) {
+                            const stats = weaponSystem.getCurrentWeaponStats();
+                            if (stats) player.setWeapon('heavy', weaponSystem.getCurrentLevel(WeaponType.HEAVY), stats.fireRate, stats.damage);
+                        }
+                        return;
+                    }
+                }
+
                 if (gameState.showLevelScreen) {
                     if (e.key === '1') {
                         e.preventDefault();
@@ -327,69 +413,57 @@ export function GameContainer() {
                         if (stats) player.setWeapon('straight', weaponSystem.getCurrentLevel(WeaponType.STRAIGHT), stats.fireRate, stats.damage);
                     } else if (e.key === '2') {
                         e.preventDefault();
-                        const currentLevel = weaponSystem.getCurrentLevel(WeaponType.SPREAD);
-                        if (currentLevel === -1) {
-                            // Buy first level
-                            const upgradeInfo = weaponSystem.upgradeWeapon(WeaponType.SPREAD);
-                            if (upgradeInfo && gameState.score >= upgradeInfo.cost) {
-                                gameState.score -= upgradeInfo.cost;
-                                weaponSystem.setCurrentWeapon(WeaponType.SPREAD);
-                                const stats = weaponSystem.getCurrentWeaponStats();
-                                if (stats) player.setWeapon('spread', 0, stats.fireRate, stats.damage);
-                            }
-                        } else {
-                            // Upgrade existing level
-                            const upgradeInfo = weaponSystem.upgradeWeapon(WeaponType.SPREAD);
-                            if (upgradeInfo && gameState.score >= upgradeInfo.cost) {
-                                gameState.score = gameState.score - upgradeInfo.cost + upgradeInfo.refund;
-                                weaponSystem.setCurrentWeapon(WeaponType.SPREAD);
-                                const stats = weaponSystem.getCurrentWeaponStats();
-                                if (stats) player.setWeapon('spread', weaponSystem.getCurrentLevel(WeaponType.SPREAD), stats.fireRate, stats.damage);
-                            }
+                        const upgradeInfo = weaponSystem.upgradeWeapon(WeaponType.SPREAD, gameState.score);
+                        if (upgradeInfo) {
+                            gameState.score = gameState.score - upgradeInfo.cost + upgradeInfo.refund;
+                            weaponSystem.setCurrentWeapon(WeaponType.SPREAD);
+                            const stats = weaponSystem.getCurrentWeaponStats();
+                            if (stats) player.setWeapon('spread', weaponSystem.getCurrentLevel(WeaponType.SPREAD), stats.fireRate, stats.damage);
+                        }
+                    } else if (e.key === 'Shift' && e.code === 'Digit2') {
+                        // Shift+2 to downgrade Spread Shot
+                        e.preventDefault();
+                        const downgradeInfo = weaponSystem.downgradeWeapon(WeaponType.SPREAD);
+                        if (downgradeInfo) {
+                            gameState.score += downgradeInfo.refund;
+                            const stats = weaponSystem.getCurrentWeaponStats();
+                            if (stats) player.setWeapon('spread', weaponSystem.getCurrentLevel(WeaponType.SPREAD), stats.fireRate, stats.damage);
                         }
                     } else if (e.key === '3') {
                         e.preventDefault();
-                        const currentLevel = weaponSystem.getCurrentLevel(WeaponType.HOMING);
-                        if (currentLevel === -1) {
-                            // Buy first level
-                            const upgradeInfo = weaponSystem.upgradeWeapon(WeaponType.HOMING);
-                            if (upgradeInfo && gameState.score >= upgradeInfo.cost) {
-                                gameState.score -= upgradeInfo.cost;
-                                weaponSystem.setCurrentWeapon(WeaponType.HOMING);
-                                const stats = weaponSystem.getCurrentWeaponStats();
-                                if (stats) player.setWeapon('homing', 0, stats.fireRate, stats.damage);
-                            }
-                        } else {
-                            // Upgrade existing level
-                            const upgradeInfo = weaponSystem.upgradeWeapon(WeaponType.HOMING);
-                            if (upgradeInfo && gameState.score >= upgradeInfo.cost) {
-                                gameState.score = gameState.score - upgradeInfo.cost + upgradeInfo.refund;
-                                weaponSystem.setCurrentWeapon(WeaponType.HOMING);
-                                const stats = weaponSystem.getCurrentWeaponStats();
-                                if (stats) player.setWeapon('homing', weaponSystem.getCurrentLevel(WeaponType.HOMING), stats.fireRate, stats.damage);
-                            }
+                        const upgradeInfo = weaponSystem.upgradeWeapon(WeaponType.HOMING, gameState.score);
+                        if (upgradeInfo) {
+                            gameState.score = gameState.score - upgradeInfo.cost + upgradeInfo.refund;
+                            weaponSystem.setCurrentWeapon(WeaponType.HOMING);
+                            const stats = weaponSystem.getCurrentWeaponStats();
+                            if (stats) player.setWeapon('homing', weaponSystem.getCurrentLevel(WeaponType.HOMING), stats.fireRate, stats.damage);
+                        }
+                    } else if (e.key === 'Shift' && e.code === 'Digit3') {
+                        // Shift+3 to downgrade Homing Missiles
+                        e.preventDefault();
+                        const downgradeInfo = weaponSystem.downgradeWeapon(WeaponType.HOMING);
+                        if (downgradeInfo) {
+                            gameState.score += downgradeInfo.refund;
+                            const stats = weaponSystem.getCurrentWeaponStats();
+                            if (stats) player.setWeapon('homing', weaponSystem.getCurrentLevel(WeaponType.HOMING), stats.fireRate, stats.damage);
                         }
                     } else if (e.key === '4') {
                         e.preventDefault();
-                        const currentLevel = weaponSystem.getCurrentLevel(WeaponType.HEAVY);
-                        if (currentLevel === -1) {
-                            // Buy first level
-                            const upgradeInfo = weaponSystem.upgradeWeapon(WeaponType.HEAVY);
-                            if (upgradeInfo && gameState.score >= upgradeInfo.cost) {
-                                gameState.score -= upgradeInfo.cost;
-                                weaponSystem.setCurrentWeapon(WeaponType.HEAVY);
-                                const stats = weaponSystem.getCurrentWeaponStats();
-                                if (stats) player.setWeapon('heavy', 0, stats.fireRate, stats.damage);
-                            }
-                        } else {
-                            // Upgrade existing level
-                            const upgradeInfo = weaponSystem.upgradeWeapon(WeaponType.HEAVY);
-                            if (upgradeInfo && gameState.score >= upgradeInfo.cost) {
-                                gameState.score = gameState.score - upgradeInfo.cost + upgradeInfo.refund;
-                                weaponSystem.setCurrentWeapon(WeaponType.HEAVY);
-                                const stats = weaponSystem.getCurrentWeaponStats();
-                                if (stats) player.setWeapon('heavy', weaponSystem.getCurrentLevel(WeaponType.HEAVY), stats.fireRate, stats.damage);
-                            }
+                        const upgradeInfo = weaponSystem.upgradeWeapon(WeaponType.HEAVY, gameState.score);
+                        if (upgradeInfo) {
+                            gameState.score = gameState.score - upgradeInfo.cost + upgradeInfo.refund;
+                            weaponSystem.setCurrentWeapon(WeaponType.HEAVY);
+                            const stats = weaponSystem.getCurrentWeaponStats();
+                            if (stats) player.setWeapon('heavy', weaponSystem.getCurrentLevel(WeaponType.HEAVY), stats.fireRate, stats.damage);
+                        }
+                    } else if (e.key === 'Shift' && e.code === 'Digit4') {
+                        // Shift+4 to downgrade Heavy Cannon
+                        e.preventDefault();
+                        const downgradeInfo = weaponSystem.downgradeWeapon(WeaponType.HEAVY);
+                        if (downgradeInfo) {
+                            gameState.score += downgradeInfo.refund;
+                            const stats = weaponSystem.getCurrentWeaponStats();
+                            if (stats) player.setWeapon('heavy', weaponSystem.getCurrentLevel(WeaponType.HEAVY), stats.fireRate, stats.damage);
                         }
                     } else if (e.key === ' ') {
                         e.preventDefault();

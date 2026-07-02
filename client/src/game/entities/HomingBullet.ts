@@ -36,6 +36,11 @@ export class HomingBullet extends Entity {
         if (this.y < -50 || this.x < -50 || this.x > 850 || this.y > 950) {
             this.isActive = false;
         }
+
+        // If target is off-screen, deactivate bullet
+        if (this.targetY < -50 || this.targetX < -50 || this.targetX > 850 || this.targetY > 950) {
+            this.isActive = false;
+        }
     }
 
     public updateTarget(targetX: number, targetY: number): void {

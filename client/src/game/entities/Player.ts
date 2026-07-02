@@ -105,34 +105,50 @@ export class Player extends Entity {
         const bullets = [];
 
         if (this.weaponType === 'straight') {
-            bullets.push({ x: centerX, y: centerY, type: 'straight' });
+            if (this.weaponLevel === 0) {
+                // Level 1: Single bullet
+                bullets.push({ x: centerX, y: centerY, type: 'straight', angle: 0 });
+            } else if (this.weaponLevel === 1) {
+                // Level 2: Faster fire rate
+                bullets.push({ x: centerX, y: centerY, type: 'straight', angle: 0 });
+            } else if (this.weaponLevel === 2) {
+                // Level 3: Even faster
+                bullets.push({ x: centerX, y: centerY, type: 'straight', angle: 0 });
+            } else if (this.weaponLevel === 3) {
+                // Level 4: Rapid fire
+                bullets.push({ x: centerX, y: centerY, type: 'straight', angle: 0 });
+            } else if (this.weaponLevel >= 4) {
+                // Level 5: Extreme speed
+                bullets.push({ x: centerX, y: centerY, type: 'straight', angle: 0 });
+            }
         } else if (this.weaponType === 'spread') {
             if (this.weaponLevel === 0) {
                 // Level 1: One center bullet
-                bullets.push({ x: centerX, y: centerY, type: 'spread' });
+                bullets.push({ x: centerX, y: centerY, type: 'spread', angle: 0 });
             } else if (this.weaponLevel === 1) {
-                // Level 2: Center + alternating sides
-                bullets.push({ x: centerX, y: centerY, type: 'spread' });
-                bullets.push({ x: centerX - 20, y: centerY, type: 'spread' });
+                // Level 2: Center + alternating sides (with slight angles)
+                bullets.push({ x: centerX, y: centerY, type: 'spread', angle: 0 });
+                bullets.push({ x: centerX - 20, y: centerY, type: 'spread', angle: -0.3 });
+                bullets.push({ x: centerX + 20, y: centerY, type: 'spread', angle: 0.3 });
             } else if (this.weaponLevel === 2) {
-                // Level 3: Center + both sides
-                bullets.push({ x: centerX - 20, y: centerY, type: 'spread' });
-                bullets.push({ x: centerX, y: centerY, type: 'spread' });
-                bullets.push({ x: centerX + 20, y: centerY, type: 'spread' });
+                // Level 3: Center + both sides (with angles)
+                bullets.push({ x: centerX - 20, y: centerY, type: 'spread', angle: -0.4 });
+                bullets.push({ x: centerX, y: centerY, type: 'spread', angle: 0 });
+                bullets.push({ x: centerX + 20, y: centerY, type: 'spread', angle: 0.4 });
             } else if (this.weaponLevel === 3) {
-                // Level 4: 5 bullets in spread
-                bullets.push({ x: centerX - 30, y: centerY, type: 'spread' });
-                bullets.push({ x: centerX - 15, y: centerY, type: 'spread' });
-                bullets.push({ x: centerX, y: centerY, type: 'spread' });
-                bullets.push({ x: centerX + 15, y: centerY, type: 'spread' });
-                bullets.push({ x: centerX + 30, y: centerY, type: 'spread' });
+                // Level 4: 5 bullets in spread with angles
+                bullets.push({ x: centerX - 30, y: centerY, type: 'spread', angle: -0.5 });
+                bullets.push({ x: centerX - 15, y: centerY, type: 'spread', angle: -0.25 });
+                bullets.push({ x: centerX, y: centerY, type: 'spread', angle: 0 });
+                bullets.push({ x: centerX + 15, y: centerY, type: 'spread', angle: 0.25 });
+                bullets.push({ x: centerX + 30, y: centerY, type: 'spread', angle: 0.5 });
             } else if (this.weaponLevel >= 4) {
                 // Level 5: Full spread with diagonals
-                bullets.push({ x: centerX - 30, y: centerY - 10, type: 'spread' });
-                bullets.push({ x: centerX - 15, y: centerY, type: 'spread' });
-                bullets.push({ x: centerX, y: centerY, type: 'spread' });
-                bullets.push({ x: centerX + 15, y: centerY, type: 'spread' });
-                bullets.push({ x: centerX + 30, y: centerY - 10, type: 'spread' });
+                bullets.push({ x: centerX - 30, y: centerY - 10, type: 'spread', angle: -0.6 });
+                bullets.push({ x: centerX - 15, y: centerY, type: 'spread', angle: -0.3 });
+                bullets.push({ x: centerX, y: centerY, type: 'spread', angle: 0 });
+                bullets.push({ x: centerX + 15, y: centerY, type: 'spread', angle: 0.3 });
+                bullets.push({ x: centerX + 30, y: centerY - 10, type: 'spread', angle: 0.6 });
             }
         } else if (this.weaponType === 'homing') {
             if (this.weaponLevel === 0) {
