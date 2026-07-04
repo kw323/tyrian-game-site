@@ -1,7 +1,7 @@
 export class PowerSystem {
     public maxPower: number = 100; // Total power capacity
     public currentPower: number = 100; // Current power level
-    public generatorLevel: number = 0; // Generator upgrade level (0-5)
+    public generatorLevel: number = 0; // Generator upgrade level (0-14)
     public generatorOutput: number = 15; // Power generated per second at level 0
     
     // Power consumption per second for each system
@@ -58,7 +58,7 @@ export class PowerSystem {
 
     public upgradeGenerator(): number {
         // Returns cost in points for upgrading generator
-        const costs = [0, 500, 1000, 1500, 2000, 2500];
+        const costs = [0, 500, 1000, 1500, 2000, 2500, 5000, 10000, 20000, 40000, 80000, 160000, 320000, 640000, 1280000];
         if (this.generatorLevel < costs.length - 1) {
             const cost = costs[this.generatorLevel + 1];
             this.generatorLevel++;
@@ -68,7 +68,7 @@ export class PowerSystem {
     }
 
     public canUpgradeGenerator(): boolean {
-        return this.generatorLevel < 5;
+        return this.generatorLevel < 14;
     }
 
     public getPowerPercentage(): number {

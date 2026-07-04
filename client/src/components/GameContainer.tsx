@@ -15,6 +15,8 @@ import { InputManager } from '@/game/systems/InputManager';
 import { CollisionSystem } from '@/game/systems/CollisionSystem';
 import { EnemySpawner } from '@/game/systems/EnemySpawner';
 import { PowerSystem } from '@/game/core/PowerSystem';
+import { Boss } from '@/game/entities/Boss';
+import { ShipUpgradeSystem } from '@/game/core/ShipUpgradeSystem';
 
 export function GameContainer() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -39,6 +41,7 @@ export function GameContainer() {
             const enemySpawner = new EnemySpawner();
             const weaponSystem = new WeaponUpgradeSystem();
             const powerSystem = new PowerSystem();
+            const shipSystem = new ShipUpgradeSystem();
 
             // Create player
             const player = new Player(
@@ -101,7 +104,12 @@ export function GameContainer() {
                                         nearestDist = dist;
                                         nearestEnemy = entity;
                                     }
-                                }
+                                } else if (entity instanceof Boss) {
+                        // Boss shooting
+                        const bossBullets = entity.shoot();
+                        bossBullets.forEach(bullet => game.addEntity(bullet));
+                    }
+
                             });
                             const targetX = nearestEnemy ? nearestEnemy.x + nearestEnemy.width / 2 : bulletData.x;
                             const targetY = nearestEnemy ? nearestEnemy.y + nearestEnemy.height / 2 : -50;
@@ -112,6 +120,12 @@ export function GameContainer() {
                             game.addEntity(bullet);
                         }
                     });
+                }
+
+                // Spawn boss every 3 levels
+                if (gameState.level % 3 === 0 && gameState.levelTimeElapsed < 1) {
+                    const boss = new Boss(game.getCanvas().width / 2, 100, gameState.level);
+                    game.addEntity(boss);
                 }
 
                 // Spawn enemies

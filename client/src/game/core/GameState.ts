@@ -58,8 +58,8 @@ export class GameState {
         this.enemiesDefeated = 0;
         this.levelStartTime = 0;
         this.levelTimeElapsed = 0;
-        // Increase level duration: 60 + (level * 10) seconds
-        this.levelDuration = 60 + (this.level * 10);
+        // Fixed level duration: always 60 seconds
+        this.levelDuration = 60;
     }
 
     public togglePause(): void {
