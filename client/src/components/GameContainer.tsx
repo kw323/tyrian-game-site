@@ -311,11 +311,23 @@ export function GameContainer() {
                     
                     weaponOptions.forEach((weapon, index) => {
                         const yPos = game.getCanvas().height / 2 + 10 + (index * 25);
-                        const upgradeInfo = weaponSystem.getUpgradeInfo(weapon.type);
+                        const upgradeInfo = weaponSystem.getWeaponLevels(weapon.type);
                         const currentLevel = weaponSystem.getCurrentLevel(weapon.type);
                         const isSelected = weaponSystem.getCurrentWeapon() === weapon.type;
-                        const canAfford = weaponSystem.canUpgrade(weapon.type, gameState.score);
-                        const canDowngrade = weaponSystem.canDowngrade(weapon.type);
+                        const levels = upgradeInfo;
+                        let nextLevel = null;
+                        let nextCost = 0;
+                        
+                        if (currentLevel === -1 && levels.length > 0) {
+                            nextLevel = levels[0];
+                            nextCost = nextLevel.cost;
+                        } else if (currentLevel >= 0 && currentLevel + 1 < levels.length) {
+                            nextLevel = levels[currentLevel + 1];
+                            nextCost = nextLevel.cost;
+                        }
+                        
+                        const canAfford = nextLevel && gameState.score >= nextCost;
+                        const canDowngrade = currentLevel > 0;
                         
                         // Determine display text
                         let displayText = `${weapon.key}. ${weapon.name}`;
@@ -324,16 +336,16 @@ export function GameContainer() {
                         
                         if (currentLevel === -1) {
                             // Not owned yet
-                            if (upgradeInfo.next) {
-                                cost = upgradeInfo.next.cost;
+                            if (nextLevel) {
+                                cost = nextLevel.cost;
                                 displayText += ` (${cost} pts)`;
                                 affordabilityColor = canAfford ? '#00FF88' : '#FF6666';
                             }
                         } else {
                             // Already owned
                             displayText += ` [Lvl ${currentLevel + 1}]`;
-                            if (upgradeInfo.next && currentLevel + 1 < 5) {
-                                cost = upgradeInfo.next.cost;
+                            if (nextLevel && currentLevel + 1 < 15) {
+                                cost = nextLevel.cost;
                                 displayText += ` -> Upgrade (${cost} pts)`;
                                 affordabilityColor = canAfford ? '#00FF88' : '#FF6666';
                                 if (canDowngrade) {

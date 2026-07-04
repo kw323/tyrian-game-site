@@ -23,8 +23,8 @@ export class PowerSystem {
     }
 
     public getMaxPower(): number {
-        // Max power increases with generator level
-        return this.maxPower + (this.generatorLevel * 20);
+        // Max power stays constant - only generation rate increases
+        return this.maxPower;
     }
 
     public getWeaponCost(weaponType: string, level: number): number {
