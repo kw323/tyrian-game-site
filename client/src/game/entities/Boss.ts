@@ -109,6 +109,10 @@ export class Boss extends Entity {
         return 5000 + (this.level * 1000);
     }
 
+    public render(ctx: CanvasRenderingContext2D): void {
+        this.draw(ctx);
+    }
+
     public draw(ctx: CanvasRenderingContext2D): void {
         // Draw boss body (larger diamond shape)
         ctx.fillStyle = this.color;

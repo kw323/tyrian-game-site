@@ -104,12 +104,7 @@ export function GameContainer() {
                                         nearestDist = dist;
                                         nearestEnemy = entity;
                                     }
-                                } else if (entity instanceof Boss) {
-                        // Boss shooting
-                        const bossBullets = entity.shoot();
-                        bossBullets.forEach(bullet => game.addEntity(bullet));
-                    }
-
+                                }
                             });
                             const targetX = nearestEnemy ? nearestEnemy.x + nearestEnemy.width / 2 : bulletData.x;
                             const targetY = nearestEnemy ? nearestEnemy.y + nearestEnemy.height / 2 : -50;
@@ -139,6 +134,10 @@ export function GameContainer() {
                         // Enemy bullet speed reduced to 5, shoots towards player
                         const enemyBullet = new EnemyBullet(bulletPos.x, bulletPos.y, 6, 6, 5, 1, bulletPos.dirX, bulletPos.dirY);
                         game.addEntity(enemyBullet);
+                    } else if (entity instanceof Boss) {
+                        // Boss shooting
+                        const bossBullets = entity.shoot();
+                        bossBullets.forEach(bullet => game.addEntity(bullet));
                     }
                 });
 
@@ -165,6 +164,29 @@ export function GameContainer() {
                         if (!entityA.isActive) {
                             gameState.enemyDefeated();
                             const explosion = new Explosion(entityA.x + entityA.width / 2, entityA.y + entityA.height / 2, 20);
+                            game.addEntity(explosion);
+                        }
+                    }
+
+                    // Player bullet hits boss
+                    if ((entityA instanceof Bullet || entityA instanceof HomingBullet || entityA instanceof HeavyBullet) && entityB instanceof Boss) {
+                        const damage = entityA instanceof HeavyBullet ? 25 : (entityA instanceof HomingBullet ? 15 : 10);
+                        entityB.takeDamage(damage);
+                        entityA.isActive = false;
+                        if (!entityB.isAlive()) {
+                            entityB.isActive = false;
+                            gameState.addScore(entityB.getReward());
+                            const explosion = new Explosion(entityB.x, entityB.y, 30);
+                            game.addEntity(explosion);
+                        }
+                    } else if ((entityB instanceof Bullet || entityB instanceof HomingBullet || entityB instanceof HeavyBullet) && entityA instanceof Boss) {
+                        const damage = entityB instanceof HeavyBullet ? 25 : (entityB instanceof HomingBullet ? 15 : 10);
+                        entityA.takeDamage(damage);
+                        entityB.isActive = false;
+                        if (!entityA.isAlive()) {
+                            entityA.isActive = false;
+                            gameState.addScore(entityA.getReward());
+                            const explosion = new Explosion(entityA.x, entityA.y, 30);
                             game.addEntity(explosion);
                         }
                     }
@@ -380,9 +402,36 @@ export function GameContainer() {
                         }
                     });
                     
+                    // Display ship upgrades
+                    ctx.fillStyle = '#FFFF00';
+                    ctx.font = '14px Arial';
+                    ctx.fillText('SHIP UPGRADES:', 50, game.getCanvas().height / 2 + 100);
+                    
+                    const shipOptions = shipSystem.getAllShips();
+                    shipOptions.forEach((ship: any, index: number) => {
+                        const key = 'S' + (index + 1);
+                        const owned = shipSystem.getCurrentShipId() === ship.id;
+                        const yPos = game.getCanvas().height / 2 + 120 + (index * 20);
+                        
+                        let displayText = `${key}. ${ship.name}`;
+                        let shipColor = '#00CCDD';
+                        
+                        if (owned) {
+                            displayText += ' [OWNED]';
+                            shipColor = '#00FF88';
+                        } else {
+                            displayText += ` (${ship.cost} pts)`;
+                            shipColor = gameState.score >= ship.cost ? '#00FF88' : '#FF6666';
+                        }
+                        
+                        ctx.fillStyle = shipColor;
+                        ctx.font = '12px Arial';
+                        ctx.fillText(displayText, 50, yPos);
+                    });
+                    
                     ctx.fillStyle = '#FFD700';
                     ctx.font = '12px Arial';
-                    ctx.fillText('Press SPACE to continue', 50, game.getCanvas().height / 2 + 130);
+                    ctx.fillText('Press SPACE to continue', 50, game.getCanvas().height / 2 + 200);
                     
                     ctx.fillStyle = '#00FF88';
                     ctx.font = '11px Arial';
