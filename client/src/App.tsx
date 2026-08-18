@@ -1,20 +1,27 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
+import { Route, Router as WouterRouter, Switch } from "wouter";
+import { useHashLocation } from "wouter/use-hash-location";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 
 
 function Router() {
+  // Electron opens the game as file://.../index.html. Browser routing would otherwise
+  // interpret the physical file path as an unknown route and show the Not Found screen.
+  const useFileLocation = typeof window !== "undefined" && window.location.protocol === "file:";
+
   return (
-    <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
-      <Route component={NotFound} />
-    </Switch>
+    <WouterRouter hook={useFileLocation ? useHashLocation : undefined}>
+      <Switch>
+        <Route path={"/"} component={Home} />
+        <Route path={"/404"} component={NotFound} />
+        {/* Final fallback route */}
+        <Route component={NotFound} />
+      </Switch>
+    </WouterRouter>
   );
 }
 
