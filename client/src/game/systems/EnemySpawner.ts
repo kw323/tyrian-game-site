@@ -15,6 +15,7 @@ interface EnemyBlueprint {
 
 import { EnemyType, EnemyMovementType, EnemyAdvanced } from '../entities/EnemyAdvanced';
 import { DifficultyProfile, DifficultySystem } from '../core/DifficultySystem';
+import { getFactionWaveProfile } from '../core/EnemyCombatProfile';
 
 export class EnemySpawner {
     private spawnRate: number = 1.5;
@@ -51,8 +52,9 @@ export class EnemySpawner {
         const newEnemies: EnemyAdvanced[] = [];
         const currentTime = performance.now() / 1000;
         const faction = this.getFactionForStage(level);
+        const waveProfile = getFactionWaveProfile(faction);
 
-        if (currentTime - this.lastSpawnTime < this.spawnRate) return newEnemies;
+        if (currentTime - this.lastSpawnTime < waveProfile.spawnRate) return newEnemies;
 
         this.lastSpawnTime = currentTime;
         this.waveCount++;
@@ -98,15 +100,16 @@ export class EnemySpawner {
         const waveType = eventType ?? (isChainWave
             ? chainableTypes[Math.floor(Math.random() * chainableTypes.length)]
             : null);
+        const escalation = Math.floor(Math.max(0, level - 1) / 25);
         const count = this.stageCombatEvent === 'swarm'
-            ? Math.min(9 + Math.floor(level / 10), 16)
+            ? Math.min(waveProfile.swarmMin + escalation, waveProfile.swarmMax)
             : isAmbushWave
-                ? Math.min(7 + Math.floor(level / 20), 10)
+                ? Math.min(waveProfile.ambushMin + escalation, waveProfile.ambushMax)
                 : this.stageCombatEvent === 'single'
-                    ? Math.min(4 + Math.floor(level / 15), 8)
+                    ? Math.min(waveProfile.singleMin + Math.floor(escalation / 2), waveProfile.singleMax)
                     : isChainWave
-                        ? Math.min(5 + Math.floor(level / 4), 8)
-                        : this.enemiesPerWave;
+                        ? Math.min(waveProfile.chainMin + escalation, waveProfile.chainMax)
+                        : waveProfile.standardCount;
         const chainStartX = 50 + Math.random() * 1040;
 
         for (let i = 0; i < count; i++) {

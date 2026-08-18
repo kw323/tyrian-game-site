@@ -32,6 +32,7 @@ export interface EnemyShot {
 import { Entity } from '../core/Entity';
 import { AsteroidBeltEntity } from './AsteroidBeltEntity';
 import { DifficultyProfile } from '../core/DifficultySystem';
+import { EnemyCombatProfile, getEnemyCombatProfile } from '../core/EnemyCombatProfile';
 
 export class EnemyAdvanced extends Entity {
     public speed: number;
@@ -63,6 +64,7 @@ export class EnemyAdvanced extends Entity {
     public faction: 'raiders' | 'military' | 'aliens' = 'raiders';
     private difficultyProfile: DifficultyProfile | null = null;
     private baseShootCooldown = 1.5;
+    private combatProfile: EnemyCombatProfile;
 
     constructor(
         x: number,
@@ -101,6 +103,9 @@ export class EnemyAdvanced extends Entity {
         this.bulletColor = '#8FFFF4';
         this.bulletStyle = 'needle';
         this.configureType();
+        this.combatProfile = getEnemyCombatProfile(this.faction, this.enemyType);
+        this.speed = this.baseSpeed * this.combatProfile.moveMultiplier;
+        this.shootCooldown = this.combatProfile.shootCooldown;
         this.baseShootCooldown = this.shootCooldown;
         if (this.isChainMember) this.shootCooldown *= 1.25;
         this.baseShootCooldown = this.shootCooldown;
@@ -198,7 +203,7 @@ export class EnemyAdvanced extends Entity {
         this.difficultyProfile = profile;
         this.maxHealth = Math.max(1, Math.round(this.maxHealth * profile.healthMultiplier));
         this.health = this.maxHealth;
-        this.speed = this.baseSpeed * profile.speedMultiplier;
+        this.speed = this.baseSpeed * this.combatProfile.moveMultiplier * profile.speedMultiplier;
         this.shootCooldown = this.baseShootCooldown / profile.fireRateMultiplier;
     }
 
@@ -218,7 +223,7 @@ export class EnemyAdvanced extends Entity {
         return this.hasEnteredScreen && this.timeAlive - this.lastShotTime >= this.shootCooldown;
     }
 
-    public shoot(_currentTime: number, playerX: number, playerY: number): EnemyShot | null {
+    public shoot(_currentTime: number, playerX: number, playerY: number): EnemyShot[] | null {
         if (!this.hasEnteredScreen) return null;
         if (this.timeAlive - this.lastShotTime < this.shootCooldown) return null;
         this.lastShotTime = this.timeAlive;
@@ -229,11 +234,15 @@ export class EnemyAdvanced extends Entity {
         if (this.isTimeFrozen) return;
         this.timeAlive += deltaTime;
         if (this.difficultyProfile) {
-            this.speed = this.slowTimer > 0 ? this.speed : this.baseSpeed * this.difficultyProfile.speedMultiplier;
+            this.speed = this.slowTimer > 0
+                ? this.speed
+                : this.baseSpeed * this.combatProfile.moveMultiplier * this.difficultyProfile.speedMultiplier;
         }
         if (this.slowTimer > 0) {
             this.slowTimer = Math.max(0, this.slowTimer - deltaTime);
-            if (this.slowTimer === 0) this.speed = this.baseSpeed;
+            if (this.slowTimer === 0) {
+                this.speed = this.baseSpeed * this.combatProfile.moveMultiplier * (this.difficultyProfile?.speedMultiplier ?? 1);
+            }
         }
 
         if (this.knockbackX !== 0 || this.knockbackY !== 0) {
@@ -269,42 +278,7 @@ export class EnemyAdvanced extends Entity {
         if (this.isChainMember) {
             this.updateChainMovement(deltaTime);
         } else {
-            switch (this.movementType) {
-                case EnemyMovementType.STRAIGHT_DOWN:
-                    this.y += this.speed * deltaTime * 60 * 1.3;
-                    break;
-                case EnemyMovementType.ZIGZAG:
-                    this.y += this.speed * deltaTime * 60 * 0.8;
-                    this.x = this.clampHorizontal(this.spawnX + Math.sin(this.timeAlive * 3.5) * 75);
-                    break;
-                case EnemyMovementType.CIRCLE:
-                    this.y += this.speed * deltaTime * 60 * 0.7;
-                    this.x = this.clampHorizontal(this.spawnX + Math.cos(this.timeAlive * 2.8) * 85);
-                    break;
-                case EnemyMovementType.SPIRAL:
-                    this.y += this.speed * deltaTime * 60 * 0.75;
-                    this.x = this.clampHorizontal(this.spawnX + Math.sin(this.timeAlive * 4) * (20 + this.timeAlive * 12));
-                    break;
-                case EnemyMovementType.CENTER_ORBIT: {
-                    const targetY = 160 + Math.sin(this.timeAlive * 2) * 50;
-                    if (this.y < targetY) {
-                        this.y += this.speed * deltaTime * 60 * 1.1;
-                    } else {
-                        this.y += Math.cos(this.timeAlive * 3) * 0.6;
-                    }
-                    this.x = this.clampHorizontal(400 + Math.sin(this.timeAlive * 1.8) * 220);
-                    break;
-                }
-                case EnemyMovementType.HOVER:
-                default:
-                    if (this.y < 140) {
-                        this.y += this.speed * deltaTime * 60 * 0.9;
-                    } else {
-                        this.y += Math.sin(this.timeAlive * 1.5) * 0.4;
-                    }
-                    this.x = this.clampHorizontal(this.spawnX + Math.sin(this.timeAlive * 1.5) * 40);
-                    break;
-            }
+            this.updateFactionMovement(deltaTime);
         }
 
         this.x = this.clampHorizontal(this.x + avoidanceX);
@@ -319,46 +293,137 @@ export class EnemyAdvanced extends Entity {
         }
     }
 
+    private updateFactionMovement(deltaTime: number): void {
+        const time = this.timeAlive;
+        switch (this.combatProfile.motion) {
+            case 'raider_scout':
+                this.y += this.speed * deltaTime * 60 * 1.35;
+                this.x = this.clampHorizontal(this.spawnX + Math.sin(time * 4.2) * 26);
+                break;
+            case 'raider_drone':
+                this.y += this.speed * deltaTime * 60 * 1.05;
+                this.x = this.clampHorizontal(this.spawnX + Math.sin(time * 3.7) * 112 + Math.sin(time * 7.4) * 24);
+                break;
+            case 'raider_tank':
+                this.y += this.speed * deltaTime * 60 * 0.62;
+                this.x = this.clampHorizontal(this.spawnX + Math.sin(time * 1.15) * 48);
+                break;
+            case 'military_scout':
+                this.y += this.speed * deltaTime * 60 * 0.72;
+                this.x = this.clampHorizontal(this.spawnX + Math.sin(time * 2.7) * 48);
+                break;
+            case 'military_drone':
+                if (this.y < 175) this.y += this.speed * deltaTime * 60 * 0.8;
+                else this.y += Math.sin(time * 1.2) * 0.3;
+                this.x = this.clampHorizontal(this.spawnX + Math.sin(time * 1.15) * 54);
+                break;
+            case 'military_tank':
+                if (this.y < 122) this.y += this.speed * deltaTime * 60 * 0.66;
+                else this.y += Math.sin(time * 0.8) * 0.18;
+                this.x = this.clampHorizontal(this.spawnX + Math.sin(time * 0.72) * 28);
+                break;
+            case 'military_sentinel':
+                if (this.y < 150) this.y += this.speed * deltaTime * 60 * 0.78;
+                else this.y += Math.cos(time * 1.4) * 0.28;
+                this.x = this.clampHorizontal(400 + Math.sin(time * 1.45) * 170);
+                break;
+            case 'alien_scout':
+                this.y += this.speed * deltaTime * 60 * 0.78;
+                this.x = this.clampHorizontal(this.spawnX + Math.sin(time * 2.3) * 76 + Math.cos(time * 4.2) * 20);
+                break;
+            case 'alien_drone':
+                this.y += this.speed * deltaTime * 60 * 0.70;
+                this.x = this.clampHorizontal(this.spawnX + Math.cos(time * 2.55) * 98);
+                break;
+            case 'alien_orbiter':
+                this.y += this.speed * deltaTime * 60 * 0.64;
+                this.x = this.clampHorizontal(this.spawnX + Math.sin(time * 3.6) * (42 + Math.min(80, time * 9)));
+                break;
+            case 'alien_sentinel':
+                if (this.y < 165) this.y += this.speed * deltaTime * 60 * 0.72;
+                else this.y += Math.sin(time * 2.1) * 0.35;
+                this.x = this.clampHorizontal(400 + Math.sin(time * 1.45) * 232);
+                break;
+            case 'hunter':
+                if (this.y < 175) this.y += this.speed * deltaTime * 60 * 0.92;
+                else this.y += Math.sin(time * 2.4) * 0.5;
+                this.x = this.clampHorizontal(this.spawnX + Math.sin(time * 1.9) * 215 + Math.sin(time * 4.8) * 48);
+                break;
+        }
+    }
+
     private updateChainMovement(deltaTime: number): void {
         this.chainTime += deltaTime * 1.25;
         const progress = Math.max(0, this.chainTime);
-        const targetY = 60 + progress * 65 + this.chainIndex * 26;
+        const formation = this.faction === 'raiders'
+            ? { yBase: 48, descent: 78, spacing: 23, speed: 1.35, amplitude: 92, frequency: 3.4 }
+            : this.faction === 'military'
+                ? { yBase: 112, descent: 34, spacing: 19, speed: 0.86, amplitude: 34, frequency: 1.15 }
+                : { yBase: 74, descent: 48, spacing: 24, speed: 0.98, amplitude: 78, frequency: 2.15 };
+        const targetY = formation.yBase + progress * formation.descent + this.chainIndex * formation.spacing;
         if (this.y < targetY) {
-            this.y += this.speed * deltaTime * 60 * 1.2;
+            this.y += this.speed * deltaTime * 60 * formation.speed;
         } else {
             this.y = targetY;
         }
-        this.x = this.clampHorizontal(this.spawnX + Math.sin(progress * 2.5 + this.chainIndex * 0.4) * 55);
+        const phaseOffset = this.chainIndex * (this.faction === 'military' ? 0.18 : 0.48);
+        this.x = this.clampHorizontal(this.spawnX + Math.sin(progress * formation.frequency + phaseOffset) * formation.amplitude);
     }
 
-    public generateShot(playerX: number, playerY: number): EnemyShot {
-        const centerX: number = Number(this.x) + Number(this.width) / 2;
-        const centerY: number = Number(this.y) + Number(this.height) / 2;
-        let dirX: number = 0;
-        let dirY: number = 1;
+    public generateShot(playerX: number, playerY: number): EnemyShot[] {
+        const centerX = this.x + this.width / 2;
+        const centerY = this.y + this.height / 2;
+        const shouldAim = (this.faction !== 'raiders' && this.enemyType !== EnemyType.SCOUT)
+            || this.enemyType === EnemyType.EVASIVE_HUNTER;
+        const baseAngle = shouldAim
+            ? Math.atan2(playerY - centerY, playerX - centerX)
+            : Math.PI / 2;
+        const offsets = this.getShotOffsets();
+        const difficulty = this.difficultyProfile;
+        const baseSpeed = this.bulletStyle === 'laser' ? 6.5 : this.bulletStyle === 'heavy' ? 4.2 : 5.0;
+        const speed = baseSpeed * this.combatProfile.projectileSpeedMultiplier * (difficulty?.speedMultiplier ?? 1);
+        const damage = (this.enemyType === EnemyType.TANK ? 2 : this.enemyType === EnemyType.EVASIVE_HUNTER ? 3 : 1) * (difficulty?.damageMultiplier ?? 1);
 
-        if (this.faction !== 'raiders' && this.enemyType !== EnemyType.SCOUT) {
-            const angle = Math.atan2(playerY - centerY, playerX - centerX);
-            dirX = Math.cos(angle);
-            dirY = Math.sin(angle);
-            if (dirY < 0.2) dirY = 0.2;
+        return offsets.map((offset) => {
+            const angle = baseAngle + offset;
+            const dirY = Math.max(0.2, Math.sin(angle));
+            return {
+                x: centerX - 3,
+                y: centerY,
+                dirX: Math.cos(angle),
+                dirY,
+                speed,
+                damage,
+                color: this.bulletColor,
+                style: this.bulletStyle,
+            };
+        });
+    }
+
+    private getShotOffsets(): number[] {
+        switch (this.combatProfile.shotPattern) {
+            case 'cross':
+                return [-0.18, 0.18];
+            case 'heavy_fan':
+                return [-0.18, 0, 0.18];
+            case 'aim_burst':
+                return [-0.07, 0.07];
+            case 'laser_sweep': {
+                const sweep = ((Math.floor(this.timeAlive * 1.5) % 3) - 1) * 0.09;
+                return [sweep - 0.18, sweep, sweep + 0.18];
+            }
+            case 'plasma_pair':
+                return [-0.14, 0.14];
+            case 'plasma_arc':
+                return [-0.24, 0, 0.24];
+            case 'plasma_crown':
+                return [-0.38, -0.19, 0, 0.19, 0.38];
+            case 'hunter_burst':
+                return [-0.16, 0, 0.16];
+            case 'single':
+            default:
+                return [0];
         }
-
-        const profile = this.difficultyProfile;
-        const speed: number = Number((this.bulletStyle === 'laser' ? 6.5 : this.bulletStyle === 'heavy' ? 4.2 : 5.0) * (profile?.speedMultiplier ?? 1));
-        const damage: number = Number((this.enemyType === EnemyType.TANK ? 2 : this.enemyType === EnemyType.EVASIVE_HUNTER ? 3 : 1) * (profile?.damageMultiplier ?? 1));
-
-        const shot: EnemyShot = {
-            x: Number(centerX - 3),
-            y: Number(centerY),
-            dirX: Number(dirX),
-            dirY: Number(dirY),
-            speed: Number(speed),
-            damage: Number(damage),
-            color: String(this.bulletColor),
-            style: this.bulletStyle
-        };
-        return shot;
     }
 
     public applyKnockback(dx: number, dy: number): void {
