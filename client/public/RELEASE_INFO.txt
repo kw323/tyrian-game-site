@@ -1,0 +1,16 @@
+PROTECT THE STARSHIP — FULL CAMPAIGN BUILD 1.1.0
+
+This offline release contains the complete cumulative campaign build.
+
+Included systems:
+- 101-stage campaign with pre-stage interactive briefings.
+- Story dialogue flow with keyboard and mouse navigation.
+- English voice-over assets for briefings and campaign contacts (539 packaged audio files).
+- Six weapon families with 25 progression ranks each and synchronized descriptions.
+- Reactor burst and full-recovery lockout system.
+- Distinct Raider, Military, and Alien combat movement and salvos.
+- Boss combat archetypes, Sera ally behavior, Archon reactor systems, Meltdown finale, epilogue, and credits.
+- Title screen, new/continue/save management, mouse flight, and customizable keyboard controls.
+
+Offline runtime:
+The Windows edition starts a local server on 127.0.0.1 only while the game is open. It does not require an Internet connection.

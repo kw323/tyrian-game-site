@@ -138,7 +138,7 @@ export default function Home() {
                     <p className="launch-console__hint">SAVES AVAILABLE BEFORE LAUNCH // MOUSE {mouseControlsEnabled ? 'ARMED' : 'HIDDEN'} // TOUCH {touchControlsEnabled ? 'ARMED' : 'HIDDEN'}</p>
                 </div>
                 <div className="launch-console__footer">
-                    <span>VERSION 1.0 // OFFLINE READY</span>
+                    <span>FULL CAMPAIGN BUILD 1.1.0 // OFFLINE READY</span>
                     <span>{resumePreview ? `LAST CHECKPOINT ${new Date(resumePreview.savedAt).toLocaleString()}` : 'SELECT NEW MISSION OR LOAD A SAVE'}</span>
                 </div>
             </section>
