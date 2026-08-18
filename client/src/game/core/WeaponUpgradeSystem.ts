@@ -1,3 +1,5 @@
+import { getWeaponUpgradeDescription, type RuntimeWeaponType } from './WeaponRuntimeProfile';
+
 export enum WeaponType {
     STRAIGHT = 'straight',
     SPREAD = 'spread',
@@ -207,6 +209,17 @@ export class WeaponUpgradeSystem {
             { level: 23, cost: 14680064000, damage: 178, fireRate: 6.2, description: 'Dimension-collapse seed', requiredShip: 3 },
             { level: 24, cost: 29360128000, damage: 195, fireRate: 6.5, description: 'Absolute event-horizon core', requiredShip: 3 }
         ]);
+
+        this.weaponLevels.forEach((levels, type) => {
+            levels.forEach((entry) => {
+                entry.description = getWeaponUpgradeDescription(
+                    type as RuntimeWeaponType,
+                    entry.level,
+                    entry.damage,
+                    entry.fireRate
+                );
+            });
+        });
     }
 
     public getWeaponLevels(type: WeaponType): WeaponLevel[] {

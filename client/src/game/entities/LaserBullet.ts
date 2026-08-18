@@ -1,4 +1,5 @@
 import { Entity } from '../core/Entity';
+import { getWeaponRuntimeProfile } from '../core/WeaponRuntimeProfile';
 
 // Style: instantaneous pulse-laser beam; the primary ray is white-hot and secondary rays are thinner cyan traces.
 export class LaserBullet extends Entity {
@@ -24,8 +25,10 @@ export class LaserBullet extends Entity {
         angle: number = 0,
         isSecondary: boolean = false
     ) {
-        const displayLevel = Math.max(1, level + 1);
-        const beamWidth = isSecondary ? Math.max(2.5, 2.5 + displayLevel * 0.4) : 5 + displayLevel * 0.95;
+        const profile = getWeaponRuntimeProfile('laser', level);
+        const beamWidth = isSecondary
+            ? (profile.laserSecondaryWidth ?? 2.5)
+            : (profile.laserPrimaryWidth ?? 5);
         const beamHeight = Math.max(1, originY);
         const endX = originX + Math.tan(angle) * beamHeight;
         const left = Math.min(originX, endX) - beamWidth / 2;
@@ -41,8 +44,8 @@ export class LaserBullet extends Entity {
         this.isSecondary = isSecondary;
         this.beamWidth = beamWidth;
         this.maxTargets = isSecondary
-            ? Math.max(1, Math.floor((1 + Math.floor(displayLevel / 3)) * 0.6))
-            : Math.min(6, 1 + Math.floor(displayLevel / 3));
+            ? (profile.laserSecondaryTargets ?? 1)
+            : (profile.laserPrimaryTargets ?? 1);
         this.lifetime = isSecondary ? 0.09 : 0.12;
     }
 

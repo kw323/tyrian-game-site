@@ -8,6 +8,8 @@ export class HomingBullet extends Entity {
     public targetY: number;
     public target: Entity | null;
     public turnSpeed: number = 3;
+    private directionX = 0;
+    private directionY = -1;
     private gravityBiasX = 0;
     private gravityBiasY = 0;
 
@@ -20,7 +22,8 @@ export class HomingBullet extends Entity {
         damage: number,
         targetX: number,
         targetY: number,
-        target: Entity | null = null
+        target: Entity | null = null,
+        turnSpeed: number = 2.6
     ) {
         super(x, y, width, height);
         this.speed = speed;
@@ -29,6 +32,7 @@ export class HomingBullet extends Entity {
         this.targetX = targetX;
         this.targetY = targetY;
         this.target = target;
+        this.turnSpeed = turnSpeed;
     }
 
     public setTarget(target: Entity | null): void {
@@ -59,11 +63,19 @@ export class HomingBullet extends Entity {
         const distance = Math.sqrt(dx * dx + dy * dy);
 
         if (distance > 0) {
-            const dirX = dx / distance + this.gravityBiasX;
-            const dirY = dy / distance + this.gravityBiasY;
-            const magnitude = Math.max(0.001, Math.hypot(dirX, dirY));
-            this.x += (dirX / magnitude) * this.speed * deltaTime * 60;
-            this.y += (dirY / magnitude) * this.speed * deltaTime * 60;
+            const desiredX = dx / distance + this.gravityBiasX;
+            const desiredY = dy / distance + this.gravityBiasY;
+            const desiredMagnitude = Math.max(0.001, Math.hypot(desiredX, desiredY));
+            const desiredDirectionX = desiredX / desiredMagnitude;
+            const desiredDirectionY = desiredY / desiredMagnitude;
+            const steer = Math.min(1, deltaTime * this.turnSpeed);
+            this.directionX += (desiredDirectionX - this.directionX) * steer;
+            this.directionY += (desiredDirectionY - this.directionY) * steer;
+            const directionMagnitude = Math.max(0.001, Math.hypot(this.directionX, this.directionY));
+            this.directionX /= directionMagnitude;
+            this.directionY /= directionMagnitude;
+            this.x += this.directionX * this.speed * deltaTime * 60;
+            this.y += this.directionY * this.speed * deltaTime * 60;
             this.gravityBiasX *= Math.max(0, 1 - deltaTime * 5);
             this.gravityBiasY *= Math.max(0, 1 - deltaTime * 5);
         }

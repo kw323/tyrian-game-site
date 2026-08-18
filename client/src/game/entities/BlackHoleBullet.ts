@@ -1,5 +1,6 @@
 import { Entity } from '../core/Entity';
 import { Bullet } from './Bullet';
+import { getWeaponRuntimeProfile } from '../core/WeaponRuntimeProfile';
 
 // Style: a compact artificial singularity with an accretion disk and a readable gravity field.
 export class BlackHoleBullet extends Bullet {
@@ -9,12 +10,13 @@ export class BlackHoleBullet extends Bullet {
     private readonly affectedTargets = new Set<Entity>();
     private readonly affectCooldowns = new Map<Entity, number>();
     private elapsed = 0;
-    private readonly lifetime = 1.8;
+    private readonly lifetime: number;
     private impactPoint: { x: number; y: number } | null = null;
 
     constructor(x: number, y: number, damage: number, level: number, angle = 0) {
         super(x, y, 14, 20, 15, damage, '#8b5cf6', angle);
         this.level = level;
+        this.lifetime = getWeaponRuntimeProfile('void_lance', level).voidFieldDuration ?? 1.25;
     }
 
     public update(deltaTime: number): void {
@@ -48,7 +50,7 @@ export class BlackHoleBullet extends Bullet {
     }
 
     public getFieldRadius(): number {
-        return 26 + this.level * 4;
+        return getWeaponRuntimeProfile('void_lance', this.level).voidFieldRadius ?? 26;
     }
 
     public getFieldCenter(): { x: number; y: number } {
@@ -75,7 +77,7 @@ export class BlackHoleBullet extends Bullet {
     }
 
     public getSuctionStrength(): number {
-        return Math.min(0.72, 0.24 + this.level * 0.035);
+        return getWeaponRuntimeProfile('void_lance', this.level).voidSuctionStrength ?? 0.2;
     }
 
     public getSuctionDamage(): number {

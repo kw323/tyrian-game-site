@@ -4,7 +4,7 @@ export class PowerSystem {
     public generatorLevel: number = 0; // Generator upgrade level (0-14)
     public generatorOutput: number = 15; // Power generated per second at level 0
     
-    // Power consumption per second for each system (extended to 25 levels)
+    // Energy cost per weapon trigger pull (extended to 25 ranks).
     public shieldRegenCost: number = 3; // Cost to regenerate shield
     public weaponCosts: Map<string, number[]> = new Map([
         ['straight', [0, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 8, 8.8, 9.6, 10.5, 11.4, 12.4, 13.5, 14.7, 16, 17.5, 19]],

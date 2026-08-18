@@ -13,6 +13,7 @@ import { EnemyAdvanced, EnemyShot } from '@/game/entities/EnemyAdvanced';
 import { EnemyBullet } from '@/game/entities/EnemyBullet';
 import { Explosion } from '@/game/entities/Explosion';
 import { WeaponUpgradeSystem, WeaponType } from '@/game/core/WeaponUpgradeSystem';
+import { getWeaponRuntimeProfile } from '@/game/core/WeaponRuntimeProfile';
 import { StarField } from '@/game/systems/StarField';
 import { InputManager } from '@/game/systems/InputManager';
 import { CollisionSystem } from '@/game/systems/CollisionSystem';
@@ -1281,12 +1282,27 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
                             const targetX = target ? target.x + target.width / 2 : bulletData.x;
                             const targetY = target ? target.y + target.height / 2 : bulletData.y - 100;
                             // Slower missiles and reacquisition make homing useful without making it dominant.
-                            const bullet = new HomingBullet(bulletData.x, bulletData.y, 6, 6, 12, player.weaponDamage, targetX, targetY, target);
+                            const bullet = new HomingBullet(
+                                bulletData.x,
+                                bulletData.y,
+                                6,
+                                6,
+                                bulletData.speed ?? 11,
+                                player.weaponDamage,
+                                targetX,
+                                targetY,
+                                target,
+                                bulletData.turnSpeed ?? 2.6
+                            );
                             (bullet as any).isCloaked = cloaked;
                             game.addEntity(bullet);
                         } else if (bulletData.type === 'heavy') {
                             const hLevel = player.weaponLevel;
-                            const hSize = 14 + Math.min(10, hLevel * 0.4);
+                            const profile = getWeaponRuntimeProfile('heavy', hLevel);
+                            const hSize = profile.heavyShellSize ?? 14;
+                            const fragmentCount = profile.heavyFragmentCount ?? 4;
+                            const fragmentSpeed = profile.heavyFragmentSpeed ?? 11;
+                            const cascadePellets = profile.heavyCascadePellets ?? 0;
                             const hBullet = new HeavyBullet(
                                 bulletData.x,
                                 bulletData.y,
@@ -1297,26 +1313,19 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
                                 bulletData.angle || 0,
                                 hLevel,
                                 (splitX, splitY, level, baseDamage) => {
-                                    // Robust reconstruction:
-                                    // Level 1-10: splits into 4 diagonal shrapnel.
-                                    // Level 11+ (Large Bomb): splits into 4 small diagonal bombs flying in 4 diagonal directions (NW, NE, SW, SE or similar).
-                                    // When each small bomb hits or depletes, it releases 4 regular bullets (16 regular bullets total).
-                                    const diagAngles = [Math.PI * 0.25, Math.PI * 0.75, Math.PI * 1.25, Math.PI * 1.75];
-                                    const subDmg = Math.max(5, baseDamage * (0.4 + level * 0.025));
-
-                                    diagAngles.forEach((dAng) => {
-                                        const smallBombCallback = level >= 11 ? (sx: number, sy: number, sl: number, sd: number) => {
-                                            // 4 regular bullets per small bomb
-                                            const bulletOffsets = [-0.4, -0.15, 0.15, 0.4];
-                                            bulletOffsets.forEach((bOff) => {
-                                                const regularBullet = new HeavyBullet(sx, sy, 5, 5, 14, sd * 0.35, dAng + bOff, 1, undefined, true);
+                                    const subDmg = Math.max(5, baseDamage * (0.38 + level * 0.022));
+                                    for (let fragmentIndex = 0; fragmentIndex < fragmentCount; fragmentIndex++) {
+                                        const dAng = (Math.PI * 2 * fragmentIndex) / fragmentCount;
+                                        const smallBombCallback = cascadePellets > 0 ? (sx: number, sy: number, _sl: number, sd: number) => {
+                                            for (let pelletIndex = 0; pelletIndex < cascadePellets; pelletIndex++) {
+                                                const pelletOffset = cascadePellets === 1 ? 0 : ((pelletIndex / (cascadePellets - 1)) - 0.5) * 0.7;
+                                                const regularBullet = new HeavyBullet(sx, sy, 5, 5, fragmentSpeed, sd * 0.28, dAng + pelletOffset, 1, undefined, true);
                                                 game.addEntity(regularBullet);
-                                            });
+                                            }
                                         } : undefined;
-
-                                        const smallBomb = new HeavyBullet(splitX, splitY, 9, 9, 12, subDmg, dAng, Math.max(1, level - 5), smallBombCallback, true);
+                                        const smallBomb = new HeavyBullet(splitX, splitY, 9, 9, fragmentSpeed, subDmg, dAng, Math.max(1, level - 5), smallBombCallback, true);
                                         game.addEntity(smallBomb);
-                                    });
+                                    }
                                 }
                             );
                             game.addEntity(hBullet);

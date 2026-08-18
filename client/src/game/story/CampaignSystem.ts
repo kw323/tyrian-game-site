@@ -5902,21 +5902,12 @@ export class CampaignSystem {
     public static getUpgradeBriefing(kind: UpgradeBriefingKind, nameOrLevel?: any, level?: number): UpgradeBriefing {
         const lvl = typeof nameOrLevel === 'number' ? nameOrLevel : (level || 1);
         switch (kind) {
-            case 'weapon': {
-                    let weaponDesc = lvl === 1
-                        ? 'Direct forward fire unlocked. Standard plasma output.'
-                        : `Advanced dispersion patterns added! Level ${lvl} weapon architecture expanded.`;
-                    if (lvl >= 10) {
-                        weaponDesc = `Split Bomb Mk.II: Massive primary shell splits into 4 diagonal fragments, which immediately cascade into 8 multi-angle secondary sub-pellets! Level ${lvl} power output maximized.`;
-                    } else if (lvl >= 5) {
-                        weaponDesc = `Split Bomb Mk.I: Enhanced heavy shell splitting into 4 high-velocity diagonal fragments upon impact or range limit. Level ${lvl}.`;
-                    }
-                    return {
-                        speaker: 'naomi',
-                        title: `Weapon Upgrade // Level ${lvl}`,
-                        message: weaponDesc
-                    };
-                }
+            case 'weapon':
+                return {
+                    speaker: 'naomi',
+                    title: `Weapon Upgrade // Rank ${lvl}`,
+                    message: 'Weapon Bay data is the combat source of truth: damage, firing rate, pattern and power cost are shown on the selected rank.'
+                };
             case 'generator':
                 return {
                     speaker: 'naomi',
@@ -5934,6 +5925,13 @@ export class CampaignSystem {
 
     public static getWeaponHoverBriefing(kind: UpgradeBriefingKind, weaponName?: any, level?: any): UpgradeBriefing {
         const lvl = typeof level === 'number' ? level : 1;
+        if (kind === 'weapon') {
+            return {
+                speaker: 'naomi',
+                title: `${weaponName ?? 'Weapon'} // Rank ${lvl + 1}`,
+                message: 'Select the next rank in Weapon Bay to review its exact damage, rate, pattern and power cost.'
+            };
+        }
         return this.getUpgradeBriefing(kind, lvl);
     }
 

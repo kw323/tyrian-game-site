@@ -1,4 +1,5 @@
 import { Entity } from '../core/Entity';
+import { getWeaponRuntimeProfile } from '../core/WeaponRuntimeProfile';
 
 export class Player extends Entity {
     public speed: number;
@@ -176,10 +177,7 @@ export class Player extends Entity {
         const bullets = [];
 
         if (this.weaponType === 'straight') {
-            // Parallel volleys increase at milestone levels instead of every level.
-            const shotCount = this.weaponLevel <= 9
-                ? 1 + Math.floor(this.weaponLevel / 2)
-                : this.weaponLevel - 4;
+            const shotCount = getWeaponRuntimeProfile('straight', this.weaponLevel).projectileCount;
             const spacing = 9;
             const midpoint = (shotCount - 1) / 2;
             for (let index = 0; index < shotCount; index++) {
@@ -191,10 +189,9 @@ export class Player extends Entity {
                 });
             }
         } else if (this.weaponType === 'spread') {
-            const spreadCount = this.weaponLevel < 3
-                ? (this.weaponLevel === 0 ? 1 : 3)
-                : Math.min(10, 5 + Math.floor((this.weaponLevel - 3) / 2));
-            const maxAngle = Math.min(0.96, 0.54 + this.weaponLevel * 0.035);
+            const profile = getWeaponRuntimeProfile('spread', this.weaponLevel);
+            const spreadCount = profile.projectileCount;
+            const maxAngle = profile.spreadAngle ?? 0;
             const midpoint = (spreadCount - 1) / 2;
             for (let index = 0; index < spreadCount; index++) {
                 const normalized = spreadCount === 1 ? 0 : (index - midpoint) / midpoint;
@@ -206,83 +203,42 @@ export class Player extends Entity {
                 });
             }
         } else if (this.weaponType === 'homing') {
-            if (this.weaponLevel === 0) {
-                bullets.push({ x: centerX, y: centerY, type: 'homing' });
-            } else if (this.weaponLevel === 1) {
-                bullets.push({ x: centerX, y: centerY, type: 'homing' });
-            } else if (this.weaponLevel === 2 || this.weaponLevel === 3) {
-                // Two missiles are enough to cover different targets without flooding the screen.
-                bullets.push({ x: centerX - 10, y: centerY, type: 'homing' });
-                bullets.push({ x: centerX + 10, y: centerY, type: 'homing' });
-            } else if (this.weaponLevel >= 4) {
-                // Cap the volley at three missiles; higher levels improve rate and damage.
-                bullets.push({ x: centerX - 14, y: centerY, type: 'homing' });
-                bullets.push({ x: centerX, y: centerY, type: 'homing' });
-                bullets.push({ x: centerX + 14, y: centerY, type: 'homing' });
+            const profile = getWeaponRuntimeProfile('homing', this.weaponLevel);
+            const midpoint = (profile.projectileCount - 1) / 2;
+            for (let index = 0; index < profile.projectileCount; index++) {
+                bullets.push({
+                    x: centerX + (index - midpoint) * 12,
+                    y: centerY,
+                    type: 'homing',
+                    speed: profile.missileSpeed,
+                    turnSpeed: profile.missileTurnSpeed
+                });
             }
         } else if (this.weaponType === 'heavy') {
-            // Levels 0-2 (Level 0-2 index): 1 bomb (Levels 1-2 in 0-indexed: level 0 and 1)
-            // Levels 2-5: 2 bombs; Levels 6-9: 3 bombs; Level 10-15: 4 bombs; Level 16-19: 8 bombs -> wait, let's map accurately to user request:
-            // Levels 0-1 (Level 1-2): 1 bomb
-            // Level 2-6 (Level 3-7): 2 bombs (with 3 bombs at level 7-9)
-            // Let's implement exact counts: 1 bomb for 0-1, 2 bombs for 2-5, 3 bombs for 6-8, 4 bombs for 9-14, 5 bombs for 15-19, 8 bombs for 20-23, 10 bombs for 24+
-            // User requested explicit counts:
-            // Levels 1-2: 1 bomb
-            // Levels 3-6: 2 bombs
-            // Level 7-9: 3 bombs
-            // Level 10-15: 4 bombs
-            // Level 16-19: 5 bombs (large bombs)
-            // Level 20-23: 3 large bombs (wait, user requested: 16 -> 2 large, 20 -> 3 large, 24 -> 4 large, 25 -> 5 large)
-            if (this.weaponLevel <= 1) {
-                bullets.push({ x: centerX, y: centerY, type: 'heavy' });
-            } else if (this.weaponLevel >= 2 && this.weaponLevel <= 5) {
-                bullets.push({ x: centerX - 14, y: centerY, type: 'heavy' });
-                bullets.push({ x: centerX + 14, y: centerY, type: 'heavy' });
-            } else if (this.weaponLevel >= 6 && this.weaponLevel <= 8) {
-                bullets.push({ x: centerX - 20, y: centerY, type: 'heavy' });
-                bullets.push({ x: centerX, y: centerY, type: 'heavy' });
-                bullets.push({ x: centerX + 20, y: centerY, type: 'heavy' });
-            } else if (this.weaponLevel >= 9 && this.weaponLevel <= 14) {
-                bullets.push({ x: centerX - 28, y: centerY, type: 'heavy' });
-                bullets.push({ x: centerX - 10, y: centerY, type: 'heavy' });
-                bullets.push({ x: centerX + 10, y: centerY, type: 'heavy' });
-                bullets.push({ x: centerX + 28, y: centerY, type: 'heavy' });
-            } else if (this.weaponLevel >= 15 && this.weaponLevel <= 18) {
-                // 15 = 2 large bombs (Levels 16 is 2 large)
-                bullets.push({ x: centerX - 20, y: centerY, type: 'heavy' });
-                bullets.push({ x: centerX + 20, y: centerY, type: 'heavy' });
-            } else if (this.weaponLevel >= 19 && this.weaponLevel <= 22) {
-                // Level 20 = 3 large bombs
-                bullets.push({ x: centerX - 28, y: centerY, type: 'heavy' });
-                bullets.push({ x: centerX, y: centerY, type: 'heavy' });
-                bullets.push({ x: centerX + 28, y: centerY, type: 'heavy' });
-            } else if (this.weaponLevel === 23) {
-                // Level 24 = 4 large bombs
-                bullets.push({ x: centerX - 32, y: centerY, type: 'heavy' });
-                bullets.push({ x: centerX - 12, y: centerY, type: 'heavy' });
-                bullets.push({ x: centerX + 12, y: centerY, type: 'heavy' });
-                bullets.push({ x: centerX + 32, y: centerY, type: 'heavy' });
-            } else {
-                // Level 25 = 5 large bombs
-                bullets.push({ x: centerX - 38, y: centerY, type: 'heavy' });
-                bullets.push({ x: centerX - 20, y: centerY, type: 'heavy' });
-                bullets.push({ x: centerX, y: centerY, type: 'heavy' });
-                bullets.push({ x: centerX + 20, y: centerY, type: 'heavy' });
-                bullets.push({ x: centerX + 38, y: centerY, type: 'heavy' });
+            const profile = getWeaponRuntimeProfile('heavy', this.weaponLevel);
+            const midpoint = (profile.projectileCount - 1) / 2;
+            for (let index = 0; index < profile.projectileCount; index++) {
+                bullets.push({ x: centerX + (index - midpoint) * 24, y: centerY, type: 'heavy' });
             }
         } else if (this.weaponType === 'void_lance') {
-            const traceAngles = this.weaponLevel >= 6 ? [-0.1, 0, 0.1] : this.weaponLevel >= 2 ? [-0.08, 0.08] : [0];
-            traceAngles.forEach((angle) => {
-                // Spawn slightly ahead of the ship nose (centerY - 24) so it never touches or harms the player at birth
-                bullets.push({ x: centerX, y: centerY - 24, type: 'void_lance', angle });
-            });
+            const profile = getWeaponRuntimeProfile('void_lance', this.weaponLevel);
+            const midpoint = (profile.projectileCount - 1) / 2;
+            for (let index = 0; index < profile.projectileCount; index++) {
+                bullets.push({
+                    x: centerX,
+                    y: centerY - 24,
+                    type: 'void_lance',
+                    angle: (index - midpoint) * 0.08
+                });
+            }
         } else if (this.weaponType === 'laser') {
-            // The laser is one continuous main beam. At level 7+ it adds two thinner angled beams.
+            const profile = getWeaponRuntimeProfile('laser', this.weaponLevel);
             bullets.push({ x: centerX, y: centerY, type: 'laser', angle: 0, isSecondary: false });
-            if (this.weaponLevel >= 6) {
-                const secondaryAngle = 0.14 + Math.min(0.08, (this.weaponLevel - 6) * 0.012);
-                bullets.push({ x: centerX, y: centerY, type: 'laser', angle: -secondaryAngle, isSecondary: true });
-                bullets.push({ x: centerX, y: centerY, type: 'laser', angle: secondaryAngle, isSecondary: true });
+            const secondaryCount = profile.laserSecondaryBeamCount ?? 0;
+            for (let index = 0; index < secondaryCount; index++) {
+                const offset = index - (secondaryCount - 1) / 2;
+                const angle = offset === 0 ? 0 : Math.sign(offset) * (profile.laserSecondaryAngle ?? 0) * Math.max(1, Math.abs(offset));
+                bullets.push({ x: centerX, y: centerY, type: 'laser', angle, isSecondary: true });
             }
         }
 

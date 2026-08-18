@@ -37,50 +37,50 @@ export class PlayerSystemsDatabase {
             {
                 name: 'Straight Shot',
                 type: 'Straight',
-                description: 'Linear forward projectiles. Excellent direct damage with low power consumption, scaling from 1 bolt up to high-speed multi-bolt salvos.',
+                description: 'Precise forward fire. Damage and fire rate improve on every rank; the volley grows from 1 to 13 parallel bolts, adding one bolt every two ranks.',
                 maxLevel: 25,
-                powerConsumption: '1.0 - 19.0 power/sec',
-                upgradeScale: 'Adds projectile speed, dual barrels, and concentrated density up to 25 parallel tiers.'
+                powerConsumption: '0.0 - 19.0 power/shot',
+                upgradeScale: 'Every rank improves damage and fire rate; every two ranks adds one parallel bolt. Projectile speed stays constant.',
             },
             {
                 name: 'Spread Shot',
                 type: 'Spread',
-                description: 'Wide coverage fan pattern. Fires diagonal and lateral projectiles to clear out clustered enemy formations and side swarms.',
+                description: 'Crowd-control fan. Damage and fire rate improve on every rank; the pattern grows from 1 to 13 pellets while its firing arc widens smoothly.',
                 maxLevel: 25,
-                powerConsumption: '1.5 - 40.0 power/sec',
-                upgradeScale: 'Expands spread angle, adds diagonal angles, and increases projectile count up to 25 angle tiers.'
+                powerConsumption: '0.0 - 40.0 power/shot',
+                upgradeScale: 'Every two ranks adds one pellet, and the fan angle expands from ±0.42 to ±0.95 radians.',
             },
             {
                 name: 'Homing Missiles',
                 type: 'Homing',
-                description: 'Guided micro-missiles equipped with dynamic target reacquisition. Automatically lock onto the nearest enemy across the playfield.',
+                description: 'Guided micro-missiles with live nearest-target reacquisition. Damage, fire rate, flight speed and turning response improve through all 25 ranks.',
                 maxLevel: 25,
-                powerConsumption: '2.0 - 58.0 power/sec',
-                upgradeScale: 'Increases salvo size, tracking agility, and guidance velocity across 25 tiers.'
+                powerConsumption: '0.0 - 58.0 power/shot',
+                upgradeScale: 'Salvos grow from 1 to 5 missiles at ranks 1, 4, 9, 15 and 21; speed and turning response improve every rank.',
             },
             {
                 name: 'Split Bomb',
                 type: 'Heavy',
-                description: 'Primary shell that splits into diagonal shrapnel upon impact or range limit. Delivers cascading multi-angle damage clusters.',
+                description: 'Area-denial shell that bursts on impact or range limit. High ranks add shells, fragments, faster shrapnel and controlled secondary pellets.',
                 maxLevel: 25,
-                powerConsumption: '2.0 - 58.0 power/sec',
-                upgradeScale: 'Increases fragment count, shrapnel velocity, cascade tiers, and blast radius up to 25 tiers.'
+                powerConsumption: '0.0 - 58.0 power/shot',
+                upgradeScale: 'Primary volleys progress from 1 to 3 shells; each shell splits into 4, 5 or 6 fragments, with cascades beginning at rank 8.',
             },
             {
                 name: 'Pulse Laser',
                 type: 'Laser',
-                description: 'High-energy beam weapon. Pierces instantly across the screen with devastating speed and continuous energy draw.',
+                description: 'Instant high-energy piercing beam. Every rank increases damage, firing rate, beam width and penetration; side rays activate at ranks 7 and 19.',
                 maxLevel: 25,
-                powerConsumption: '3.0 - 95.0 power/sec',
-                upgradeScale: 'Increases beam thickness, frequency, and controlled multi-target penetration up to 25 tiers.'
+                powerConsumption: '3.0 - 95.0 power/shot',
+                upgradeScale: 'The beam grows from 1 to 3 to 5 rays at ranks 1, 7 and 19; primary penetration reaches six targets.',
             },
             {
                 name: 'Black Hole Projectile',
                 type: 'Secret / Gravity Well',
-                description: 'A recovered artificial singularity awarded for defeating the evasive hunter. On impact it creates a small black hole that damages and pulls nearby small craft; large enemies and bosses resist the suction.',
+                description: 'A recovered artificial singularity. On impact it damages and pulls nearby small craft; larger enemies and bosses resist suction.',
                 maxLevel: 25,
-                powerConsumption: '8.0 - 99.0 power/sec',
-                upgradeScale: 'Improves field radius, suction strength, damage, and adds secondary gravity traces across 25 tiers.'
+                powerConsumption: '8.0 - 99.0 power/shot',
+                upgradeScale: 'Damage, field radius, duration and suction improve every rank; traces progress from 1 to 4 at ranks 1, 7, 14 and 22.',
             }
         ];
     }
@@ -89,7 +89,7 @@ export class PlayerSystemsDatabase {
         return {
             levelRange: 'Level 1 — Level 50',
             outputFormula: 'Base 15 + (Level * 8.5) power per second',
-            description: 'The ship power core. Advanced weapons and active shields consume electricity every second. If power depletes, weapons cannot fire, shields stop regenerating, and the ship moves at half speed.',
+            description: 'The ship power core. Weapons consume energy for each fired volley, while shield regeneration consumes energy while active. If power depletes, weapons cannot fire, shields stop regenerating, and the ship moves at half speed.',
             capacityNote: 'Upgrading the generator increases energy recharge rate across 50 tiers. Higher generator levels require upgrading to larger ship hulls.'
         };
     }
