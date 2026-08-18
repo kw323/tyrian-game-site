@@ -941,7 +941,41 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
                 );
             };
 
+            const getBriefingLines = () => stageBriefing.dialogueSequence ?? [stageBriefing.contact];
+
+            const getBriefingVoiceLineId = (index: number): string => {
+                const segment = index === 0 ? 'contact-0' : `after-${index}`;
+                return `stage-${gameState.level}-${segment}`;
+            };
+
+            const playBriefingLine = (index: number): void => {
+                const lines = getBriefingLines();
+                const line = lines[Math.min(index, lines.length - 1)];
+                activeContactLine = line;
+                SoundSystem.playCriticalComms(line.speaker, 'briefing');
+                VoicePlaybackManager.playVoiceLine(getBriefingVoiceLineId(index), gameplayLangRef.current);
+            };
+
+            const openStageBriefing = (): void => {
+                commsParagraphIndex = 0;
+                showCommsModal = true;
+                commVisibleUntil = 0;
+                VoicePlaybackManager.stop();
+                playBriefingLine(commsParagraphIndex);
+            };
+
+            const advanceBriefing = (): void => {
+                const lines = getBriefingLines();
+                if (commsParagraphIndex < lines.length - 1) {
+                    commsParagraphIndex++;
+                    playBriefingLine(commsParagraphIndex);
+                    return;
+                }
+                startStagePlay();
+            };
+
             const startStagePlay = (): void => {
+                VoicePlaybackManager.stop();
                 MissionArchiveSystem.recordBriefing(stageBriefing, true);
                 initialLaunchPending = false;
                 showCommsModal = false;
@@ -988,10 +1022,8 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
                     return;
                 }
                 if (initialLaunchPending || stageFailureReason) {
-                    commsParagraphIndex = 0;
                     MissionArchiveSystem.recordBriefing(stageBriefing, false);
-                    SoundSystem.playCriticalComms(stageBriefing.contact.speaker, 'briefing');
-                    showCommsModal = true;
+                    openStageBriefing();
                     return;
                 }
                 if (gameState.level % 10 === 0 && !showBranchModal) {
@@ -1004,11 +1036,8 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
                 stageBriefing = CampaignSystem.getStageBriefing(gameState.level, gameplayLangRef.current);
                 inMissionCommsTriggered = false;
                 activeContactLine = stageBriefing.contact;
-                commsParagraphIndex = 0;
                 MissionArchiveSystem.recordBriefing(stageBriefing, false);
-                SoundSystem.playCriticalComms(stageBriefing.contact.speaker, 'briefing');
-                showCommsModal = true;
-                VoicePlaybackManager.playVoiceLine(`stage-${gameState.level}-contact`, gameplayLangRef.current);
+                openStageBriefing();
                 stageMasterySystem.beginStage(gameState.level);
                 lastStageMasteryResult = null;
                 stageTelemetryFinalized = false;
@@ -1039,7 +1068,7 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
                 activeContactLine = stageBriefing.contact;
                 commVisibleUntil = performance.now() + 9000;
                 SoundSystem.playCriticalComms(stageBriefing.contact.speaker, 'briefing');
-                VoicePlaybackManager.playVoiceLine(`stage-${gameState.level}-contact`, gameplayLangRef.current);
+                VoicePlaybackManager.playVoiceLine(`stage-${gameState.level}-contact-0`, gameplayLangRef.current);
                 upgradeBriefing = CampaignSystem.getUpgradeBriefing('weapon', 'Straight Shot', 1);
                 bossSpawnedForLevel = false;
                 bossDefeatedAt = null;
@@ -2164,10 +2193,8 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
                             stageBriefing = CampaignSystem.getStageBriefing(gameState.level, gameplayLangRef.current);
                             inMissionCommsTriggered = false;
                             activeContactLine = stageBriefing.contact;
-                            commsParagraphIndex = 0;
                             MissionArchiveSystem.recordBriefing(stageBriefing, false);
-                            SoundSystem.playCriticalComms(stageBriefing.contact.speaker, 'briefing');
-                            showCommsModal = true;
+                            openStageBriefing();
                             stageFailureReason = null;
                             upgradeBriefing = CampaignSystem.getUpgradeBriefing('weapon', 'Straight Shot', 1);
                             bossSpawnedForLevel = false;
@@ -2273,16 +2300,7 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
                     ctx.fillText(`HAZARD: ${commsHazard.name}`, boxX + 160, boxY + 340);
 
                     const nextLabel = commsParagraphIndex < dialogueLines.length - 1 ? 'NEXT BRIEFING LINE  >>' : 'CONFIRM & LAUNCH MISSION  [ENTER]';
-                    drawButton('comms-next', nextLabel, boxX + 28, boxY + 416, 320, 48, '#00FF88', () => {
-                        if (commsParagraphIndex < dialogueLines.length - 1) {
-                            commsParagraphIndex++;
-                            SoundSystem.playCriticalComms(activeLine.speaker, 'briefing');
-                            const nextVoicePart = commsParagraphIndex === 0 ? 'contact' : 'after';
-                            VoicePlaybackManager.playVoiceLine(`stage-${gameState.level}-${nextVoicePart}`, gameplayLangRef.current);
-                        } else {
-                            startStagePlay();
-                        }
-                    });
+                    drawButton('comms-next', nextLabel, boxX + 28, boxY + 416, 320, 48, '#00FF88', advanceBriefing);
 
                     drawButton('comms-skip', 'SKIP BRIEFING  [ESC]', boxX + boxWidth - 220, boxY + 416, 192, 48, '#75d8e7', () => {
                         startStagePlay();
@@ -3381,13 +3399,7 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
                         if (e.key === 'Escape') {
                             startStagePlay();
                         } else if (e.key === 'Enter' || e.key === ' ') {
-                            const lines = stageBriefing.dialogueSequence ?? [{ speaker: stageBriefing.contact.speaker, name: stageBriefing.contact.name, message: stageBriefing.contact.message }];
-                            if (commsParagraphIndex < lines.length - 1) {
-                                commsParagraphIndex++;
-                                SoundSystem.playCriticalComms(lines[commsParagraphIndex].speaker, 'briefing');
-                            } else {
-                                startStagePlay();
-                            }
+                            advanceBriefing();
                         }
                         return;
                     }
@@ -3598,6 +3610,10 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
                     currentLangForBriefing = gameplayLangRef.current;
                     stageBriefing = CampaignSystem.getStageBriefing(gameState.level, currentLangForBriefing);
                     activeContactLine = stageBriefing.contact;
+                    if (showCommsModal) {
+                        commsParagraphIndex = 0;
+                        playBriefingLine(commsParagraphIndex);
+                    }
                 }
             }, 100);
 
