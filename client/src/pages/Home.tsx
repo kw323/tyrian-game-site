@@ -5,6 +5,7 @@ import { EnemyDatabaseModal } from '@/components/EnemyDatabaseModal';
 import { PlayerSystemsModal } from '@/components/PlayerSystemsModal';
 import { MissionArchiveModal } from '@/components/MissionArchiveModal';
 import { SaveLoadModal } from '@/components/SaveLoadModal';
+import { ControlsSettingsModal } from '@/components/ControlsSettingsModal';
 import { SaveData, SaveSystem } from '@/game/core/SaveSystem';
 import { SoundSystem } from '@/game/core/SoundSystem';
 
@@ -37,6 +38,7 @@ export default function Home() {
     const [showSystemsDatabase, setShowSystemsDatabase] = useState(false);
     const [showMissionArchive, setShowMissionArchive] = useState(false);
     const [showLoadModal, setShowLoadModal] = useState(false);
+    const [showControlsModal, setShowControlsModal] = useState(false);
     const [saveRevision, setSaveRevision] = useState(0);
     const [musicEnabled, setMusicEnabled] = useState(() => SoundSystem.isMusicEnabled());
     const [touchControlsEnabled, setTouchControlsEnabled] = useState(() => {
@@ -44,6 +46,11 @@ export default function Home() {
         const stored = window.localStorage.getItem('tyrian_touch_controls_enabled');
         if (stored !== null) return stored === 'true';
         return window.matchMedia('(max-width: 767px)').matches;
+    });
+    const [mouseControlsEnabled, setMouseControlsEnabled] = useState(() => {
+        if (typeof window === 'undefined') return true;
+        const stored = window.localStorage.getItem('tyrian_mouse_controls_enabled');
+        return stored === null ? true : stored === 'true';
     });
 
     const resumePreview = useMemo(() => readResumePreview(), [saveRevision]);
@@ -53,6 +60,10 @@ export default function Home() {
     useEffect(() => {
         window.localStorage.setItem('tyrian_touch_controls_enabled', String(touchControlsEnabled));
     }, [touchControlsEnabled]);
+
+    useEffect(() => {
+        window.localStorage.setItem('tyrian_mouse_controls_enabled', String(mouseControlsEnabled));
+    }, [mouseControlsEnabled]);
 
     const startNewMission = () => {
         window.localStorage.removeItem(RESUME_CHECKPOINT_KEY);
@@ -124,7 +135,7 @@ export default function Home() {
                             </button>
                         )}
                     </div>
-                    <p className="launch-console__hint">SAVES ARE AVAILABLE BEFORE LAUNCH // KEYBOARD + POINTER // TOUCH {touchControlsEnabled ? 'ARMED' : 'HIDDEN'}</p>
+                    <p className="launch-console__hint">SAVES AVAILABLE BEFORE LAUNCH // MOUSE {mouseControlsEnabled ? 'ARMED' : 'HIDDEN'} // TOUCH {touchControlsEnabled ? 'ARMED' : 'HIDDEN'}</p>
                 </div>
                 <div className="launch-console__footer">
                     <span>VERSION 1.0 // OFFLINE READY</span>
@@ -156,10 +167,20 @@ export default function Home() {
                         </button>
                         <button
                             type="button"
+                            onClick={() => setMouseControlsEnabled((enabled) => !enabled)}
+                            className={`console-button ${mouseControlsEnabled ? 'console-button--cyan' : 'console-button--muted'}`}
+                        >
+                            Mouse flight: {mouseControlsEnabled ? 'ON' : 'OFF'}
+                        </button>
+                        <button
+                            type="button"
                             onClick={() => setTouchControlsEnabled((enabled) => !enabled)}
                             className={`console-button ${touchControlsEnabled ? 'console-button--magenta' : 'console-button--muted'}`}
                         >
                             Touch: {touchControlsEnabled ? 'ON' : 'OFF'}
+                        </button>
+                        <button type="button" onClick={() => setShowControlsModal(true)} className="console-button console-button--green">
+                            Keyboard map
                         </button>
                     </div>
                 </article>
@@ -193,11 +214,12 @@ export default function Home() {
                         <button type="button" onClick={() => setLaunchMode(null)} className="console-button console-button--muted">RETURN TO TITLE</button>
                     </div>
                     <section className="launch-frame hud-frame">
-                        <div className="launch-frame__topline"><span>FLIGHT DECK // PILOT LINKED</span><span>INPUT: KEYBOARD + POINTER // TOUCH {touchControlsEnabled ? 'ARMED' : 'HIDDEN'}</span></div>
+                        <div className="launch-frame__topline"><span>FLIGHT DECK // PILOT LINKED</span><span>INPUT: KEYBOARD // MOUSE {mouseControlsEnabled ? 'ARMED' : 'HIDDEN'} // TOUCH {touchControlsEnabled ? 'ARMED' : 'HIDDEN'}</span></div>
                         <div className="game-window">
                             <GameContainer
                                 key={launchMode}
                                 touchControlsEnabled={touchControlsEnabled}
+                                mouseControlsEnabled={mouseControlsEnabled}
                                 launchMode={launchMode}
                                 onReturnToTitle={() => setLaunchMode(null)}
                             />
@@ -206,6 +228,7 @@ export default function Home() {
                 </main>
             ) : titleScreen}
 
+            {showControlsModal && <ControlsSettingsModal isOpen={showControlsModal} onClose={() => setShowControlsModal(false)} />}
             {showDatabase && <EnemyDatabaseModal onClose={() => setShowDatabase(false)} />}
             {showSystemsDatabase && <PlayerSystemsModal onClose={() => setShowSystemsDatabase(false)} />}
             {showMissionArchive && <MissionArchiveModal onClose={() => setShowMissionArchive(false)} />}

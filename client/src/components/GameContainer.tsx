@@ -16,6 +16,7 @@ import { WeaponUpgradeSystem, WeaponType } from '@/game/core/WeaponUpgradeSystem
 import { getWeaponRuntimeProfile } from '@/game/core/WeaponRuntimeProfile';
 import { StarField } from '@/game/systems/StarField';
 import { InputManager } from '@/game/systems/InputManager';
+import { formatControlCode, loadControlBindings } from '@/game/systems/ControlSettings';
 import { CollisionSystem } from '@/game/systems/CollisionSystem';
 import { EnemySpawner, StageCombatEvent } from '@/game/systems/EnemySpawner';
 import { PowerSystem } from '@/game/core/PowerSystem';
@@ -68,11 +69,12 @@ type ShopScreen = 'hub' | 'weapons' | 'systems' | 'abilities' | 'pilot_skills' |
 // Style: the game viewport is an armed retro-futurist flight console, with operational copy, signal strips, and no generic demo language.
 interface GameContainerProps {
     touchControlsEnabled?: boolean;
+    mouseControlsEnabled?: boolean;
     launchMode?: 'new' | 'continue';
     onReturnToTitle?: () => void;
 }
 
-export function GameContainer({ touchControlsEnabled = true, launchMode = 'continue', onReturnToTitle }: GameContainerProps) {
+export function GameContainer({ touchControlsEnabled = true, mouseControlsEnabled = true, launchMode = 'continue', onReturnToTitle }: GameContainerProps) {
     const isMobile = useIsMobile();
     const showTouchControls = isMobile && touchControlsEnabled;
     const [gameplayLang, setGameplayLang] = useState<'he' | 'en' | 'ja' | 'zh' | 'es'>(() => {
@@ -81,6 +83,7 @@ export function GameContainer({ touchControlsEnabled = true, launchMode = 'conti
     const gameplayLangRef = useRef(gameplayLang);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const touchInputRef = useRef({ moveX: 0, moveY: 0, fire: false });
+    const mouseInputRef = useRef<{ targetX: number | null; targetY: number | null; fire: boolean }>({ targetX: null, targetY: null, fire: false });
     const touchActionsRef = useRef<{ toggleAbility?: () => void }>({});
     const gameRef = useRef<Game | null>(null);
 
@@ -101,6 +104,14 @@ export function GameContainer({ touchControlsEnabled = true, launchMode = 'conti
             touchInputRef.current.fire = false;
         }
     }, [showTouchControls]);
+
+    useEffect(() => {
+        if (!mouseControlsEnabled) {
+            mouseInputRef.current.targetX = null;
+            mouseInputRef.current.targetY = null;
+            mouseInputRef.current.fire = false;
+        }
+    }, [mouseControlsEnabled]);
     // The title screen chooses whether this mounted play session starts new or restores its checkpoint.
     const [gameStarted, setGameStarted] = useState(true);
     const [startFromResume, setStartFromResume] = useState(launchMode === 'continue');
@@ -1243,6 +1254,13 @@ export function GameContainer({ touchControlsEnabled = true, launchMode = 'conti
 
                 const keys = inputManager.getKeys();
                 const touchInput = touchInputRef.current;
+                const mouseInput = mouseInputRef.current;
+                const mouseMoveX = mouseInput.targetX === null
+                    ? 0
+                    : Math.max(-1, Math.min(1, (mouseInput.targetX - (player.x + player.width / 2)) / 120));
+                const mouseMoveY = mouseInput.targetY === null
+                    ? 0
+                    : Math.max(-1, Math.min(1, (mouseInput.targetY - (player.y + player.height / 2)) / 120));
                 const activeSeraForInput = game['entities'].find((entity: any) =>
                     entity instanceof SeraDuelEntity && !(entity instanceof SeraAllyShipEntity) && entity.isActive
                 ) as SeraDuelEntity | undefined;
@@ -1252,8 +1270,8 @@ export function GameContainer({ touchControlsEnabled = true, launchMode = 'conti
                     ? {}
                     : {
                         ...keys,
-                        moveX: Math.max(-1, Math.min(1, keyboardMoveX + touchInput.moveX)),
-                        moveY: Math.max(-1, Math.min(1, keyboardMoveY + touchInput.moveY))
+                        moveX: Math.max(-1, Math.min(1, keyboardMoveX + touchInput.moveX + mouseMoveX)),
+                        moveY: Math.max(-1, Math.min(1, keyboardMoveY + touchInput.moveY + mouseMoveY))
                     };
 
                 // Update player; keyboard arrows and the mobile joystick can be used together.
@@ -1272,8 +1290,8 @@ export function GameContainer({ touchControlsEnabled = true, launchMode = 'conti
                     player.speed = 7.5;
                 }
 
-                // Handle player shooting
-                if ((keys.Space || touchInput.fire) && player.canShoot(performance.now() / 1000) && (hasUnlimitedPower || powerSystem.canShoot(player.weaponType, player.weaponLevel))) {
+                // Hold Space, the touch-fire control, or the left mouse button to fire.
+                if ((keys.Space || touchInput.fire || mouseInput.fire) && player.canShoot(performance.now() / 1000) && (hasUnlimitedPower || powerSystem.canShoot(player.weaponType, player.weaponLevel))) {
                     const bulletPositions = player.shoot(performance.now() / 1000);
                     const weaponCost = powerSystem.getWeaponCost(player.weaponType, player.weaponLevel);
                     if (!hasUnlimitedPower) powerSystem.consumePower(weaponCost);
@@ -3512,9 +3530,9 @@ export function GameContainer({ touchControlsEnabled = true, launchMode = 'conti
 
                 // Weapon selection available anytime (except game over)
                 if (!gameState.gameOver && !gameState.showLevelScreen) {
-                    if (e.key === 'e' || e.key === 'E') {
+                    if (inputManager.isActionPressed('tacticalAbility')) {
                         e.preventDefault();
-                        toggleTacticalAbility();
+                        if (!e.repeat) toggleTacticalAbility();
                         return;
                     } else if (e.key === '1') {
                         e.preventDefault();
@@ -3653,6 +3671,10 @@ export function GameContainer({ touchControlsEnabled = true, launchMode = 'conti
                 touchInputRef.current.moveX = 0;
                 touchInputRef.current.moveY = 0;
                 touchInputRef.current.fire = false;
+                mouseInputRef.current.targetX = null;
+                mouseInputRef.current.targetY = null;
+                mouseInputRef.current.fire = false;
+                inputManager.clear();
             };
             const canvas = game.getCanvas();
             const getShopPoint = (event: MouseEvent): { x: number; y: number } => {
@@ -3664,12 +3686,19 @@ export function GameContainer({ touchControlsEnabled = true, launchMode = 'conti
             };
 
             const handleCanvasMouseMove = (event: MouseEvent): void => {
+                const point = getShopPoint(event);
                 if (!gameState.showLevelScreen && !showCommsModal) {
                     hoveredShopItem = null;
-                    canvas.style.cursor = 'default';
+                    if (mouseControlsEnabled) {
+                        mouseInputRef.current.targetX = Math.max(player.width / 2, Math.min(canvas.width - player.width / 2, point.x));
+                        mouseInputRef.current.targetY = Math.max(player.height / 2, Math.min(GAME_CANVAS_HEIGHT - player.height / 2, point.y));
+                        canvas.style.cursor = 'crosshair';
+                    } else {
+                        canvas.style.cursor = 'default';
+                    }
                     return;
                 }
-                const point = getShopPoint(event);
+
                 const hit = shopHitboxes.find((box) => point.x >= box.x && point.x <= box.x + box.width && point.y >= box.y && point.y <= box.y + box.height);
                 const nextHoveredShopItem = hit?.id ?? null;
                 if (nextHoveredShopItem !== hoveredShopItem && nextHoveredShopItem) {
@@ -3678,6 +3707,30 @@ export function GameContainer({ touchControlsEnabled = true, launchMode = 'conti
                 }
                 hoveredShopItem = nextHoveredShopItem;
                 canvas.style.cursor = hit ? 'pointer' : 'default';
+            };
+
+            const handleCanvasMouseDown = (event: MouseEvent): void => {
+                if (!mouseControlsEnabled || event.button !== 0 || gameState.showLevelScreen || showCommsModal) return;
+                const point = getShopPoint(event);
+                // The tactical meter remains a click-only UI target rather than beginning weapon fire.
+                if (point.x >= 12 && point.x <= 455 && point.y >= 238 && point.y <= 286) return;
+                event.preventDefault();
+                mouseInputRef.current.fire = true;
+            };
+
+            const handleCanvasMouseUp = (event: MouseEvent): void => {
+                if (event.button === 0) mouseInputRef.current.fire = false;
+            };
+
+            const handleCanvasMouseLeave = (): void => {
+                mouseInputRef.current.targetX = null;
+                mouseInputRef.current.targetY = null;
+                mouseInputRef.current.fire = false;
+                if (!gameState.showLevelScreen && !showCommsModal) canvas.style.cursor = 'default';
+            };
+
+            const handleCanvasContextMenu = (event: MouseEvent): void => {
+                if (mouseControlsEnabled && !gameState.showLevelScreen && !showCommsModal) event.preventDefault();
             };
 
             const handleCanvasClick = (event: MouseEvent): void => {
@@ -3701,6 +3754,10 @@ export function GameContainer({ touchControlsEnabled = true, launchMode = 'conti
             window.addEventListener('keyup', handleKeyUp);
             window.addEventListener('blur', handleWindowBlur);
             canvas.addEventListener('mousemove', handleCanvasMouseMove);
+            canvas.addEventListener('mousedown', handleCanvasMouseDown);
+            canvas.addEventListener('mouseup', handleCanvasMouseUp);
+            canvas.addEventListener('mouseleave', handleCanvasMouseLeave);
+            canvas.addEventListener('contextmenu', handleCanvasContextMenu);
             canvas.addEventListener('click', handleCanvasClick);
 
             // Start the game
@@ -3726,9 +3783,14 @@ export function GameContainer({ touchControlsEnabled = true, launchMode = 'conti
                 window.removeEventListener('keydown', handleKeyDown);
                 window.removeEventListener('keyup', handleKeyUp);
                 window.removeEventListener('blur', handleWindowBlur);
+                inputManager.destroy();
                 touchActionsRef.current.toggleAbility = undefined;
                 handleWindowBlur();
                 canvas.removeEventListener('mousemove', handleCanvasMouseMove);
+                canvas.removeEventListener('mousedown', handleCanvasMouseDown);
+                canvas.removeEventListener('mouseup', handleCanvasMouseUp);
+                canvas.removeEventListener('mouseleave', handleCanvasMouseLeave);
+                canvas.removeEventListener('contextmenu', handleCanvasContextMenu);
                 canvas.removeEventListener('click', handleCanvasClick);
                 canvas.style.cursor = 'default';
             };
@@ -3835,6 +3897,14 @@ export function GameContainer({ touchControlsEnabled = true, launchMode = 'conti
         );
     }
 
+    const activeControlBindings = loadControlBindings();
+    const movementKeysLabel = [
+        formatControlCode(activeControlBindings.moveUp),
+        formatControlCode(activeControlBindings.moveDown),
+        formatControlCode(activeControlBindings.moveLeft),
+        formatControlCode(activeControlBindings.moveRight),
+    ].join(' ');
+
     const triggerStageJump = (requestedStage: number): void => {
         const targetStage = Math.max(1, Math.min(CampaignSystem.TOTAL_STAGES, Math.floor(requestedStage)));
         setMaxUnlockedLevel((prev) => {
@@ -3921,7 +3991,7 @@ export function GameContainer({ touchControlsEnabled = true, launchMode = 'conti
                 )}
             </div>
             <div className="text-center text-sm text-gray-400">
-                <p><span className="text-green-400 font-semibold">Arrow Keys</span> move · <span className="text-green-400 font-semibold">Space</span> fires · <span className="text-green-400 font-semibold">E</span> toggles tactical</p>
+                <p><span className="text-green-400 font-semibold">{movementKeysLabel}</span> move · <span className="text-green-400 font-semibold">{formatControlCode(activeControlBindings.fire)}</span> fires · <span className="text-green-400 font-semibold">{formatControlCode(activeControlBindings.tacticalAbility)}</span> toggles tactical {mouseControlsEnabled && <>· <span className="text-cyan-300 font-semibold">MOUSE</span> flies / left click fires</>}</p>
                 {showTouchControls && <p className="mobile-input-hint">On mobile: drag the left joystick, hold FIRE, and tap TACTICAL to start or stop the ability.</p>}
             </div>
         </div>
