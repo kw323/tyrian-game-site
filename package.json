@@ -10,8 +10,8 @@
     "preview": "vite preview --host",
     "check": "tsc --noEmit",
     "format": "prettier --write .",
-    "electron:build": "vite build && tsc -p electron/tsconfig.json && electron-builder --dir",
-    "electron:pack": "vite build && electron-builder --win portable"
+    "electron:build": "ELECTRON_BUILD=true vite build && tsc -p electron/tsconfig.json && electron-builder --win --dir",
+    "electron:pack": "ELECTRON_BUILD=true vite build && tsc -p electron/tsconfig.json && electron-builder --win portable"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -101,17 +101,16 @@
       "tailwindcss>nanoid": "3.3.7"
     }
   },
-  "main": "electron/main.js",
+  "main": "dist-electron/main.js",
   "build": {
-    "appId": "com.manus.tyrian2000",
-    "productName": "Tyrian 2000",
+    "appId": "com.protectthestarship.game",
+    "productName": "Protect The Starship",
     "directories": {
       "output": "dist"
     },
     "files": [
       "dist/public/**/*",
-      "electron/main.js",
-      "electron/package.json"
+      "dist-electron/main.js"
     ],
     "win": {
       "target": "portable"

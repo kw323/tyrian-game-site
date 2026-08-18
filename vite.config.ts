@@ -206,6 +206,9 @@ function vitePluginStorageProxy(): Plugin {
 const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector(), vitePluginStorageProxy()];
 
 export default defineConfig({
+  // Electron opens index.html through file://, so production assets must be relative to that file.
+  // Browser deployments retain the root-relative paths they expect.
+  base: process.env.ELECTRON_BUILD === "true" ? "./" : "/",
   plugins,
   resolve: {
     alias: {
