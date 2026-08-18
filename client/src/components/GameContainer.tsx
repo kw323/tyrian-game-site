@@ -1252,13 +1252,15 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
 
                 // Generate power; OVER POWER keeps the reactor at maximum output for its duration.
                 powerSystem.generatePower(deltaTime, (pilotSkillSystem.getBonusMultiplier('generator_output') * pilotSkillSystem.getBonusMultiplier('generator_capacity')));
-                if (hasUnlimitedPower) powerSystem.currentPower = powerSystem.getMaxPower();
+                if (hasUnlimitedPower) powerSystem.forceReactorOnline();
 
-                // Reduce player speed if power is low
-                if (powerSystem.currentPower < 20) {
-                    player.speed = 7.5 * 0.5; // Half speed when power is low
+                // A depleted reactor keeps movement available, but with a small recovery penalty.
+                if (powerSystem.isReactorRecovering()) {
+                    player.speed = 7.5 * 0.8;
+                } else if (powerSystem.currentPower < 20) {
+                    player.speed = 7.5 * 0.7;
                 } else {
-                    player.speed = 7.5; // Normal speed
+                    player.speed = 7.5;
                 }
 
                 // Handle player shooting
@@ -2009,14 +2011,20 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
                 ctx.fillStyle = '#333333';
                 ctx.fillRect(barX, powerBarY, barWidth, barHeight);
                 const powerPercent = powerSystem.currentPower / powerSystem.getMaxPower();
-                const powerColor = powerPercent > 0.5 ? 'rgb(255, ' + Math.floor(200 * powerPercent) + ', 0)' : 'rgb(255, 0, 0)';
+                const reactorRecovering = powerSystem.isReactorRecovering();
+                const powerColor = reactorRecovering
+                    ? '#ff3b30'
+                    : powerPercent > 0.5 ? 'rgb(255, ' + Math.floor(200 * powerPercent) + ', 0)' : 'rgb(255, 0, 0)';
                 ctx.fillStyle = powerColor;
                 ctx.fillRect(barX, powerBarY, barWidth * powerPercent, barHeight);
                 ctx.strokeStyle = '#FFD700';
                 ctx.lineWidth = 1;
                 ctx.strokeRect(barX, powerBarY, barWidth, barHeight);
-                ctx.fillStyle = '#FFD700';
-                ctx.fillText('Power: ' + Math.floor(powerSystem.currentPower) + '/' + Math.floor(powerSystem.getMaxPower()), barX + 160, powerBarY + 10);
+                ctx.fillStyle = reactorRecovering ? '#ff6b5f' : '#FFD700';
+                const powerReadout = reactorRecovering
+                    ? `REACTOR RECOVERY ${Math.floor(powerSystem.getReactorRecoveryPercent() * 100)}% // WEAPONS OFFLINE`
+                    : 'Power: ' + Math.floor(powerSystem.currentPower) + '/' + Math.floor(powerSystem.getMaxPower());
+                ctx.fillText(powerReadout, barX + 160, powerBarY + 10);
 
                 // Tactical ability readout: only the selected module can be armed at once.
                 const abilityBarY = 250;
@@ -3060,6 +3068,7 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
                             const isLocked = weapon.locked;
                             const isSelected = !isLocked && weaponSystem.getCurrentWeapon() === weapon.type;
                             const nextLevel = isLocked ? null : (currentLevel < 0 ? levels[0] : levels[currentLevel + 1]);
+                            const nextPowerCost = nextLevel ? powerSystem.getWeaponCost(weapon.type, currentLevel < 0 ? 0 : currentLevel + 1) : 0;
                             const canAfford = Boolean(nextLevel && gameState.score >= nextLevel.cost);
                             ctx.textAlign = 'left';
                             ctx.fillStyle = isSelected ? '#00FF88' : '#e6f1f5';
@@ -3069,6 +3078,11 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
                             ctx.font = '14px Arial';
                             ctx.fillText(isLocked ? 'CLASSIFIED • DEFEAT EVASIVE HUNTER' : (currentLevel < 0 ? 'NOT OWNED' : `LEVEL ${currentLevel + 1}/25`), 48, rowY + 43);
                             ctx.fillText(isLocked ? 'SIGNAL SEALED • HUNT THE SPECIAL TARGET' : (nextLevel ? `${nextLevel.description} • ${nextLevel.cost} pts` : 'MAXIMUM LEVEL'), 48, rowY + 64);
+                            if (!isLocked && nextLevel) {
+                                ctx.fillStyle = '#ffd166';
+                                ctx.font = '12px Arial';
+                                ctx.fillText(`Energy ${nextPowerCost.toFixed(1)} / shot`, 48, rowY + 83);
+                            }
                             if (!isLocked) addButton(`weapon-select-${weapon.type}`, 38, rowY + 2, 540, 72, () => selectWeapon(weapon.type));
                             if (isLocked) drawButton(`weapon-locked-${weapon.type}`, 'LOCKED', 628, rowY + 16, 120, 42, '#7c5abf', () => undefined);
                             else if (nextLevel) drawButton(`weapon-upgrade-${weapon.type}`, currentLevel < 0 ? 'BUY' : 'UPGRADE', 628, rowY + 16, 130, 42, canAfford ? '#00FF88' : '#ff6666', () => upgradeWeapon(weapon.type));

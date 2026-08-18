@@ -3,16 +3,18 @@ export class PowerSystem {
     public currentPower: number = 200; // Current power level (doubled)
     public generatorLevel: number = 0; // Generator upgrade level (0-14)
     public generatorOutput: number = 15; // Power generated per second at level 0
+    private reactorRecovering: boolean = false;
+    private readonly reactorRecoveryOutputMultiplier: number = 0.6;
     
     // Energy cost per weapon trigger pull (extended to 25 ranks).
     public shieldRegenCost: number = 3; // Cost to regenerate shield
     public weaponCosts: Map<string, number[]> = new Map([
-        ['straight', [0, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 8, 8.8, 9.6, 10.5, 11.4, 12.4, 13.5, 14.7, 16, 17.5, 19]],
-        ['spread', [0, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 15, 16.5, 18.2, 20, 22, 24.5, 27, 30, 33, 36.5, 40]],
-        ['homing', [0, 2, 3.5, 5, 6.5, 8, 9.5, 11, 12.5, 14, 15.5, 17, 18.5, 20, 22, 24, 26.5, 29, 32, 35.5, 39, 43, 47, 52, 58]],
-        ['heavy', [0, 2, 3.5, 5, 6.5, 8, 9.5, 11, 12.5, 14, 15.5, 17, 18.5, 20, 22, 24, 26.5, 29, 32, 35.5, 39, 43, 47, 52, 58]],
-        ['laser', [3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 30, 34, 38, 42, 47, 52, 58, 64, 71, 78, 86, 95]],
-        ['void_lance', [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 35, 38, 42, 46, 51, 56, 62, 68, 75, 82, 90, 99]]
+        ['straight', [0, 0.3, 0.7, 1, 1.3, 1.7, 2, 2.3, 2.7, 3, 3.3, 3.7, 4, 4.3, 4.7, 5, 5.3, 5.7, 6, 6.3, 6.7, 7, 7.3, 7.7, 8]],
+        ['spread', [0, 0.7, 1.4, 2.1, 2.8, 3.5, 4.3, 5, 5.7, 6.4, 7.1, 7.8, 8.5, 9.2, 9.9, 10.6, 11.3, 12, 12.8, 13.5, 14.2, 14.9, 15.6, 16.3, 17]],
+        ['homing', [0, 1.1, 2.2, 3.3, 4.3, 5.4, 6.5, 7.6, 8.7, 9.8, 10.8, 11.9, 13, 14.1, 15.2, 16.3, 17.3, 18.4, 19.5, 20.6, 21.7, 22.8, 23.8, 24.9, 26]],
+        ['heavy', [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 25, 28, 31, 34, 37, 40, 43, 45, 47, 48.5, 49.5, 50.3, 51]],
+        ['laser', [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18.5, 20, 21.5, 23, 24, 25, 25.5, 26, 26.5, 27]],
+        ['void_lance', [8, 10.5, 13, 15.5, 18, 20.5, 23, 25.5, 28, 30.5, 33, 35.5, 38, 40.5, 43, 46, 49, 52, 55, 58, 61, 64, 67, 70, 73]]
     ]);
 
     constructor() {
@@ -45,17 +47,40 @@ export class PowerSystem {
 
     public canShoot(weaponType: string, level: number): boolean {
         const cost = this.getWeaponCost(weaponType, level);
-        return this.currentPower >= cost;
+        return !this.reactorRecovering && this.currentPower >= cost;
     }
 
     public consumePower(amount: number): void {
+        if (this.reactorRecovering || amount <= 0) return;
         this.currentPower = Math.max(0, this.currentPower - amount);
+        if (this.currentPower <= 0) {
+            this.reactorRecovering = true;
+        }
     }
 
     public generatePower(deltaTime: number, bonusMultiplier: number = 1.0): void {
-        const output = this.getGeneratorOutput(bonusMultiplier) * deltaTime;
+        const recoveryMultiplier = this.reactorRecovering ? this.reactorRecoveryOutputMultiplier : 1;
+        const output = this.getGeneratorOutput(bonusMultiplier) * recoveryMultiplier * deltaTime;
         const maxPower = this.getMaxPower();
         this.currentPower = Math.min(this.currentPower + output, maxPower);
+        if (this.reactorRecovering && this.currentPower >= maxPower) {
+            this.currentPower = maxPower;
+            this.reactorRecovering = false;
+        }
+    }
+
+    public isReactorRecovering(): boolean {
+        return this.reactorRecovering;
+    }
+
+    public getReactorRecoveryPercent(): number {
+        return this.currentPower / this.getMaxPower();
+    }
+
+    /** Used by the unlimited-power tactical effect and controlled stage resets. */
+    public forceReactorOnline(): void {
+        this.currentPower = this.getMaxPower();
+        this.reactorRecovering = false;
     }
 
     private getGeneratorCosts(): number[] {
@@ -93,7 +118,7 @@ export class PowerSystem {
 
     /** Refill runtime power at a stage boundary without removing generator upgrades. */
     public refillForStage(): void {
-        this.currentPower = this.getMaxPower();
+        this.forceReactorOnline();
     }
 
     public loadSaveState(generatorLevel: number): void {
@@ -103,7 +128,7 @@ export class PowerSystem {
 
     /** Full reset used only for a new campaign/run. */
     public reset(): void {
-        this.currentPower = this.getMaxPower();
+        this.forceReactorOnline();
         this.generatorLevel = 0;
     }
 }
