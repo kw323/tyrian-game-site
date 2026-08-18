@@ -68,9 +68,11 @@ type ShopScreen = 'hub' | 'weapons' | 'systems' | 'abilities' | 'pilot_skills' |
 // Style: the game viewport is an armed retro-futurist flight console, with operational copy, signal strips, and no generic demo language.
 interface GameContainerProps {
     touchControlsEnabled?: boolean;
+    launchMode?: 'new' | 'continue';
+    onReturnToTitle?: () => void;
 }
 
-export function GameContainer({ touchControlsEnabled = true }: GameContainerProps) {
+export function GameContainer({ touchControlsEnabled = true, launchMode = 'continue', onReturnToTitle }: GameContainerProps) {
     const isMobile = useIsMobile();
     const showTouchControls = isMobile && touchControlsEnabled;
     const [gameplayLang, setGameplayLang] = useState<'he' | 'en' | 'ja' | 'zh' | 'es'>(() => {
@@ -99,9 +101,9 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
             touchInputRef.current.fire = false;
         }
     }, [showTouchControls]);
-    // The game opens directly into the stage briefing/control deck.
+    // The title screen chooses whether this mounted play session starts new or restores its checkpoint.
     const [gameStarted, setGameStarted] = useState(true);
-    const [startFromResume, setStartFromResume] = useState(true);
+    const [startFromResume, setStartFromResume] = useState(launchMode === 'continue');
     const [maxUnlockedLevel, setMaxUnlockedLevel] = useState<number>(() => {
         const stored = localStorage.getItem('tyrian_max_unlocked_level');
         return stored ? Math.max(1, parseInt(stored, 10)) : 1;
@@ -118,6 +120,10 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
         }
     });
     let shieldLevel = 1;
+    const returnToTitle = (): void => {
+        setGameStarted(false);
+        onReturnToTitle?.();
+    };
 
     useEffect(() => {
         let currentLangForBriefing = gameplayLang;
@@ -2525,7 +2531,7 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
                             finaleSceneIndex = (finaleSceneIndex + 1) % epilogueScenes.length;
                         });
                         drawButton('finale-return', isHebrew ? 'חזרה למסך הראשי // תפריט ראשי' : 'RETURN TO TITLE // MAIN MENU', canvasWidth / 2 - 190, 548, 380, 48, '#00FF88', () => {
-                            setGameStarted(false);
+                            returnToTitle();
                             shopScreen = 'hub';
                         });
                         return;
@@ -3551,7 +3557,7 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
                 if (gameState.showLevelScreen) {
                     if (shopScreen === 'finale_victory') {
                         e.preventDefault();
-                        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') setGameStarted(false);
+                        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') returnToTitle();
                         return;
                     }
                     if (e.key === 'Escape') {

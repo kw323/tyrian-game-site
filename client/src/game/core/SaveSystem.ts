@@ -74,6 +74,10 @@ export class SaveSystem {
     }
 
     public static deleteSlot(slotId: number): void {
-        localStorage.removeItem(`${this.SAVE_KEY_PREFIX}${slotId}`);
+        localStorage.removeItem(`${SaveSystem.SAVE_KEY_PREFIX}${slotId}`);
+    }
+
+    public static deleteAutoSave(): void {
+        localStorage.removeItem(this.AUTOSAVE_KEY);
     }
 }

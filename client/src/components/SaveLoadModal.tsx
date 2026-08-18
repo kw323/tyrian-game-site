@@ -6,9 +6,10 @@ interface Props {
     currentState?: Omit<SaveData, 'slotId' | 'slotName' | 'timestamp'>;
     onClose: () => void;
     onLoadGame?: (data: SaveData) => void;
+    onDeleteSave?: () => void;
 }
 
-export function SaveLoadModal({ isOpen, mode, currentState, onClose, onLoadGame }: Props) {
+export function SaveLoadModal({ isOpen, mode, currentState, onClose, onLoadGame, onDeleteSave }: Props) {
     if (!isOpen) return null;
 
     const slots = SaveSystem.getSlots();
@@ -38,6 +39,14 @@ export function SaveLoadModal({ isOpen, mode, currentState, onClose, onLoadGame 
         }
     };
 
+    const deleteSave = (slotId: number | 'auto') => {
+        const label = slotId === 'auto' ? 'the autosave' : `Slot ${slotId}`;
+        if (!window.confirm(`Delete ${label}? This cannot be undone.`)) return;
+        if (slotId === 'auto') SaveSystem.deleteAutoSave();
+        else SaveSystem.deleteSlot(slotId);
+        onDeleteSave?.();
+    };
+
     return (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
             <div className="bg-slate-900 border border-teal-500/40 rounded-xl max-w-lg w-full p-6 shadow-2xl shadow-teal-950/50 text-white">
@@ -61,12 +70,20 @@ export function SaveLoadModal({ isOpen, mode, currentState, onClose, onLoadGame 
                                 <div className="text-sm font-bold text-white mt-1">Level {autoSave.level} • Score: {autoSave.score}</div>
                                 <div className="text-xs text-gray-400">{new Date(autoSave.timestamp).toLocaleString()}</div>
                             </div>
-                            <button
-                                onClick={handleLoadAuto}
-                                className="px-4 py-2 bg-teal-600 hover:bg-teal-500 text-black font-bold rounded text-sm transition-colors"
-                            >
-                                LOAD
-                            </button>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={handleLoadAuto}
+                                    className="px-4 py-2 bg-teal-600 hover:bg-teal-500 text-black font-bold rounded text-sm transition-colors"
+                                >
+                                    LOAD
+                                </button>
+                                <button
+                                    onClick={() => deleteSave('auto')}
+                                    className="px-3 py-2 bg-slate-800 hover:bg-red-950 text-red-300 border border-red-500/30 font-bold rounded text-sm transition-colors"
+                                >
+                                    DELETE
+                                </button>
+                            </div>
                         </div>
                     )}
 
@@ -85,19 +102,29 @@ export function SaveLoadModal({ isOpen, mode, currentState, onClose, onLoadGame 
                                         <div className="text-sm text-gray-500 italic mt-1">Empty Slot</div>
                                     )}
                                 </div>
-                                <button
-                                    onClick={() => handleAction(slotId)}
-                                    disabled={mode === 'load' && !slot}
-                                    className={`px-4 py-2 font-bold rounded text-sm transition-colors ${
-                                        mode === 'load' && !slot
-                                            ? 'bg-slate-800 text-slate-600 cursor-not-allowed'
-                                            : mode === 'save'
-                                            ? 'bg-teal-600 hover:bg-teal-500 text-black'
-                                            : 'bg-green-600 hover:bg-green-500 text-black'
-                                    }`}
-                                >
-                                    {mode === 'save' ? 'SAVE' : 'LOAD'}
-                                </button>
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => handleAction(slotId)}
+                                        disabled={mode === 'load' && !slot}
+                                        className={`px-4 py-2 font-bold rounded text-sm transition-colors ${
+                                            mode === 'load' && !slot
+                                                ? 'bg-slate-800 text-slate-600 cursor-not-allowed'
+                                                : mode === 'save'
+                                                ? 'bg-teal-600 hover:bg-teal-500 text-black'
+                                                : 'bg-green-600 hover:bg-green-500 text-black'
+                                        }`}
+                                    >
+                                        {mode === 'save' ? 'SAVE' : 'LOAD'}
+                                    </button>
+                                    {mode === 'load' && slot && (
+                                        <button
+                                            onClick={() => deleteSave(slotId)}
+                                            className="px-3 py-2 bg-slate-800 hover:bg-red-950 text-red-300 border border-red-500/30 font-bold rounded text-sm transition-colors"
+                                        >
+                                            DELETE
+                                        </button>
+                                    )}
+                                </div>
                             </div>
                         );
                     })}

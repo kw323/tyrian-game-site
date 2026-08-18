@@ -1,21 +1,43 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Github } from 'lucide-react';
 import { GameContainer } from '@/components/GameContainer';
 import { EnemyDatabaseModal } from '@/components/EnemyDatabaseModal';
 import { PlayerSystemsModal } from '@/components/PlayerSystemsModal';
 import { MissionArchiveModal } from '@/components/MissionArchiveModal';
 import { SaveLoadModal } from '@/components/SaveLoadModal';
-import { SaveSystem } from '@/game/core/SaveSystem';
+import { SaveData, SaveSystem } from '@/game/core/SaveSystem';
 import { SoundSystem } from '@/game/core/SoundSystem';
-import { StageSelectModal } from '@/components/StageSelectModal';
 
-// Style: retro-futurist arcade command console; this page is the launch bay, not a SaaS landing page.
+const RESUME_CHECKPOINT_KEY = 'tyrian_resume_checkpoint';
+type LaunchMode = 'new' | 'continue' | null;
+
+interface ResumePreview {
+    level: number;
+    score: number;
+    savedAt: number;
+}
+
+function readResumePreview(): ResumePreview | null {
+    const raw = window.localStorage.getItem(RESUME_CHECKPOINT_KEY);
+    if (!raw) return null;
+    try {
+        const parsed = JSON.parse(raw) as ResumePreview;
+        return typeof parsed.level === 'number' && typeof parsed.score === 'number' ? parsed : null;
+    } catch {
+        window.localStorage.removeItem(RESUME_CHECKPOINT_KEY);
+        return null;
+    }
+}
+
+// The title screen is deliberately the first thing players see: save selection is a game action,
+// not a secondary utility hidden below an already-running canvas.
 export default function Home() {
+    const [launchMode, setLaunchMode] = useState<LaunchMode>(null);
     const [showDatabase, setShowDatabase] = useState(false);
     const [showSystemsDatabase, setShowSystemsDatabase] = useState(false);
     const [showMissionArchive, setShowMissionArchive] = useState(false);
     const [showLoadModal, setShowLoadModal] = useState(false);
-    const [showStageSelect, setShowStageSelect] = useState(false);
+    const [saveRevision, setSaveRevision] = useState(0);
     const [musicEnabled, setMusicEnabled] = useState(() => SoundSystem.isMusicEnabled());
     const [touchControlsEnabled, setTouchControlsEnabled] = useState(() => {
         if (typeof window === 'undefined') return true;
@@ -24,74 +46,111 @@ export default function Home() {
         return window.matchMedia('(max-width: 767px)').matches;
     });
 
+    const resumePreview = useMemo(() => readResumePreview(), [saveRevision]);
+    const manualSaveCount = useMemo(() => SaveSystem.getSlots().filter(Boolean).length, [saveRevision]);
+    const autoSave = useMemo(() => SaveSystem.loadAutoSave(), [saveRevision]);
+
     useEffect(() => {
         window.localStorage.setItem('tyrian_touch_controls_enabled', String(touchControlsEnabled));
     }, [touchControlsEnabled]);
 
-    const saveGame = () => {
-        SaveSystem.saveGame(1, {
-            slotId: '1',
-            slotName: 'Quick Manual Save',
-            level: 1,
-            score: 0,
-            shipId: 0,
-            weaponLevels: { '0': 1 },
-            generatorLevel: 1,
-            shieldLevel: 1,
-            currentWeapon: 'straight',
-            tacticalAbilityLevels: {},
-            selectedTacticalAbility: 'time_lock'
-        });
-        alert('Game progress saved successfully to Slot 1!');
+    const startNewMission = () => {
+        window.localStorage.removeItem(RESUME_CHECKPOINT_KEY);
+        setSaveRevision((revision) => revision + 1);
+        setLaunchMode('new');
     };
 
-    return (
-        <div className="tyrian-shell">
-            <header className="command-header">
-                <div className="command-header__inner">
-                    <div className="brand-lockup">
-                        <div className="brand-emblem" aria-hidden="true">
-                            <span />
-                            <i />
-                        </div>
-                        <div>
-                            <p className="brand-eyebrow">PROGRAM ZERO // FLIGHT NETWORK</p>
-                            <h1 className="brand-wordmark">TYRIAN <span>2000</span></h1>
-                        </div>
-                    </div>
-                    <div className="header-readout">
-                        <span className="signal-dot" />
-                        <span>ARK-9 LINK // ONLINE</span>
-                        <a href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="Open project source on GitHub">
-                            <Github size={19} />
-                        </a>
-                    </div>
+    const continueMission = () => {
+        if (!resumePreview) {
+            setShowLoadModal(true);
+            return;
+        }
+        setLaunchMode('continue');
+    };
+
+    const clearCheckpoint = () => {
+        if (!window.confirm('Delete the current checkpoint? This cannot be undone.')) return;
+        window.localStorage.removeItem(RESUME_CHECKPOINT_KEY);
+        setSaveRevision((revision) => revision + 1);
+    };
+
+    const loadSelectedSave = (data: SaveData) => {
+        window.localStorage.setItem(RESUME_CHECKPOINT_KEY, JSON.stringify({
+            level: data.level,
+            score: data.score,
+            reason: `SAVE SLOT ${data.slotId} LOADED`,
+            savedAt: data.timestamp,
+            shipId: data.shipId,
+            generatorLevel: data.generatorLevel,
+            shieldLevel: data.shieldLevel,
+            weaponState: {
+                weaponLevels: data.weaponLevels,
+                currentWeapon: data.currentWeapon,
+            },
+        }));
+        setSaveRevision((revision) => revision + 1);
+        setLaunchMode('continue');
+    };
+
+    const titleScreen = (
+        <main className="command-main">
+            <section className="launch-console hud-frame" aria-labelledby="game-title">
+                <div className="launch-console__signal-row">
+                    <span>ARK-9 DEFENSE NETWORK // READY</span>
+                    <span>{resumePreview ? `CHECKPOINT // STAGE ${resumePreview.level}` : 'NO ACTIVE CHECKPOINT'}</span>
                 </div>
-            </header>
-
-            <main className="command-main">
-
-
-                <section className="launch-section" aria-labelledby="launch-title">
-                    <div className="section-heading-row">
-                        <div>
-                            <p className="section-kicker">FLIGHT DECK // READY ROOM</p>
-                            <h2 id="launch-title">Select command.</h2>
-                        </div>
-                        <span className="status-tag">LIVE BUILD / CANVAS 60 FPS // TOUCH {touchControlsEnabled ? 'ARMED' : 'HIDDEN'}</span>
+                <div className="launch-console__core">
+                    <p className="launch-console__eyebrow">PROGRAM ZERO // STARSHIP DEFENSE COMMAND</p>
+                    <h2 id="game-title">PROTECT <span>THE STARSHIP</span></h2>
+                    <p className="launch-console__briefing">
+                        Break the pursuit, hold the line, and protect Ark-9 from raiders, military hunters, and the alien fleet.
+                    </p>
+                    <div className="launch-console__telemetry" aria-label="Save telemetry">
+                        <span><b>{resumePreview ? `STAGE ${resumePreview.level}` : 'NEW'}</b>MISSION STATUS</span>
+                        <span><b>{manualSaveCount}</b>MANUAL SAVES</span>
+                        <span><b>{autoSave ? 'READY' : 'EMPTY'}</b>AUTOSAVE</span>
                     </div>
-                    <div className="action-rail" aria-label="Game command actions">
-                        <button type="button" onClick={() => setShowLoadModal(true)} className="console-button console-button--cyan">Load slot</button>
-                        <button type="button" onClick={saveGame} className="console-button console-button--green">Save slot</button>
-                        <button type="button" onClick={() => setShowDatabase(true)} className="console-button console-button--muted">Enemy database</button>
-                        <button type="button" onClick={() => setShowSystemsDatabase(true)} className="console-button console-button--cyan">Player systems codex</button>
-                        <button type="button" onClick={() => setShowMissionArchive(true)} className="console-button console-button--amber">Mission archive log</button>
-                        <button type="button" onClick={() => setShowStageSelect(true)} className="console-button console-button--magenta">Stage map 01—100</button>
+                    <div className="flex flex-col items-center gap-3">
+                        <button type="button" onClick={startNewMission} className="launch-command">NEW MISSION</button>
+                        <button type="button" onClick={continueMission} className="launch-command">
+                            {resumePreview ? `CONTINUE // STAGE ${resumePreview.level}` : 'LOAD SAVED MISSION'}
+                        </button>
+                        <button type="button" onClick={() => setShowLoadModal(true)} className="console-button console-button--cyan">
+                            MANAGE SAVES // LOAD OR DELETE
+                        </button>
+                        {resumePreview && (
+                            <button type="button" onClick={clearCheckpoint} className="console-button console-button--muted">
+                                CLEAR CURRENT CHECKPOINT
+                            </button>
+                        )}
+                    </div>
+                    <p className="launch-console__hint">SAVES ARE AVAILABLE BEFORE LAUNCH // KEYBOARD + POINTER // TOUCH {touchControlsEnabled ? 'ARMED' : 'HIDDEN'}</p>
+                </div>
+                <div className="launch-console__footer">
+                    <span>VERSION 1.0 // OFFLINE READY</span>
+                    <span>{resumePreview ? `LAST CHECKPOINT ${new Date(resumePreview.savedAt).toLocaleString()}` : 'SELECT NEW MISSION OR LOAD A SAVE'}</span>
+                </div>
+            </section>
+
+            <section className="telemetry-grid" aria-label="Title screen utilities">
+                <article className="telemetry-module hud-frame">
+                    <span className="module-index">01 // ARCHIVE</span>
+                    <h3>Know the threat.</h3>
+                    <button type="button" onClick={() => setShowDatabase(true)} className="console-button console-button--muted">Enemy database</button>
+                </article>
+                <article className="telemetry-module hud-frame">
+                    <span className="module-index">02 // LOADOUT</span>
+                    <h3>Review systems.</h3>
+                    <button type="button" onClick={() => setShowSystemsDatabase(true)} className="console-button console-button--cyan">Player systems codex</button>
+                </article>
+                <article className="telemetry-module hud-frame">
+                    <span className="module-index">03 // SETTINGS</span>
+                    <h3>Prepare controls.</h3>
+                    <div className="flex flex-wrap gap-2">
                         <button
                             type="button"
                             onClick={() => setMusicEnabled(SoundSystem.toggleMusic())}
                             className={`console-button ${musicEnabled ? 'console-button--green' : 'console-button--muted'}`}
-                            aria-pressed={musicEnabled}
                         >
                             Music: {musicEnabled ? 'ON' : 'OFF'}
                         </button>
@@ -99,89 +158,69 @@ export default function Home() {
                             type="button"
                             onClick={() => setTouchControlsEnabled((enabled) => !enabled)}
                             className={`console-button ${touchControlsEnabled ? 'console-button--magenta' : 'console-button--muted'}`}
-                            aria-pressed={touchControlsEnabled}
-                            aria-label={`${touchControlsEnabled ? 'Hide' : 'Show'} touch controls`}
                         >
-                            Touch controls: {touchControlsEnabled ? 'ON' : 'OFF'}
+                            Touch: {touchControlsEnabled ? 'ON' : 'OFF'}
                         </button>
                     </div>
-                    <div className="launch-frame hud-frame">
-                        <div className="launch-frame__topline"><span>LAUNCH WINDOW // PILOT LINKED</span><span>INPUT: KEYBOARD + POINTER // TOUCH {touchControlsEnabled ? 'ARMED' : 'HIDDEN'}</span></div>
-                        <div className="game-window">
-                            <GameContainer touchControlsEnabled={touchControlsEnabled} />
+                </article>
+            </section>
+        </main>
+    );
+
+    return (
+        <div className="tyrian-shell">
+            <header className="command-header">
+                <div className="command-header__inner">
+                    <div className="brand-lockup">
+                        <div className="brand-emblem" aria-hidden="true"><span /><i /></div>
+                        <div>
+                            <p className="brand-eyebrow">PROGRAM ZERO // FLIGHT NETWORK</p>
+                            <h1 className="brand-wordmark">PROTECT <span>THE STARSHIP</span></h1>
                         </div>
                     </div>
-                </section>
-
-                {showDatabase && <EnemyDatabaseModal onClose={() => setShowDatabase(false)} />}
-                {showSystemsDatabase && <PlayerSystemsModal onClose={() => setShowSystemsDatabase(false)} />}
-                {showMissionArchive && <MissionArchiveModal onClose={() => setShowMissionArchive(false)} />}
-                {showLoadModal && (
-                    <SaveLoadModal
-                        isOpen={showLoadModal}
-                        mode="load"
-                        onClose={() => setShowLoadModal(false)}
-                        onLoadGame={() => setShowLoadModal(false)}
-                    />
-                )}
-                {showStageSelect && (
-                    <StageSelectModal
-                        maxUnlockedLevel={100}
-                        onSelectStage={() => setShowStageSelect(false)}
-                        onClose={() => setShowStageSelect(false)}
-                    />
-                )}
-
-                <section className="telemetry-grid" aria-label="Campaign systems">
-                    <article className="telemetry-module hud-frame">
-                        <span className="module-index">01 // SYSTEM</span>
-                        <h3>Build the loadout.</h3>
-                        <p>Five weapon families, fifteen levels, shield recharge, generator strain, and four experimental hulls that change what you can carry.</p>
-                    </article>
-                    <article className="telemetry-module hud-frame">
-                        <span className="module-index">02 // THREAT</span>
-                        <h3>Read the formation.</h3>
-                        <p>Scout chains, orbiters, sentinels, heavy armor, bosses, and projectile signatures that demand different answers.</p>
-                    </article>
-                    <article className="telemetry-module hud-frame">
-                        <span className="module-index">03 // SIGNAL</span>
-                        <h3>Choose the route.</h3>
-                        <p>Every ten stages the campaign branches. Rewards, pressure, and the people speaking in your comms all change with the decision.</p>
-                    </article>
-                </section>
-
-                <section className="flight-panel hud-frame" aria-labelledby="flight-title">
-                    <div>
-                        <p className="section-kicker">PILOT MANUAL // QUICK READ</p>
-                        <h2 id="flight-title">Keep the prototype alive.</h2>
-                        <p>Destroy the boss or survive the timed stage, then press Enter to reach the upgrade bay. Space fires; the arrow keys move; E activates or stops the fully charged tactical module. On mobile, drag the left joystick, hold FIRE, and tap TACTICAL to start or stop the ability.</p>
-                        <p className="mt-2 text-amber-300/80">TEST LINK: hold M for 8 seconds for credits; press L and enter a stage from 1 to 100.</p>
+                    <div className="header-readout">
+                        <span className="signal-dot" />
+                        <span>ARK-9 LINK // ONLINE</span>
+                        <a href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="Open project source on GitHub"><Github size={19} /></a>
                     </div>
-                    <div className="control-readout">
-                        <span><b>↑ ↓ ← →</b> MOVE</span>
-                        <span><b>SPACE</b> FIRE</span>
-                        <span><b>E</b> TACTICAL</span>
-                        <span><b>ENTER</b> NEXT STAGE</span>
-                        <span><b>ESC</b> PAUSE / RESERVED</span>
-                        <span className="mobile-manual-control"><b>TOUCH {touchControlsEnabled ? 'ON' : 'OFF'}</b> JOYSTICK · FIRE · TACTICAL</span>
-                    </div>
-                </section>
+                </div>
+            </header>
 
-                <section className="developer-log hud-frame" aria-labelledby="developer-log-title">
-                    <div>
-                        <p className="section-kicker">ENGINE LOG // SECONDARY READOUT</p>
-                        <h2 id="developer-log-title">Built to keep expanding.</h2>
+            {launchMode ? (
+                <main className="command-main">
+                    <div className="flex justify-between items-center gap-3 mb-3">
+                        <span className="status-tag">{launchMode === 'new' ? 'NEW MISSION // STAGE 1' : `CONTINUE MISSION // STAGE ${resumePreview?.level ?? 1}`}</span>
+                        <button type="button" onClick={() => setLaunchMode(null)} className="console-button console-button--muted">RETURN TO TITLE</button>
                     </div>
-                    <div className="developer-log__columns">
-                        <p><b>FRONTEND</b><br />React 19 / TypeScript / HTML5 Canvas / Web Audio API</p>
-                        <p><b>ARCHITECTURE</b><br />OOP entity modules / delta-time movement / campaign data systems</p>
-                        <p><b>RENDERING</b><br />Layered vector-style silhouettes / regional backgrounds / particle effects</p>
-                    </div>
-                </section>
-            </main>
+                    <section className="launch-frame hud-frame">
+                        <div className="launch-frame__topline"><span>FLIGHT DECK // PILOT LINKED</span><span>INPUT: KEYBOARD + POINTER // TOUCH {touchControlsEnabled ? 'ARMED' : 'HIDDEN'}</span></div>
+                        <div className="game-window">
+                            <GameContainer
+                                key={launchMode}
+                                touchControlsEnabled={touchControlsEnabled}
+                                launchMode={launchMode}
+                                onReturnToTitle={() => setLaunchMode(null)}
+                            />
+                        </div>
+                    </section>
+                </main>
+            ) : titleScreen}
+
+            {showDatabase && <EnemyDatabaseModal onClose={() => setShowDatabase(false)} />}
+            {showSystemsDatabase && <PlayerSystemsModal onClose={() => setShowSystemsDatabase(false)} />}
+            {showMissionArchive && <MissionArchiveModal onClose={() => setShowMissionArchive(false)} />}
+            {showLoadModal && (
+                <SaveLoadModal
+                    isOpen={showLoadModal}
+                    mode="load"
+                    onClose={() => setShowLoadModal(false)}
+                    onLoadGame={loadSelectedSave}
+                    onDeleteSave={() => setSaveRevision((revision) => revision + 1)}
+                />
+            )}
 
             <footer className="command-footer">
-                <span>TYRIAN 2000 // PROGRAM ZERO</span>
+                <span>PROTECT THE STARSHIP // PROGRAM ZERO</span>
                 <span>ARK-9 FLIGHT NETWORK © 2026</span>
             </footer>
         </div>
