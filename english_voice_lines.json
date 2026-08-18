@@ -1,0 +1,2319 @@
+[
+  {
+    "lineId": "stage-1-contact-0",
+    "stage": 1,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "טייס, זו החללית הניסיונית. פקודות ממני בלבד."
+  },
+  {
+    "lineId": "stage-1-after-1",
+    "stage": 1,
+    "speaker": "naomi",
+    "text": "Look at her. Absolutely flawless. Touch her with dirty hands and I will break your fingers.",
+    "heText": "תסתכל עליה. היא מושלמת. אם תיגע בה בידיים מלוכלכות אני אשבור לך אצבע."
+  },
+  {
+    "lineId": "stage-1-after-2",
+    "stage": 1,
+    "speaker": "protagonist",
+    "text": "Good morning to you too. Thrilled to be here.",
+    "heText": "בוקר טוב גם לי."
+  },
+  {
+    "lineId": "stage-2-contact-0",
+    "stage": 2,
+    "speaker": "elena",
+    "text": "Pirate vessel sighted. Execute destruction order immediately.",
+    "heText": "ספינת פיראטים. לפי הפקודה – להשמיד."
+  },
+  {
+    "lineId": "stage-2-after-1",
+    "stage": 2,
+    "speaker": "naomi",
+    "text": "My weapon calibration is a work of art. Use them with respect, pilot.",
+    "heText": "הנשקים מוכנים. תשתמש בהם יפה. היא לא אוהבת רעש מיותר."
+  },
+  {
+    "lineId": "stage-2-after-2",
+    "stage": 2,
+    "speaker": "protagonist",
+    "text": "I am right here flying, you know.",
+    "heText": "אני גם פה, כן?"
+  },
+  {
+    "lineId": "stage-3-contact-0",
+    "stage": 3,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "תשמיד מהר."
+  },
+  {
+    "lineId": "stage-3-after-1",
+    "stage": 3,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "המגן שלה כמעט נסדק!"
+  },
+  {
+    "lineId": "stage-3-after-2",
+    "stage": 3,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "הם ירו קודם…"
+  },
+  {
+    "lineId": "stage-4-contact-0",
+    "stage": 4,
+    "speaker": "elena",
+    "text": "Mission accomplished. Report back to base for debriefing.",
+    "heText": "חזרה. דיווח."
+  },
+  {
+    "lineId": "stage-4-after-1",
+    "stage": 4,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "תיקנתי אותה. הבאתי לה מטלית רכה."
+  },
+  {
+    "lineId": "stage-4-after-2",
+    "stage": 4,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "המטרה חוסלה."
+  },
+  {
+    "lineId": "stage-5-contact-0",
+    "stage": 5,
+    "speaker": "elena",
+    "text": "Escort convoy through sector. Zero failures tolerated.",
+    "heText": "ליווי שיירה."
+  },
+  {
+    "lineId": "stage-5-after-1",
+    "stage": 5,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "היא מחליקה בין האסטרואידים כאילו נולדה לזה."
+  },
+  {
+    "lineId": "stage-5-after-2",
+    "stage": 5,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "ואני מטיס אותה."
+  },
+  {
+    "lineId": "stage-6-contact-0",
+    "stage": 6,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "תקיפה. הגיב."
+  },
+  {
+    "lineId": "stage-6-after-1",
+    "stage": 6,
+    "speaker": "naomi",
+    "text": "The engines are purring like a kitten. Don't you dare push them too hard!",
+    "heText": "המנוע שלה רעד. היא לא אוהבת כשמרעידים אותה."
+  },
+  {
+    "lineId": "stage-6-after-2",
+    "stage": 6,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "אולי כי ירו עלינו."
+  },
+  {
+    "lineId": "stage-7-contact-0",
+    "stage": 7,
+    "speaker": "elena",
+    "text": "Mission accomplished. Report back to base for debriefing.",
+    "heText": "סיימת. חזור."
+  },
+  {
+    "lineId": "stage-7-after-1",
+    "stage": 7,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "שדרגתי לה את הקירור. עכשיו היא יותר יציבה."
+  },
+  {
+    "lineId": "stage-7-after-2",
+    "stage": 7,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "כל הכבוד."
+  },
+  {
+    "lineId": "stage-8-contact-0",
+    "stage": 8,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "סיור בגבול."
+  },
+  {
+    "lineId": "stage-8-after-1",
+    "stage": 8,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "אם תחזור עם אבק עליה אני אדפוק לך בראש."
+  },
+  {
+    "lineId": "stage-8-after-2",
+    "stage": 8,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "אבק בחלל זה לא בשליטה שלי."
+  },
+  {
+    "lineId": "stage-9-contact-0",
+    "stage": 9,
+    "speaker": "elena",
+    "text": "Mission accomplished. Report back to base for debriefing.",
+    "heText": "אין תנועה. חזור."
+  },
+  {
+    "lineId": "stage-9-after-1",
+    "stage": 9,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "התמרון האחרון היה מדויק. היא אהבה אותו."
+  },
+  {
+    "lineId": "stage-9-after-2",
+    "stage": 9,
+    "speaker": "protagonist",
+    "text": "Crystal clear. Thanks for the vote of confidence.",
+    "heText": "תודה."
+  },
+  {
+    "lineId": "stage-10-contact-0",
+    "stage": 10,
+    "speaker": "elena",
+    "text": "Official bounty target detected. Eliminate the threat.",
+    "heText": "מחר ציד מבוקשים."
+  },
+  {
+    "lineId": "stage-10-after-1",
+    "stage": 10,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "תשמור עליה. חייך פחות חשובים ממנה."
+  },
+  {
+    "lineId": "stage-10-after-2",
+    "stage": 10,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "הבנתי."
+  },
+  {
+    "lineId": "stage-11-contact-0",
+    "stage": 11,
+    "speaker": "ghost",
+    "text": "Hey pilot, I bypassed the comms. Got some lucrative bounties for you.",
+    "heText": "היי טייס, פרצתי לערוץ. יש לי מבוקשים עם כסף."
+  },
+  {
+    "lineId": "stage-11-after-1",
+    "stage": 11,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "מי זה?"
+  },
+  {
+    "lineId": "stage-11-after-2",
+    "stage": 11,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "גוסט. כבר בפנים."
+  },
+  {
+    "lineId": "stage-11-after-3",
+    "stage": 11,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "מישהו נגע בה?!"
+  },
+  {
+    "lineId": "stage-12-contact-0",
+    "stage": 12,
+    "speaker": "ghost",
+    "text": "Captain Razer. Half a million credits on his head. Interested?",
+    "heText": "קפטן ראזר. חצי מיליון."
+  },
+  {
+    "lineId": "stage-12-after-1",
+    "stage": 12,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "משימה רשמית. לחסל."
+  },
+  {
+    "lineId": "stage-12-after-2",
+    "stage": 12,
+    "speaker": "naomi",
+    "text": "My weapon calibration is a work of art. Use them with respect, pilot.",
+    "heText": "הנשקים מוכנים… רגע. מה זה? כתם של ביג-מק גלקטי על הקונסולה שלה!"
+  },
+  {
+    "lineId": "stage-12-after-3",
+    "stage": 12,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "אני לא אכלתי כלום."
+  },
+  {
+    "lineId": "stage-13-contact-0",
+    "stage": 13,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "הכתם הזה לא יורד. ניסיתי שלושה סוגי ממסים. היא לא אוהבת אותו."
+  },
+  {
+    "lineId": "stage-13-after-1",
+    "stage": 13,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "הוא ליד אוריון."
+  },
+  {
+    "lineId": "stage-13-after-2",
+    "stage": 13,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "יוצא."
+  },
+  {
+    "lineId": "stage-14-contact-0",
+    "stage": 14,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "השמד."
+  },
+  {
+    "lineId": "stage-14-after-1",
+    "stage": 14,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "המגן שלה כמעט נשבר!"
+  },
+  {
+    "lineId": "stage-14-after-2",
+    "stage": 14,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "סתם קרוב."
+  },
+  {
+    "lineId": "stage-15-contact-0",
+    "stage": 15,
+    "speaker": "ghost",
+    "text": "Credits are transferring to your account. Pleasure doing business.",
+    "heText": "יפה. הכסף בדרך."
+  },
+  {
+    "lineId": "stage-15-after-1",
+    "stage": 15,
+    "speaker": "elena",
+    "text": "Mission accomplished. Report back to base for debriefing.",
+    "heText": "חזור. דיווח."
+  },
+  {
+    "lineId": "stage-15-after-2",
+    "stage": 15,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "תיקנתי אותה. הכתם עדיין שם. ניסיתי עוד שני חומרים."
+  },
+  {
+    "lineId": "stage-16-contact-0",
+    "stage": 16,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "ליידי ווקס."
+  },
+  {
+    "lineId": "stage-16-after-1",
+    "stage": 16,
+    "speaker": "naomi",
+    "text": "My weapon calibration is a work of art. Use them with respect, pilot.",
+    "heText": "הנשקים שלה מחכים."
+  },
+  {
+    "lineId": "stage-16-after-2",
+    "stage": 16,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "קודם נמצא אותה."
+  },
+  {
+    "lineId": "stage-17-contact-0",
+    "stage": 17,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "אל תיתן לה לברוח."
+  },
+  {
+    "lineId": "stage-17-after-1",
+    "stage": 17,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "ענני האבק של נבולה סל."
+  },
+  {
+    "lineId": "stage-17-after-2",
+    "stage": 17,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "אבק עליה. והכתם עדיין שם. היא סובלת."
+  },
+  {
+    "lineId": "stage-18-contact-0",
+    "stage": 18,
+    "speaker": "naomi",
+    "text": "A scratch on my hull?! I am bringing a heavy wrench right to your helmet!",
+    "heText": "יש לה שריטה!"
+  },
+  {
+    "lineId": "stage-18-after-1",
+    "stage": 18,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "איי למה עשית את זה?!"
+  },
+  {
+    "lineId": "stage-18-after-2",
+    "stage": 18,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "כי אתה מגיע לה. זו הייתה מכה ראשונה."
+  },
+  {
+    "lineId": "stage-18-after-3",
+    "stage": 18,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "סיים את המשימה."
+  },
+  {
+    "lineId": "stage-19-contact-0",
+    "stage": 19,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "עוד אחד מחכה."
+  },
+  {
+    "lineId": "stage-19-after-1",
+    "stage": 19,
+    "speaker": "elena",
+    "text": "Mission accomplished. Report back to base for debriefing.",
+    "heText": "דיווח ואז מנוחה."
+  },
+  {
+    "lineId": "stage-19-after-2",
+    "stage": 19,
+    "speaker": "naomi",
+    "text": "The engines are purring like a kitten. Don't you dare push them too hard!",
+    "heText": "שדרגתי לה את המנועים. הכתם עדיין לא זז. ניסיתי כבר שבעה חומרים."
+  },
+  {
+    "lineId": "stage-20-contact-0",
+    "stage": 20,
+    "speaker": "ghost",
+    "text": "Something stinks inside military command. Want to know who's pulling the strings?",
+    "heText": "משהו בצבא שלכם מסריח."
+  },
+  {
+    "lineId": "stage-20-after-1",
+    "stage": 20,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "הריח היחיד שהיא מרגישה זה שמן חדש. וביג-מק."
+  },
+  {
+    "lineId": "stage-20-after-2",
+    "stage": 20,
+    "speaker": "protagonist",
+    "text": "Crystal clear. Thanks for the vote of confidence.",
+    "heText": "תודה."
+  },
+  {
+    "lineId": "stage-21-contact-0",
+    "stage": 21,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "ספינת מבריחים."
+  },
+  {
+    "lineId": "stage-21-after-1",
+    "stage": 21,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "יוצא."
+  },
+  {
+    "lineId": "stage-21-after-2",
+    "stage": 21,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "היא מתמרנת יפה."
+  },
+  {
+    "lineId": "stage-22-contact-0",
+    "stage": 22,
+    "speaker": "ghost",
+    "text": "Something stinks inside military command. Want to know who's pulling the strings?",
+    "heText": "הם נושאים משהו שהצבא רוצה."
+  },
+  {
+    "lineId": "stage-22-after-1",
+    "stage": 22,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "בצע."
+  },
+  {
+    "lineId": "stage-22-after-2",
+    "stage": 22,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "אם המטען ילכלך אותה – אתה תנקה."
+  },
+  {
+    "lineId": "stage-23-contact-0",
+    "stage": 23,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "עוד כתם קטן ליד הישן!"
+  },
+  {
+    "lineId": "stage-23-after-1",
+    "stage": 23,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "זה אור…"
+  },
+  {
+    "lineId": "stage-23-after-2",
+    "stage": 23,
+    "speaker": "elena",
+    "text": "Mission accomplished. Report back to base for debriefing.",
+    "heText": "חזור עם המטען."
+  },
+  {
+    "lineId": "stage-24-contact-0",
+    "stage": 24,
+    "speaker": "ghost",
+    "text": "Something stinks inside military command. Want to know who's pulling the strings?",
+    "heText": "הצבא שותק על הפלישות."
+  },
+  {
+    "lineId": "stage-24-after-1",
+    "stage": 24,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "תיקנתי לה את חיישן הלחץ. ניסיתי עוד ממס על הכתם. כלום."
+  },
+  {
+    "lineId": "stage-24-after-2",
+    "stage": 24,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "כל הכבוד."
+  },
+  {
+    "lineId": "stage-25-contact-0",
+    "stage": 25,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "סיור בגבול."
+  },
+  {
+    "lineId": "stage-25-after-1",
+    "stage": 25,
+    "speaker": "naomi",
+    "text": "A scratch on my hull?! I am bringing a heavy wrench right to your helmet!",
+    "heText": "אם תחזור עם אבק עליה – מפתח שבדי."
+  },
+  {
+    "lineId": "stage-25-after-2",
+    "stage": 25,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "משתדל."
+  },
+  {
+    "lineId": "stage-26-contact-0",
+    "stage": 26,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "תנועות חייזריות. הצי מעלים עין."
+  },
+  {
+    "lineId": "stage-26-after-1",
+    "stage": 26,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "התמרון שלה היה מדויק."
+  },
+  {
+    "lineId": "stage-26-after-2",
+    "stage": 26,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "אני ביצעתי אותו."
+  },
+  {
+    "lineId": "stage-27-contact-0",
+    "stage": 27,
+    "speaker": "elena",
+    "text": "Mission accomplished. Report back to base for debriefing.",
+    "heText": "חזור מיד. אין רשות להתערב."
+  },
+  {
+    "lineId": "stage-27-after-1",
+    "stage": 27,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "סוף סוף פקודה ששומרת עליה."
+  },
+  {
+    "lineId": "stage-27-after-2",
+    "stage": 27,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "חוזר."
+  },
+  {
+    "lineId": "stage-28-contact-0",
+    "stage": 28,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "יש קשר בין הפלישות לטכנולוגיה."
+  },
+  {
+    "lineId": "stage-28-after-1",
+    "stage": 28,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "מישהו העתיק אותה. אני חושדת חזק שזה אבא שלי."
+  },
+  {
+    "lineId": "stage-28-after-2",
+    "stage": 28,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "רהב?"
+  },
+  {
+    "lineId": "stage-29-contact-0",
+    "stage": 29,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "מחר תפגוש את סרה."
+  },
+  {
+    "lineId": "stage-29-after-1",
+    "stage": 29,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "יש לה חללית דומה. בטח רהב. אף אחד אחר לא מסוגל להבין אותה."
+  },
+  {
+    "lineId": "stage-29-after-2",
+    "stage": 29,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "את בטוחה?"
+  },
+  {
+    "lineId": "stage-30-contact-0",
+    "stage": 30,
+    "speaker": "elena",
+    "text": "HQ direct order: Hold your position and repel all hostile forces.",
+    "heText": "דו-קרב. לפי פקודה מלמעלה."
+  },
+  {
+    "lineId": "stage-30-after-1",
+    "stage": 30,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "אם היא תיגע בה אני אפרק אותה. ואת רהב נדבר אחר כך."
+  },
+  {
+    "lineId": "stage-30-after-2",
+    "stage": 30,
+    "speaker": "sera",
+    "text": "Impressive piloting. But I am still faster.",
+    "heText": "אני הכי טובה פה."
+  },
+  {
+    "lineId": "stage-31-contact-0",
+    "stage": 31,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "בעוד שעה."
+  },
+  {
+    "lineId": "stage-31-after-1",
+    "stage": 31,
+    "speaker": "naomi",
+    "text": "My weapon calibration is a work of art. Use them with respect, pilot.",
+    "heText": "הנשקים שלה מוכנים."
+  },
+  {
+    "lineId": "stage-31-after-2",
+    "stage": 31,
+    "speaker": "sera",
+    "text": "Impressive piloting. But I am still faster.",
+    "heText": "אני לא מפסידה."
+  },
+  {
+    "lineId": "stage-32-contact-0",
+    "stage": 32,
+    "speaker": "sera",
+    "text": "Impressive piloting. But I am still faster.",
+    "heText": "בוא נגמור מהר."
+  },
+  {
+    "lineId": "stage-32-after-1",
+    "stage": 32,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "מוכן."
+  },
+  {
+    "lineId": "stage-32-after-2",
+    "stage": 32,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "המגן שלה כמעט נסדק!"
+  },
+  {
+    "lineId": "stage-32-after-3",
+    "stage": 32,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "איי למה עשית את זה?!"
+  },
+  {
+    "lineId": "stage-32-after-4",
+    "stage": 32,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "כי כמעט נסדק. זו מכה שנייה."
+  },
+  {
+    "lineId": "stage-33-contact-0",
+    "stage": 33,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "תיקו. שניכם חוזרים."
+  },
+  {
+    "lineId": "stage-33-after-1",
+    "stage": 33,
+    "speaker": "naomi",
+    "text": "A scratch on my hull?! I am bringing a heavy wrench right to your helmet!",
+    "heText": "יש לה שריטה. ורהב כנראה גנב לי חלקים ממנה. אף אחד אחר לא יודע איך היא בנויה."
+  },
+  {
+    "lineId": "stage-33-after-2",
+    "stage": 33,
+    "speaker": "sera",
+    "text": "Impressive piloting. But I am still faster.",
+    "heText": "תיקו רק כי התחשבתי."
+  },
+  {
+    "lineId": "stage-34-contact-0",
+    "stage": 34,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "הצי הזמין את הפלישות בכוונה."
+  },
+  {
+    "lineId": "stage-34-after-1",
+    "stage": 34,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "קיבלתי גנבים וכתמים. רהב…"
+  },
+  {
+    "lineId": "stage-34-after-2",
+    "stage": 34,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "אנחנו פיתיון?"
+  },
+  {
+    "lineId": "stage-35-contact-0",
+    "stage": 35,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "פקודות מלמעלה. ממשיכים לציית."
+  },
+  {
+    "lineId": "stage-35-after-1",
+    "stage": 35,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "אילנה, זה רקוב."
+  },
+  {
+    "lineId": "stage-35-after-2",
+    "stage": 35,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "תיקנתי אותה. הכתם עדיין שם. ניסיתי כבר עשרה חומרים."
+  },
+  {
+    "lineId": "stage-36-contact-0",
+    "stage": 36,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "סרה עדיין חושבת שהיא הכי טובה."
+  },
+  {
+    "lineId": "stage-36-after-1",
+    "stage": 36,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "אל תתחיל."
+  },
+  {
+    "lineId": "stage-36-after-2",
+    "stage": 36,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "מה?"
+  },
+  {
+    "lineId": "stage-37-contact-0",
+    "stage": 37,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "משימה נוספת."
+  },
+  {
+    "lineId": "stage-37-after-1",
+    "stage": 37,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "אילנה, את לא מרגישה שמשהו פה לא בסדר כבר הרבה זמן?"
+  },
+  {
+    "lineId": "stage-37-after-2",
+    "stage": 37,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "אני מרגישה. אבל פקודות הן עדיין פקודות."
+  },
+  {
+    "lineId": "stage-37-after-3",
+    "stage": 37,
+    "speaker": "naomi",
+    "text": "My weapon calibration is a work of art. Use them with respect, pilot.",
+    "heText": "הנשקים שלה מוכנים."
+  },
+  {
+    "lineId": "stage-38-contact-0",
+    "stage": 38,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "עוד מבוקש."
+  },
+  {
+    "lineId": "stage-38-after-1",
+    "stage": 38,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "לפעמים אני שואל למי אנחנו באמת עובדים."
+  },
+  {
+    "lineId": "stage-38-after-2",
+    "stage": 38,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "לצי. לפחות כך אני אומרת לעצמי."
+  },
+  {
+    "lineId": "stage-38-after-3",
+    "stage": 38,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "תעבוד בשבילה. היא היחידה שלא משקרת."
+  },
+  {
+    "lineId": "stage-39-contact-0",
+    "stage": 39,
+    "speaker": "elena",
+    "text": "Mission accomplished. Report back to base for debriefing.",
+    "heText": "חזור. דיווח."
+  },
+  {
+    "lineId": "stage-39-after-1",
+    "stage": 39,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "המטרה חוסלה. שוב."
+  },
+  {
+    "lineId": "stage-39-after-2",
+    "stage": 39,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "טוב. לפחות משהו עדיין מתנהל כמו שצריך."
+  },
+  {
+    "lineId": "stage-39-after-3",
+    "stage": 39,
+    "speaker": "naomi",
+    "text": "Look at her. Absolutely flawless. Touch her with dirty hands and I will break your fingers.",
+    "heText": "היא שוב מושלמת. חוץ מהכתם."
+  },
+  {
+    "lineId": "stage-40-contact-0",
+    "stage": 40,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "הצי שותק יותר מדי."
+  },
+  {
+    "lineId": "stage-40-after-1",
+    "stage": 40,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "השתיקה הזו מתחילה להרגיש מסוכנת."
+  },
+  {
+    "lineId": "stage-40-after-2",
+    "stage": 40,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "אני יודעת. תתרכז במשימה בכל זאת."
+  },
+  {
+    "lineId": "stage-40-after-3",
+    "stage": 40,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "היא מרגישה שמן חדש."
+  },
+  {
+    "lineId": "stage-41-contact-0",
+    "stage": 41,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "סיור בגבול."
+  },
+  {
+    "lineId": "stage-41-after-1",
+    "stage": 41,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "ואם נראה משהו שאסור לנו לראות?"
+  },
+  {
+    "lineId": "stage-41-after-2",
+    "stage": 41,
+    "speaker": "elena",
+    "text": "HQ direct order: Hold your position and repel all hostile forces.",
+    "heText": "אז תתעלם. כרגע זו עדיין הפקודה."
+  },
+  {
+    "lineId": "stage-41-after-3",
+    "stage": 41,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "היא לא אוהבת כשמתעלמים ממנה."
+  },
+  {
+    "lineId": "stage-42-contact-0",
+    "stage": 42,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "תנועות חייזריות גדולות. הצי מעלים עין."
+  },
+  {
+    "lineId": "stage-42-after-1",
+    "stage": 42,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "כמה פעמים עוד אפשר להעלים עין?"
+  },
+  {
+    "lineId": "stage-42-after-2",
+    "stage": 42,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "אני שואלת את עצמי את אותה שאלה. עד שאומרים אחרת."
+  },
+  {
+    "lineId": "stage-42-after-3",
+    "stage": 42,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "התמרון שלה היה מדויק."
+  },
+  {
+    "lineId": "stage-43-contact-0",
+    "stage": 43,
+    "speaker": "elena",
+    "text": "Mission accomplished. Report back to base for debriefing.",
+    "heText": "אין רשות להתערב. חזור."
+  },
+  {
+    "lineId": "stage-43-after-1",
+    "stage": 43,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "את באמת עדיין מאמינה שזה רק פקודות?"
+  },
+  {
+    "lineId": "stage-43-after-2",
+    "stage": 43,
+    "speaker": "elena",
+    "text": "Mission accomplished. Report back to base for debriefing.",
+    "heText": "אני מנסה להאמין. חזור."
+  },
+  {
+    "lineId": "stage-43-after-3",
+    "stage": 43,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "היא שמחה שחוזרים."
+  },
+  {
+    "lineId": "stage-44-contact-0",
+    "stage": 44,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "יש קשר ברור בין הפלישות לטכנולוגיה."
+  },
+  {
+    "lineId": "stage-44-after-1",
+    "stage": 44,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "מישהו משחק משחק גדול מאיתנו."
+  },
+  {
+    "lineId": "stage-44-after-2",
+    "stage": 44,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "אני מתחילה להבין את זה."
+  },
+  {
+    "lineId": "stage-44-after-3",
+    "stage": 44,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "מישהו העתיק אותה. רהב."
+  },
+  {
+    "lineId": "stage-45-contact-0",
+    "stage": 45,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "מחר עוד מפגש עם סרה."
+  },
+  {
+    "lineId": "stage-45-after-1",
+    "stage": 45,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "ואם הפעם זה לא ייגמר בתיקו?"
+  },
+  {
+    "lineId": "stage-45-after-2",
+    "stage": 45,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "אז תעשה מה שצריך. ואני… אמשיך לתת פקודות."
+  },
+  {
+    "lineId": "stage-45-after-3",
+    "stage": 45,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "אם היא תיגע בה – תדע."
+  },
+  {
+    "lineId": "stage-46-contact-0",
+    "stage": 46,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "אני מורד. בורחים."
+  },
+  {
+    "lineId": "stage-46-after-1",
+    "stage": 46,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "רק אם היא לא תיפגע. אחרת אני נשארת."
+  },
+  {
+    "lineId": "stage-46-after-2",
+    "stage": 46,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "בגידה! תיכנעו מיד!"
+  },
+  {
+    "lineId": "stage-47-contact-0",
+    "stage": 47,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "מסלול פתוח. תברחו."
+  },
+  {
+    "lineId": "stage-47-after-1",
+    "stage": 47,
+    "speaker": "naomi",
+    "text": "The engines are purring like a kitten. Don't you dare push them too hard!",
+    "heText": "מפעילה בריחה. המנועים שלה יציבים."
+  },
+  {
+    "lineId": "stage-47-after-2",
+    "stage": 47,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "יוצאים."
+  },
+  {
+    "lineId": "stage-48-contact-0",
+    "stage": 48,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "כל הצי רודף אחריכם!"
+  },
+  {
+    "lineId": "stage-48-after-1",
+    "stage": 48,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "אם מישהו ייגע בה – אני אמצא אותו."
+  },
+  {
+    "lineId": "stage-48-after-2",
+    "stage": 48,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "תזוזו מהר."
+  },
+  {
+    "lineId": "stage-49-contact-0",
+    "stage": 49,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "טייס, בית דין. נעמי, את תאבדי הכל!"
+  },
+  {
+    "lineId": "stage-49-after-1",
+    "stage": 49,
+    "speaker": "naomi",
+    "text": "The engines are purring like a kitten. Don't you dare push them too hard!",
+    "heText": "המנוע שלה רעד. היא עייפה."
+  },
+  {
+    "lineId": "stage-49-after-2",
+    "stage": 49,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "אנחנו כבר בדרך."
+  },
+  {
+    "lineId": "stage-50-contact-0",
+    "stage": 50,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "אתם תיתפסו!"
+  },
+  {
+    "lineId": "stage-50-after-1",
+    "stage": 50,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "נכנסים לחגורת אסטרואידים. היא לא אוהבת צפיפות."
+  },
+  {
+    "lineId": "stage-50-after-2",
+    "stage": 50,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "מחפש מסלול."
+  },
+  {
+    "lineId": "stage-51-contact-0",
+    "stage": 51,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "השמשות שלה מלאות באבק!"
+  },
+  {
+    "lineId": "stage-51-after-1",
+    "stage": 51,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "עף לפי חיישנים."
+  },
+  {
+    "lineId": "stage-51-after-2",
+    "stage": 51,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "יש לכם כמה דקות."
+  },
+  {
+    "lineId": "stage-52-contact-0",
+    "stage": 52,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "הכנף שלה שרטה! והכתם עדיין שם! ניסיתי כבר כל חומר ביקום חוץ משפכטל!"
+  },
+  {
+    "lineId": "stage-52-after-1",
+    "stage": 52,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "אולי פשוט…"
+  },
+  {
+    "lineId": "stage-52-after-2",
+    "stage": 52,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "אל תעז."
+  },
+  {
+    "lineId": "stage-53-contact-0",
+    "stage": 53,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "מערכת ההסוואה שלה מהבהבת!"
+  },
+  {
+    "lineId": "stage-53-after-1",
+    "stage": 53,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "זה הרטט."
+  },
+  {
+    "lineId": "stage-53-after-2",
+    "stage": 53,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "באונטי בקצה."
+  },
+  {
+    "lineId": "stage-54-contact-0",
+    "stage": 54,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "הגנרטור שלה משתעל!"
+  },
+  {
+    "lineId": "stage-54-after-1",
+    "stage": 54,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "מחזיק אותה יציב."
+  },
+  {
+    "lineId": "stage-54-after-2",
+    "stage": 54,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "נעמי, את תהיי מנודה!"
+  },
+  {
+    "lineId": "stage-55-contact-0",
+    "stage": 55,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "יש שבבים על הריצפה שלה!"
+  },
+  {
+    "lineId": "stage-55-after-1",
+    "stage": 55,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "אחר כך!"
+  },
+  {
+    "lineId": "stage-55-after-2",
+    "stage": 55,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "היציאה בעוד שתי דקות."
+  },
+  {
+    "lineId": "stage-56-contact-0",
+    "stage": 56,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "הניווט שלה מראה שלושה מסלולים!"
+  },
+  {
+    "lineId": "stage-56-after-1",
+    "stage": 56,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "בוחר באחד."
+  },
+  {
+    "lineId": "stage-56-after-2",
+    "stage": 56,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "המשפחה שלך תשמע!"
+  },
+  {
+    "lineId": "stage-57-contact-0",
+    "stage": 57,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "השמשות שלה מתחילות להיסדק!"
+  },
+  {
+    "lineId": "stage-57-after-1",
+    "stage": 57,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "עוד קצת."
+  },
+  {
+    "lineId": "stage-57-after-2",
+    "stage": 57,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "כמעט בחוץ."
+  },
+  {
+    "lineId": "stage-58-contact-0",
+    "stage": 58,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "הכל רוטט עליה!"
+  },
+  {
+    "lineId": "stage-58-after-1",
+    "stage": 58,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "איי זה כמעט פגע בי!"
+  },
+  {
+    "lineId": "stage-58-after-2",
+    "stage": 58,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "נשמת חזק מדי. יש אדים על השמשה שלה."
+  },
+  {
+    "lineId": "stage-58-after-3",
+    "stage": 58,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "איי למה עשית את זה?!"
+  },
+  {
+    "lineId": "stage-58-after-4",
+    "stage": 58,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "כי נשמת חזק. זו מכה שלישית."
+  },
+  {
+    "lineId": "stage-59-contact-0",
+    "stage": 59,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "ההסוואה שלה נשרפה!"
+  },
+  {
+    "lineId": "stage-59-after-1",
+    "stage": 59,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "יצאנו!"
+  },
+  {
+    "lineId": "stage-59-after-2",
+    "stage": 59,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "(בערוץ סודי) \"…'לתת להם להישבר בחגורה. אחר כך נאסוף את השברים ואת הטכנולוגיה'. זו הייתה ההוראה מפיקוד עליון. מספיק."
+  },
+  {
+    "lineId": "stage-59-after-3",
+    "stage": 59,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "תמשיכו לזוז."
+  },
+  {
+    "lineId": "stage-60-contact-0",
+    "stage": 60,
+    "speaker": "sera",
+    "text": "Impressive piloting. But I am still faster.",
+    "heText": "מצאתי אתכם. אני רודפת."
+  },
+  {
+    "lineId": "stage-60-after-1",
+    "stage": 60,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "היא שבורה. ורהב בטח גאה בפח המעופף שהוא בנה לה."
+  },
+  {
+    "lineId": "stage-60-after-2",
+    "stage": 60,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "קודם בורחים."
+  },
+  {
+    "lineId": "stage-61-contact-0",
+    "stage": 61,
+    "speaker": "sera",
+    "text": "Impressive piloting. But I am still faster.",
+    "heText": "אני מאחוריכם."
+  },
+  {
+    "lineId": "stage-61-after-1",
+    "stage": 61,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "עוצרת זמן. תנצל. היא צריכה רגע. רהב כנראה לא לימד אותה לחכות."
+  },
+  {
+    "lineId": "stage-61-after-2",
+    "stage": 61,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "מנצל."
+  },
+  {
+    "lineId": "stage-62-contact-0",
+    "stage": 62,
+    "speaker": "elena",
+    "text": "Pirate vessel sighted. Execute destruction order immediately.",
+    "heText": "(סודי) \"סרה מקבלת פקודות להשמיד. אני מעכבת."
+  },
+  {
+    "lineId": "stage-62-after-1",
+    "stage": 62,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "המגן שלה כמעט נסדק!"
+  },
+  {
+    "lineId": "stage-62-after-2",
+    "stage": 62,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "מבין."
+  },
+  {
+    "lineId": "stage-63-contact-0",
+    "stage": 63,
+    "speaker": "sera",
+    "text": "Impressive piloting. But I am still faster.",
+    "heText": "עדיין רודפת."
+  },
+  {
+    "lineId": "stage-63-after-1",
+    "stage": 63,
+    "speaker": "naomi",
+    "text": "My weapon calibration is a work of art. Use them with respect, pilot.",
+    "heText": "שאבתי לה אנרגיה. הנשקים שלה יציבים. בניגוד לנשקים הבוהקים של אבא שלי שרק מושכים אש."
+  },
+  {
+    "lineId": "stage-63-after-2",
+    "stage": 63,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "יורים אם צריך."
+  },
+  {
+    "lineId": "stage-64-contact-0",
+    "stage": 64,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "גל חייזרים קטן."
+  },
+  {
+    "lineId": "stage-64-after-1",
+    "stage": 64,
+    "speaker": "sera",
+    "text": "Impressive piloting. But I am still faster.",
+    "heText": "אני רואה."
+  },
+  {
+    "lineId": "stage-64-after-2",
+    "stage": 64,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "תיקנתי לה את השמשות. רהב בטח היה משתמש בזכוכית זולה שרק מסנוורת."
+  },
+  {
+    "lineId": "stage-65-contact-0",
+    "stage": 65,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "(סודי) \"סרה, תסתכלי על הנתונים."
+  },
+  {
+    "lineId": "stage-65-after-1",
+    "stage": 65,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "הגנרטור שלה עדיין חלש. בניגוד לפח של רהב שרק מרעיש ומרגיז."
+  },
+  {
+    "lineId": "stage-65-after-2",
+    "stage": 65,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "אנחנו חיים."
+  },
+  {
+    "lineId": "stage-66-contact-0",
+    "stage": 66,
+    "speaker": "sera",
+    "text": "Impressive piloting. But I am still faster.",
+    "heText": "אני ממשיכה… אבל הנתונים…"
+  },
+  {
+    "lineId": "stage-66-after-1",
+    "stage": 66,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "עוצרת זמן שוב. היא צריכה שקט. לא כמו החללית הרועשת של אבא שלי שהורסת את כל הסאונדסקייפ."
+  },
+  {
+    "lineId": "stage-66-after-2",
+    "stage": 66,
+    "speaker": "protagonist",
+    "text": "Crystal clear. Thanks for the vote of confidence.",
+    "heText": "תודה."
+  },
+  {
+    "lineId": "stage-67-contact-0",
+    "stage": 67,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "באונטי קטן."
+  },
+  {
+    "lineId": "stage-67-after-1",
+    "stage": 67,
+    "speaker": "sera",
+    "text": "Impressive piloting. But I am still faster.",
+    "heText": "אתם עוצרים לציד?!"
+  },
+  {
+    "lineId": "stage-67-after-2",
+    "stage": 67,
+    "speaker": "naomi",
+    "text": "My weapon calibration is a work of art. Use them with respect, pilot.",
+    "heText": "הנשקים שלה צריכים תרגול. והכתם עדיין שם. ניסיתי הכל חוץ משפכטל."
+  },
+  {
+    "lineId": "stage-68-contact-0",
+    "stage": 68,
+    "speaker": "sera",
+    "text": "Let's see if your reflexes match your ego.",
+    "heText": "מתקרבת."
+  },
+  {
+    "lineId": "stage-68-after-1",
+    "stage": 68,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "(סודי) \"יש חלון. אני מעכבת תגבורת."
+  },
+  {
+    "lineId": "stage-68-after-2",
+    "stage": 68,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "הניווט שלה חזר. רהב כנראה היה מאבד אותו כבר מזמן עם העיצוב המגושם שלו."
+  },
+  {
+    "lineId": "stage-69-contact-0",
+    "stage": 69,
+    "speaker": "sera",
+    "text": "Impressive piloting. But I am still faster.",
+    "heText": "הנתונים… וההוראה מחגורה…"
+  },
+  {
+    "lineId": "stage-69-after-1",
+    "stage": 69,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "כן. ורהב גנב לי חלקים ממנה. עכשיו הפח שלו הורס לי את הקומפוזיציה של כל הגזרה."
+  },
+  {
+    "lineId": "stage-69-after-2",
+    "stage": 69,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "תתרכזי."
+  },
+  {
+    "lineId": "stage-70-contact-0",
+    "stage": 70,
+    "speaker": "sera",
+    "text": "Impressive piloting. But I am still faster.",
+    "heText": "אני עוצרת. צריכה לחשוב."
+  },
+  {
+    "lineId": "stage-70-after-1",
+    "stage": 70,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "סוף סוף. עכשיו אפשר לנסות שוב את הכתם."
+  },
+  {
+    "lineId": "stage-70-after-2",
+    "stage": 70,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "היא כבר לא דולקת."
+  },
+  {
+    "lineId": "stage-70-after-3",
+    "stage": 70,
+    "speaker": "archon",
+    "text": "Insignificant mortals. Your rebellion ends in the void.",
+    "heText": "סרה. אל תתני להם לחשוב אפילו לרגע שהחללית הזו טובה יותר משלי. הכל התחיל ממני."
+  },
+  {
+    "lineId": "stage-71-contact-0",
+    "stage": 71,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "(סודי) \"סרה, עוד נתונים."
+  },
+  {
+    "lineId": "stage-71-after-1",
+    "stage": 71,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "תיקנתי לה את הגנרטור."
+  },
+  {
+    "lineId": "stage-71-after-2",
+    "stage": 71,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "טוב."
+  },
+  {
+    "lineId": "stage-72-contact-0",
+    "stage": 72,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "שקט יחסי. רהב שלח הודעה יהירה."
+  },
+  {
+    "lineId": "stage-72-after-1",
+    "stage": 72,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "שדרגתי לה את עצירת הזמן. בניגוד למה שרהב היה עושה עם העיצוב הכבד שלו."
+  },
+  {
+    "lineId": "stage-72-after-2",
+    "stage": 72,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "שימושי."
+  },
+  {
+    "lineId": "stage-73-contact-0",
+    "stage": 73,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "באונטי."
+  },
+  {
+    "lineId": "stage-73-after-1",
+    "stage": 73,
+    "speaker": "naomi",
+    "text": "My weapon calibration is a work of art. Use them with respect, pilot.",
+    "heText": "הנשקים שלה מוכנים."
+  },
+  {
+    "lineId": "stage-73-after-2",
+    "stage": 73,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "יוצאים."
+  },
+  {
+    "lineId": "stage-74-contact-0",
+    "stage": 74,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "עוצרת זמן. היא מקפיאה אותו."
+  },
+  {
+    "lineId": "stage-74-after-1",
+    "stage": 74,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "יורה."
+  },
+  {
+    "lineId": "stage-74-after-2",
+    "stage": 74,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "חוסל."
+  },
+  {
+    "lineId": "stage-75-contact-0",
+    "stage": 75,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "(סודי) \"התמונה מתבהרת."
+  },
+  {
+    "lineId": "stage-75-after-1",
+    "stage": 75,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "שאבתי לה עוד אנרגיה."
+  },
+  {
+    "lineId": "stage-75-after-2",
+    "stage": 75,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "מספיק."
+  },
+  {
+    "lineId": "stage-76-contact-0",
+    "stage": 76,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "גל בינוני."
+  },
+  {
+    "lineId": "stage-76-after-1",
+    "stage": 76,
+    "speaker": "naomi",
+    "text": "My weapon calibration is a work of art. Use them with respect, pilot.",
+    "heText": "הנשקים שלה יטפלו. לא כמו הנשקים הבוהקים של רהב שרק מושכים תשומת לב מיותרת."
+  },
+  {
+    "lineId": "stage-76-after-2",
+    "stage": 76,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "יורים."
+  },
+  {
+    "lineId": "stage-77-contact-0",
+    "stage": 77,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "המגן שלה רעד!"
+  },
+  {
+    "lineId": "stage-77-after-1",
+    "stage": 77,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "איי למה עשית את זה?!"
+  },
+  {
+    "lineId": "stage-77-after-2",
+    "stage": 77,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "כי הוא רעד. זו מכה רביעית."
+  },
+  {
+    "lineId": "stage-77-after-3",
+    "stage": 77,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "הגל נחלש."
+  },
+  {
+    "lineId": "stage-78-contact-0",
+    "stage": 78,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "תיקנתי אותה."
+  },
+  {
+    "lineId": "stage-78-after-1",
+    "stage": 78,
+    "speaker": "protagonist",
+    "text": "Crystal clear. Thanks for the vote of confidence.",
+    "heText": "תודה."
+  },
+  {
+    "lineId": "stage-78-after-2",
+    "stage": 78,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "הצי מתקרב."
+  },
+  {
+    "lineId": "stage-79-contact-0",
+    "stage": 79,
+    "speaker": "elena",
+    "text": "Pilot, execute orders without hesitation. Sector security is paramount.",
+    "heText": "(סודי) \"סרה, החלון פתוח. אם את עוברת – אני מכסה."
+  },
+  {
+    "lineId": "stage-79-after-1",
+    "stage": 79,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "עוצרת זמן קצר."
+  },
+  {
+    "lineId": "stage-79-after-2",
+    "stage": 79,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "מנצל."
+  },
+  {
+    "lineId": "stage-80-contact-0",
+    "stage": 80,
+    "speaker": "sera",
+    "text": "Impressive piloting. But I am still faster.",
+    "heText": "אני עוברת צד. רשמית."
+  },
+  {
+    "lineId": "stage-80-after-1",
+    "stage": 80,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "ברוכה הבאה. רק אל תיגעי בה. והפח המעופף של אבא שלי שיישאר רחוק מהקומפוזיציה."
+  },
+  {
+    "lineId": "stage-80-after-2",
+    "stage": 80,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "סוף סוף."
+  },
+  {
+    "lineId": "stage-81-contact-0",
+    "stage": 81,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "המנהיג החייזרי בטווח."
+  },
+  {
+    "lineId": "stage-81-after-1",
+    "stage": 81,
+    "speaker": "sera",
+    "text": "Impressive piloting. But I am still faster.",
+    "heText": "אני תוקפת ראשונה! אני יותר מהירה!"
+  },
+  {
+    "lineId": "stage-81-after-2",
+    "stage": 81,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "כן, כן. בטח."
+  },
+  {
+    "lineId": "stage-81-after-3",
+    "stage": 81,
+    "speaker": "naomi",
+    "text": "My weapon calibration is a work of art. Use them with respect, pilot.",
+    "heText": "הנשקים שלה מוכנים. בניגוד לנשקים החלשים והבוהקים של רהב."
+  },
+  {
+    "lineId": "stage-82-contact-0",
+    "stage": 82,
+    "speaker": "sera",
+    "text": "Impressive piloting. But I am still faster.",
+    "heText": "הוא חזק! אבל אני יותר טובה!"
+  },
+  {
+    "lineId": "stage-82-after-1",
+    "stage": 82,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "ברור. את תמיד הכי טובה."
+  },
+  {
+    "lineId": "stage-82-after-2",
+    "stage": 82,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "המגן שלה רעד. רהב בטח היה מתגאה ברעש שהחללית שלו עושה."
+  },
+  {
+    "lineId": "stage-83-contact-0",
+    "stage": 83,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "הצי צופה."
+  },
+  {
+    "lineId": "stage-83-after-1",
+    "stage": 83,
+    "speaker": "sera",
+    "text": "Impressive piloting. But I am still faster.",
+    "heText": "לא צריכים אותם! אני מסתדרת!"
+  },
+  {
+    "lineId": "stage-83-after-2",
+    "stage": 83,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "בטוח. כמו תמיד."
+  },
+  {
+    "lineId": "stage-83-after-3",
+    "stage": 83,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "עוצרת זמן. תירו. והחללית של רהב הורסת לי את כל האסתטיקה של הקרב."
+  },
+  {
+    "lineId": "stage-84-contact-0",
+    "stage": 84,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "המגנים שלו נחלשים."
+  },
+  {
+    "lineId": "stage-84-after-1",
+    "stage": 84,
+    "speaker": "sera",
+    "text": "Impressive piloting. But I am still faster.",
+    "heText": "עוד מכה! ראית איך אני מדויקת?"
+  },
+  {
+    "lineId": "stage-84-after-2",
+    "stage": 84,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "ראיתי. מרשים."
+  },
+  {
+    "lineId": "stage-84-after-3",
+    "stage": 84,
+    "speaker": "naomi",
+    "text": "My weapon calibration is a work of art. Use them with respect, pilot.",
+    "heText": "הנשקים שלה עובדים. לא כמו הבוהקים של אבא שלי שרק מסנוורים."
+  },
+  {
+    "lineId": "stage-85-contact-0",
+    "stage": 85,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "הוא מנסה לברוח."
+  },
+  {
+    "lineId": "stage-85-after-1",
+    "stage": 85,
+    "speaker": "sera",
+    "text": "Impressive piloting. But I am still faster.",
+    "heText": "לא יברח ממני!"
+  },
+  {
+    "lineId": "stage-85-after-2",
+    "stage": 85,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "בטח שלא."
+  },
+  {
+    "lineId": "stage-85-after-3",
+    "stage": 85,
+    "speaker": "naomi",
+    "text": "My weapon calibration is a work of art. Use them with respect, pilot.",
+    "heText": "הנשקים שלה לא נותנים לבורחים. בניגוד לפח של רהב שרק מרעיש ולא פוגע."
+  },
+  {
+    "lineId": "stage-86-contact-0",
+    "stage": 86,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "אנרגיה אחרונה. היא נותנת הכל."
+  },
+  {
+    "lineId": "stage-86-after-1",
+    "stage": 86,
+    "speaker": "sera",
+    "text": "Impressive piloting. But I am still faster.",
+    "heText": "זהו! ניצחתי!"
+  },
+  {
+    "lineId": "stage-86-after-2",
+    "stage": 86,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "אנחנו ניצחנו. יש הבדל."
+  },
+  {
+    "lineId": "stage-86-after-3",
+    "stage": 86,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "נגמר. והחללית של רהב עדיין הורסת לי את הרקע."
+  },
+  {
+    "lineId": "stage-87-contact-0",
+    "stage": 87,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "המנהיג חוסל."
+  },
+  {
+    "lineId": "stage-87-after-1",
+    "stage": 87,
+    "speaker": "sera",
+    "text": "Impressive piloting. But I am still faster.",
+    "heText": "אמרתי שאני הכי טובה!"
+  },
+  {
+    "lineId": "stage-87-after-2",
+    "stage": 87,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "אמרת. כמה פעמים כבר."
+  },
+  {
+    "lineId": "stage-87-after-3",
+    "stage": 87,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "תיקנתי אותה. היא שוב נקייה יחסית. הכתם… עדיין שם."
+  },
+  {
+    "lineId": "stage-88-contact-0",
+    "stage": 88,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "עוד כמה פגמים. תעזור לתקן."
+  },
+  {
+    "lineId": "stage-88-after-1",
+    "stage": 88,
+    "speaker": "sera",
+    "text": "Impressive piloting. But I am still faster.",
+    "heText": "אני אעזור! אני טובה גם בזה!"
+  },
+  {
+    "lineId": "stage-88-after-2",
+    "stage": 88,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "בטח."
+  },
+  {
+    "lineId": "stage-88-after-3",
+    "stage": 88,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "רהב כנראה היה משתמש בסרט הדבקה וקורא לזה 'עיצוב'."
+  },
+  {
+    "lineId": "stage-89-contact-0",
+    "stage": 89,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "הצי רוצה את הטכנולוגיה."
+  },
+  {
+    "lineId": "stage-89-after-1",
+    "stage": 89,
+    "speaker": "sera",
+    "text": "Impressive piloting. But I am still faster.",
+    "heText": "הם לא יקבלו! אני לא אתן!"
+  },
+  {
+    "lineId": "stage-89-after-2",
+    "stage": 89,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "אנחנו לא ניתן. שים לב להבדל."
+  },
+  {
+    "lineId": "stage-89-after-3",
+    "stage": 89,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "שדרגתי לה את ההיגוי. בניגוד להיגוי הרופף של רהב שרק גורם לחללית שלי להיראות יותר יציבה לידו."
+  },
+  {
+    "lineId": "stage-90-contact-0",
+    "stage": 90,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "שתי חלליות. היא עדיין יותר מדויקת. אגב, הציון שלך היה רבע נקודה מעל שלה."
+  },
+  {
+    "lineId": "stage-90-after-1",
+    "stage": 90,
+    "speaker": "sera",
+    "text": "Impressive piloting. But I am still faster.",
+    "heText": "שלי יותר מהירה! ויותר יפה!"
+  },
+  {
+    "lineId": "stage-90-after-2",
+    "stage": 90,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "רבע נקודה… מה זה בכלל אומר?"
+  },
+  {
+    "lineId": "stage-90-after-3",
+    "stage": 90,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "שאתה יותר טוב. והחללית של רהב עדיין פח שרק הורס את הנוף."
+  },
+  {
+    "lineId": "stage-91-contact-0",
+    "stage": 91,
+    "speaker": "sera",
+    "text": "Impressive piloting. But I am still faster.",
+    "heText": "אני עוזבת. מישהו צריך לסדר את הצי. ואני אעשה את זה הכי טוב!"
+  },
+  {
+    "lineId": "stage-91-after-1",
+    "stage": 91,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "בטוחה? לא רוצה להישאר ולריב עוד קצת?"
+  },
+  {
+    "lineId": "stage-91-after-2",
+    "stage": 91,
+    "speaker": "sera",
+    "text": "Impressive piloting. But I am still faster.",
+    "heText": "אחר כך!"
+  },
+  {
+    "lineId": "stage-92-contact-0",
+    "stage": 92,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "אני נשארת. מישהו צריך לשמור עליה. רבע הנקודה הזו היא הסיבה שאף אחד אחר לא יטיס אותה. כולל אותך, סרה. במיוחד לא את הפח של אבא שלי."
+  },
+  {
+    "lineId": "stage-92-after-1",
+    "stage": 92,
+    "speaker": "sera",
+    "text": "Impressive piloting. But I am still faster.",
+    "heText": "תשמרו על עצמכם! ואני יותר טובה מכולם!"
+  },
+  {
+    "lineId": "stage-92-after-2",
+    "stage": 92,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "בהצלחה. באמת."
+  },
+  {
+    "lineId": "stage-93-contact-0",
+    "stage": 93,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "אני אעזור מרחוק. ידעתי על הציון."
+  },
+  {
+    "lineId": "stage-93-after-1",
+    "stage": 93,
+    "speaker": "sera",
+    "text": "Impressive piloting. But I am still faster.",
+    "heText": "תודה! אני אסתדר!"
+  },
+  {
+    "lineId": "stage-93-after-2",
+    "stage": 93,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "תגידי לאילנה שההסוואה שלה עדיין צריכה עבודה. ושהחללית של רהב ממשיכה להרוס לי את הקומפוזיציה."
+  },
+  {
+    "lineId": "stage-94-contact-0",
+    "stage": 94,
+    "speaker": "sera",
+    "text": "Impressive piloting. But I am still faster.",
+    "heText": "אני יוצאת נגד הצי!"
+  },
+  {
+    "lineId": "stage-94-after-1",
+    "stage": 94,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "אל תיגעי בה מרחוק. והפח של אבא שלי שיתרחק מהמסגרת."
+  },
+  {
+    "lineId": "stage-94-after-2",
+    "stage": 94,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "לכי."
+  },
+  {
+    "lineId": "stage-95-contact-0",
+    "stage": 95,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "עדיין יש חייזרים."
+  },
+  {
+    "lineId": "stage-95-after-1",
+    "stage": 95,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "ממשיכים."
+  },
+  {
+    "lineId": "stage-95-after-2",
+    "stage": 95,
+    "speaker": "naomi",
+    "text": "The engines are purring like a kitten. Don't you dare push them too hard!",
+    "heText": "המנועים שלה יציבים. בניגוד למנועים הרועשים של רהב שרק מושכים תשומת לב."
+  },
+  {
+    "lineId": "stage-96-contact-0",
+    "stage": 96,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "סרה נגד הצבא. אנחנו נגד החייזרים."
+  },
+  {
+    "lineId": "stage-96-after-1",
+    "stage": 96,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "והיא קודם. תמיד."
+  },
+  {
+    "lineId": "stage-96-after-2",
+    "stage": 96,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "מעדכן."
+  },
+  {
+    "lineId": "stage-97-contact-0",
+    "stage": 97,
+    "speaker": "naomi",
+    "text": "My weapon calibration is a work of art. Use them with respect, pilot.",
+    "heText": "ריכוז חדש. הנשקים שלה מוכנים."
+  },
+  {
+    "lineId": "stage-97-after-1",
+    "stage": 97,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "יוצאים."
+  },
+  {
+    "lineId": "stage-97-after-2",
+    "stage": 97,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "מסלול פתוח."
+  },
+  {
+    "lineId": "stage-98-contact-0",
+    "stage": 98,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "רגע… אני מנקה את הכתם. עם שפכטל."
+  },
+  {
+    "lineId": "stage-98-after-1",
+    "stage": 98,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "מה?!"
+  },
+  {
+    "lineId": "stage-98-after-2",
+    "stage": 98,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "ירד. סוף סוף."
+  },
+  {
+    "lineId": "stage-98-after-3",
+    "stage": 98,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "השפכטל יכול היה לשרוט את המשטח!"
+  },
+  {
+    "lineId": "stage-98-after-4",
+    "stage": 98,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "איי למה עשית את זה?!"
+  },
+  {
+    "lineId": "stage-98-after-5",
+    "stage": 98,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "כי יכולת לשרוט אותה. זו מכה חמישית. גם אם לא שרטת."
+  },
+  {
+    "lineId": "stage-99-contact-0",
+    "stage": 99,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "עוד קרב. שמן חם מוכן. היא תמיד מוכנה. בניגוד לפח של רהב."
+  },
+  {
+    "lineId": "stage-99-after-1",
+    "stage": 99,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "תמיד יהיה עוד."
+  },
+  {
+    "lineId": "stage-99-after-2",
+    "stage": 99,
+    "speaker": "ghost",
+    "text": "Ghost on frequency. Keep your eyes open and weapons hot.",
+    "heText": "לפחות בוחרים."
+  },
+  {
+    "lineId": "stage-100-contact-0",
+    "stage": 100,
+    "speaker": "protagonist",
+    "text": "Understood. Doing all the heavy lifting as usual.",
+    "heText": "נשארים נגד החייזרים."
+  },
+  {
+    "lineId": "stage-100-after-1",
+    "stage": 100,
+    "speaker": "naomi",
+    "text": "Treat my experimental craft with absolute reverence, pilot!",
+    "heText": "ואני נשארת נגד כל מי שנוגע בה. עכשיו אתה יודע למה. ורהב עדיין בנה פח שהורס נופים."
+  },
+  {
+    "lineId": "stage-100-after-2",
+    "stage": 100,
+    "speaker": "sera",
+    "text": "Impressive piloting. But I am still faster.",
+    "heText": "ואני הולכת לסדר את הצבא הכי טוב שאפשר! ניפגש כשהגלקסיה תהיה פחות מביכה."
+  }
+]

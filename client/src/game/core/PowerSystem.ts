@@ -1,0 +1,109 @@
+export class PowerSystem {
+    public maxPower: number = 200; // Total power capacity (doubled)
+    public currentPower: number = 200; // Current power level (doubled)
+    public generatorLevel: number = 0; // Generator upgrade level (0-14)
+    public generatorOutput: number = 15; // Power generated per second at level 0
+    
+    // Power consumption per second for each system (extended to 25 levels)
+    public shieldRegenCost: number = 3; // Cost to regenerate shield
+    public weaponCosts: Map<string, number[]> = new Map([
+        ['straight', [0, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 8, 8.8, 9.6, 10.5, 11.4, 12.4, 13.5, 14.7, 16, 17.5, 19]],
+        ['spread', [0, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 15, 16.5, 18.2, 20, 22, 24.5, 27, 30, 33, 36.5, 40]],
+        ['homing', [0, 2, 3.5, 5, 6.5, 8, 9.5, 11, 12.5, 14, 15.5, 17, 18.5, 20, 22, 24, 26.5, 29, 32, 35.5, 39, 43, 47, 52, 58]],
+        ['heavy', [0, 2, 3.5, 5, 6.5, 8, 9.5, 11, 12.5, 14, 15.5, 17, 18.5, 20, 22, 24, 26.5, 29, 32, 35.5, 39, 43, 47, 52, 58]],
+        ['laser', [3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 30, 34, 38, 42, 47, 52, 58, 64, 71, 78, 86, 95]],
+        ['void_lance', [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 35, 38, 42, 46, 51, 56, 62, 68, 75, 82, 90, 99]]
+    ]);
+
+    constructor() {
+        this.currentPower = this.maxPower;
+    }
+
+    public getGeneratorOutput(bonusMultiplier: number = 1.0): number {
+        // Generator output increases smoothly up to level 49 (50 levels total) and applies pilot skill bonus
+        return (this.generatorOutput + (this.generatorLevel * 8.5)) * bonusMultiplier;
+    }
+
+    public getMaxPower(): number {
+        // Max power stays constant - only generation rate increases
+        return this.maxPower;
+    }
+
+    public getWeaponCost(weaponType: string, level: number): number {
+        const costs = this.weaponCosts.get(weaponType);
+        if (!costs || level < 0 || level >= costs.length) return 0;
+        return costs[level];
+    }
+
+    public getShieldRegenCost(): number {
+        return this.shieldRegenCost;
+    }
+
+    public canShield(): boolean {
+        return this.currentPower >= this.shieldRegenCost;
+    }
+
+    public canShoot(weaponType: string, level: number): boolean {
+        const cost = this.getWeaponCost(weaponType, level);
+        return this.currentPower >= cost;
+    }
+
+    public consumePower(amount: number): void {
+        this.currentPower = Math.max(0, this.currentPower - amount);
+    }
+
+    public generatePower(deltaTime: number, bonusMultiplier: number = 1.0): void {
+        const output = this.getGeneratorOutput(bonusMultiplier) * deltaTime;
+        const maxPower = this.getMaxPower();
+        this.currentPower = Math.min(this.currentPower + output, maxPower);
+    }
+
+    private getGeneratorCosts(): number[] {
+        const costs: number[] = [0];
+        let base = 500;
+        for (let i = 1; i < 50; i++) {
+            costs.push(base);
+            base = Math.round(base * 1.18);
+        }
+        return costs;
+    }
+
+    public upgradeGenerator(): number {
+        const costs = this.getGeneratorCosts();
+        if (this.generatorLevel < costs.length - 1) {
+            const cost = costs[this.generatorLevel + 1];
+            this.generatorLevel++;
+            return cost;
+        }
+        return 0;
+    }
+
+    public canUpgradeGenerator(): boolean {
+        return this.generatorLevel < 49;
+    }
+
+    public getGeneratorInvestment(): number {
+        const costs = this.getGeneratorCosts();
+        return costs.slice(0, Math.min(this.generatorLevel + 1, costs.length)).reduce((total, cost) => total + cost, 0);
+    }
+
+    public getPowerPercentage(): number {
+        return (this.currentPower / this.getMaxPower()) * 100;
+    }
+
+    /** Refill runtime power at a stage boundary without removing generator upgrades. */
+    public refillForStage(): void {
+        this.currentPower = this.getMaxPower();
+    }
+
+    public loadSaveState(generatorLevel: number): void {
+        this.generatorLevel = Math.max(0, Math.min(49, Math.floor(generatorLevel)));
+        this.refillForStage();
+    }
+
+    /** Full reset used only for a new campaign/run. */
+    public reset(): void {
+        this.currentPower = this.getMaxPower();
+        this.generatorLevel = 0;
+    }
+}

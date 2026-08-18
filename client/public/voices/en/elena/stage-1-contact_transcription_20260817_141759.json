@@ -1,0 +1,17 @@
+{
+  "duration": 5.928,
+  "language": "eng",
+  "segments": [
+    {
+      "start": 0.399,
+      "end": 3.46,
+      "text": "Pilot, this is the experimental craft."
+    },
+    {
+      "start": 3.46,
+      "end": 5.619,
+      "text": "Orders come from me alone"
+    }
+  ],
+  "full_text": "Pilot, this is the experimental craft. Orders come from me alone"
+}
