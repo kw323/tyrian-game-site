@@ -221,6 +221,7 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
             let missionEventSpawned = false;
             let stageFailureReason: string | null = null;
             let shopScreen: ShopScreen = 'hub';
+            let finaleSceneIndex = 0;
             let initialLaunchPending = true;
             let showCommsModal = false;
             let showAfterActionModal = false;
@@ -583,18 +584,18 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
                     weaponCost: Math.max(4, Math.round(powerSystem.getWeaponCost(WeaponType.LASER, laserLevel) * 0.25 * 10) / 10),
                     maxShield: 50 + (10 - 1) * 30,
                     shieldRegenRate: 5 + (10 - 1) * 2,
-                    generatorLevel: 14,
-                    generatorOutput: 15 + 14 * 5,
+                    generatorLevel: 28,
+                    generatorOutput: 15 + 28 * 8.5,
                     maxPower: powerSystem.getMaxPower(),
-                    ability: 'time_lock',
+                    ability: 'over_power',
                     abilityLevel: 5,
-                    abilityDuration: 6.7,
+                    abilityDuration: 5.2,
                     pilotInvestmentBudget
                 };
             };
 
             const deploySeraAlly = (): void => {
-                if (gameState.level < 71 || gameState.level > 90 || seraAlly) return;
+                if (gameState.level < 81 || gameState.level > 90 || seraAlly) return;
                 const canvasWidth = game.getCanvas().width;
                 seraAlly = new SeraAllyShipEntity(
                     canvasWidth * 0.72,
@@ -603,7 +604,7 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
                 );
                 seraAlly.setEscortAnchor(player.x + player.width / 2, player.y + player.height / 2);
                 game.addEntity(seraAlly);
-                testNoticeText = 'ALLIANCE LINK // SERA BATTLESHIP ESCORT ONLINE';
+                testNoticeText = 'ALLIANCE LINK // SERA ASSAULT WING ONLINE';
                 testNoticeUntil = performance.now() + 4200;
                 SoundSystem.playCriticalComms('sera', 'warning');
             };
@@ -1017,6 +1018,7 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
 
             const advanceFromShop = (): void => {
                 if (gameState.level >= CampaignSystem.TOTAL_STAGES) {
+                    finaleSceneIndex = 0;
                     shopScreen = 'finale_victory';
                     gameState.levelComplete = true;
                     gameState.showLevelScreen = true;
@@ -1155,12 +1157,13 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
                     if (boss instanceof FinalBossPart) {
                         stageMasterySystem.recordEnemyDefeat();
                         game.addEntity(new Explosion(boss.x + boss.width / 2, boss.y + boss.height / 2, 58));
-                        if (finalBossAssembly?.isDefeated() && bossDefeatedAt === null) {
-                            gameState.addScore(Math.floor(boss.getReward() * 2.5));
-                            bossDefeatedAt = performance.now() / 1000;
-                            testNoticeText = 'ARCHON SUPREME // ALL SYSTEMS DESTROYED // VICTORY CONFIRMED';
-                            testNoticeUntil = performance.now() + 7000;
-                            SoundSystem.playUpgrade();
+                        if (boss.role === 'reactor' && finalBossAssembly?.isMeltdownActive()) {
+                            testNoticeText = 'VOID REACTOR DESTROYED // MELTDOWN INITIATED // SURVIVE 18 SECONDS';
+                            testNoticeUntil = performance.now() + 6500;
+                            SoundSystem.playCriticalComms('naomi', 'warning');
+                        } else if (finalBossAssembly?.isReactorExposed()) {
+                            testNoticeText = 'ARCHON DEFENSE GRID BROKEN // VOID REACTOR EXPOSED';
+                            testNoticeUntil = performance.now() + 4200;
                         }
                         return;
                     }
@@ -1390,8 +1393,7 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
                     tacticalAbilitySystem.addTimeCharge(deltaTime, shipSystem.getCurrentShipId());
                 }
                 const seraTimeLock = Boolean(seraDuel?.isTimeLockingPlayer());
-                const seraAllyTimeLock = Boolean(seraAlly?.isTimeLockingEnemies());
-                const canHostileFire = !isTimeLocked && !seraTimeLock && !seraAllyTimeLock;
+                const canHostileFire = !isTimeLocked && !seraTimeLock;
                 // Sera's allied fire is independent of the pilot's TIME LOCK. Only hostile
                 // entities are gated by the player's or Sera's time-freeze state.
                 game['entities'].forEach((entity: any) => {
@@ -1437,6 +1439,31 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
                 game['entities'].forEach((entity: any) => {
                     if (entity instanceof SeraAllyShipEntity) {
                         entity.setEscortAnchor(player.x + player.width / 2, player.y + player.height / 2);
+                        const targets = game['entities']
+                            .filter((candidate: any) => candidate.isActive && (
+                                candidate instanceof Boss
+                                || candidate instanceof MissionTargetEntity
+                                || candidate instanceof Enemy
+                                || candidate instanceof EnemyAdvanced
+                            ))
+                            .map((candidate: any) => ({
+                                x: candidate.x + (candidate.width ?? 0) / 2,
+                                y: candidate.y + (candidate.height ?? 0) / 2,
+                                priority: candidate instanceof Boss
+                                    ? 'boss' as const
+                                    : candidate instanceof MissionTargetEntity
+                                        ? 'mission' as const
+                                        : candidate instanceof EnemyAdvanced && candidate.isSpecial
+                                            ? 'threat' as const
+                                            : 'enemy' as const,
+                                healthRatio: typeof candidate.health === 'number' && typeof candidate.maxHealth === 'number'
+                                    ? candidate.health / Math.max(1, candidate.maxHealth)
+                                    : undefined
+                            }));
+                        const hostileShots = game['entities']
+                            .filter((candidate: any) => candidate instanceof EnemyBullet && !candidate.isFriendly && candidate.isActive)
+                            .map((candidate: any) => ({ x: candidate.x, y: candidate.y }));
+                        entity.setCombatSnapshot(targets, hostileShots);
                     } else if (entity instanceof SeraDuelEntity) {
                         entity.setPilotTarget(player.x + player.width / 2, player.y + player.height / 2);
                         entity.setThreatSnapshot(game['entities'].filter((candidate: any) =>
@@ -1450,7 +1477,7 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
                     if (entity instanceof EnemyAdvanced && entity.isSpecial) {
                         entity.setThreatSnapshot(game['entities']);
                     }
-                    entity.isTimeFrozen = (isTimeLocked || seraAllyTimeLock) && (
+                    entity.isTimeFrozen = isTimeLocked && (
                         entity instanceof Enemy ||
                         entity instanceof EnemyAdvanced ||
                         (entity instanceof Boss && !(entity instanceof SeraAllyShipEntity)) ||
@@ -1473,6 +1500,24 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
                 // Call original update
                 originalUpdate(deltaTime);
                 resolveStageHazardCollisions();
+
+                if (finalBossAssembly?.isMeltdownActive()) {
+                    finalBossAssembly.update(deltaTime);
+                    if (finalBossAssembly.isDefeated() && bossDefeatedAt === null) {
+                        finalBossAssembly.getParts().forEach((part) => {
+                            if (part.isActive) {
+                                part.isActive = false;
+                                game.addEntity(new Explosion(part.x + part.width / 2, part.y + part.height / 2, 66));
+                            }
+                        });
+                        const rewardBoss = finalBossAssembly.getParts()[0];
+                        gameState.addScore(Math.floor((rewardBoss?.getReward() ?? 100000) * 2.5));
+                        bossDefeatedAt = performance.now() / 1000;
+                        testNoticeText = 'ARCHON SUPREME // REACTOR MELTDOWN COMPLETE // VICTORY CONFIRMED';
+                        testNoticeUntil = performance.now() + 7000;
+                        SoundSystem.playUpgrade();
+                    }
+                }
 
                 // Resolve Equipment Drop pickups by player
                 game['entities'].forEach((entity: any) => {
@@ -1895,7 +1940,8 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
                     gameState.showLevelScreen = true;
                     if (gameState.level === 101) {
                         // Special campaign completion finale screen flow
-                        shopScreen = 'finale_victory';
+                        finaleSceneIndex = 0;
+                    shopScreen = 'finale_victory';
                     } else if ((gameState.level % 10 === 0 || gameState.level === 31) && stageBriefing.afterAction) {
                         showAfterActionModal = true;
                         SoundSystem.playCriticalComms(stageBriefing.afterAction.speaker, 'briefing');
@@ -1950,9 +1996,9 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
                     ctx.fillStyle = '#ffb700';
                     ctx.fillText(`TARGET: ${currentMissionTarget.targetName} (${Math.floor(currentMissionTarget.health)}/${currentMissionTarget.maxHealth})`, 20, 148);
                 } else if (gameState.level === 101) {
-                    ctx.fillStyle = '#ffb000';
-                    const finalBoss = game['entities'].find((entity: any) => entity instanceof Boss && entity.isFinalBoss && entity.isActive) as Boss | undefined;
-                    ctx.fillText(finalBoss ? `ARCHON SUPREME // HULL ${Math.max(0, Math.floor(finalBoss.health))}/${finalBoss.maxHealth} // SHIELD ${Math.max(0, Math.floor(finalBoss.shield))}/${finalBoss.maxShield}` : 'ARCHON SUPREME // FINAL BOSS DEFEATED', 20, 148);
+                    const archonObjective = finalBossAssembly?.getObjectiveLabel() ?? 'ARCHON SUPREME // TARGETING SYSTEMS';
+                    ctx.fillStyle = finalBossAssembly?.isMeltdownActive() ? '#ff4d6d' : '#ffb000';
+                    ctx.fillText(archonObjective, 20, 148);
                 } else if (gameState.level % 3 === 0) {
                     ctx.fillStyle = '#ff6b6b';
                     ctx.fillText('BOUNTY TARGET ACTIVE // FLAGSHIP HUNT', 20, 148);
@@ -1970,13 +2016,16 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
                     ctx.fillText(`FORMATION ACTIVE // ${resolveStageCombatEvent(gameState.level, stageBriefing.missionType).toUpperCase()}`, 20, 148);
                 }
 
-                // Stage 101 has no countdown: only total destruction of the carrier can finish it.
+                // Stage 101 shifts from subsystem destruction to a survival countdown after reactor breach.
                 ctx.font = 'bold 14px Arial';
                 if (gameState.level === 101) {
                     const destroyed = finalBossAssembly?.getDestroyedParts() ?? 0;
-                    const total = finalBossAssembly?.getTotalParts() ?? 6;
-                    ctx.fillStyle = '#ffb000';
-                    ctx.fillText(`TIME LIMIT: NONE  // SYSTEMS DESTROYED: ${destroyed}/${total}`, 20, 122);
+                    const outerDestroyed = finalBossAssembly?.getDestroyedOuterSystems() ?? 0;
+                    ctx.fillStyle = finalBossAssembly?.isMeltdownActive() ? '#ff4d6d' : '#ffb000';
+                    const archonReadout = finalBossAssembly?.isMeltdownActive()
+                        ? `MELTDOWN COUNTDOWN: ${finalBossAssembly.getMeltdownRemaining().toFixed(1)}s  // SURVIVE`
+                        : `OUTER SYSTEMS: ${outerDestroyed}/3  // TOTAL DESTROYED: ${destroyed}/6`;
+                    ctx.fillText(archonReadout, 20, 122);
                 } else {
                     const timeRemaining = gameState.getLevelTimeRemaining();
                     const timeMinutes = Math.floor(timeRemaining / 60);
@@ -2428,7 +2477,26 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
                             ]
                         ];
 
-                        const currentScene = epilogueScenes[Math.floor((performance.now() / 8000) % epilogueScenes.length)];
+                        epilogueScenes.push(isHebrew ? [
+                            '5. תיעוד מסע הקמפיין:',
+                            `ניקוד סופי: ${Math.floor(gameState.score)}  //  דרגת חללית: Mk.${shipSystem.getCurrentShipId() + 1}`,
+                            `גנרטור: דרגה ${powerSystem.generatorLevel + 1}  //  נשק פעיל: ${weaponSystem.getCurrentWeapon().toUpperCase()}`,
+                            `דו־קרב סרה: ${seraDuelOutcome === 'win' ? 'ניצחון' : seraDuelOutcome === 'loss' ? 'ניסיון הושלם' : 'ללא תיעוד'}`,
+                            'ארק-9 מאובטחת. יומן המשימות נשאר פתוח לכל קריאה חוזרת.'
+                        ] : [
+                            '5. Campaign Record:',
+                            `Final Score: ${Math.floor(gameState.score)}  //  Ship Tier: Mk.${shipSystem.getCurrentShipId() + 1}`,
+                            `Generator: Rank ${powerSystem.generatorLevel + 1}  //  Active Weapon: ${weaponSystem.getCurrentWeapon().toUpperCase()}`,
+                            `Sera Duel: ${seraDuelOutcome === 'win' ? 'Victory' : seraDuelOutcome === 'loss' ? 'Trial Completed' : 'No Record'}`,
+                            'Ark-9 is secured. The mission archive remains open for review.'
+                        ]);
+                        const currentScene = epilogueScenes[finaleSceneIndex % epilogueScenes.length];
+                        ctx.fillStyle = '#8da8b5';
+                        ctx.font = '12px Arial';
+                        ctx.textAlign = isHebrew ? 'left' : 'right';
+                        ctx.fillText(`${finaleSceneIndex % epilogueScenes.length + 1} / ${epilogueScenes.length}`, isHebrew ? 90 : canvasWidth - 90, 150);
+                        ctx.fillStyle = '#dbe9ee';
+                        ctx.font = '14px Arial';
                         currentScene.forEach((line, idx) => {
                             ctx.textAlign = isHebrew ? 'right' : 'left';
                             ctx.fillText(line, isHebrew ? canvasWidth - 90 : 90, 185 + idx * 42);
@@ -2450,7 +2518,13 @@ export function GameContainer({ touchControlsEnabled = true }: GameContainerProp
                         ctx.fillText(isHebrew ? 'עיצוב ופיתוח: Manus AI & טייס פרויקט Zero  •  עלילה ודמויות: ד״ר נעמי רן & אלנה וייל' : 'Lead Design: Manus AI & Pilot  •  Narrative & Voice: Dr. Naomi Ren & Elena Vail', isHebrew ? canvasWidth - 85 : 90, 460);
                         ctx.fillText(isHebrew ? 'מנוע סאונד רטרו שמיאסן וסינתיסייזר: Web Audio API  •  גלקסיה: ארק-9' : 'Retro Shamisen Sound Engine: Web Audio API  •  Galaxy: Ark-9', isHebrew ? canvasWidth - 85 : 90, 485);
 
-                        drawButton('finale-return', isHebrew ? 'חזרה למסך הראשי // תפריט ראשי' : 'RETURN TO TITLE // MAIN MENU', canvasWidth / 2 - 190, 538, 380, 50, '#00FF88', () => {
+                        drawButton('finale-previous', isHebrew ? 'הקודם' : 'PREVIOUS', 90, 548, 180, 48, '#75d8e7', () => {
+                            finaleSceneIndex = (finaleSceneIndex + epilogueScenes.length - 1) % epilogueScenes.length;
+                        });
+                        drawButton('finale-next', isHebrew ? 'הבא' : 'NEXT', canvasWidth - 270, 548, 180, 48, '#75d8e7', () => {
+                            finaleSceneIndex = (finaleSceneIndex + 1) % epilogueScenes.length;
+                        });
+                        drawButton('finale-return', isHebrew ? 'חזרה למסך הראשי // תפריט ראשי' : 'RETURN TO TITLE // MAIN MENU', canvasWidth / 2 - 190, 548, 380, 48, '#00FF88', () => {
                             setGameStarted(false);
                             shopScreen = 'hub';
                         });

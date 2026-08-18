@@ -2,14 +2,18 @@ import { Entity } from '../core/Entity';
 import { DifficultyProfile } from '../core/DifficultySystem';
 import { EnemyBullet } from './EnemyBullet';
 
+export type BossCombatProfile = 'duelist' | 'siege' | 'controller';
+
+const BOSS_PROFILES: BossCombatProfile[] = ['duelist', 'siege', 'controller'];
+
 export class Boss extends Entity {
     public health: number;
     public maxHealth: number;
     public shield: number;
     public maxShield: number;
-    public shieldRegenRate: number = 5; // Shield regenerates per second
+    public shieldRegenRate: number = 5;
     public shootCooldown: number = 0;
-    public shootInterval: number = 1.05; // Fewer salvos with a clear dodge window
+    public shootInterval: number = 1.05;
     public readonly isFinalBoss: boolean;
     public movementTime: number = 0;
     public vx: number = 0;
@@ -22,22 +26,29 @@ export class Boss extends Entity {
     public rewardMultiplier = 1;
     private difficultyApplied = false;
     private shotPattern: number = 0;
+    private readonly combatProfile: BossCombatProfile;
+    private combatPhase = 0;
 
     constructor(x: number, y: number, level: number) {
         super(x, y, 80, 80);
         this.level = level;
         this.isFinalBoss = level === 101;
+        this.combatProfile = BOSS_PROFILES[Math.max(0, Math.floor((Math.max(3, level) - 3) / 3)) % BOSS_PROFILES.length];
 
-        // Stage 101 is the campaign's super-boss: a long, shielded endurance fight.
         this.maxHealth = (this.isFinalBoss ? 24000 : 70 + (level * 35)) * 4;
         this.health = this.maxHealth;
-
-        // The final shield regenerates quickly until the player creates a safe damage window.
         this.maxShield = (this.isFinalBoss ? 14000 : 100 + (level * 20)) * 4;
         this.shield = this.maxShield;
         this.shieldRegenRate = this.isFinalBoss ? 18 : 5;
         this.shootInterval = this.isFinalBoss ? 0.34 : 1.05;
-        this.vx = 0;
+    }
+
+    public getCombatProfile(): BossCombatProfile {
+        return this.combatProfile;
+    }
+
+    public getCombatPhase(): number {
+        return this.combatPhase;
     }
 
     public update(deltaTime: number): void {
@@ -45,77 +56,127 @@ export class Boss extends Entity {
         this.slowTimer = Math.max(0, this.slowTimer - deltaTime);
         if (this.slowTimer <= 0) this.movementScale = 1;
 
-        // Regenerate shield
         if (this.shield < this.maxShield) {
-            this.shield = Math.min(this.maxShield, this.shield + (this.shieldRegenRate * deltaTime));
+            this.shield = Math.min(this.maxShield, this.shield + this.shieldRegenRate * deltaTime);
         }
 
-        // Movement pattern - figure-8 or circular
         this.movementTime += deltaTime;
-        const movementSpeed = (this.isFinalBoss ? 125 : 60) * this.movementScale;
+        if (!this.isFinalBoss) this.updateCombatPhase();
+        this.updateMovement(deltaTime);
 
+        this.shootCooldown += deltaTime;
+    }
+
+    private updateCombatPhase(): void {
+        const hullRatio = this.health / Math.max(1, this.maxHealth);
+        const nextPhase = hullRatio <= 0.35 ? 2 : hullRatio <= 0.70 ? 1 : 0;
+        this.combatPhase = Math.max(this.combatPhase, nextPhase);
+    }
+
+    private updateMovement(deltaTime: number): void {
+        const movementSpeed = (this.isFinalBoss ? 125 : 60) * this.movementScale;
         if (this.isFinalBoss) {
-            // The Archon sweeps, reverses, and drifts vertically instead of sitting on one rail.
             this.vx = Math.sin(this.movementTime * 1.35) * movementSpeed;
             this.y = 150 + Math.sin(this.movementTime * 0.78) * 70;
-        } else if (this.movementTime < 4) {
-            this.vx = -movementSpeed;
-        } else if (this.movementTime < 8) {
-            this.vx = movementSpeed;
+            this.x += this.vx * deltaTime;
         } else {
-            this.movementTime = 0;
+            const phaseBoost = this.combatPhase * 0.14;
+            let targetX = 400;
+            let targetY = 118;
+            if (this.combatProfile === 'duelist') {
+                targetX = 400 + Math.sin(this.movementTime * (1.12 + phaseBoost)) * (215 + this.combatPhase * 20)
+                    + Math.sin(this.movementTime * 2.6) * 42;
+                targetY = 112 + Math.cos(this.movementTime * 1.4) * (24 + this.combatPhase * 6);
+            } else if (this.combatProfile === 'siege') {
+                targetX = 400 + Math.sin(this.movementTime * (0.38 + phaseBoost * 0.4)) * 260;
+                targetY = 106 + Math.cos(this.movementTime * 0.52) * 18;
+            } else {
+                targetX = 400 + Math.sin(this.movementTime * (0.78 + phaseBoost)) * 205
+                    + Math.sin(this.movementTime * 1.68) * 92;
+                targetY = 126 + Math.cos(this.movementTime * 0.66) * (46 + this.combatPhase * 9);
+            }
+            const steering = Math.min(1, deltaTime * (this.combatProfile === 'duelist' ? 4.8 : 2.8));
+            this.x += (targetX - this.x) * steering;
+            this.y += (targetY - this.y) * steering;
         }
 
-        // Keep boss in bounds
-        this.x += this.vx * deltaTime;
         this.x += this.knockbackX * deltaTime * 60;
         this.y += this.knockbackY * deltaTime * 60;
         const knockbackDecay = Math.pow(0.12, deltaTime);
         this.knockbackX *= knockbackDecay;
         this.knockbackY *= knockbackDecay;
-        if (this.x < 50) this.x = 50;
-        if (this.x > 750) this.x = 750;
-
-        // Update shoot cooldown
-        this.shootCooldown += deltaTime;
+        this.x = Math.max(50, Math.min(750, this.x));
+        this.y = Math.max(64, Math.min(290, this.y));
     }
 
     public shoot(): EnemyBullet[] {
+        if (this.shootCooldown < this.getEffectiveShootInterval()) return [];
+        this.shootCooldown = 0;
         const bullets: EnemyBullet[] = [];
-        
-        if (this.shootCooldown >= this.shootInterval) {
-            this.shootCooldown = 0;
-            
-                const finalPatterns = [
+        const angles = this.getShotAngles();
+        const speed = this.isFinalBoss ? 4.7 : this.getProjectileSpeed();
+        const damage = this.isFinalBoss ? 22 : this.getProjectileDamage();
+        const color = this.isFinalBoss ? '#FFB000' : this.getProfileColor();
+        for (const angle of angles) {
+            bullets.push(new EnemyBullet(
+                this.x,
+                this.y + this.height / 2,
+                8,
+                8,
+                speed,
+                damage,
+                Math.sin(angle),
+                Math.cos(angle),
+                color
+            ));
+        }
+        this.shotPattern++;
+        return bullets;
+    }
+
+    private getEffectiveShootInterval(): number {
+        if (this.isFinalBoss) return this.shootInterval;
+        const phaseMultiplier = this.combatProfile === 'duelist' ? 0.17 : this.combatProfile === 'siege' ? 0.10 : 0.13;
+        return Math.max(0.28, this.shootInterval * (1 - this.combatPhase * phaseMultiplier));
+    }
+
+    private getShotAngles(): number[] {
+        if (this.isFinalBoss) {
+            const finalPatterns = [
                 [0],
                 [-0.34, -0.17, 0, 0.17, 0.34],
                 [-0.52, -0.26, 0, 0.26, 0.52],
                 [-0.70, -0.35, 0, 0.35, 0.70],
                 [-0.88, -0.59, -0.30, 0, 0.30, 0.59, 0.88]
             ];
-            const angles = this.isFinalBoss
-                ? finalPatterns[this.shotPattern % finalPatterns.length]
-                : (this.shotPattern % 2 === 0 ? [0] : [-0.16, 0.16]);
-            this.shotPattern++;
-            for (const angle of angles) {
-                const dirX = Math.sin(angle);
-                const dirY = Math.cos(angle);
-                const bullet = new EnemyBullet(
-                    this.x,
-                    this.y + this.height / 2,
-                    8,
-                    8,
-                    this.isFinalBoss ? 4.7 : 3.2,
-                    this.isFinalBoss ? 22 : 12,
-                    dirX,
-                    dirY,
-                    this.isFinalBoss ? '#FFB000' : '#FF6666'
-                );
-                bullets.push(bullet);
-            }
+            return finalPatterns[this.shotPattern % finalPatterns.length];
         }
-        
-        return bullets;
+        if (this.combatProfile === 'duelist') {
+            const dart = this.shotPattern % 3 === 0 ? 0 : this.shotPattern % 3 === 1 ? -0.18 : 0.18;
+            return this.combatPhase === 2 ? [dart - 0.10, dart, dart + 0.10] : [dart];
+        }
+        if (this.combatProfile === 'siege') {
+            const count = 3 + this.combatPhase * 2;
+            const arc = 0.30 + this.combatPhase * 0.15;
+            return Array.from({ length: count }, (_, index) => count === 1 ? 0 : ((index / (count - 1)) - 0.5) * arc * 2);
+        }
+        const rotation = ((this.shotPattern % 5) - 2) * 0.11;
+        const count = 3 + this.combatPhase;
+        return Array.from({ length: count }, (_, index) => rotation + (index - (count - 1) / 2) * 0.18);
+    }
+
+    private getProjectileSpeed(): number {
+        const base = this.combatProfile === 'duelist' ? 4.4 : this.combatProfile === 'siege' ? 3.35 : 3.85;
+        return base + this.combatPhase * 0.32;
+    }
+
+    private getProjectileDamage(): number {
+        const base = this.combatProfile === 'duelist' ? 13 : this.combatProfile === 'siege' ? 16 : 14;
+        return Math.round(base * (1 + this.combatPhase * 0.18));
+    }
+
+    private getProfileColor(): string {
+        return this.combatProfile === 'duelist' ? '#ff6b9b' : this.combatProfile === 'siege' ? '#ff9f43' : '#a66bff';
     }
 
     public applyDifficulty(profile: DifficultyProfile): void {
@@ -145,9 +206,7 @@ export class Boss extends Entity {
             const shieldDamage = Math.min(this.shield, damage);
             this.shield -= shieldDamage;
             const remainingDamage = damage - shieldDamage;
-            if (remainingDamage > 0) {
-                this.health -= remainingDamage;
-            }
+            if (remainingDamage > 0) this.health -= remainingDamage;
         } else {
             this.health -= damage;
         }
@@ -158,28 +217,26 @@ export class Boss extends Entity {
     }
 
     public getReward(): number {
-        // Boss gives 5000 + 1000 per level
-        return Math.floor((5000 + (this.level * 1000)) * 0.75 * this.rewardMultiplier);
+        return Math.floor((5000 + this.level * 1000) * 0.75 * this.rewardMultiplier);
     }
 
     public render(ctx: CanvasRenderingContext2D): void {
         this.draw(ctx);
     }
 
-    // Style: imposing retro-futurist capital ship with readable armor layers and an animated reactor core.
     public draw(ctx: CanvasRenderingContext2D): void {
+        const accent = this.isFinalBoss ? this.color : this.getProfileColor();
         const hull = ctx.createLinearGradient(this.x - 42, this.y - 42, this.x + 42, this.y + 42);
         hull.addColorStop(0, '#fff0f0');
-        hull.addColorStop(0.18, this.color);
+        hull.addColorStop(0.18, accent);
         hull.addColorStop(0.62, '#7f182c');
         hull.addColorStop(1, '#1b1027');
         ctx.save();
-        ctx.shadowColor = this.color;
+        ctx.shadowColor = accent;
         ctx.shadowBlur = 24;
         ctx.fillStyle = hull;
         ctx.strokeStyle = '#ffd0d8';
         ctx.lineWidth = 2;
-
         ctx.beginPath();
         ctx.moveTo(this.x, this.y - 48);
         ctx.lineTo(this.x + 28, this.y - 19);
@@ -215,24 +272,18 @@ export class Boss extends Entity {
         ctx.fill();
         ctx.strokeStyle = '#ffe5ed';
         ctx.stroke();
-
-        ctx.strokeStyle = 'rgba(255, 90, 150, 0.75)';
-        ctx.beginPath();
-        ctx.ellipse(this.x, this.y, 57, 22, Math.sin(performance.now() / 800) * 0.2, 0, Math.PI * 2);
-        ctx.stroke();
         ctx.restore();
 
         const barWidth = 92;
-        const barHeight = 7;
         const drawBar = (y: number, value: number, max: number, color: string, label: string): void => {
             const left = this.x - barWidth / 2;
             ctx.fillStyle = 'rgba(4, 8, 18, 0.9)';
-            ctx.fillRect(left - 2, y - 2, barWidth + 4, barHeight + 4);
+            ctx.fillRect(left - 2, y - 2, barWidth + 4, 11);
             ctx.strokeStyle = color;
             ctx.lineWidth = 1;
-            ctx.strokeRect(left, y, barWidth, barHeight);
+            ctx.strokeRect(left, y, barWidth, 7);
             ctx.fillStyle = color;
-            ctx.fillRect(left, y, barWidth * Math.max(0, Math.min(value / max, 1)), barHeight);
+            ctx.fillRect(left, y, barWidth * Math.max(0, Math.min(value / max, 1)), 7);
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 9px Arial';
             ctx.textAlign = 'center';
@@ -240,9 +291,10 @@ export class Boss extends Entity {
         };
         drawBar(this.y - 62, this.shield, this.maxShield, '#42e9ff', 'SHIELD');
         drawBar(this.y + 54, this.health, this.maxHealth, '#ff4d6d', 'HULL');
-        ctx.fillStyle = '#ff6d87';
-        ctx.font = 'bold 14px Arial';
+        ctx.fillStyle = accent;
+        ctx.font = 'bold 12px Arial';
         ctx.textAlign = 'center';
-        ctx.fillText('BOSS', this.x, this.y + 76);
+        const label = this.isFinalBoss ? 'ARCHON SUPREME' : `${this.combatProfile.toUpperCase()} // PHASE ${this.combatPhase + 1}`;
+        ctx.fillText(label, this.x, this.y + 76);
     }
 }

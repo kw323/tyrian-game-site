@@ -1,5 +1,3 @@
-// Style: the final boss is a monumental retro-futurist carrier built from readable layered silhouettes, not a single flat hitbox.
-
 import { Boss } from './Boss';
 import { EnemyBullet } from './EnemyBullet';
 import { DifficultyProfile } from '../core/DifficultySystem';
@@ -21,8 +19,12 @@ export interface FinalBossPartConfig {
 
 export class FinalBossAssembly {
     private readonly parts: FinalBossPart[] = [];
-    private destroyedParts = 0;
-    private phase = 0;
+    private readonly destroyedPartIds = new Set<string>();
+    private destroyedOuterSystems = 0;
+    private reactorExposed = false;
+    private meltdownActive = false;
+    private meltdownRemaining = 0;
+    private meltdownComplete = false;
 
     public constructor(private readonly difficulty: DifficultyProfile) {}
 
@@ -36,31 +38,77 @@ export class FinalBossAssembly {
             { id: 'right-cannon', label: 'STARBOARD CANNON', role: 'cannon', x: 560, y: 64, width: 176, height: 112, health: 16800, shield: 8800, color: '#ff7b39' },
             { id: 'reactor', label: 'VOID REACTOR', role: 'reactor', x: 292, y: 28, width: 216, height: 108, health: 20800, shield: 14400, color: '#b06cff' }
         ];
-        configs.forEach((config) => {
-            this.parts.push(new FinalBossPart(config, this, this.difficulty));
-        });
+        configs.forEach((config) => this.parts.push(new FinalBossPart(config, this, this.difficulty)));
         return this.parts;
     }
 
-    public markPartDestroyed(): void {
-        this.destroyedParts = Math.min(this.parts.length, this.destroyedParts + 1);
-        this.phase = Math.min(5, this.destroyedParts);
+    public update(deltaTime: number): void {
+        if (!this.meltdownActive || this.meltdownComplete) return;
+        this.meltdownRemaining = Math.max(0, this.meltdownRemaining - deltaTime);
+        if (this.meltdownRemaining <= 0) {
+            this.meltdownComplete = true;
+            this.meltdownActive = false;
+        }
+    }
+
+    public markPartDestroyed(part: FinalBossPart): void {
+        if (this.destroyedPartIds.has(part.partId)) return;
+        this.destroyedPartIds.add(part.partId);
+        if (part.role === 'reactor') {
+            this.startMeltdown();
+            return;
+        }
+        this.destroyedOuterSystems++;
+        if (this.destroyedOuterSystems >= 3) {
+            this.reactorExposed = true;
+        }
+    }
+
+    private startMeltdown(): void {
+        if (this.meltdownActive || this.meltdownComplete) return;
+        this.meltdownActive = true;
+        this.meltdownRemaining = 18;
     }
 
     public getPhase(): number {
-        return this.phase;
+        if (this.meltdownActive) return 4;
+        if (this.reactorExposed) return 3;
+        return Math.min(2, this.destroyedOuterSystems);
     }
 
     public getDestroyedParts(): number {
-        return this.destroyedParts;
+        return this.destroyedPartIds.size;
+    }
+
+    public getDestroyedOuterSystems(): number {
+        return this.destroyedOuterSystems;
     }
 
     public getTotalParts(): number {
         return this.parts.length;
     }
 
+    public isReactorExposed(): boolean {
+        return this.reactorExposed;
+    }
+
+    public isMeltdownActive(): boolean {
+        return this.meltdownActive;
+    }
+
+    public getMeltdownRemaining(): number {
+        return this.meltdownRemaining;
+    }
+
     public isDefeated(): boolean {
-        return this.parts.length > 0 && this.parts.every((part) => !part.isActive || !part.isAlive());
+        return this.meltdownComplete;
+    }
+
+    public getObjectiveLabel(): string {
+        if (this.meltdownActive) return `MELTDOWN // SURVIVE ${this.meltdownRemaining.toFixed(1)}s`;
+        if (this.meltdownComplete) return 'ARCHON SUPREME // DETONATED';
+        if (this.reactorExposed) return 'VOID REACTOR EXPOSED // DESTROY IT';
+        return `OUTER SYSTEMS // ${this.destroyedOuterSystems}/3 DESTROYED`;
     }
 
     public getParts(): readonly FinalBossPart[] {
@@ -73,12 +121,13 @@ export class FinalBossPart extends Boss {
     public readonly partLabel: string;
     public readonly role: FinalBossPartRole;
     public readonly assembly: FinalBossAssembly;
-    private readonly basePartHealth: number;
-    private readonly basePartShield: number;
+    private readonly baseX: number;
+    private readonly baseY: number;
     private readonly partColor: string;
     private readonly difficulty: DifficultyProfile;
     private phaseShotIndex = 0;
     private timeAlive = 0;
+    private destructionReported = false;
 
     public constructor(config: FinalBossPartConfig, assembly: FinalBossAssembly, difficulty: DifficultyProfile) {
         super(config.x, config.y, 101);
@@ -87,8 +136,8 @@ export class FinalBossPart extends Boss {
         this.role = config.role;
         this.assembly = assembly;
         this.difficulty = difficulty;
-        this.basePartHealth = config.health;
-        this.basePartShield = config.shield;
+        this.baseX = config.x;
+        this.baseY = config.y;
         this.partColor = config.color;
         this.maxHealth = Math.floor(config.health * difficulty.bossMultiplier);
         this.health = this.maxHealth;
@@ -101,24 +150,42 @@ export class FinalBossPart extends Boss {
     }
 
     public update(deltaTime: number): void {
-        if (this.isTimeFrozen || !this.isActive) return;
+        if (this.isTimeFrozen || !this.isActive || !this.isAlive()) return;
         const phase = this.assembly.getPhase();
         this.shootCooldown += deltaTime;
-        const regenMultiplier = this.role === 'reactor' && phase < 4 ? 1.65 : 1;
+        this.timeAlive += deltaTime;
+        this.updateFormationMotion(phase);
+
+        const reactorLocked = this.role === 'reactor' && !this.assembly.isReactorExposed();
+        const regenMultiplier = reactorLocked ? 2.2 : this.role === 'reactor' && phase < 4 ? 1.45 : 1;
         if (this.shield < this.maxShield) {
             this.shield = Math.min(this.maxShield, this.shield + this.shieldRegenRate * regenMultiplier * deltaTime);
         }
-        // The carrier itself holds formation; only its internal systems pulse as phases advance.
-        if (this.role === 'reactor') {
-            this.y = 28 + Math.sin(this.timeAlive * 1.2) * 7;
+    }
+
+    private updateFormationMotion(phase: number): void {
+        if (this.role === 'core') {
+            this.x = this.baseX + Math.sin(this.timeAlive * 0.43) * (8 + phase * 4);
+            this.y = this.baseY + Math.cos(this.timeAlive * 0.71) * 8;
+        } else if (this.role === 'wing') {
+            const direction = this.partId.startsWith('left') ? -1 : 1;
+            this.x = this.baseX + direction * Math.sin(this.timeAlive * 0.66) * (12 + phase * 5);
+            this.y = this.baseY + Math.cos(this.timeAlive * 0.88) * 11;
+        } else if (this.role === 'cannon') {
+            const direction = this.partId.startsWith('left') ? -1 : 1;
+            this.x = this.baseX + direction * Math.sin(this.timeAlive * 1.15) * (9 + phase * 3);
+            this.y = this.baseY + Math.cos(this.timeAlive * 0.94) * 8;
+        } else {
+            this.x = this.baseX + Math.sin(this.timeAlive * 0.74) * (18 + phase * 5);
+            this.y = this.baseY + Math.sin(this.timeAlive * 1.36) * 10;
         }
-        this.timeAlive += deltaTime;
     }
 
     public shoot(): EnemyBullet[] {
-        if (!this.isActive || !this.isAlive()) return [];
+        if (!this.isActive || !this.isAlive() || this.assembly.isDefeated()) return [];
         const phase = this.assembly.getPhase();
-        const interval = Math.max(0.18, (this.role === 'cannon' ? 0.56 : 0.82) / (1 + phase * 0.16)) / this.difficulty.fireRateMultiplier;
+        const intervalMultiplier = this.assembly.isMeltdownActive() ? 0.7 : 1;
+        const interval = Math.max(0.16, ((this.role === 'cannon' ? 0.56 : 0.82) / (1 + phase * 0.16)) * intervalMultiplier) / this.difficulty.fireRateMultiplier;
         if (this.shootCooldown < interval) return [];
         this.shootCooldown = 0;
         this.phaseShotIndex++;
@@ -126,20 +193,17 @@ export class FinalBossPart extends Boss {
         const shots: EnemyBullet[] = [];
         const centerX = this.x + this.width / 2;
         const originY = this.y + this.height - 4;
-        const spreadCount = this.role === 'cannon' ? 3 + Math.min(phase, 2) : 1 + Math.min(phase, 3);
-        const spread = this.role === 'cannon' ? 0.14 + phase * 0.018 : 0.09 + phase * 0.014;
-        for (let i = 0; i < spreadCount; i++) {
-            const offset = spreadCount === 1 ? 0 : (i - (spreadCount - 1) / 2) * spread;
-            const dirX = Math.sin(offset);
-            const dirY = Math.cos(offset);
-            const speed = (this.role === 'reactor' ? 4.4 : 4.9) + phase * 0.48;
+        const meltdownBoost = this.assembly.isMeltdownActive() ? 1 : 0;
+        const spreadCount = this.role === 'cannon' ? 3 + Math.min(phase + meltdownBoost, 3) : 1 + Math.min(phase, 3);
+        const spread = this.role === 'cannon' ? 0.14 + phase * 0.022 : 0.09 + phase * 0.016;
+        for (let index = 0; index < spreadCount; index++) {
+            const offset = spreadCount === 1 ? 0 : (index - (spreadCount - 1) / 2) * spread;
+            const speed = (this.role === 'reactor' ? 4.4 : 4.9) + phase * 0.48 + meltdownBoost * 0.35;
             const damage = Math.round((this.role === 'cannon' ? 20 : 15) * (1 + phase * 0.18) * this.difficulty.damageMultiplier);
-            shots.push(new EnemyBullet(centerX, originY, 10, 10, speed, damage, dirX, dirY, this.partColor, this.role === 'reactor' ? 'plasma' : 'heavy'));
+            shots.push(new EnemyBullet(centerX, originY, 10, 10, speed, damage, Math.sin(offset), Math.cos(offset), this.partColor, this.role === 'reactor' ? 'plasma' : 'heavy'));
         }
-
         if (phase >= 3 && (this.phaseShotIndex % 2 === 0 || this.role === 'reactor')) {
-            const sideAngles = [-0.42, 0.42];
-            sideAngles.forEach((angle) => {
+            [-0.42, 0.42].forEach((angle) => {
                 shots.push(new EnemyBullet(centerX, originY, 8, 8, 5.2 + phase * 0.35, Math.round(12 * this.difficulty.damageMultiplier), Math.sin(angle), Math.cos(angle), '#ffcf5c', 'orb'));
             });
         }
@@ -147,11 +211,12 @@ export class FinalBossPart extends Boss {
     }
 
     public takeDamage(amount: number): void {
-        if (!this.isActive) return;
+        if (!this.isActive || this.assembly.isMeltdownActive()) return;
+        if (this.role === 'reactor' && !this.assembly.isReactorExposed()) return;
         super.takeDamage(amount);
-        if (!this.isAlive()) {
-            // Collision handling owns the active-flag transition so the parent game loop can register the destroyed part exactly once.
-            this.assembly.markPartDestroyed();
+        if (!this.isAlive() && !this.destructionReported) {
+            this.destructionReported = true;
+            this.assembly.markPartDestroyed(this);
         }
     }
 
@@ -159,12 +224,13 @@ export class FinalBossPart extends Boss {
         if (!this.isActive) return;
         const phase = this.assembly.getPhase();
         const pulse = Math.sin(performance.now() * 0.004 + this.x) * 0.5 + 0.5;
+        const lockedReactor = this.role === 'reactor' && !this.assembly.isReactorExposed();
         ctx.save();
         ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
-        ctx.shadowColor = this.partColor;
+        ctx.shadowColor = lockedReactor ? '#67d9ff' : this.partColor;
         ctx.shadowBlur = 18 + pulse * 12 + phase * 2;
         ctx.fillStyle = this.partColor;
-        ctx.strokeStyle = '#ffe8ed';
+        ctx.strokeStyle = lockedReactor ? '#d2f8ff' : '#ffe8ed';
         ctx.lineWidth = this.role === 'core' ? 3 : 2;
         ctx.beginPath();
         if (this.role === 'core') {
@@ -190,7 +256,7 @@ export class FinalBossPart extends Boss {
         ctx.stroke();
         ctx.shadowBlur = 0;
         ctx.fillStyle = '#1b1027';
-        ctx.strokeStyle = '#fff3a6';
+        ctx.strokeStyle = lockedReactor ? '#67d9ff' : '#fff3a6';
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.arc(0, 0, Math.min(this.width, this.height) * 0.16 + phase * 2, 0, Math.PI * 2);
@@ -210,14 +276,7 @@ export class FinalBossPart extends Boss {
         ctx.fillStyle = '#fff1f5';
         ctx.font = 'bold 10px monospace';
         ctx.textAlign = 'center';
-        ctx.fillText(this.partLabel, this.x + this.width / 2, this.y - 31);
-    }
-
-    public getPartBaseHealth(): number {
-        return this.basePartHealth;
-    }
-
-    public getPartBaseShield(): number {
-        return this.basePartShield;
+        const label = lockedReactor ? 'VOID REACTOR // LOCKED' : this.assembly.isMeltdownActive() ? `${this.partLabel} // MELTDOWN` : this.partLabel;
+        ctx.fillText(label, this.x + this.width / 2, this.y - 31);
     }
 }

@@ -1,4 +1,5 @@
 import { Entity } from '../core/Entity';
+
 export interface SeraAllyShot {
     type: 'laser';
     x: number;
@@ -20,15 +21,28 @@ export interface SeraAllyLoadout {
     generatorLevel: number;
     generatorOutput: number;
     maxPower: number;
-    ability: 'time_lock';
+    ability: 'over_power';
     abilityLevel: number;
     abilityDuration: number;
     pilotInvestmentBudget: number;
 }
 
-// Style: Sera's allied craft is a forward-facing escort ship: rose-violet rival plating,
-// cyan navigation lights, and a readable upward laser lane. It is intentionally separate
-// from the hostile Stage 31 duel entity so its orientation and loadout cannot leak across modes.
+export interface SeraCombatTarget {
+    x: number;
+    y: number;
+    priority: 'boss' | 'mission' | 'threat' | 'enemy';
+    healthRatio?: number;
+}
+
+export interface SeraThreatSnapshot {
+    x: number;
+    y: number;
+}
+
+export type SeraCombatState = 'HUNT' | 'INTERCEPT' | 'BOSS FOCUS';
+
+// Sera is an autonomous assault wing: she selects targets, changes firing lanes and avoids
+// nearby hostile projectiles instead of being locked to a decorative escort orbit.
 export class SeraAllyShipEntity extends Entity {
     public readonly isFriendly = true;
     public readonly faction = 'player-allied' as const;
@@ -39,13 +53,16 @@ export class SeraAllyShipEntity extends Entity {
     public maxShield: number;
     public shieldRegenRate: number;
     private readonly loadout: SeraAllyLoadout;
-    private escortTime = 0;
+    private combatTime = 0;
     private shotTimer = 0;
     private abilityElapsed = 0;
     private abilityCooldown = 2.5;
     private abilityActive = false;
     private currentPower: number;
-    private escortAnchor = { x: 400, y: 760 };
+    private playerAnchor = { x: 400, y: 760 };
+    private combatTarget: SeraCombatTarget | null = null;
+    private threats: SeraThreatSnapshot[] = [];
+    private combatState: SeraCombatState = 'HUNT';
 
     constructor(x: number, y: number, loadout: SeraAllyLoadout) {
         super(x, y, 60, 80);
@@ -63,12 +80,34 @@ export class SeraAllyShipEntity extends Entity {
     }
 
     public setEscortAnchor(x: number, y: number): void {
-        this.escortAnchor = { x, y };
+        this.playerAnchor = { x, y };
+    }
+
+    public setCombatSnapshot(targets: SeraCombatTarget[], threats: SeraThreatSnapshot[]): void {
+        this.threats = threats;
+        this.combatTarget = targets
+            .map((target) => ({ target, score: this.scoreTarget(target) }))
+            .sort((a, b) => b.score - a.score)[0]?.target ?? null;
+        this.combatState = this.combatTarget?.priority === 'boss'
+            ? 'BOSS FOCUS'
+            : this.combatTarget?.priority === 'threat'
+                ? 'INTERCEPT'
+                : 'HUNT';
+    }
+
+    private scoreTarget(target: SeraCombatTarget): number {
+        const priorityScore = target.priority === 'boss' ? 1000
+            : target.priority === 'mission' ? 700
+                : target.priority === 'threat' ? 520
+                    : 250;
+        const distance = Math.hypot(target.x - (this.x + this.width / 2), target.y - this.y);
+        const lowHealthBonus = target.healthRatio !== undefined ? (1 - target.healthRatio) * 80 : 0;
+        return priorityScore + lowHealthBonus - distance * 0.18;
     }
 
     public update(deltaTime: number): void {
         if (!this.isActive || this.isTimeFrozen) return;
-        this.escortTime += deltaTime;
+        this.combatTime += deltaTime;
         this.shotTimer += deltaTime;
         this.abilityCooldown = Math.max(0, this.abilityCooldown - deltaTime);
         this.currentPower = Math.min(this.loadout.maxPower, this.currentPower + this.loadout.generatorOutput * deltaTime);
@@ -84,24 +123,53 @@ export class SeraAllyShipEntity extends Entity {
             if (this.abilityElapsed >= this.loadout.abilityDuration) {
                 this.abilityActive = false;
                 this.abilityElapsed = 0;
-                this.abilityCooldown = 5;
+                this.abilityCooldown = 5.5;
             }
-        } else if (this.abilityCooldown <= 0 && this.escortTime >= 4 && this.currentPower >= this.loadout.maxPower * 0.65) {
+        } else if (
+            this.abilityCooldown <= 0
+            && this.combatTarget
+            && this.combatTarget.priority !== 'enemy'
+            && this.currentPower >= this.loadout.maxPower * 0.68
+        ) {
             this.abilityActive = true;
             this.abilityElapsed = 0;
         }
 
-        // Keep Sera in the pilot's lower-right escort lane. This is deliberately not
-        // the upper hostile patrol lane used by the Stage 31 duel craft.
-        const targetX = Math.max(42, Math.min(736, this.escortAnchor.x + 128 + Math.sin(this.escortTime * 1.35) * 24));
-        const targetY = Math.max(360, Math.min(770, this.escortAnchor.y - 142 + Math.cos(this.escortTime * 1.1) * 22));
-        const steering = Math.min(1, deltaTime * 4.8);
+        this.updateAssaultPosition(deltaTime);
+    }
+
+    private updateAssaultPosition(deltaTime: number): void {
+        const target = this.combatTarget;
+        let targetX = this.playerAnchor.x + 92;
+        let targetY = this.playerAnchor.y - 155;
+        if (target) {
+            targetX = target.x + Math.sin(this.combatTime * 1.35) * 58;
+            targetY = Math.max(300, Math.min(690, target.y + (target.priority === 'boss' ? 260 : 190)));
+        }
+
+        let dodgeX = 0;
+        let dodgeY = 0;
+        for (const threat of this.threats) {
+            const deltaX = (this.x + this.width / 2) - threat.x;
+            const deltaY = (this.y + this.height / 2) - threat.y;
+            const distance = Math.hypot(deltaX, deltaY);
+            if (distance < 170 && distance > 1) {
+                const force = (170 - distance) / 170;
+                dodgeX += (deltaX / distance) * 120 * force;
+                dodgeY += (deltaY / distance) * 62 * force;
+            }
+        }
+
+        targetX = Math.max(42, Math.min(736, targetX + dodgeX));
+        targetY = Math.max(340, Math.min(760, targetY + dodgeY));
+        const steering = Math.min(1, deltaTime * (this.combatState === 'BOSS FOCUS' ? 5.8 : 4.6));
         this.x += (targetX - this.x) * steering;
         this.y += (targetY - this.y) * steering;
     }
 
     public canShoot(): boolean {
-        return this.shotTimer >= Math.max(0.07, 1 / Math.max(1, this.loadout.weaponFireRate))
+        const effectiveFireRate = this.loadout.weaponFireRate * (this.abilityActive ? 1.72 : 1);
+        return this.shotTimer >= Math.max(0.055, 1 / Math.max(1, effectiveFireRate))
             && (this.abilityActive || this.currentPower >= this.loadout.weaponCost);
     }
 
@@ -112,11 +180,14 @@ export class SeraAllyShipEntity extends Entity {
 
         const centerX = this.x + this.width / 2;
         const originY = this.y;
-        const shots: SeraAllyShot[] = [{ type: 'laser', x: centerX, y: originY, angle: 0 }];
+        const targetX = this.combatTarget?.x ?? centerX;
+        const targetY = this.combatTarget?.y ?? Math.max(0, originY - 400);
+        const primaryAngle = Math.atan2(targetX - centerX, Math.max(40, originY - targetY));
+        const shots: SeraAllyShot[] = [{ type: 'laser', x: centerX, y: originY, angle: primaryAngle }];
         if (this.loadout.weaponLevel >= 6) {
             const secondaryAngle = 0.14 + Math.min(0.08, (this.loadout.weaponLevel - 6) * 0.012);
-            shots.push({ type: 'laser', x: centerX, y: originY, angle: -secondaryAngle, isSecondary: true });
-            shots.push({ type: 'laser', x: centerX, y: originY, angle: secondaryAngle, isSecondary: true });
+            shots.push({ type: 'laser', x: centerX, y: originY, angle: primaryAngle - secondaryAngle, isSecondary: true });
+            shots.push({ type: 'laser', x: centerX, y: originY, angle: primaryAngle + secondaryAngle, isSecondary: true });
         }
         return shots;
     }
@@ -125,12 +196,12 @@ export class SeraAllyShipEntity extends Entity {
         return this.loadout.weaponDamage * (isSecondary ? 0.45 : 1);
     }
 
-    public isAbilityActive(): boolean {
+    public isOverPowered(): boolean {
         return this.abilityActive;
     }
 
-    public isTimeLockingEnemies(): boolean {
-        return this.abilityActive && this.loadout.ability === 'time_lock';
+    public getCombatState(): SeraCombatState {
+        return this.combatState;
     }
 
     public isAlive(): boolean {
@@ -146,20 +217,13 @@ export class SeraAllyShipEntity extends Entity {
         return !this.isAlive();
     }
 
-    // Explicitly false: allied TIME LOCK is an independent AI module and can never
-    // freeze the human pilot or replace the player's TacticalAbilitySystem state.
-    public isTimeLockingPlayer(): boolean {
-        return false;
-    }
-
     public render(ctx: CanvasRenderingContext2D): void {
         const { x, y, width: w, height: h } = this;
         const centerX = x + w / 2;
-        const pulse = Math.sin(this.escortTime * 5) * 0.5 + 0.5;
+        const pulse = Math.sin(this.combatTime * 5) * 0.5 + 0.5;
         ctx.save();
-
-        ctx.shadowColor = '#ff4fbc';
-        ctx.shadowBlur = 20;
+        ctx.shadowColor = this.abilityActive ? '#ffcf5c' : '#ff4fbc';
+        ctx.shadowBlur = this.abilityActive ? 30 : 20;
         const hull = ctx.createLinearGradient(x, y, x + w, y + h);
         hull.addColorStop(0, '#fff0f8');
         hull.addColorStop(0.2, '#ff70b9');
@@ -199,7 +263,7 @@ export class SeraAllyShipEntity extends Entity {
         ctx.beginPath();
         ctx.ellipse(centerX, y + h * 0.3, w * 0.13, h * 0.11, 0, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillStyle = '#5af1ff';
+        ctx.fillStyle = this.abilityActive ? '#ffd166' : '#5af1ff';
         ctx.beginPath();
         ctx.ellipse(centerX, y + h * 0.3, w * 0.07, h * 0.055, 0, 0, Math.PI * 2);
         ctx.fill();
@@ -240,9 +304,9 @@ export class SeraAllyShipEntity extends Entity {
         ctx.fillStyle = '#8dffff';
         ctx.font = 'bold 11px Arial';
         ctx.textAlign = 'center';
-        ctx.fillText('SERA // ALLY WING', centerX, y - 24);
-        ctx.fillStyle = this.abilityActive ? '#f6c7ff' : '#8dffff';
-        ctx.fillText(`LASER MK-${this.loadout.weaponLevel + 1} // TIME LOCK`, centerX, y + h + 18);
+        ctx.fillText('SERA // ASSAULT WING', centerX, y - 24);
+        ctx.fillStyle = this.abilityActive ? '#ffd166' : '#8dffff';
+        ctx.fillText(`${this.getCombatState()} // LASER MK-${this.loadout.weaponLevel + 1}${this.abilityActive ? ' // OVER POWER' : ''}`, centerX, y + h + 18);
 
         const drawBar = (barY: number, value: number, max: number, color: string, label: string): void => {
             const barWidth = 110;
