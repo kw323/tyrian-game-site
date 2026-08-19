@@ -1,4 +1,5 @@
 import linesData from '../../../../english_voice_lines.json';
+import localizedLines from '../story/locales/dialogue.voice-lines.json';
 
 export interface VoiceLineMapping {
     lineId: string;
@@ -16,11 +17,14 @@ export class VoiceManifest {
         this.initialized = true;
         try {
             const rawList = linesData as Array<{ lineId: string; speaker: any; text: string }>;
+            const localizedByLineId = new Map(
+                (localizedLines as Array<{ lineId: string; en?: string }>).map((line) => [line.lineId, line.en])
+            );
             rawList.forEach(item => {
                 this.lines.set(item.lineId, {
                     lineId: item.lineId,
                     speaker: item.speaker || 'elena',
-                    text: item.text,
+                    text: localizedByLineId.get(item.lineId) || item.text,
                     audioUrl: `/voices/en/${item.speaker || 'elena'}/${item.lineId}.mp3`
                 });
             });

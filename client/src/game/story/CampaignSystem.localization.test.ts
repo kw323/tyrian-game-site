@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import voiceLines from '../../../../english_voice_lines.json';
+import localizedLines from './locales/dialogue.voice-lines.json';
 import { CampaignSystem } from './CampaignSystem';
 
 const HEBREW_CHARACTERS = /[\u0590-\u05FF]/;
@@ -70,6 +72,22 @@ describe('Campaign briefing localization', () => {
             expect(chinese.contact.message).toMatch(CHINESE_CHARACTERS);
             expect(japanese.dialogueSequence).toHaveLength(hebrew.dialogueSequence?.length ?? 0);
             expect(chinese.dialogueSequence).toHaveLength(hebrew.dialogueSequence?.length ?? 0);
+        }
+    });
+
+    it('contains a complete Hebrew-canonical localization for every authored voice line', () => {
+        const canonicalSource = voiceLines as Array<{ lineId: string }>;
+        const translations = localizedLines as Array<{ lineId: string; en: string; ja: string; zh: string }>;
+        const translationsById = new Map(translations.map((line) => [line.lineId, line]));
+
+        expect(translations).toHaveLength(canonicalSource.length);
+        expect(new Set(translations.map((line) => line.lineId)).size).toBe(canonicalSource.length);
+        for (const sourceLine of canonicalSource) {
+            const translated = translationsById.get(sourceLine.lineId);
+            expect(translated).toBeDefined();
+            expect(translated?.en.trim()).toBeTruthy();
+            expect(translated?.ja.trim()).toBeTruthy();
+            expect(translated?.zh.trim()).toBeTruthy();
         }
     });
 

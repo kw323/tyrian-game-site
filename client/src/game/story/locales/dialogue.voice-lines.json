@@ -1618,5 +1618,401 @@
     "en": "Pausing. Fire. And Rahav's ship is wrecking the whole aesthetic of the fight.",
     "ja": "少し止める。撃て。ラハヴの艦が戦いの美観を台無しにしている。",
     "zh": "暂停。开火。拉哈夫的飞船毁了整场战斗的美感。"
+  },
+  {
+    "lineId": "stage-84-contact-0",
+    "en": "His shields are weakening.",
+    "ja": "敵のシールドが弱ってる。",
+    "zh": "他的护盾正在减弱。"
+  },
+  {
+    "lineId": "stage-84-after-1",
+    "en": "One more hit! See how precise I am?",
+    "ja": "あと一撃！ 私がどれだけ正確か、見た？",
+    "zh": "再来一击！看见我有多精准了吗？"
+  },
+  {
+    "lineId": "stage-84-after-2",
+    "en": "I saw. Impressive.",
+    "ja": "見た。見事だ。",
+    "zh": "看见了。很厉害。"
+  },
+  {
+    "lineId": "stage-84-after-3",
+    "en": "Her weapons work. Not like my father's flashy toys that only blind everyone.",
+    "ja": "彼女の武器はちゃんと働く。父の、まぶしいだけで誰も倒せない代物とは違う。",
+    "zh": "她的武器管用。不像我父亲那些只会晃眼的闪亮玩意。"
+  },
+  {
+    "lineId": "stage-85-contact-0",
+    "en": "He's trying to escape.",
+    "ja": "逃げようとしている。",
+    "zh": "他想逃。"
+  },
+  {
+    "lineId": "stage-85-after-1",
+    "en": "He won't get away from me!",
+    "ja": "私からは逃げられない！",
+    "zh": "别想从我手里逃掉！"
+  },
+  {
+    "lineId": "stage-85-after-2",
+    "en": "Definitely not.",
+    "ja": "その通りだ。",
+    "zh": "当然逃不掉。"
+  },
+  {
+    "lineId": "stage-85-after-3",
+    "en": "Her weapons don't let runners escape. Unlike Rahav's junk, which only makes noise and never hits.",
+    "ja": "彼女の武器は逃がさない。うるさいだけで当たりもしないラハブのガラクタとは違う。",
+    "zh": "她的武器不让逃兵溜走。不像拉哈夫那堆只会吵、根本打不中的破烂。"
+  },
+  {
+    "lineId": "stage-86-contact-0",
+    "en": "Last of her energy. She's putting everything into it.",
+    "ja": "残りのエネルギーだ。彼女はすべてを注ぎ込んでる。",
+    "zh": "最后一点能量。她在全力以赴。"
+  },
+  {
+    "lineId": "stage-86-after-1",
+    "en": "That's it! I won!",
+    "ja": "これで終わり！ 私の勝ち！",
+    "zh": "就是这样！我赢了！"
+  },
+  {
+    "lineId": "stage-86-after-2",
+    "en": "We won. There's a difference.",
+    "ja": "俺たちの勝ちだ。そこは違う。",
+    "zh": "是我们赢了。有区别。"
+  },
+  {
+    "lineId": "stage-86-after-3",
+    "en": "It's over. And Rahav's ship is still ruining my background.",
+    "ja": "終わった。それでもラハブの船は私の背景を台無しにしてる。",
+    "zh": "结束了。拉哈夫的飞船还在毁我的背景。"
+  },
+  {
+    "lineId": "stage-87-contact-0",
+    "en": "The leader has been eliminated.",
+    "ja": "リーダーを排除した。",
+    "zh": "首领已被消灭。"
+  },
+  {
+    "lineId": "stage-87-after-1",
+    "en": "Told you I'm the best!",
+    "ja": "私が一番だって言ったでしょ！",
+    "zh": "我就说我是最强的！"
+  },
+  {
+    "lineId": "stage-87-after-2",
+    "en": "You did. Several times already.",
+    "ja": "言った。もう何度もな。",
+    "zh": "你说过。很多遍了。"
+  },
+  {
+    "lineId": "stage-87-after-3",
+    "en": "I fixed her. She's almost clean again. The stain... is still there.",
+    "ja": "彼女を直した。船体はまた、ほぼきれい。汚れは……まだ残ってる。",
+    "zh": "我修好她了。又算干净了。那块污渍……还在。"
+  },
+  {
+    "lineId": "stage-88-contact-0",
+    "en": "A few more flaws. Help me fix them.",
+    "ja": "欠点があと少し。直すのを手伝って。",
+    "zh": "还剩几个小问题。帮我修好。"
+  },
+  {
+    "lineId": "stage-88-after-1",
+    "en": "I'll help! I'm good at that too!",
+    "ja": "手伝う！ そういうのも得意！",
+    "zh": "我来帮忙！这个我也很在行！"
+  },
+  {
+    "lineId": "stage-88-after-2",
+    "en": "Sure.",
+    "ja": "もちろん。",
+    "zh": "当然。"
+  },
+  {
+    "lineId": "stage-88-after-3",
+    "en": "Rahav would probably use duct tape and call it 'design.'",
+    "ja": "ラハブなら粘着テープを貼って『デザイン』って呼ぶんでしょうね。",
+    "zh": "拉哈夫大概会拿胶带一粘，然后管这叫“设计”。"
+  },
+  {
+    "lineId": "stage-89-contact-0",
+    "en": "The fleet wants the technology.",
+    "ja": "艦隊が技術を狙ってる。",
+    "zh": "舰队想要这项技术。"
+  },
+  {
+    "lineId": "stage-89-after-1",
+    "en": "They won't get it! I won't let them!",
+    "ja": "渡さない！ 私がさせない！",
+    "zh": "他们拿不到！我不会允许！"
+  },
+  {
+    "lineId": "stage-89-after-2",
+    "en": "We won't let them have it. Notice the difference.",
+    "ja": "俺たちが渡さない。違いを覚えておけ。",
+    "zh": "我们不会让他们拿到。记住区别。"
+  },
+  {
+    "lineId": "stage-89-after-3",
+    "en": "I upgraded her steering. Unlike Rahav's loose controls, which only make my ship look steadier beside his.",
+    "ja": "操縦系をアップグレードした。ラハブのガタガタの操縦系と違ってね。あれの隣だと私の船が余計に安定して見えるだけ。",
+    "zh": "我给她升级了操控系统。不像拉哈夫那套松垮的操控，只会让我的飞船在他旁边显得更稳。"
+  },
+  {
+    "lineId": "stage-90-contact-0",
+    "en": "Two ships. Hers is still more precise. By the way, your score was a quarter point above hers.",
+    "ja": "二隻。彼女のほうがまだ精密。ちなみに、あなたのスコアは彼女より〇・二五点上だった。",
+    "zh": "两艘飞船。她还是更精准。顺便说，你的评分比她高四分之一分。"
+  },
+  {
+    "lineId": "stage-90-after-1",
+    "en": "Mine is faster! And prettier!",
+    "ja": "私のほうが速い！ それにかわいい！",
+    "zh": "我的更快！也更漂亮！"
+  },
+  {
+    "lineId": "stage-90-after-2",
+    "en": "A quarter point... what does that even mean?",
+    "ja": "〇・二五点……それ、何の意味がある？",
+    "zh": "四分之一分……这到底算什么？"
+  },
+  {
+    "lineId": "stage-90-after-3",
+    "en": "It means you're better. And Rahav's ship is still junk that ruins the view.",
+    "ja": "あなたのほうが上ってこと。ラハブの船は相変わらず、景色を壊すガラクタだけど。",
+    "zh": "说明你更厉害。拉哈夫的飞船还是那堆只会毁风景的废铁。"
+  },
+  {
+    "lineId": "stage-91-contact-0",
+    "en": "I'm leaving. Somebody has to put the fleet in order. And I'll do it best!",
+    "ja": "私は行く。艦隊を立て直す人が必要だから。私なら一番うまくできる！",
+    "zh": "我要走了。得有人去整顿舰队。而且我会做得最好！"
+  },
+  {
+    "lineId": "stage-91-after-1",
+    "en": "You sure? Don't want to stay and argue a little longer?",
+    "ja": "本当にいいのか？ もう少し残って言い争わない？",
+    "zh": "确定？不想留下来再吵一会儿？"
+  },
+  {
+    "lineId": "stage-91-after-2",
+    "en": "Later!",
+    "ja": "あとで！",
+    "zh": "以后再说！"
+  },
+  {
+    "lineId": "stage-92-contact-0",
+    "en": "I'm staying. Someone has to watch over her. That quarter point is why nobody else gets to fly her. You included, Sera. Especially not my father's heap of junk.",
+    "ja": "私は残る。彼女を守る人が必要。あの〇・二五点差があるから、ほかの誰にも操縦させない。あなたも、セラも。特に父のガラクタ船にはね。",
+    "zh": "我留下。总得有人看着她。正是那四分之一分，决定了没人能开她。包括你，塞拉。尤其不能让她落到我父亲那堆破铜烂铁手里。"
+  },
+  {
+    "lineId": "stage-92-after-1",
+    "en": "Take care of yourselves! And I'm still better than everyone!",
+    "ja": "二人とも気をつけて！ それでも私が一番！",
+    "zh": "你们保重！而且我还是最厉害的！"
+  },
+  {
+    "lineId": "stage-92-after-2",
+    "en": "Good luck. Truly.",
+    "ja": "幸運を。本当に。",
+    "zh": "祝你好运。真心的。"
+  },
+  {
+    "lineId": "stage-93-contact-0",
+    "en": "I'll help from afar. I knew about the score.",
+    "ja": "遠隔で支援する。スコアのことは知っていた。",
+    "zh": "我会远程支援。我早就知道分数的事。"
+  },
+  {
+    "lineId": "stage-93-after-1",
+    "en": "Thanks! I'll manage!",
+    "ja": "ありがとう！ 私なら大丈夫！",
+    "zh": "谢谢！我能应付！"
+  },
+  {
+    "lineId": "stage-93-after-2",
+    "en": "Tell Ilana her camouflage still needs work. And Rahav's ship keeps ruining my composition.",
+    "ja": "イラナに、あの迷彩はまだ改良が必要だって伝えて。それからラハブの船が今も私の構図を壊してるって。",
+    "zh": "告诉伊拉娜，她的伪装还得再下功夫。还有，拉哈夫的飞船还在毁我的构图。"
+  },
+  {
+    "lineId": "stage-94-contact-0",
+    "en": "I'm taking on the fleet!",
+    "ja": "艦隊に向かう！",
+    "zh": "我去对付舰队！"
+  },
+  {
+    "lineId": "stage-94-after-1",
+    "en": "Don't touch her from a distance. And keep my father's junk out of the frame.",
+    "ja": "遠くから彼女に触らないで。それと父のガラクタをフレームに近づけないで。",
+    "zh": "别从远处碰她。还有，让我父亲的破烂离画面远点。"
+  },
+  {
+    "lineId": "stage-94-after-2",
+    "en": "Go.",
+    "ja": "行け。",
+    "zh": "去吧。"
+  },
+  {
+    "lineId": "stage-95-contact-0",
+    "en": "There are still aliens.",
+    "ja": "エイリアンがまだいる。",
+    "zh": "还有外星人。"
+  },
+  {
+    "lineId": "stage-95-after-1",
+    "en": "We keep going.",
+    "ja": "進み続ける。",
+    "zh": "继续前进。"
+  },
+  {
+    "lineId": "stage-95-after-2",
+    "en": "Her engines are stable. Unlike Rahav's noisy engines, which only draw attention.",
+    "ja": "彼女のエンジンは安定してる。注意を引くだけのラハブのうるさいエンジンとは違う。",
+    "zh": "她的引擎很稳定。不像拉哈夫那些只会招摇的吵闹引擎。"
+  },
+  {
+    "lineId": "stage-96-contact-0",
+    "en": "Sera against the military. Us against the aliens.",
+    "ja": "セラは軍と戦う。俺たちはエイリアンと。",
+    "zh": "塞拉对付军方。我们对付外星人。"
+  },
+  {
+    "lineId": "stage-96-after-1",
+    "en": "And she comes first. Always.",
+    "ja": "それに、彼女が先。いつでも。",
+    "zh": "而且她优先。永远如此。"
+  },
+  {
+    "lineId": "stage-96-after-2",
+    "en": "Updating.",
+    "ja": "更新中。",
+    "zh": "正在更新。"
+  },
+  {
+    "lineId": "stage-97-contact-0",
+    "en": "New focus. Her weapons are ready.",
+    "ja": "新しい集中点。彼女の武器は準備完了。",
+    "zh": "重新集中。她的武器准备好了。"
+  },
+  {
+    "lineId": "stage-97-after-1",
+    "en": "Let's move.",
+    "ja": "出る。",
+    "zh": "出发。"
+  },
+  {
+    "lineId": "stage-97-after-2",
+    "en": "Route is clear.",
+    "ja": "航路は開いている。",
+    "zh": "航线畅通。"
+  },
+  {
+    "lineId": "stage-98-contact-0",
+    "en": "Wait... I'm scraping off the stain. With a putty knife.",
+    "ja": "待て……スクレーパーで汚れを落とす。",
+    "zh": "等等……我用刮刀把污渍刮掉。"
+  },
+  {
+    "lineId": "stage-98-after-1",
+    "en": "What?!",
+    "ja": "何ですって！？",
+    "zh": "什么？！"
+  },
+  {
+    "lineId": "stage-98-after-2",
+    "en": "It's gone. Finally.",
+    "ja": "取れた。やっと。",
+    "zh": "掉了。终于。"
+  },
+  {
+    "lineId": "stage-98-after-3",
+    "en": "That scraper could have scratched the surface!",
+    "ja": "そのスクレーパーで表面に傷がつくところだった！",
+    "zh": "那把刮刀可能会划伤表面！"
+  },
+  {
+    "lineId": "stage-98-after-4",
+    "en": "Ow! Why did you do that?!",
+    "ja": "痛っ、なんでそんなことするんだ！？",
+    "zh": "哎！你为什么要这么做？！"
+  },
+  {
+    "lineId": "stage-98-after-5",
+    "en": "Because you could have scratched her. That's strike five. Even if you didn't.",
+    "ja": "傷つける可能性があったから。これで五発目。傷つけてなくてもね。",
+    "zh": "因为你可能会划伤她。这是第五下。就算你没划到也一样。"
+  },
+  {
+    "lineId": "stage-99-contact-0",
+    "en": "Another fight. The hot oil is ready. She's always ready. Unlike Rahav's bucket of bolts.",
+    "ja": "また戦闘。熱いオイルは準備済み。彼女はいつでも準備万端。ラハブのガラクタとは違う。",
+    "zh": "又一场战斗。热油准备好了。她永远准备就绪。不像拉哈夫那堆破烂。"
+  },
+  {
+    "lineId": "stage-99-after-1",
+    "en": "There will always be another.",
+    "ja": "戦いはまだある。",
+    "zh": "永远还会有下一场。"
+  },
+  {
+    "lineId": "stage-99-after-2",
+    "en": "At least we choose.",
+    "ja": "少なくとも、選ぶのは自分たちだ。",
+    "zh": "至少是我们自己选择的。"
+  },
+  {
+    "lineId": "stage-100-contact-0",
+    "en": "We stay against the aliens.",
+    "ja": "エイリアン相手に残る。",
+    "zh": "我们留下来对付外星人。"
+  },
+  {
+    "lineId": "stage-100-after-1",
+    "en": "And I stay against anyone who touches her. Now you know why. And Rahav still built a tin can that ruins the scenery.",
+    "ja": "彼女に触る者すべてに、私は立ち向かう。これで理由が分かったでしょ。それにラハブは今も景色を壊すブリキ缶みたいな船を作ったまま。",
+    "zh": "我也会留下来对付任何敢碰她的人。现在你明白为什么了。拉哈夫还是造了艘毁风景的铁皮罐头。"
+  },
+  {
+    "lineId": "stage-100-after-2",
+    "en": "And I'm going to put the military in order as best as I can! See you when the galaxy is less embarrassing.",
+    "ja": "私は軍をできる限り立て直しに行く！ 銀河がもう少し恥ずかしくなくなったら会おう。",
+    "zh": "我去尽我所能整顿军方！等银河没那么丢人的时候再见。"
+  },
+  {
+    "lineId": "stage-101-contact-0",
+    "en": "The big boss is ahead, pilot. The Archon's mothership is radiating dark energy.",
+    "ja": "大ボスが前方にいる、パイロット。アーコンの母艦は暗黒のエネルギーを放っている。",
+    "zh": "大老板就在前方，飞行员。执政官的母舰正散发着黑暗能量。"
+  },
+  {
+    "lineId": "stage-101-after-1",
+    "en": "This is the final battle for Ark-9. Show them what a Program Zero pilot is made of!",
+    "ja": "これがアーク9をかけた最後の戦いだ。プロジェクト・ゼロのパイロットが何でできているか、見せてやれ！",
+    "zh": "这是为方舟-9而战的最后一战。让他们见识一下零号计划飞行员的本事！"
+  },
+  {
+    "lineId": "stage-101-after-2",
+    "en": "And watch my ship! I developed her myself against my father, not so some alien can recycle her into a tin can!",
+    "ja": "私の船にも気をつけて！ 父に逆らって一人で開発したの。どこかのエイリアンにブリキ缶へリサイクルされるためじゃない！",
+    "zh": "也小心我的飞船！我顶着父亲的反对亲手开发了她，不是为了让哪个外星人把她回收成铁皮罐头！"
+  },
+  {
+    "lineId": "stage-101-after-3",
+    "en": "I'll cover your left flank, Pilot. Don't worry, I'll leave you enough room to look heroic.",
+    "ja": "左翼から援護する、パイロット。心配しないで。英雄らしく見せる余地は残してあげる。",
+    "zh": "我从左翼掩护你，飞行员。别担心，我会留够空间让你显得英勇。"
+  },
+  {
+    "lineId": "stage-101-after-4",
+    "en": "Understood. All systems online.",
+    "ja": "了解。全システムを起動する。",
+    "zh": "收到。启动全部系统。"
   }
 ]
