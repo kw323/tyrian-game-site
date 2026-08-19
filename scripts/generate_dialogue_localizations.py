@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""Generate Japanese and Simplified Chinese subtitles for every authored voice line.
+"""Generate canonical multilingual dialogue from the Hebrew story source.
 
-The source line IDs are the canonical dialogue/voice sequence. Output is resumable so
-an interrupted run never discards already validated translations.
+Each line in english_voice_lines.json has a stable lineId and Hebrew text authored for the
+campaign. Hebrew is the authoritative plot and speaker source. English, Japanese, and
+Simplified Chinese are regenerated from that Hebrew line so subtitles and voice-over
+always describe the same event in the same sequence.
 """
 from __future__ import annotations
 
@@ -17,7 +19,7 @@ from openai import OpenAI
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "english_voice_lines.json"
 OUTPUT = ROOT / "client/src/game/story/locales/dialogue.voice-lines.json"
-CHUNK_SIZE = 18
+CHUNK_SIZE = 10
 MODEL = "gpt-5-mini"
 
 
@@ -28,9 +30,9 @@ def load_json(path: Path, fallback: Any) -> Any:
         return json.load(handle)
 
 
-def write_output(entries: dict[str, dict[str, str]]) -> None:
+def write_output(entries: dict[str, dict[str, str]], source_ids: list[str]) -> None:
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    ordered = [entries[line_id] for line_id in sorted(entries)]
+    ordered = [entries[line_id] for line_id in source_ids]
     with OUTPUT.open("w", encoding="utf-8") as handle:
         json.dump(ordered, handle, ensure_ascii=False, indent=2)
         handle.write("\n")
@@ -40,16 +42,16 @@ def translate_chunk(client: OpenAI, chunk: list[dict[str, Any]]) -> list[dict[st
     payload = [
         {
             "lineId": item["lineId"],
+            "stage": item["stage"],
             "speaker": item["speaker"],
-            "english": item["text"],
-            "hebrewReference": item.get("heText", ""),
+            "hebrew": item["heText"],
         }
         for item in chunk
     ]
     schema = {
         "type": "json_schema",
         "json_schema": {
-            "name": "dialogue_translations",
+            "name": "canonical_dialogue_translations",
             "strict": True,
             "schema": {
                 "type": "object",
@@ -60,10 +62,11 @@ def translate_chunk(client: OpenAI, chunk: list[dict[str, Any]]) -> list[dict[st
                             "type": "object",
                             "properties": {
                                 "lineId": {"type": "string"},
+                                "en": {"type": "string"},
                                 "ja": {"type": "string"},
                                 "zh": {"type": "string"},
                             },
-                            "required": ["lineId", "ja", "zh"],
+                            "required": ["lineId", "en", "ja", "zh"],
                             "additionalProperties": False,
                         },
                     }
@@ -74,23 +77,30 @@ def translate_chunk(client: OpenAI, chunk: list[dict[str, Any]]) -> list[dict[st
         },
     }
     prompt = (
-        "Translate every supplied game dialogue line into natural Japanese and natural Simplified Chinese. "
-        "This is a fast pre-mission space-radio exchange in the game PROTECT THE STARSHIP. "
-        "Keep each translation concise, expressive, culturally natural, and faithful to the speaker's personality. "
-        "Use the Hebrew reference only to resolve meaning if English is generic or repetitive; do not output Hebrew. "
-        "Preserve named characters and proper nouns appropriately. Do not add narration, labels, or explanations. "
-        "Return every lineId exactly once.\n\nSOURCE LINES:\n"
+        "The Hebrew dialogue below is the canonical story source for PROTECT THE STARSHIP. "
+        "For every line, create one English, one Japanese, and one Simplified Chinese localization. "
+        "The three translations must preserve the exact story meaning, intent, speaker identity, and line-by-line sequence of the Hebrew source. "
+        "Do not use, infer from, or preserve any older English script. Adapt naturally for each culture, but never add facts, threats, jokes, or emotional beats absent from Hebrew. "
+        "This is concise spoken space-radio dialogue: retain the line's brevity and personality. "
+        "Keep proper names and Program Zero consistent. Return each lineId exactly once and output no narration or explanations.\n\n"
+        "CANONICAL HEBREW LINES:\n"
         + json.dumps(payload, ensure_ascii=False)
     )
     response = client.chat.completions.create(
         model=MODEL,
         messages=[
-            {"role": "system", "content": "You are a professional Japanese and Simplified Chinese game localization editor. Output only the requested JSON."},
+            {
+                "role": "system",
+                "content": "You are a meticulous professional game localization editor. Hebrew is the sole canonical source. Output only the requested JSON.",
+            },
             {"role": "user", "content": prompt},
         ],
-        max_completion_tokens=8000,
+        max_completion_tokens=12000,
         response_format=schema,
     )
+    if not response.choices:
+        error = getattr(response, "error", None) or "unknown provider error"
+        raise RuntimeError(f"The translation model returned no choices for this chunk: {error}")
     content = response.choices[0].message.content
     if not content:
         raise RuntimeError("The translation model returned an empty response.")
@@ -100,8 +110,9 @@ def translate_chunk(client: OpenAI, chunk: list[dict[str, Any]]) -> list[dict[st
     received = {item.get("lineId") for item in translations}
     if expected != received:
         raise RuntimeError(f"Translation IDs did not match the request. Missing={expected - received}; extra={received - expected}")
-    if any(not item["ja"].strip() or not item["zh"].strip() for item in translations):
-        raise RuntimeError("A translation was empty.")
+    for item in translations:
+        if any(not item[key].strip() for key in ("en", "ja", "zh")):
+            raise RuntimeError(f"An output translation was empty for {item['lineId']}.")
     return translations
 
 
@@ -109,33 +120,38 @@ def main() -> int:
     source = load_json(SOURCE, [])
     if not isinstance(source, list) or not source:
         raise RuntimeError("Voice dialogue source is empty or invalid.")
-    source_ids = [item["lineId"] for item in source]
+    source_ids = [item.get("lineId") for item in source]
+    if any(not isinstance(line_id, str) or not line_id for line_id in source_ids):
+        raise RuntimeError("Voice dialogue source contains a missing line ID.")
     if len(source_ids) != len(set(source_ids)):
         raise RuntimeError("Voice dialogue source contains duplicate line IDs.")
+    missing_hebrew = [item["lineId"] for item in source if not isinstance(item.get("heText"), str) or not item["heText"].strip()]
+    if missing_hebrew:
+        raise RuntimeError(f"Hebrew canonical source is missing for: {', '.join(missing_hebrew)}")
 
-    existing_list = load_json(OUTPUT, [])
-    translated: dict[str, dict[str, str]] = {
+    existing = load_json(OUTPUT, [])
+    canonical: dict[str, dict[str, str]] = {
         item["lineId"]: item
-        for item in existing_list
-        if isinstance(item, dict) and isinstance(item.get("lineId"), str)
-        and isinstance(item.get("ja"), str) and isinstance(item.get("zh"), str)
-        and item["ja"].strip() and item["zh"].strip()
+        for item in existing
+        if isinstance(item, dict)
+        and isinstance(item.get("lineId"), str)
+        and isinstance(item.get("en"), str) and item["en"].strip()
+        and isinstance(item.get("ja"), str) and item["ja"].strip()
+        and isinstance(item.get("zh"), str) and item["zh"].strip()
+        and item["lineId"] in source_ids
     }
-    pending = [item for item in source if item["lineId"] not in translated]
-    print(f"Dialogue translation status: {len(translated)}/{len(source)} complete; {len(pending)} pending.")
-    if not pending:
-        return 0
-
+    pending = [item for item in source if item["lineId"] not in canonical]
+    print(f"Canonical localization status: {len(canonical)}/{len(source)} complete; {len(pending)} pending.")
     client = OpenAI()
     for start in range(0, len(pending), CHUNK_SIZE):
         chunk = pending[start:start + CHUNK_SIZE]
         for attempt in range(1, 4):
             try:
-                output = translate_chunk(client, chunk)
-                for item in output:
-                    translated[item["lineId"]] = item
-                write_output(translated)
-                print(f"Translated {min(start + len(chunk), len(pending))}/{len(pending)} pending dialogue lines.")
+                translations = translate_chunk(client, chunk)
+                for item in translations:
+                    canonical[item["lineId"]] = item
+                write_output(canonical, [line_id for line_id in source_ids if line_id in canonical])
+                print(f"Localized {len(canonical)}/{len(source)} canonical Hebrew lines.")
                 break
             except Exception as error:
                 if attempt == 3:
@@ -143,10 +159,10 @@ def main() -> int:
                 print(f"Chunk retry {attempt}/3 after error: {error}", file=sys.stderr)
                 time.sleep(attempt * 2)
 
-    if set(translated) != set(source_ids):
-        raise RuntimeError("Output does not contain exactly the voice dialogue source IDs.")
-    write_output(translated)
-    print(f"Wrote {len(translated)} dialogue translations to {OUTPUT}")
+    if set(canonical) != set(source_ids):
+        raise RuntimeError("Output does not contain exactly the Hebrew canonical source IDs.")
+    write_output(canonical, source_ids)
+    print(f"Wrote {len(canonical)} Hebrew-canonical localizations to {OUTPUT}")
     return 0
 
 

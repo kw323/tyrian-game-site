@@ -21,8 +21,10 @@ interface VoiceLineSource {
 
 interface LocalizedVoiceLine {
     lineId: string;
-    ja: string;
-    zh: string;
+    /** English is translated from Hebrew, the canonical campaign source. */
+    en?: string;
+    ja?: string;
+    zh?: string;
 }
 
 const CHARACTER_NAMES: Record<DialogueSpeaker, Record<DialogueLanguage, string>> = {
@@ -48,8 +50,8 @@ const linesByStage = (voiceLines as VoiceLineSource[]).reduce<Map<number, VoiceL
 
 function getDialogueMessage(line: VoiceLineSource, language: DialogueLanguage): string {
     if (language === 'he') return line.heText;
-    if (language === 'en') return line.text;
     const localized = localizedByLineId.get(line.lineId);
+    if (language === 'en') return localized?.en || line.text;
     return language === 'ja' ? (localized?.ja || line.text) : (localized?.zh || line.text);
 }
 

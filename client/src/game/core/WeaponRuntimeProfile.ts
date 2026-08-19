@@ -20,6 +20,29 @@ export interface WeaponRuntimeProfile {
     voidSuctionStrength?: number;
 }
 
+/**
+ * Split Bomb fragments always travel ahead of the player in a visible diagonal fan.
+ * The old radial pattern put fragments on vertical and backward trajectories, which
+ * made the weapon look like it split straight rather than opening into an attack cone.
+ */
+export function getHeavyFragmentAngles(fragmentCount: number, parentAngle = 0): number[] {
+    const count = Math.max(1, Math.floor(fragmentCount));
+    const fanWidth = 1.3; // ±37° at the outer edges: wide enough to read, never backward.
+
+    if (count === 1) return [parentAngle + 0.32];
+
+    return Array.from({ length: count }, (_, index) => {
+        const centered = index - (count - 1) / 2;
+        const directPath = Math.abs(centered) < 0.0001;
+        // Odd fragment counts would otherwise retain one straight fragment; nudge it
+        // to a shallow diagonal while keeping the full pattern nearly symmetric.
+        const offset = directPath
+            ? (index % 2 === 0 ? -1 : 1) * fanWidth / (2 * (count - 1))
+            : (centered / ((count - 1) / 2)) * fanWidth / 2;
+        return parentAngle + offset;
+    });
+}
+
 const clampLevel = (level: number): number => Math.max(0, Math.min(24, Math.floor(level)));
 const formatNumber = (value: number): string => Number.isInteger(value) ? String(value) : value.toFixed(1);
 

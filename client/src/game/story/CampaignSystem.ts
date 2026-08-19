@@ -51,15 +51,15 @@ interface ChapterDefinition {
 export class CampaignSystem {
     public static readonly TOTAL_STAGES = 101;
 
+    /** Local assets keep speaker portraits available in the offline Windows installation. */
     private static PORTRAIT_URLS: Record<CharacterId, string> = {
-        naomi: '/manus-storage/naomi-anime-v2_251aa177.png',
-        protagonist: '/manus-storage/pilot-anime-v2_d70cff53.png',
-        elena: '/manus-storage/character-elena-animated_dd6169d9.png',
-        sera: '/manus-storage/sera-anime-v2_b1c96d90.png',
-        ghost: '/manus-storage/ghost-anime-v2_43325ccc.png',
-        rahav: '/manus-storage/rahav-anime-portrait_280d5393.png',
-        // The Archon has no portrait asset yet; the dialogue console renders its callsign fallback.
-        archon: '/assets/archon-comms-fallback.png'
+        naomi: '/portraits/naomi.png',
+        protagonist: '/portraits/protagonist.png',
+        elena: '/portraits/elena.png',
+        sera: '/portraits/sera.png',
+        ghost: '/portraits/ghost.png',
+        rahav: '/portraits/rahav.png',
+        archon: '/portraits/archon.png'
     };
 
     private static CHARACTER_NAMES: Record<CharacterId, Record<GameplayLanguage, string>> = {

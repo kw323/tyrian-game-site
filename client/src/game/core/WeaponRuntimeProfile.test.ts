@@ -5,6 +5,7 @@ import { HomingBullet } from '../entities/HomingBullet';
 import { LaserBullet } from '../entities/LaserBullet';
 import { WeaponType, WeaponUpgradeSystem } from './WeaponUpgradeSystem';
 import {
+    getHeavyFragmentAngles,
     getWeaponRuntimeProfile,
     getWeaponUpgradeDescription,
     type RuntimeWeaponType
@@ -50,6 +51,19 @@ describe('Weapon runtime profile', () => {
             const missile = new HomingBullet(0, 0, 6, 6, profile.missileSpeed ?? 0, 10, 0, -100, null, profile.missileTurnSpeed);
             expect(missile.speed).toBe(profile.missileSpeed);
             expect(missile.turnSpeed).toBe(profile.missileTurnSpeed);
+        }
+    });
+
+    it('splits every Split Bomb payload into a forward diagonal fan', () => {
+        for (const level of [0, 14, 20, 24]) {
+            const fragmentCount = getWeaponRuntimeProfile('heavy', level).heavyFragmentCount ?? 0;
+            const angles = getHeavyFragmentAngles(fragmentCount);
+
+            expect(angles).toHaveLength(fragmentCount);
+            expect(angles.every((angle) => Math.abs(angle) > 0.001)).toBe(true);
+            expect(angles.every((angle) => Math.cos(angle) > 0)).toBe(true);
+            expect(angles.some((angle) => angle < 0)).toBe(true);
+            expect(angles.some((angle) => angle > 0)).toBe(true);
         }
     });
 

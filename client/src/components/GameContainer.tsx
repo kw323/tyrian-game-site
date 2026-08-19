@@ -13,7 +13,7 @@ import { EnemyAdvanced, EnemyShot } from '@/game/entities/EnemyAdvanced';
 import { EnemyBullet } from '@/game/entities/EnemyBullet';
 import { Explosion } from '@/game/entities/Explosion';
 import { WeaponUpgradeSystem, WeaponType } from '@/game/core/WeaponUpgradeSystem';
-import { getWeaponRuntimeProfile } from '@/game/core/WeaponRuntimeProfile';
+import { getHeavyFragmentAngles, getWeaponRuntimeProfile } from '@/game/core/WeaponRuntimeProfile';
 import { StarField } from '@/game/systems/StarField';
 import { InputManager } from '@/game/systems/InputManager';
 import { formatControlCode, loadControlBindings } from '@/game/systems/ControlSettings';
@@ -1460,8 +1460,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                                 hLevel,
                                 (splitX, splitY, level, baseDamage) => {
                                     const subDmg = Math.max(5, baseDamage * (0.38 + level * 0.022));
-                                    for (let fragmentIndex = 0; fragmentIndex < fragmentCount; fragmentIndex++) {
-                                        const dAng = (Math.PI * 2 * fragmentIndex) / fragmentCount;
+                                    const fragmentAngles = getHeavyFragmentAngles(fragmentCount, bulletData.angle || 0);
+                                    for (const dAng of fragmentAngles) {
                                         const smallBombCallback = cascadePellets > 0 ? (sx: number, sy: number, _sl: number, sd: number) => {
                                             for (let pelletIndex = 0; pelletIndex < cascadePellets; pelletIndex++) {
                                                 const pelletOffset = cascadePellets === 1 ? 0 : ((pelletIndex / (cascadePellets - 1)) - 0.5) * 0.7;

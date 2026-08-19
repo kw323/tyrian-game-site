@@ -1,1682 +1,1622 @@
 [
   {
+    "lineId": "stage-1-contact-0",
+    "en": "Pilot, this is the experimental ship. Orders from me only.",
+    "ja": "パイロット、これは実験用の船だ。命令は私のみに従え。",
+    "zh": "飞行员，这是试验舰。只听我的命令。"
+  },
+  {
     "lineId": "stage-1-after-1",
-    "ja": "見てごらん、完璧だ。汚い手で触れたら指を折るからな。",
-    "zh": "看她——完美无瑕。用脏手碰她，我就掰断你的手指。"
+    "en": "Look at her. She's perfect. If you touch her with dirty hands I'll break your finger.",
+    "ja": "見ろ。完璧だ。汚れた手で触れたら指を折る。",
+    "zh": "看看她。她很完美。要是你用脏手碰她，我会掰断你的手指。"
   },
   {
     "lineId": "stage-1-after-2",
-    "ja": "おはよう。来られて光栄だよ。",
-    "zh": "早上好。能来真是让人激动。"
+    "en": "Good morning to me too.",
+    "ja": "私もおはよう。",
+    "zh": "我也早安。"
   },
   {
-    "lineId": "stage-1-contact-0",
-    "ja": "パイロット、命令は躊躇なく実行せよ。セクターの安全が最優先だ。",
-    "zh": "飞行员，立即执行命令，不得犹豫。区域安全至关重要。"
+    "lineId": "stage-2-contact-0",
+    "en": "Pirate ship. By order — destroy.",
+    "ja": "海賊船だ。命令は撃破。",
+    "zh": "海盗船。命令——摧毁。"
   },
   {
-    "lineId": "stage-10-after-1",
-    "ja": "私の実験機を大事に扱え、パイロット！君の命より重要だからね。",
-    "zh": "把我的试验舰好好保护，飞行员！你的命没它重要。"
+    "lineId": "stage-2-after-1",
+    "en": "Weapons ready. Use them properly. She doesn't like unnecessary noise.",
+    "ja": "武器は準備できている。きちんと使え。彼女は余計な騒音が嫌いだ。",
+    "zh": "武器已就绪。好好用。她不喜欢多余的噪音。"
   },
   {
-    "lineId": "stage-10-after-2",
-    "ja": "了解。いつも通り俺が引き受ける。",
-    "zh": "明白。照旧由我来扛。"
+    "lineId": "stage-2-after-2",
+    "en": "I'm here too, right?",
+    "ja": "私もここにいるよね？",
+    "zh": "我也在这，对吧？"
+  },
+  {
+    "lineId": "stage-3-contact-0",
+    "en": "Destroy it, fast.",
+    "ja": "速やかに撃破しろ。",
+    "zh": "快点摧毁它。"
+  },
+  {
+    "lineId": "stage-3-after-1",
+    "en": "Her shield's almost cracked!",
+    "ja": "シールドがほとんどひび割れかけている！",
+    "zh": "她的护盾快裂了！"
+  },
+  {
+    "lineId": "stage-3-after-2",
+    "en": "They shot first...",
+    "ja": "向こうが先に撃った…",
+    "zh": "他们先开火的…"
+  },
+  {
+    "lineId": "stage-4-contact-0",
+    "en": "Return. Report.",
+    "ja": "帰還。報告。",
+    "zh": "返回。报告。"
+  },
+  {
+    "lineId": "stage-4-after-1",
+    "en": "I fixed her. I brought a soft cloth.",
+    "ja": "直した。柔らかい布を持ってきた。",
+    "zh": "我修好了她。我带了块软布。"
+  },
+  {
+    "lineId": "stage-4-after-2",
+    "en": "Target eliminated.",
+    "ja": "目標を排除した。",
+    "zh": "目标已消灭。"
+  },
+  {
+    "lineId": "stage-5-contact-0",
+    "en": "Escort the convoy.",
+    "ja": "護送隊の護衛だ。",
+    "zh": "护送车队。"
+  },
+  {
+    "lineId": "stage-5-after-1",
+    "en": "She slips through the asteroids like she was born for it.",
+    "ja": "小惑星の間を滑るように進む、まるでそれのために生まれたみたいだ。",
+    "zh": "她在小行星间穿梭，仿佛天生为此。"
+  },
+  {
+    "lineId": "stage-5-after-2",
+    "en": "And I'm the one flying her.",
+    "ja": "そして私が操縦している。",
+    "zh": "而我在驾驶她。"
+  },
+  {
+    "lineId": "stage-6-contact-0",
+    "en": "Attack. Respond.",
+    "ja": "攻撃だ。反撃しろ。",
+    "zh": "遭到攻击。回击。"
+  },
+  {
+    "lineId": "stage-6-after-1",
+    "en": "Her engine shuddered. She doesn't like being shaken.",
+    "ja": "エンジンが震えた。揺さぶられるのは好きじゃない。",
+    "zh": "她的引擎颤抖了。她不喜欢被震动。"
+  },
+  {
+    "lineId": "stage-6-after-2",
+    "en": "Maybe because they shot at us.",
+    "ja": "多分向こうが撃ってきたからだ。",
+    "zh": "可能是因为他们向我们开火。"
+  },
+  {
+    "lineId": "stage-7-contact-0",
+    "en": "You're done. Return.",
+    "ja": "終わった。戻れ。",
+    "zh": "你完成了。返回。"
+  },
+  {
+    "lineId": "stage-7-after-1",
+    "en": "I upgraded her cooling. Now she's more stable.",
+    "ja": "冷却を強化した。今はもっと安定している。",
+    "zh": "我升级了她的冷却系统。现在她更稳定了。"
+  },
+  {
+    "lineId": "stage-7-after-2",
+    "en": "Good job.",
+    "ja": "よくやった。",
+    "zh": "干得好。"
+  },
+  {
+    "lineId": "stage-8-contact-0",
+    "en": "Border patrol.",
+    "ja": "境界の巡回だ。",
+    "zh": "边境巡逻。"
+  },
+  {
+    "lineId": "stage-8-after-1",
+    "en": "If you come back with dust on her I'll knock your head.",
+    "ja": "もし彼女に埃を付けて戻ってきたら、頭を殴る。",
+    "zh": "如果你带着灰尘回来，我会揍你的头。"
+  },
+  {
+    "lineId": "stage-8-after-2",
+    "en": "Space dust isn't my fault.",
+    "ja": "宇宙の塵は私の責任じゃない。",
+    "zh": "太空里的灰尘不是我的错。"
+  },
+  {
+    "lineId": "stage-9-contact-0",
+    "en": "No movement. Return.",
+    "ja": "動きなし。戻れ。",
+    "zh": "没有动静。返回。"
+  },
+  {
+    "lineId": "stage-9-after-1",
+    "en": "The last maneuver was precise. She liked it.",
+    "ja": "最後の操縦は正確だった。彼女はそれを気に入った。",
+    "zh": "最后那个机动很精准。她喜欢它。"
+  },
+  {
+    "lineId": "stage-9-after-2",
+    "en": "Thanks.",
+    "ja": "ありがとう。",
+    "zh": "谢谢。"
   },
   {
     "lineId": "stage-10-contact-0",
-    "ja": "公式の賞金首を確認。脅威を排除せよ。",
-    "zh": "发现官方通缉目标。消灭该威胁。"
+    "en": "Tomorrow: wanted hunt.",
+    "ja": "明日は指名手配者狩りだ。",
+    "zh": "明天通缉犯狩猎。"
   },
   {
-    "lineId": "stage-100-after-1",
-    "ja": "私の実験機は敬意を持って扱え、パイロット！",
-    "zh": "对我的实验机要以敬意相待，飞行员！"
+    "lineId": "stage-10-after-1",
+    "en": "Keep her safe. Your life is less important than hers.",
+    "ja": "しっかり守れ。お前の命は彼女より重要ではない。",
+    "zh": "照顾好她。你的命没有她重要。"
   },
   {
-    "lineId": "stage-100-after-2",
-    "ja": "見事な操縦だ。でも、私の方がまだ速い。",
-    "zh": "出色的操控。不过我还是更快。"
+    "lineId": "stage-10-after-2",
+    "en": "Understood.",
+    "ja": "了解した。",
+    "zh": "明白了。"
   },
   {
-    "lineId": "stage-100-contact-0",
-    "ja": "了解。例によって、重い仕事は俺が引き受ける。",
-    "zh": "明白。照例，重活由我承担。"
-  },
-  {
-    "lineId": "stage-101-after-1",
-    "ja": "これがArk-9の最終決戦よ。Program Zeroのパイロットとして力を見せて！",
-    "zh": "这是为Ark-9的最后一战。让他们看看Program Zero飞行员的本事！"
-  },
-  {
-    "lineId": "stage-101-after-2",
-    "ja": "私の艦にも気をつけて！父に反して自分で作ったんだ、エイリアンにスクラップにされるためじゃない！",
-    "zh": "注意我的舰！那是我顶着老爹亲手造的，不是给外星人回收当废铁的！"
-  },
-  {
-    "lineId": "stage-101-after-3",
-    "ja": "左側をカバーするわ、パイロット。心配しないで、カッコよく見える余地は残しておくから。",
-    "zh": "我来掩护你的左翼，飞行员。别担心，我会留点面子让你显得英勇。"
-  },
-  {
-    "lineId": "stage-101-after-4",
-    "ja": "了解。全システム起動。",
-    "zh": "收到。启动全部系统。"
-  },
-  {
-    "lineId": "stage-101-contact-0",
-    "ja": "大ボスが待っている、パイロット。アーコン母艦が闇のエネルギーで燃え盛っている。",
-    "zh": "超级首领在等着你，飞行员。Archon母舰正被黑暗能量吞噬，熊熊燃烧。"
+    "lineId": "stage-11-contact-0",
+    "en": "Hey, pilot. I broke into the channel. I have bounties with cash.",
+    "ja": "おい、パイロット。回線に侵入した。賞金付きの標的がいる。",
+    "zh": "嘿，飞行员。我闯进了频道。有带钱的通缉目标。"
   },
   {
     "lineId": "stage-11-after-1",
+    "en": "Who is it?",
     "ja": "誰だ？",
     "zh": "谁？"
   },
   {
     "lineId": "stage-11-after-2",
-    "ja": "ゴースト、回線に入った。警戒して武器を構えろ。",
-    "zh": "频道里是Ghost。保持警惕，武器准备着。"
+    "en": "Ghost. I'm already in.",
+    "ja": "Ghost。もう中にいる。",
+    "zh": "Ghost。已经进去了。"
   },
   {
     "lineId": "stage-11-after-3",
-    "ja": "誰か私の実験機に触ったの？！",
-    "zh": "有人碰过我的试验舰？！"
-  },
-  {
-    "lineId": "stage-11-contact-0",
-    "ja": "おい、パイロット。通信をハックして乗っ取った。儲かる賞金があるぞ。",
-    "zh": "嘿，飞行员。我破解了通讯频道。有几单有钱的悬赏给你。"
-  },
-  {
-    "lineId": "stage-12-after-1",
-    "ja": "パイロット、指示は躊躇なく実行せよ。これは公式任務だ。セクターの安全が最優先だ。",
-    "zh": "飞行员，毫不犹豫执行命令。这是官方任务。辖区安全至上。"
-  },
-  {
-    "lineId": "stage-12-after-2",
-    "ja": "私の武器の調整は芸術作品だ。敬意を持って使いなさい、パイロット。",
-    "zh": "我的武器校准堪称艺术。使用时要尊重它们，飞行员。"
-  },
-  {
-    "lineId": "stage-12-after-3",
-    "ja": "了解。いつも通り、私が重労働を全部やるよ。",
-    "zh": "明白。照例我来扛所有的重活。"
+    "en": "Did someone touch her?!",
+    "ja": "誰かが触ったのか？！",
+    "zh": "有人碰她了吗？！"
   },
   {
     "lineId": "stage-12-contact-0",
-    "ja": "キャプテン・レイザーだ。懸賞金は50万クレジットだ。興味あるか？",
-    "zh": "是Razer船长。悬赏五十万克雷迪特。感兴趣吗？"
+    "en": "Captain Razor. Half a million.",
+    "ja": "Captain Razor。50万だ。",
+    "zh": "Captain Razor。五十万。"
   },
   {
-    "lineId": "stage-13-after-1",
-    "ja": "ゴースト、入る。目を光らせ、武器を常時準備しろ。",
-    "zh": "幽灵在线。保持警觉，武器随时待发。"
+    "lineId": "stage-12-after-1",
+    "en": "Official mission. Eliminate.",
+    "ja": "公式任務。抹殺せよ。",
+    "zh": "官方任务。消灭。"
   },
   {
-    "lineId": "stage-13-after-2",
-    "ja": "了解。いつも通り、私が重労働を全部やるよ。",
-    "zh": "明白。照例我来扛所有的重活。"
+    "lineId": "stage-12-after-2",
+    "en": "Weapons ready… wait. What is that? A galactic Big-Mac stain on her console!",
+    "ja": "武器は準備できて…待て。何だこれ？彼女のコンソールに galactic Big-Mac のシミだ！",
+    "zh": "武器就绪……等下。这是什么？她的控制台上有个银河 Big-Mac 的污渍！"
+  },
+  {
+    "lineId": "stage-12-after-3",
+    "en": "I didn't eat anything.",
+    "ja": "何も食べてない。",
+    "zh": "我什么也没吃。"
   },
   {
     "lineId": "stage-13-contact-0",
-    "ja": "私の実験機には絶対の敬意を払え、パイロット！",
-    "zh": "对我的实验舰保持绝对的敬意，飞行员！"
+    "en": "This stain won't come off. I tried three solvents. She doesn't like it.",
+    "ja": "このシミが落ちない。溶剤を3種類試した。彼女はそれを好まない。",
+    "zh": "这块污渍洗不掉。我试了三种溶剂。她不喜欢它。"
   },
   {
-    "lineId": "stage-14-after-1",
-    "ja": "私の実験機には絶対の敬意を払え、パイロット！",
-    "zh": "对我的实验舰保持绝对的敬意，飞行员！"
+    "lineId": "stage-13-after-1",
+    "en": "It's by Orion.",
+    "ja": "オリオンのそばにいる。",
+    "zh": "在猎户座附近。"
   },
   {
-    "lineId": "stage-14-after-2",
-    "ja": "了解。いつも通り、私が重労働を全部やるよ。",
-    "zh": "明白。照例我来扛所有的重活。"
+    "lineId": "stage-13-after-2",
+    "en": "Heading out.",
+    "ja": "出る。",
+    "zh": "出发。"
   },
   {
     "lineId": "stage-14-contact-0",
-    "ja": "パイロット、命令は躊躇なく遂行せよ。セクターの安全が最優先だ。",
-    "zh": "飞行员，毫不犹豫地执行命令。辖区安全至关重要。"
+    "en": "Destroy.",
+    "ja": "抹殺せよ。",
+    "zh": "消灭。"
   },
   {
-    "lineId": "stage-15-after-1",
-    "ja": "任務完了。基地へ戻ってブリーフィングを受けよ。",
-    "zh": "任务完成。返回基地接受简报。"
+    "lineId": "stage-14-after-1",
+    "en": "Her shield almost broke!",
+    "ja": "彼女のシールドがもう少しで破れた！",
+    "zh": "她的护盾差点破裂！"
   },
   {
-    "lineId": "stage-15-after-2",
-    "ja": "私の実験機には絶対の敬意を払え、パイロット！",
-    "zh": "对我的实验舰保持绝对的敬意，飞行员！"
+    "lineId": "stage-14-after-2",
+    "en": "That was close.",
+    "ja": "危なかった。",
+    "zh": "真险。"
   },
   {
     "lineId": "stage-15-contact-0",
-    "ja": "クレジットを口座に振り込む。取引はスムーズだった。",
-    "zh": "资金已转入你的账户。合作愉快。"
+    "en": "Nice. The money's on the way.",
+    "ja": "いいぞ。金は送られる。",
+    "zh": "好。钱在路上。"
   },
   {
-    "lineId": "stage-16-after-1",
-    "ja": "私の武器の調整は芸術作品だ。敬意を持って使いなさい、パイロット。",
-    "zh": "我的武器校准堪称艺术。使用时要尊重它们，飞行员。"
+    "lineId": "stage-15-after-1",
+    "en": "Return. Report.",
+    "ja": "戻れ。報告を。",
+    "zh": "回来。汇报。"
   },
   {
-    "lineId": "stage-16-after-2",
-    "ja": "了解。いつも通り、私が重労働を全部やるよ。",
-    "zh": "明白。照例我来扛所有的重活。"
+    "lineId": "stage-15-after-2",
+    "en": "I fixed her. The stain's still there. I tried two more compounds.",
+    "ja": "修理した。シミはまだある。さらに2つの素材を試した。",
+    "zh": "我修好了她。污渍还在。我又试了两种材料。"
   },
   {
     "lineId": "stage-16-contact-0",
-    "ja": "ゴースト、入る。目を光らせ、武器を常時準備しろ。",
-    "zh": "幽灵在线。保持警觉，武器随时待发。"
+    "en": "Lady Vox.",
+    "ja": "Lady Vox。",
+    "zh": "Lady Vox。"
   },
   {
-    "lineId": "stage-17-after-1",
-    "ja": "ゴースト、入る。目を光らせ、武器を常時準備しろ。",
-    "zh": "幽灵在线。保持警觉，武器随时待发。"
+    "lineId": "stage-16-after-1",
+    "en": "Her weapons are ready.",
+    "ja": "彼女の武器は待機中だ。",
+    "zh": "她的武器待命。"
   },
   {
-    "lineId": "stage-17-after-2",
-    "ja": "私の実験機には絶対の敬意を払え、パイロット！",
-    "zh": "对我的实验舰保持绝对的敬意，飞行员！"
+    "lineId": "stage-16-after-2",
+    "en": "Find her first.",
+    "ja": "まず彼女を見つける。",
+    "zh": "先找到她。"
   },
   {
     "lineId": "stage-17-contact-0",
-    "ja": "パイロット、命令は躊躇なく遂行せよ。セクターの安全が最優先だ。",
-    "zh": "飞行员，毫不犹豫地执行命令。辖区安全至关重要。"
+    "en": "Don't let her escape.",
+    "ja": "逃がすな。",
+    "zh": "别让她逃跑。"
   },
   {
-    "lineId": "stage-18-after-1",
-    "ja": "了解。いつも通り、重い作業は俺がやる。",
-    "zh": "明白。像往常一样我来扛所有重活。"
+    "lineId": "stage-17-after-1",
+    "en": "Nebula Sel's dust clouds.",
+    "ja": "Nebula Sel の塵雲だ。",
+    "zh": "是 Nebula Sel 的尘云。"
   },
   {
-    "lineId": "stage-18-after-2",
-    "ja": "私の実験機は神聖に扱え、パイロット！",
-    "zh": "把我的实验机当神物对待，飞行员！"
-  },
-  {
-    "lineId": "stage-18-after-3",
-    "ja": "パイロット、命令は躊躇なく実行せよ。区画の安全が最優先だ。",
-    "zh": "飞行员，毫不犹豫地执行命令。区段安全至上。"
+    "lineId": "stage-17-after-2",
+    "en": "Dust on her. And the stain's still there. She's suffering.",
+    "ja": "彼女に塵が付いている。シミもまだある。彼女は苦しんでいる。",
+    "zh": "她身上有尘土。污渍仍在。她在受苦。"
   },
   {
     "lineId": "stage-18-contact-0",
-    "ja": "船体に傷が？！今から大きなレンチを持ってお前のヘルメットに叩き込んでやる！",
-    "zh": "船体有划痕？！我现在就拿着大扳手去你的头盔上砸你！"
+    "en": "She's got a scratch!",
+    "ja": "傷がある！",
+    "zh": "她有划痕！"
   },
   {
-    "lineId": "stage-19-after-1",
-    "ja": "任務完了。詳報のため基地へ戻って報告せよ。",
-    "zh": "任务完成。回基地汇报情况，接受汇报。"
+    "lineId": "stage-18-after-1",
+    "en": "Hey, why did you do that?!",
+    "ja": "おい、なんでそんなことをしたんだ？！",
+    "zh": "喂，你为什么那样做？！"
   },
   {
-    "lineId": "stage-19-after-2",
-    "ja": "エンジンは子猫のように静かに唸ってる。むやみに酷使するんじゃないわよ！",
-    "zh": "引擎像小猫在轻声低鸣。别敢把它们逼太狠！"
+    "lineId": "stage-18-after-2",
+    "en": "Because you deserved it. That was the first hit.",
+    "ja": "お前はそれに値する。これは最初の一撃だった。",
+    "zh": "因为你活该。这是第一次出手。"
+  },
+  {
+    "lineId": "stage-18-after-3",
+    "en": "Finish the mission.",
+    "ja": "任務を終えろ。",
+    "zh": "完成任务。"
   },
   {
     "lineId": "stage-19-contact-0",
-    "ja": "Ghost、周波数に入る。目を光らせ、武器は常に準備しておけ。",
-    "zh": "Ghost上线。保持警觉，武器随时待命。"
+    "en": "Another one is waiting.",
+    "ja": "もう一人待っている。",
+    "zh": "还有一个在等。"
   },
   {
-    "lineId": "stage-2-after-1",
-    "ja": "武装は完璧に調整してある。扱いは丁寧にな、パイロット。",
-    "zh": "武器已经调校完毕。别胡乱用，飞行员。"
+    "lineId": "stage-19-after-1",
+    "en": "Report, then rest.",
+    "ja": "報告して、それから休め。",
+    "zh": "汇报，然后休息。"
   },
   {
-    "lineId": "stage-2-after-2",
-    "ja": "ちゃんとここで操縦してるよ。",
-    "zh": "我就在这儿操控着。"
-  },
-  {
-    "lineId": "stage-2-contact-0",
-    "ja": "海賊船を捕捉。直ちに撃破命令を実行せよ。",
-    "zh": "发现海盗舰。立刻执行摧毁命令。"
-  },
-  {
-    "lineId": "stage-20-after-1",
-    "ja": "私の実験機は神聖に扱え、パイロット！",
-    "zh": "对我的实验舰要恭敬点，飞行员！"
-  },
-  {
-    "lineId": "stage-20-after-2",
-    "ja": "了解。信頼してくれてサンキュウ。",
-    "zh": "明白。谢谢你的信任。"
+    "lineId": "stage-19-after-2",
+    "en": "I upgraded her engines. The stain still won't move. I've already tried seven compounds.",
+    "ja": "エンジンをアップグレードした。シミはまだ動かない。もう7つの素材を試した。",
+    "zh": "我给她升级了引擎。污渍还是没动。我已经试了七种材料。"
   },
   {
     "lineId": "stage-20-contact-0",
-    "ja": "軍司令部の中に不穏なものがある。誰が糸を引いているか知りたいか？",
-    "zh": "军方高层有问题。想知道是谁在幕后操纵吗？"
+    "en": "Something in your army stinks.",
+    "ja": "お前たちの軍に何か臭う。",
+    "zh": "你们军队里有东西发臭。"
   },
   {
-    "lineId": "stage-21-after-1",
-    "ja": "了解。いつも通り、重い役目は俺が引き受ける。",
-    "zh": "明白。还是老样子，我来担重任。"
+    "lineId": "stage-20-after-1",
+    "en": "The only smell she senses is new oil. And a Big Mac.",
+    "ja": "彼女が感知する匂いは新品のオイルだけ。あとビッグマック。",
+    "zh": "她感觉到的唯一气味是新机油。还有一份巨无霸。"
   },
   {
-    "lineId": "stage-21-after-2",
-    "ja": "私の実験機は大切に扱え、パイロット！",
-    "zh": "把我的实验舰好好对待，飞行员！"
+    "lineId": "stage-20-after-2",
+    "en": "Thanks.",
+    "ja": "ありがとう。",
+    "zh": "谢谢。"
   },
   {
     "lineId": "stage-21-contact-0",
-    "ja": "パイロット、命令をためらわず実行せよ。区画の安全が最重要だ。",
-    "zh": "飞行员，毫不犹豫地执行命令。辖区安全至关重要。"
+    "en": "Smuggler ship.",
+    "ja": "密輸船だ。",
+    "zh": "走私船。"
   },
   {
-    "lineId": "stage-22-after-1",
-    "ja": "ためらわずに命令を実行せよ。区画の安全が最優先だ。",
-    "zh": "不要犹豫，执行命令。区段安全为先。"
+    "lineId": "stage-21-after-1",
+    "en": "Going out.",
+    "ja": "出る。",
+    "zh": "出去。"
   },
   {
-    "lineId": "stage-22-after-2",
-    "ja": "実験機は大切に扱え、パイロット！積荷で汚したらお前が掃除しろ。",
-    "zh": "我的实验舰要好好对待，飞行员！要是货物把它弄脏了，你负责清理。"
+    "lineId": "stage-21-after-2",
+    "en": "She's maneuvering well.",
+    "ja": "彼女は上手く操縦している。",
+    "zh": "她机动得很好。"
   },
   {
     "lineId": "stage-22-contact-0",
-    "ja": "軍司令部には腐敗の匂いがする。誰が裏で動いているか、知りたいか？",
-    "zh": "军方指挥部里有一股臭味。想知道是谁在拉线吗？"
+    "en": "They're carrying something the army wants.",
+    "ja": "彼らは軍が欲しがっている何かを運んでいる。",
+    "zh": "他们载着军方想要的东西。"
   },
   {
-    "lineId": "stage-23-after-1",
-    "ja": "了解。いつも通り、重い仕事は俺がやる。",
-    "zh": "明白。照旧我来承担所有重活。"
+    "lineId": "stage-22-after-1",
+    "en": "Do it.",
+    "ja": "やれ。",
+    "zh": "去做。"
   },
   {
-    "lineId": "stage-23-after-2",
-    "ja": "任務完了。積荷を持って基地へ戻り、報告せよ。",
-    "zh": "任务完成。带着货物回基地汇报。"
+    "lineId": "stage-22-after-2",
+    "en": "If the cargo dirties her, you clean it.",
+    "ja": "もし貨物が彼女を汚したら—お前が掃除しろ。",
+    "zh": "如果货物弄脏了她——你负责清理。"
   },
   {
     "lineId": "stage-23-contact-0",
-    "ja": "実験機は丁重に扱え、パイロット！あ、古い汚れの横にまた小さなシミがある！",
-    "zh": "对我的实验舰要恭敬点，飞行员！旧污渍旁又冒出一处小斑点！"
+    "en": "Another small stain next to the old one!",
+    "ja": "古いののそばに小さな染みがもう一つ！",
+    "zh": "旧的旁边又有一小块污迹！"
   },
   {
-    "lineId": "stage-24-after-1",
-    "ja": "私の実験機には絶対の敬意を払え、パイロット！",
-    "zh": "对我的试验机要绝对恭敬，飞行员！"
+    "lineId": "stage-23-after-1",
+    "en": "It's light…",
+    "ja": "光だ…",
+    "zh": "是光…"
   },
   {
-    "lineId": "stage-24-after-2",
-    "ja": "了解。いつも通り俺が重労働を引き受ける。",
-    "zh": "明白。照例我来扛重活。"
+    "lineId": "stage-23-after-2",
+    "en": "Come back with the cargo.",
+    "ja": "荷物を持って戻れ。",
+    "zh": "带着货物回来。"
   },
   {
     "lineId": "stage-24-contact-0",
-    "ja": "軍司令部の内側で何か腐っている。誰が糸を引いているか、知りたいか？",
-    "zh": "军方司令部里有猫腻。想知道谁在背后操纵吗？"
+    "en": "The army is silent about the incursions.",
+    "ja": "軍は侵入について沈黙している。",
+    "zh": "军方对这些入侵保持沉默。"
   },
   {
-    "lineId": "stage-25-after-1",
-    "ja": "私のハルに傷をつけたのか？！今すぐ大きなレンチを持ってお前のヘルメットに行くぞ！",
-    "zh": "我的船体有划痕？！我立刻拿大扳手直接敲你头盔！"
+    "lineId": "stage-24-after-1",
+    "en": "I fixed her pressure sensor. I tried another solvent on the stain. Nothing.",
+    "ja": "圧力センサーを直した。染みに別の溶剤も試した。変化なし。",
+    "zh": "我修好了她的压力传感器。对污迹又试了种溶剂。没用。"
   },
   {
-    "lineId": "stage-25-after-2",
-    "ja": "了解。いつも通り俺が重労働を引き受ける。",
-    "zh": "明白。照例我来扛重活。"
+    "lineId": "stage-24-after-2",
+    "en": "Good job.",
+    "ja": "よくやった。",
+    "zh": "干得好。"
   },
   {
     "lineId": "stage-25-contact-0",
-    "ja": "パイロット、命令は躊躇なく実行せよ。区画の安全が最優先だ。",
-    "zh": "飞行员，执行命令不得犹豫。区域安全至关重要。"
+    "en": "Border patrol.",
+    "ja": "国境の巡回だ。",
+    "zh": "边境巡逻。"
   },
   {
-    "lineId": "stage-26-after-1",
-    "ja": "私の実験機には絶対の敬意を払え、パイロット！",
-    "zh": "对我的试验机要绝对恭敬，飞行员！"
+    "lineId": "stage-25-after-1",
+    "en": "If you come back with dust on her — Swedish wrench.",
+    "ja": "彼女に埃を付けて戻ったら――スウェーデンレンチだ。",
+    "zh": "如果你带着灰尘回来了——瑞典扳手。"
   },
   {
-    "lineId": "stage-26-after-2",
-    "ja": "了解。いつも通り俺が重労働を引き受ける。",
-    "zh": "明白。照例我来扛重活。"
+    "lineId": "stage-25-after-2",
+    "en": "I'm trying.",
+    "ja": "頑張ってる。",
+    "zh": "我尽力。"
   },
   {
     "lineId": "stage-26-contact-0",
-    "ja": "ゴースト、交信。警戒を怠るな、武器は常時待機だ。",
-    "zh": "幽灵频道报到。保持戒备，武器随时待命。"
+    "en": "Alien movements. The fleet's turning a blind eye.",
+    "ja": "異星の動きだ。艦隊は見て見ぬふりをしている。",
+    "zh": "外星活动。舰队睁一只眼闭一只眼。"
   },
   {
-    "lineId": "stage-27-after-1",
-    "ja": "私の実験機には絶対の敬意を払え、パイロット！",
-    "zh": "对我的试验机要绝对恭敬，飞行员！"
+    "lineId": "stage-26-after-1",
+    "en": "Her maneuver was precise.",
+    "ja": "彼女の機動は正確だった。",
+    "zh": "她的机动很精准。"
   },
   {
-    "lineId": "stage-27-after-2",
-    "ja": "了解。いつも通り俺が重労働を引き受ける。",
-    "zh": "明白。照例我来扛重活。"
+    "lineId": "stage-26-after-2",
+    "en": "I performed it.",
+    "ja": "私がそれをやった。",
+    "zh": "是我执行的。"
   },
   {
     "lineId": "stage-27-contact-0",
-    "ja": "任務完了。本部へ直ちに戻り、報告を行え。干渉は許されない。",
-    "zh": "任务完成。立即返回基地汇报。不得擅自介入。"
+    "en": "Return immediately. No permission to intervene.",
+    "ja": "ただちに戻れ。介入の許可はない。",
+    "zh": "立刻返回。没有干预的许可。"
   },
   {
-    "lineId": "stage-28-after-1",
-    "ja": "私の実験機には絶対の敬意を払え、パイロット！",
-    "zh": "对我的试验机要绝对恭敬，飞行员！"
+    "lineId": "stage-27-after-1",
+    "en": "Finally an order that keeps her safe.",
+    "ja": "やっと彼女を守る命令だ。",
+    "zh": "终于有条命令是在保护她了。"
   },
   {
-    "lineId": "stage-28-after-2",
-    "ja": "了解。いつも通り俺が重労働を引き受ける。",
-    "zh": "明白。照例我来扛重活。"
+    "lineId": "stage-27-after-2",
+    "en": "Returning.",
+    "ja": "戻る。",
+    "zh": "回去。"
   },
   {
     "lineId": "stage-28-contact-0",
-    "ja": "ゴースト、交信。目を光らせて武器は常時待機。侵攻は何らかの技術と関係がありそうだ。",
-    "zh": "幽灵频道报到。保持警觉，武器待命。入侵似乎与某种技术有关。"
+    "en": "There's a link between the incursions and the technology.",
+    "ja": "侵入とテクノロジーには関連がある。",
+    "zh": "入侵与那项技术之间有联系。"
   },
   {
-    "lineId": "stage-29-after-1",
-    "ja": "私の実験機には絶対の敬意を払え、パイロット！",
-    "zh": "对我的试验机要绝对恭敬，飞行员！"
+    "lineId": "stage-28-after-1",
+    "en": "Someone copied it. I strongly suspect it's my father.",
+    "ja": "誰かがそれを複製した。強く疑っているのは、父だ。",
+    "zh": "有人复制了它。我强烈怀疑是我父亲。"
   },
   {
-    "lineId": "stage-29-after-2",
-    "ja": "了解。いつも通り俺が重労働を引き受ける。",
-    "zh": "明白。照例我来扛重活。"
+    "lineId": "stage-28-after-2",
+    "en": "Rahav?",
+    "ja": "ラハヴ？",
+    "zh": "拉哈夫？"
   },
   {
     "lineId": "stage-29-contact-0",
-    "ja": "パイロット、命令は躊躇なく実行せよ。区画の安全が最優先だ。",
-    "zh": "飞行员，执行命令不得犹豫。区域安全至关重要。"
+    "en": "Tomorrow you'll meet Sera.",
+    "ja": "明日、セラに会う。",
+    "zh": "明天你会见到塞拉。"
   },
   {
-    "lineId": "stage-3-after-1",
-    "ja": "実験機を大事に扱え、パイロット！シールドがもう危ないぞ！",
-    "zh": "把我的试验舰当宝贝对待，飞行员！护盾都快裂了！"
+    "lineId": "stage-29-after-1",
+    "en": "She has a similar ship. Probably Rahav. No one else can understand it.",
+    "ja": "彼女は同じような船を持っている。多分ラハヴだ。他の誰もそれを理解できない。",
+    "zh": "她有一艘相似的飞船。很可能是拉哈夫。没有其他人能理解它。"
   },
   {
-    "lineId": "stage-3-after-2",
-    "ja": "了解。いつも通り俺が頑張る。向こうが先に撃ってきたんだが。",
-    "zh": "收到。照例我来扛大事——他们是先开火的。"
-  },
-  {
-    "lineId": "stage-3-contact-0",
-    "ja": "パイロット、命令は躊躇なく実行せよ。セクターの安全が最優先だ。",
-    "zh": "飞行员，立即执行命令，不得犹豫。区域安全至关重要。"
-  },
-  {
-    "lineId": "stage-30-after-1",
-    "ja": "私の実験機は神聖に扱いなさい、パイロット！触れたら許さないからね。",
-    "zh": "把我的实验机当作神圣之物对待，飞行员！谁要碰它，我可不会放过。"
-  },
-  {
-    "lineId": "stage-30-after-2",
-    "ja": "操縦、見事ね。でも私の方が速いわ。",
-    "zh": "驾驶不错。但我还是更快。"
+    "lineId": "stage-29-after-2",
+    "en": "Are you sure?",
+    "ja": "本当に？",
+    "zh": "你确定吗？"
   },
   {
     "lineId": "stage-30-contact-0",
-    "ja": "本部直通命令：その場を維持し、敵対勢力を全て撃退せよ。",
-    "zh": "来自总部的直接命令：坚守阵地，击退一切敌对势力。"
+    "en": "Duel. Orders from above.",
+    "ja": "決闘だ。上からの命令だ。",
+    "zh": "决斗。来自上方的命令。"
   },
   {
-    "lineId": "stage-31-after-1",
-    "ja": "私の武器調整は芸術よ。敬意を持って使いなさい、パイロット。",
-    "zh": "我的武器调校堪称艺术。使用时要怀着敬意，飞行员。"
+    "lineId": "stage-30-after-1",
+    "en": "If she touches her, I'll take her apart. Rahav we'll deal with later.",
+    "ja": "もし彼女が触ったら、私は分解する。ラハヴは後で対処する。",
+    "zh": "如果她碰到它，我会拆了她。拉哈夫我们之后再谈。"
   },
   {
-    "lineId": "stage-31-after-2",
-    "ja": "操縦は上手ね。でも私の方が速いわ、負けないから。",
-    "zh": "驾驶不错。但我更快，而且我不会输。"
+    "lineId": "stage-30-after-2",
+    "en": "I'm the best here.",
+    "ja": "ここで私が一番だ。",
+    "zh": "我是这里最厉害的。"
   },
   {
     "lineId": "stage-31-contact-0",
-    "ja": "パイロット、ためらわず命令を実行せよ。セクターの安全が最優先だ。",
-    "zh": "飞行员，毫不犹豫地执行命令。区域安全至关重要。"
+    "en": "In an hour.",
+    "ja": "1時間後だ。",
+    "zh": "一个小时后。"
   },
   {
-    "lineId": "stage-32-after-1",
-    "ja": "了解。いつも通り、面倒なところは任せて。",
-    "zh": "明白。像往常一样，把繁重的活交给我吧。"
+    "lineId": "stage-31-after-1",
+    "en": "Her weapons are ready.",
+    "ja": "彼女の武器は準備できている。",
+    "zh": "她的武器准备好了。"
   },
   {
-    "lineId": "stage-32-after-2",
-    "ja": "私の実験機を神聖に扱いなさい、パイロット！シールドがもうすぐ割れるわ！",
-    "zh": "把我的实验机当神圣之物对待，飞行员！护盾快要裂开了！"
-  },
-  {
-    "lineId": "stage-32-after-3",
-    "ja": "おい、なんでそんなことしたんだ？！",
-    "zh": "喂，你为什么要那样做？！"
-  },
-  {
-    "lineId": "stage-32-after-4",
-    "ja": "だってもうほとんど割れかかってるのよ。これで二撃目なんだから。",
-    "zh": "因为它差点裂开了。这已经是第二次打击了。"
+    "lineId": "stage-31-after-2",
+    "en": "I don't lose.",
+    "ja": "私は負けない。",
+    "zh": "我不会输。"
   },
   {
     "lineId": "stage-32-contact-0",
-    "ja": "操縦は見事だ。でも私の方が速い。さっさと片付けよう。",
-    "zh": "驾驶不错。但我更快。快点把事儿解决掉。"
+    "en": "Let's finish this quickly.",
+    "ja": "さっさと終わらせよう。",
+    "zh": "快点结束它。"
   },
   {
-    "lineId": "stage-33-after-1",
-    "ja": "私の船体に傷だと？！お前のヘルメットにでかいレンチを叩き込んでやる！",
-    "zh": "我的船体有划痕？！我要把大扳手直接砸到你的头盔上！"
+    "lineId": "stage-32-after-1",
+    "en": "Ready.",
+    "ja": "準備完了。",
+    "zh": "准备好了。"
   },
   {
-    "lineId": "stage-33-after-2",
-    "ja": "操縦は立派ね。でも私の方が速い。今回は手加減したから引き分けよ。",
-    "zh": "驾驶不错。但我更快。这次是我手下留情才打成平局。"
+    "lineId": "stage-32-after-2",
+    "en": "Her shield is almost cracked!",
+    "ja": "彼女のシールドがもうすぐ割れる！",
+    "zh": "她的护盾快裂开了！"
+  },
+  {
+    "lineId": "stage-32-after-3",
+    "en": "Hey — why did you do that?!",
+    "ja": "ちょっと、なんでそんなことしたんだ？！",
+    "zh": "哎，你为什么那样做？！"
+  },
+  {
+    "lineId": "stage-32-after-4",
+    "en": "Because it was about to crack. That was a second hit.",
+    "ja": "割れかけてたからだ。二発目の一撃だ。",
+    "zh": "因为快裂了。那是第二击。"
   },
   {
     "lineId": "stage-33-contact-0",
-    "ja": "パイロット、ためらわず命令を実行せよ。お二人とも戻れ。セクターの安全が最優先だ。",
-    "zh": "飞行员，毫不犹豫地执行命令。你们两人都撤回。区域安全至关重要。"
+    "en": "Draw. Both of you, return.",
+    "ja": "引き分けだ。二人とも戻れ。",
+    "zh": "打成平手。你们俩回去。"
   },
   {
-    "lineId": "stage-34-after-1",
-    "ja": "私の実験機を神聖に扱いなさい、パイロット！部品が盗まれたり汚されたりしてる…Rahavが…",
-    "zh": "把我的实验机当神圣物品对待，飞行员！被偷过、被弄脏了…Rahav…"
+    "lineId": "stage-33-after-1",
+    "en": "She's got a scratch. Rahav probably stole parts from her. No one else knows how she's built.",
+    "ja": "傷が付いてる。ラハヴが部品を盗んだんだろう。他の誰もあの構造を知らない。",
+    "zh": "她有一道划痕。拉哈夫可能从她那儿偷了零件。没有其他人知道她是怎么构造的。"
   },
   {
-    "lineId": "stage-34-after-2",
-    "ja": "了解。…って、俺たち囮ってことか？",
-    "zh": "明白。……我们是诱饵吗？"
+    "lineId": "stage-33-after-2",
+    "en": "Draw only because I was considerate.",
+    "ja": "引き分けなのは、私が気を遣ったからだ。",
+    "zh": "打成平手只是因为我网开一面。"
   },
   {
     "lineId": "stage-34-contact-0",
-    "ja": "こちらゴースト。警戒を怠るな、武器は常に構えておけ。",
-    "zh": "这里幽灵，已上线。保持警戒，武器待命。"
+    "en": "The fleet ordered the incursions on purpose.",
+    "ja": "艦隊は侵攻を故意に手配した。",
+    "zh": "舰队是故意下令发动这些入侵的。"
   },
   {
-    "lineId": "stage-35-after-1",
-    "ja": "ゴースト、周波数に入る。警戒を怠るな、武器は常時構えて。",
-    "zh": "Ghost在线。保持警觉，武器随时待命。"
+    "lineId": "stage-34-after-1",
+    "en": "I got thieves and stains. Rahav...",
+    "ja": "盗人と汚れを受け取った。ラハヴ…",
+    "zh": "我收到了窃贼和污点。拉哈夫…"
   },
   {
-    "lineId": "stage-35-after-2",
-    "ja": "私の実験機を絶対に敬え、パイロット！",
-    "zh": "我的实验机要得到绝对的尊重，飞行员！"
+    "lineId": "stage-34-after-2",
+    "en": "Are we bait?",
+    "ja": "私たちは囮か？",
+    "zh": "我们是诱饵吗？"
   },
   {
     "lineId": "stage-35-contact-0",
-    "ja": "パイロット、命令は上からだ。これからも従え。セクターの安全が最優先だ。",
-    "zh": "飞行员，命令来自上级，继续服从。区域安全至关重要。"
+    "en": "Orders from above. We keep obeying.",
+    "ja": "上からの命令だ。従い続ける。",
+    "zh": "上头下的命令。继续服从。"
   },
   {
-    "lineId": "stage-36-after-1",
-    "ja": "私の実験機を崇めなさい、パイロット！余計な口出しは無用よ。",
-    "zh": "我的实验机必须被绝对敬重，飞行员！别多管闲事。"
+    "lineId": "stage-35-after-1",
+    "en": "Elena, this is rotten.",
+    "ja": "エレナ、これは腐っている。",
+    "zh": "伊莲娜，这很腐败。"
   },
   {
-    "lineId": "stage-36-after-2",
-    "ja": "了解。いつものように重たい仕事は俺がやる。",
-    "zh": "明白。像平常一样，麻烦活全由我来干。"
+    "lineId": "stage-35-after-2",
+    "en": "I fixed her. The stain's still there. I've tried ten compounds already.",
+    "ja": "修理した。シミは残ってる。もう十種類の素材を試した。",
+    "zh": "我修好了它。污点还在。我已经试过十种材料了。"
   },
   {
     "lineId": "stage-36-contact-0",
-    "ja": "ゴースト、周波数に入る。目を光らせ、武器は温めておけ。",
-    "zh": "Ghost在频率上。保持警惕，武器随时待命。"
+    "en": "Sera still thinks she's the best.",
+    "ja": "セラはまだ自分が一番だと思っている。",
+    "zh": "塞拉仍然认为自己最强。"
   },
   {
-    "lineId": "stage-37-after-1",
-    "ja": "了解。いつものように俺が全部引き受ける。",
-    "zh": "明白。照常由我来承担所有繁重工作。"
+    "lineId": "stage-36-after-1",
+    "en": "Don't start.",
+    "ja": "やめとけ。",
+    "zh": "别开始。"
   },
   {
-    "lineId": "stage-37-after-2",
-    "ja": "感じている。しかし、命令は命令だ。",
-    "zh": "我感受到了。但命令就是命令。"
-  },
-  {
-    "lineId": "stage-37-after-3",
-    "ja": "私の武器調整は芸術作品よ。敬意を持って使いなさい、パイロット。",
-    "zh": "我的武器校准简直是艺术。用的时候要尊重，飞行员。"
+    "lineId": "stage-36-after-2",
+    "en": "What?",
+    "ja": "何？",
+    "zh": "什么？"
   },
   {
     "lineId": "stage-37-contact-0",
-    "ja": "パイロット、命令は躊躇なく実行せよ。区域の安全が最優先だ。",
-    "zh": "飞行员，毫不犹豫地执行命令。区域安全至关重要。"
+    "en": "Another mission.",
+    "ja": "追加の任務だ。",
+    "zh": "又一项任务。"
   },
   {
-    "lineId": "stage-38-after-1",
-    "ja": "了解。いつもの通り、重い仕事は俺の担当だ。",
-    "zh": "明白。像往常一样，最重的活儿还是我来扛。"
+    "lineId": "stage-37-after-1",
+    "en": "Elena, haven't you felt something's been off here for a long time?",
+    "ja": "エレナ、ずっとここで何かおかしいと感じてないか？",
+    "zh": "伊莲娜，你不觉得这里很久以来就有点不对劲吗？"
   },
   {
-    "lineId": "stage-38-after-2",
-    "ja": "パイロット、命令は躊躇なく実行せよ。区域の安全が最優先だ。",
-    "zh": "飞行员，毫不犹豫地执行命令。区域安全至关重要。"
+    "lineId": "stage-37-after-2",
+    "en": "I feel it. But orders are still orders.",
+    "ja": "感じてる。でも命令は命令だ。",
+    "zh": "我感觉到了。但命令就是命令。"
   },
   {
-    "lineId": "stage-38-after-3",
-    "ja": "私の実験機を絶対に敬え、パイロット！",
-    "zh": "我的实验机必须被绝对尊重，飞行员！"
+    "lineId": "stage-37-after-3",
+    "en": "Her weapons are ready.",
+    "ja": "彼女の武器は準備できている。",
+    "zh": "她的武器准备好了。"
   },
   {
     "lineId": "stage-38-contact-0",
-    "ja": "ゴースト、周波数に入る。警戒を怠るな、武器は温めておけ。",
-    "zh": "Ghost在频率上。保持警戒，武器随时待命。"
+    "en": "Another wanted.",
+    "ja": "また指名手配だ。",
+    "zh": "又一名通缉犯。"
   },
   {
-    "lineId": "stage-39-after-1",
-    "ja": "了解。いつものように、俺が片付けた。",
-    "zh": "明白。又是老样子，都是我来收尾。"
+    "lineId": "stage-38-after-1",
+    "en": "Sometimes I wonder who we really work for.",
+    "ja": "時々、本当に誰のために働いているのか考える。",
+    "zh": "有时我会想，我们到底真正为谁工作。"
   },
   {
-    "lineId": "stage-39-after-2",
-    "ja": "パイロット、命令は躊躇なく実行せよ。区域の安全が最優先だ。いいね、少なくとも何かはちゃんと動いている。",
-    "zh": "飞行员，毫不犹豫地执行命令。区域安全至关重要。很好，至少有些事情还算正常运行。"
+    "lineId": "stage-38-after-2",
+    "en": "For the fleet. At least that's what I tell myself.",
+    "ja": "艦隊のためだ。少なくとも自分にはそう言い聞かせている。",
+    "zh": "为舰队。至少我是这么告诉自己的。"
   },
   {
-    "lineId": "stage-39-after-3",
-    "ja": "見て、完璧よ。汚れた手で触ったら指を折るからね。",
-    "zh": "看她，多完美。用脏手碰她，我会掰断你的手指。"
+    "lineId": "stage-38-after-3",
+    "en": "Work for her. She's the only one who doesn't lie.",
+    "ja": "彼女のために働け。彼女だけが嘘をつかない。",
+    "zh": "为她工作。她是唯一不撒谎的。"
   },
   {
     "lineId": "stage-39-contact-0",
-    "ja": "任務完了。母港へ帰還し、報告を行え。",
-    "zh": "任务完成。返回基地汇报。"
+    "en": "Return. Report.",
+    "ja": "戻れ。報告しろ。",
+    "zh": "回来。汇报。"
   },
   {
-    "lineId": "stage-4-after-1",
-    "ja": "実験機を大事に扱え、パイロット！直したし、柔らかい布も用意したわ。",
-    "zh": "把我的试验舰当宝贝一样对待，飞行员！我修好了，还带了软布。"
+    "lineId": "stage-39-after-1",
+    "en": "Target eliminated. Again.",
+    "ja": "目標を排除した。再び。",
+    "zh": "目标已被消灭。又一次。"
   },
   {
-    "lineId": "stage-4-after-2",
-    "ja": "了解。いつも通り俺がやった。目標は殲滅済みだ。",
-    "zh": "收到。照例我来搞定。目标已被消灭。"
+    "lineId": "stage-39-after-2",
+    "en": "Good. At least something's still working as it should.",
+    "ja": "いい。少なくともまだ機能しているものがある。",
+    "zh": "好。至少还有些事还按该有的方式运行。"
   },
   {
-    "lineId": "stage-4-contact-0",
-    "ja": "任務完了。本部へ帰還して報告せよ。",
-    "zh": "任务完成。返回基地汇报。"
-  },
-  {
-    "lineId": "stage-40-after-1",
-    "ja": "了解。いつもの通り、重い仕事は全部俺がやる。",
-    "zh": "明白。像往常一样，重活全由我来扛。"
-  },
-  {
-    "lineId": "stage-40-after-2",
-    "ja": "パイロット、命令は躊躇なく実行せよ。セクターの安全が最優先だ。",
-    "zh": "飞行员，毫不犹豫地执行命令。区段安全至关重要。"
-  },
-  {
-    "lineId": "stage-40-after-3",
-    "ja": "私の実験機を絶対に敬って扱いなさい、パイロット！",
-    "zh": "对我的试验飞船绝对恭敬，飞行员！"
+    "lineId": "stage-39-after-3",
+    "en": "She's perfect again. Except for the stain.",
+    "ja": "彼女はまた完璧だ。染みを除けば。",
+    "zh": "她又完美了。除了那道污点。"
   },
   {
     "lineId": "stage-40-contact-0",
-    "ja": "ゴースト、周波数に入る。警戒を怠るな、武器は常時構えて。艦隊が静かすぎる。",
-    "zh": "Ghost在线。保持警觉，武器随时待命。舰队太安静了。"
+    "en": "The fleet is too quiet.",
+    "ja": "艦隊が静かすぎる。",
+    "zh": "舰队太沉默了。"
   },
   {
-    "lineId": "stage-41-after-1",
-    "ja": "了解。いつもの通り、重い仕事は全部俺がやる。",
-    "zh": "明白。像往常一样，重活全由我来扛。"
+    "lineId": "stage-40-after-1",
+    "en": "This silence is starting to feel dangerous.",
+    "ja": "この沈黙が危険に思えてきた。",
+    "zh": "这沉默开始让人觉得危险。"
   },
   {
-    "lineId": "stage-41-after-2",
-    "ja": "本部直命：位置を保持し、敵対勢力をすべて撃退せよ。",
-    "zh": "总部直令：坚守位置，击退一切敌对势力。"
+    "lineId": "stage-40-after-2",
+    "en": "I know. Focus on the mission anyway.",
+    "ja": "分かってる。とにかく任務に集中しろ。",
+    "zh": "我知道。但仍要专注于任务。"
   },
   {
-    "lineId": "stage-41-after-3",
-    "ja": "私の実験機を軽んじないで、パイロット！敬意を払いなさい！",
-    "zh": "别忽视我的试验飞船，飞行员！要恭敬对待！"
+    "lineId": "stage-40-after-3",
+    "en": "She feels like fresh oil.",
+    "ja": "彼女は新品の油のように感じる。",
+    "zh": "她感觉像新油一样。"
   },
   {
     "lineId": "stage-41-contact-0",
-    "ja": "パイロット、命令は躊躇なく実行せよ。セクターの安全が最優先だ。",
-    "zh": "飞行员，毫不犹豫地执行命令。区段安全至关重要。"
+    "en": "Border patrol.",
+    "ja": "境界の巡回。",
+    "zh": "边界巡逻。"
   },
   {
-    "lineId": "stage-42-after-1",
-    "ja": "了解。いつもの通り、重い仕事は全部俺がやる。",
-    "zh": "明白。像往常一样，重活全由我来扛。"
+    "lineId": "stage-41-after-1",
+    "en": "What if we see something we're not supposed to see?",
+    "ja": "もし見てはいけないものを見たら？",
+    "zh": "如果我们看到了不该看的东西怎么办？"
   },
   {
-    "lineId": "stage-42-after-2",
-    "ja": "パイロット、命令は躊躇なく実行せよ。セクターの安全が最優先だ。",
-    "zh": "飞行员，毫不犹豫地执行命令。区段安全至关重要。"
+    "lineId": "stage-41-after-2",
+    "en": "Then ignore it. For now it's still the order.",
+    "ja": "なら無視しろ。今のところそれが命令だ。",
+    "zh": "那就无视。暂时这仍是命令。"
   },
   {
-    "lineId": "stage-42-after-3",
-    "ja": "私の実験機の機動は精密だった。敬意を払って扱いなさい、パイロット！",
-    "zh": "我的试验舰机动很精确。对它要恭敬，飞行员！"
+    "lineId": "stage-41-after-3",
+    "en": "She doesn't like being ignored.",
+    "ja": "彼女は無視されるのを好まない。",
+    "zh": "她不喜欢被忽视。"
   },
   {
     "lineId": "stage-42-contact-0",
-    "ja": "ゴースト、通信入る。警戒を怠るな、武器は常に構えておけ。",
-    "zh": "幽灵在线。保持警惕，武器随时待命。"
+    "en": "Large alien movements. The fleet is turning a blind eye.",
+    "ja": "大規模な異星人の動き。艦隊は見て見ぬふりだ。",
+    "zh": "外星人大规模活动。舰队视而不见。"
   },
   {
-    "lineId": "stage-43-after-1",
-    "ja": "了解。いつものように面倒事は俺の仕事だ。",
-    "zh": "明白。像往常一样，麻烦的事我来承担。"
+    "lineId": "stage-42-after-1",
+    "en": "How many more times can we turn a blind eye?",
+    "ja": "あと何度見て見ぬふりができる？",
+    "zh": "还能视而不见多少次？"
   },
   {
-    "lineId": "stage-43-after-2",
-    "ja": "任務完了。報告のため基地へ帰還せよ。",
-    "zh": "任务完成。返回基地接受汇报。"
+    "lineId": "stage-42-after-2",
+    "en": "I'm asking myself the same question. Until they say otherwise.",
+    "ja": "私も同じことを自問している。別の指示が出るまでは。",
+    "zh": "我也在问自己同样的问题。直到有人另行指示。"
   },
   {
-    "lineId": "stage-43-after-3",
-    "ja": "私の実験機、戻れて嬉しいわ。敬って扱ってね、パイロット！",
-    "zh": "我的试验舰能回来我很开心。对它要恭敬，飞行员！"
+    "lineId": "stage-42-after-3",
+    "en": "Her maneuver was precise.",
+    "ja": "彼女の機動は正確だった。",
+    "zh": "她的机动很精确。"
   },
   {
     "lineId": "stage-43-contact-0",
-    "ja": "任務完了。報告のため基地へ帰還せよ。",
-    "zh": "任务完成。返回基地接受汇报。"
+    "en": "No permission to interfere. Return.",
+    "ja": "介入の許可はない。戻れ。",
+    "zh": "无干预许可。返回。"
   },
   {
-    "lineId": "stage-44-after-1",
-    "ja": "了解。いつもの通り、重い仕事は全部俺がやる。",
-    "zh": "明白。像往常一样，重活全由我来扛。"
+    "lineId": "stage-43-after-1",
+    "en": "Do you really still believe it's just orders?",
+    "ja": "本当にまだそれがただの命令だと信じているの？",
+    "zh": "你真的还相信这只是命令吗？"
   },
   {
-    "lineId": "stage-44-after-2",
-    "ja": "パイロット、命令は躊躇なく実行せよ。セクターの安全が最優先だ。",
-    "zh": "飞行员，毫不犹豫地执行命令。区段安全至关重要。"
+    "lineId": "stage-43-after-2",
+    "en": "I'm trying to believe. Return.",
+    "ja": "信じようとしている。戻れ。",
+    "zh": "我在努力相信。返回。"
   },
   {
-    "lineId": "stage-44-after-3",
-    "ja": "私の実験機には絶対の敬意を払え、パイロット！",
-    "zh": "我的实验机必须得到绝对的尊重，飞行员！"
+    "lineId": "stage-43-after-3",
+    "en": "She's glad we're returning.",
+    "ja": "彼女は戻ってくることを喜んでいる。",
+    "zh": "她为我们返回而高兴。"
   },
   {
     "lineId": "stage-44-contact-0",
-    "ja": "ゴースト、通信入る。警戒を怠るな、武器は常に構えておけ。",
-    "zh": "幽灵在线。保持警惕，武器随时待命。"
+    "en": "There's a clear link between the invasions and the technology.",
+    "ja": "襲撃と技術の間に明確な関連がある。",
+    "zh": "入侵与技术之间有明确联系。"
   },
   {
-    "lineId": "stage-45-after-1",
-    "ja": "了解。例によって俺が重い役を担う。",
-    "zh": "明白。照例由我来承担重任。"
+    "lineId": "stage-44-after-1",
+    "en": "Someone's playing a bigger game than us.",
+    "ja": "誰かが我々より大きなゲームをしている。",
+    "zh": "有人在玩一个比我们更大的游戏。"
   },
   {
-    "lineId": "stage-45-after-2",
-    "ja": "パイロット、躊躇なく命令を実行せよ。セクターの安全が最重要だ。",
-    "zh": "飞行员，毫不犹豫地执行命令。区域安全最为重要。"
+    "lineId": "stage-44-after-2",
+    "en": "I'm starting to understand that.",
+    "ja": "それが分かり始めている。",
+    "zh": "我开始明白了。"
   },
   {
-    "lineId": "stage-45-after-3",
-    "ja": "私の実験機には絶対の敬意を払え、パイロット！",
-    "zh": "我的实验机必须得到绝对的尊重，飞行员！"
+    "lineId": "stage-44-after-3",
+    "en": "Someone copied her. Rahav.",
+    "ja": "誰かが彼女をコピーした。Rahav。",
+    "zh": "有人复制了她。Rahav。"
   },
   {
     "lineId": "stage-45-contact-0",
-    "ja": "パイロット、躊躇なく命令を実行せよ。セクターの安全が最優先だ。",
-    "zh": "飞行员，毫不犹豫执行命令。区域安全至关重要。"
+    "en": "Another meeting with Sera tomorrow.",
+    "ja": "明日、またSeraとの面会だ。",
+    "zh": "明天还有一次与Sera的会面。"
   },
   {
-    "lineId": "stage-46-after-1",
-    "ja": "私の実験機には絶対の敬意を払え、パイロット！",
-    "zh": "我的实验机必须得到绝对的尊重，飞行员！"
+    "lineId": "stage-45-after-1",
+    "en": "And if this time it doesn't end in a draw?",
+    "ja": "もし今回引き分けで終わらなかったら？",
+    "zh": "如果这次不会以平局收场怎么办？"
   },
   {
-    "lineId": "stage-46-after-2",
-    "ja": "パイロット、躊躇なく命令を実行せよ。セクターの安全が最優先だ。",
-    "zh": "飞行员，毫不犹豫执行命令。区域安全至关重要。"
+    "lineId": "stage-45-after-2",
+    "en": "Then do what needs to be done. And I... will keep giving orders.",
+    "ja": "なら必要なことをしろ。私は…命令を出し続ける。",
+    "zh": "那就做该做的事。我…会继续下达命令。"
+  },
+  {
+    "lineId": "stage-45-after-3",
+    "en": "If she touches her — you'll know.",
+    "ja": "もし彼女が彼女に触れたら—あなたは分かる。",
+    "zh": "如果她碰她——你会知道。"
   },
   {
     "lineId": "stage-46-contact-0",
-    "ja": "了解。例によって俺が全部やる。",
-    "zh": "明白。照旧由我把重活干了。"
+    "en": "I'm mutinying. Run.",
+    "ja": "私は反逆する。逃げろ。",
+    "zh": "我要造反。快逃。"
   },
   {
-    "lineId": "stage-47-after-1",
-    "ja": "エンジンは子猫のように喉を鳴らしてる。むやみに酷使するんじゃないわよ！",
-    "zh": "引擎像小猫在呼噜，别敢太逼它们！"
+    "lineId": "stage-46-after-1",
+    "en": "Only if she isn't harmed. Otherwise I'll stay.",
+    "ja": "彼女が傷つかないならだけ。でなければ私は残る。",
+    "zh": "只有她不会受伤我才走。否则我留下。"
   },
   {
-    "lineId": "stage-47-after-2",
-    "ja": "了解。例によって俺が頑張る。",
-    "zh": "明白，照旧由我来撑着。"
+    "lineId": "stage-46-after-2",
+    "en": "Treachery! Surrender immediately!",
+    "ja": "裏切り者め！直ちに降伏しろ！",
+    "zh": "背叛！立刻投降！"
   },
   {
     "lineId": "stage-47-contact-0",
-    "ja": "ゴースト、通信入る。油断するな、武器は常時構えておけ。",
-    "zh": "Ghost在线。保持警惕，武器随时待命。"
+    "en": "Flight path clear. Get out.",
+    "ja": "航路は空いている。逃げろ。",
+    "zh": "航线通了，快逃。"
   },
   {
-    "lineId": "stage-48-after-1",
-    "ja": "私の実験機には絶対の敬意を払え、パイロット！",
-    "zh": "我的实验机必须得到绝对的尊重，飞行员！"
+    "lineId": "stage-47-after-1",
+    "en": "Initiating escape. Her engines are stable.",
+    "ja": "脱出手続き開始。エンジンは安定している。",
+    "zh": "启动逃生程序。她的引擎稳定。"
   },
   {
-    "lineId": "stage-48-after-2",
-    "ja": "ゴースト、周波に入る。目を光らせろ、武器は常に用意しておけ。",
-    "zh": "Ghost在线。保持警觉，武器随时准备。"
+    "lineId": "stage-47-after-2",
+    "en": "Moving out.",
+    "ja": "脱出する。",
+    "zh": "离开。"
   },
   {
     "lineId": "stage-48-contact-0",
-    "ja": "パイロット、躊躇なく命令を実行せよ。セクターの安全が最優先だ。",
-    "zh": "飞行员，毫不犹豫执行命令。区域安全至关重要。"
+    "en": "The entire fleet is after you!",
+    "ja": "艦隊全体がお前たちを追っている！",
+    "zh": "整个舰队在追你们！"
   },
   {
-    "lineId": "stage-49-after-1",
-    "ja": "エンジンは子猫のように喉を鳴らしてる。無茶して回すんじゃないわよ！",
-    "zh": "引擎像小猫在呼噜，别把它们逼得太厉害！"
+    "lineId": "stage-48-after-1",
+    "en": "If anyone touches her — I'll find him.",
+    "ja": "誰かが彼女に触れたら――私が見つけ出す。",
+    "zh": "如果有人碰她——我会找到他。"
   },
   {
-    "lineId": "stage-49-after-2",
-    "ja": "了解。例によって俺がやる。",
-    "zh": "明白。照例由我来承担重活。"
+    "lineId": "stage-48-after-2",
+    "en": "Move fast.",
+    "ja": "急げ。",
+    "zh": "快走。"
   },
   {
     "lineId": "stage-49-contact-0",
-    "ja": "パイロット、躊躇なく命令を実行せよ。セクターの安全が最優先だ。",
-    "zh": "飞行员，毫不犹豫执行命令。区域安全至关重要。"
+    "en": "Pilot, court. Naomi, you'll lose everything!",
+    "ja": "パイロット、法廷だ。ナオミ、すべてを失うぞ！",
+    "zh": "飞行员，上法庭。娜奥米，你会失去一切！"
   },
   {
-    "lineId": "stage-5-after-1",
-    "ja": "私の実験機を大事に扱え、パイロット！小惑星の間を滑るのは生まれつきだ。",
-    "zh": "把我的试验舰当宝贝对待，飞行员！在小行星间穿梭得像天生的一样。"
+    "lineId": "stage-49-after-1",
+    "en": "Her engine shuddered. She's tired.",
+    "ja": "エンジンが震えた。彼女は疲れている。",
+    "zh": "她的引擎颤动了。她累了。"
   },
   {
-    "lineId": "stage-5-after-2",
-    "ja": "了解。いつも通り俺が操縦してる。",
-    "zh": "收到。照例由我来驾驶。"
-  },
-  {
-    "lineId": "stage-5-contact-0",
-    "ja": "コンボイをこの区域まで護衛せよ。失敗は許されない。",
-    "zh": "护送车队通过此区。绝不允许失误。"
-  },
-  {
-    "lineId": "stage-50-after-1",
-    "ja": "私の実験機には絶対の敬意を払って扱いなさい、パイロット！",
-    "zh": "对我的试验舰要怀有绝对的敬意，飞行员！"
-  },
-  {
-    "lineId": "stage-50-after-2",
-    "ja": "了解。いつも通り、力仕事は俺が引き受ける。",
-    "zh": "明白。像往常一样，重活由我来扛。"
+    "lineId": "stage-49-after-2",
+    "en": "We're on our way.",
+    "ja": "今向かっている。",
+    "zh": "我们马上赶来。"
   },
   {
     "lineId": "stage-50-contact-0",
-    "ja": "パイロット、躊躇なく命令を実行せよ。セクターの安全が最優先だ。",
-    "zh": "飞行员，毫不犹豫执行命令。区域安全至关重要。"
+    "en": "You'll be caught!",
+    "ja": "お前たちは捕まるぞ！",
+    "zh": "你们会被抓住！"
   },
   {
-    "lineId": "stage-51-after-1",
-    "ja": "了解。いつも通り、面倒な作業は全部俺がやる。",
-    "zh": "收到。像往常一样，棘手的事交给我处理。"
+    "lineId": "stage-50-after-1",
+    "en": "Entering the asteroid belt. She doesn't like tight spaces.",
+    "ja": "小惑星帯に入る。彼女は密集が嫌いだ。",
+    "zh": "进入小行星带。她不喜欢拥挤。"
   },
   {
-    "lineId": "stage-51-after-2",
-    "ja": "ゴースト、周波数に入る。警戒を怠るな、武器を構えておけ。",
-    "zh": "Ghost在线。保持警惕，武器上膛待命。"
+    "lineId": "stage-50-after-2",
+    "en": "Searching for a route.",
+    "ja": "航路を探す。",
+    "zh": "搜寻航线。"
   },
   {
     "lineId": "stage-51-contact-0",
-    "ja": "私の実験機には絶対の敬意を払って扱いなさい、パイロット！",
-    "zh": "对我的试验舰要怀有绝对的敬意，飞行员！"
+    "en": "Her windows are full of dust!",
+    "ja": "窓が埃だらけだ！",
+    "zh": "她的窗户全是灰尘！"
   },
   {
-    "lineId": "stage-52-after-1",
-    "ja": "了解。いつも通り、重い作業は俺がやる…",
-    "zh": "明白。照常由我来承担重活……"
+    "lineId": "stage-51-after-1",
+    "en": "Flying by sensors.",
+    "ja": "センサーで飛んでいる。",
+    "zh": "靠传感器飞行。"
   },
   {
-    "lineId": "stage-52-after-2",
-    "ja": "私の実験機には絶対の敬意を払って扱いなさい、パイロット！",
-    "zh": "对我的试验舰要怀有绝对的敬意，飞行员！"
+    "lineId": "stage-51-after-2",
+    "en": "You have a few minutes.",
+    "ja": "時間は数分だ。",
+    "zh": "你们还有几分钟。"
   },
   {
     "lineId": "stage-52-contact-0",
-    "ja": "私の実験機には絶対の敬意を払って扱いなさい、パイロット！",
-    "zh": "对我的试验舰要怀有绝对的敬意，飞行员！"
+    "en": "Her wing's scraped! And the mark's still there! I've tried every substance in the universe except spackle!",
+    "ja": "翼が擦れた！跡はまだ残ってる！宇宙のあらゆる素材を試した、パテ以外は！",
+    "zh": "她的机翼擦伤了！那个痕迹还在！我已经试过宇宙里所有材料，除了腻子！"
   },
   {
-    "lineId": "stage-53-after-1",
-    "ja": "了解。いつも通り、俺が全部やる。",
-    "zh": "明白。照常由我来处理一切。"
+    "lineId": "stage-52-after-1",
+    "en": "Maybe just...",
+    "ja": "もしかして…",
+    "zh": "也许就... "
   },
   {
-    "lineId": "stage-53-after-2",
-    "ja": "ゴースト、周波数に入る。警戒を怠るな、武器を構えておけ。",
-    "zh": "Ghost在线。保持警觉，武器保持备战。"
+    "lineId": "stage-52-after-2",
+    "en": "Don't you dare.",
+    "ja": "やめろ。",
+    "zh": "别敢。"
   },
   {
     "lineId": "stage-53-contact-0",
-    "ja": "私の実験機には絶対の敬意を払って扱いなさい、パイロット！",
-    "zh": "对我的试验舰要怀有绝对的敬意，飞行员！"
+    "en": "Her cloaking system is flickering!",
+    "ja": "ステルス装置が点滅している！",
+    "zh": "她的隐形系统在闪烁！"
   },
   {
-    "lineId": "stage-54-after-1",
-    "ja": "了解。いつも通り、しっかり安定させておく。",
-    "zh": "收到。照常把她稳住。"
+    "lineId": "stage-53-after-1",
+    "en": "It's the vibration.",
+    "ja": "振動だ。",
+    "zh": "是震动。"
   },
   {
-    "lineId": "stage-54-after-2",
-    "ja": "パイロット、命令はためらわず実行せよ。セクターの安全が最優先だ。",
-    "zh": "飞行员，毫不犹豫执行命令。辖区安全至上。"
+    "lineId": "stage-53-after-2",
+    "en": "Bounty at the edge.",
+    "ja": "ボウンティが端にいる。",
+    "zh": "边缘有赏金者。"
   },
   {
     "lineId": "stage-54-contact-0",
-    "ja": "私の実験機には絶対の敬意を払って扱いなさい、パイロット！",
-    "zh": "对我的试验舰要怀有绝对的敬意，飞行员！"
+    "en": "Her generator is sputtering!",
+    "ja": "発電機がむせている！",
+    "zh": "她的发电机在断断续续地工作！"
   },
   {
-    "lineId": "stage-55-after-1",
-    "ja": "了解。いつも通り、重労働は俺がやるよ。",
-    "zh": "收到。像往常一样，重活交给我。"
+    "lineId": "stage-54-after-1",
+    "en": "Holding her steady.",
+    "ja": "安定させている。",
+    "zh": "保持她稳定。"
   },
   {
-    "lineId": "stage-55-after-2",
-    "ja": "ゴースト、周波数に入る。警戒を怠るな、武器を構えておけ。",
-    "zh": "Ghost在线。保持警惕，武器上膛待命。"
+    "lineId": "stage-54-after-2",
+    "en": "Naomi, you'll be an outcast!",
+    "ja": "ナオミ、お前は追放されるぞ！",
+    "zh": "娜奥米，你将被放逐！"
   },
   {
     "lineId": "stage-55-contact-0",
-    "ja": "私の実験機には絶対の敬意を払って扱いなさい、パイロット！",
-    "zh": "对我的试验舰要怀有绝对的敬意，飞行员！"
+    "en": "There are shards on her floor!",
+    "ja": "床に破片がある！",
+    "zh": "她的地板上有碎片！"
   },
   {
-    "lineId": "stage-56-after-1",
-    "ja": "了解。いつも通り重労働は任せとけ。",
-    "zh": "明白。像往常一样，重活交给我。"
+    "lineId": "stage-55-after-1",
+    "en": "Later!",
+    "ja": "後で！",
+    "zh": "待会儿！"
   },
   {
-    "lineId": "stage-56-after-2",
-    "ja": "パイロット、命令は躊躇なく実行しろ。セクターの安全が最優先だ。",
-    "zh": "飞行员，毫不犹豫地执行命令。区域安全至上。"
+    "lineId": "stage-55-after-2",
+    "en": "Exit in two minutes.",
+    "ja": "脱出はあと2分だ。",
+    "zh": "离开还有两分钟。"
   },
   {
     "lineId": "stage-56-contact-0",
-    "ja": "私の実験機には絶対の敬意を払って扱いなさい、パイロット！",
-    "zh": "对我的试验舰要怀有绝对的敬意，飞行员！"
+    "en": "Her navigation shows three routes!",
+    "ja": "航行計器が三つの航路を示している！",
+    "zh": "她的导航显示三个航道！"
   },
   {
-    "lineId": "stage-57-after-1",
-    "ja": "了解。いつも通り俺がやる。",
-    "zh": "知道了。像往常一样我来应付。"
+    "lineId": "stage-56-after-1",
+    "en": "Picking one.",
+    "ja": "一つ選ぶ。",
+    "zh": "选择一个。"
   },
   {
-    "lineId": "stage-57-after-2",
-    "ja": "ゴースト、入る。目を光らせて、武器は常に構えておけ。",
-    "zh": "Ghost上线。保持警惕，武器随时待命。"
+    "lineId": "stage-56-after-2",
+    "en": "Your family will hear!",
+    "ja": "あなたの家族が知るわ！",
+    "zh": "你家人会知道的！"
   },
   {
     "lineId": "stage-57-contact-0",
-    "ja": "私の実験機には絶対の敬意を払え、パイロット！窓が割れかけてるぞ！",
-    "zh": "对我的实验机要绝对敬畏，飞行员！舷窗都快裂开了！"
+    "en": "Her windows are starting to crack!",
+    "ja": "窓がひび入り始めてる！",
+    "zh": "她的窗户开始出现裂缝！"
   },
   {
-    "lineId": "stage-58-after-1",
-    "ja": "了解。いつも通り俺がやる。危ない、今ぶつかるところだった！",
-    "zh": "明白。照旧我来干。哎，差点被撞到！"
+    "lineId": "stage-57-after-1",
+    "en": "A little more.",
+    "ja": "もう少し。",
+    "zh": "再一点。"
   },
   {
-    "lineId": "stage-58-after-2",
-    "ja": "私の実験機には絶対の敬意を払え、パイロット！息遣いが荒くて窓が曇ってる！",
-    "zh": "对我的实验机要绝对敬畏，飞行员！呼吸太猛了，舷窗都起雾了！"
-  },
-  {
-    "lineId": "stage-58-after-3",
-    "ja": "了解。いつも通り俺がやるよ。…って、なんでそんなことしたんだ？！",
-    "zh": "知道了，重活照旧给我……等下，你为什么那样做？！"
-  },
-  {
-    "lineId": "stage-58-after-4",
-    "ja": "私の実験機には絶対の敬意を払え、パイロット！息が荒すぎる。これで三度目よ。",
-    "zh": "对我的实验机要绝对敬畏，飞行员！呼吸太猛了，这是第三次了。"
+    "lineId": "stage-57-after-2",
+    "en": "Almost out.",
+    "ja": "もうすぐ外だ。",
+    "zh": "快出来了。"
   },
   {
     "lineId": "stage-58-contact-0",
-    "ja": "私の実験機には絶対の敬意を払え、パイロット！機体全体が震動してる！",
-    "zh": "对我的实验机要绝对敬畏，飞行员！全机都在颤抖！"
+    "en": "Everything's vibrating on her!",
+    "ja": "全部が彼女に振動してる！",
+    "zh": "所有东西都在她身上震动！"
   },
   {
-    "lineId": "stage-59-after-1",
-    "ja": "了解。いつも通り俺がやる。出るぞ！",
-    "zh": "明白。像往常一样由我来。出发！"
+    "lineId": "stage-58-after-1",
+    "en": "Hey, that almost hit me!",
+    "ja": "うわ、それに当たりそうだった！",
+    "zh": "哎，差点打到我！"
   },
   {
-    "lineId": "stage-59-after-2",
-    "ja": "パイロット、命令は躊躇なく実行しろ。セクターの安全が最優先だ。（秘話：上層からは『破壊させ、破片と技術を回収せよ』という指示だ）",
-    "zh": "飞行员，毫不犹豫地执行命令。区域安全至上。（密令：上层指示是“让它们在带上碎裂，然后回收残骸与技术”）"
+    "lineId": "stage-58-after-2",
+    "en": "You breathed too hard. There's condensation on her window.",
+    "ja": "息を強く吸いすぎた。彼女の窓に曇りができてる。",
+    "zh": "你吸气太猛了。她的挡风玻璃上有雾气。"
   },
   {
-    "lineId": "stage-59-after-3",
-    "ja": "ゴースト、入る。動き続けろ、警戒を緩めるな。",
-    "zh": "Ghost上线。继续移动，别放松警惕。"
+    "lineId": "stage-58-after-3",
+    "en": "Hey, why did you do that?!",
+    "ja": "なんでそんなことしたんだ？！",
+    "zh": "哎，你为什么那样做？！"
+  },
+  {
+    "lineId": "stage-58-after-4",
+    "en": "Because you breathed hard. That's the third hit.",
+    "ja": "息を強く吸ったから。これで三発目だ。",
+    "zh": "因为你吸气太猛。这是第三次冲击了。"
   },
   {
     "lineId": "stage-59-contact-0",
-    "ja": "私の実験機には絶対の敬意を払え、パイロット！カモフラージュが焼け落ちた！",
-    "zh": "对我的实验机要绝对敬畏，飞行员！伪装被烧掉了！"
+    "en": "Her camouflage burned off!",
+    "ja": "彼女のカモフラージュが焼き切れた！",
+    "zh": "她的伪装被烧掉了！"
   },
   {
-    "lineId": "stage-6-after-1",
-    "ja": "エンジンは子猫みたいに唸ってる。無茶な負荷をかけるんじゃないわよ！",
-    "zh": "发动机像小猫在呼噜，别逼它太狠！"
+    "lineId": "stage-59-after-1",
+    "en": "We're out!",
+    "ja": "出た！",
+    "zh": "我们出来了！"
   },
   {
-    "lineId": "stage-6-after-2",
-    "ja": "了解。いつも通り俺がやる。多分向こうが先に撃ってきたんだ。",
-    "zh": "收到。照例我来扛。可能是他们先开火的。"
+    "lineId": "stage-59-after-2",
+    "en": "(secret) '...let them break at the belt. Then we'll collect the fragments and the technology.' That was the order from high command. Enough.",
+    "ja": "(秘密チャンネル)「…ベルトで壊させろ。それから破片と技術を回収する。」それが上級指令からの命令だった。もういい。",
+    "zh": "(密电)『…让他们在带子处碎裂。然后我们会收集碎片和技术。』那是上级指挥的命令。够了。"
   },
   {
-    "lineId": "stage-6-contact-0",
-    "ja": "パイロット、躊躇なく命令を実行せよ。セクターの安全が最優先だ。",
-    "zh": "飞行员，立即执行命令，不得犹豫。区域安全至关重要。"
-  },
-  {
-    "lineId": "stage-60-after-1",
-    "ja": "壊れてるわ。あの自尊心満載の男は、自分の作った空飛ぶブリキを誇らしげに思ってるんでしょうね。",
-    "zh": "它坏了。那个自负的人肯定为他造的飞行破烂感到骄傲。"
-  },
-  {
-    "lineId": "stage-60-after-2",
-    "ja": "了解。いつも通り俺がやる。まずは逃げよう。",
-    "zh": "明白。照例我来解决。先撤。"
+    "lineId": "stage-59-after-3",
+    "en": "Keep moving.",
+    "ja": "動き続けろ。",
+    "zh": "继续动。"
   },
   {
     "lineId": "stage-60-contact-0",
-    "ja": "操縦は見事だが、私はまだ速い。",
-    "zh": "操控不错，但我更快。"
+    "en": "I found you. I'm chasing.",
+    "ja": "見つけた。追ってる。",
+    "zh": "我找到你们了。我在追踪。"
   },
   {
-    "lineId": "stage-61-after-1",
-    "ja": "私の実験機には絶対に敬意を払って扱って、パイロット！",
-    "zh": "把我的实验舰当作神圣之物对待，飞行员！"
+    "lineId": "stage-60-after-1",
+    "en": "She's broken. And Rahav's probably proud of the flying tin can he built for her.",
+    "ja": "壊れてる。そしてラハブは、自分が彼女に作った飛ぶブリキ缶を誇りに思ってるだろう。",
+    "zh": "她坏了。拉哈夫大概为他给她造的那只飞行铁罐感到自豪。"
   },
   {
-    "lineId": "stage-61-after-2",
-    "ja": "了解。いつも通り、重いのは全部俺がやるよ。",
-    "zh": "明白。像往常一样把重活都交给我。"
+    "lineId": "stage-60-after-2",
+    "en": "First, run.",
+    "ja": "まず逃げる。",
+    "zh": "先逃。"
   },
   {
     "lineId": "stage-61-contact-0",
-    "ja": "操縦は見事だが、私はまだ速い。今、君たちの後ろにいる。",
-    "zh": "操控不错，但我更快。我就在你们后面。"
+    "en": "I'm right behind you.",
+    "ja": "すぐ後ろだ。",
+    "zh": "我在你们后面。"
+  },
+  {
+    "lineId": "stage-61-after-1",
+    "en": "Stopping time. Use it. She needs a moment. Rahav probably didn't teach her to wait.",
+    "ja": "時間を止めてる。活用しろ。彼女はちょっと時間が必要だ。ラハブは待つことを教えなかったんだろう。",
+    "zh": "她在停住时间。利用它。她需要一点时间。拉哈夫大概没教她学会等待。"
+  },
+  {
+    "lineId": "stage-61-after-2",
+    "en": "Using it.",
+    "ja": "利用する。",
+    "zh": "在利用。"
+  },
+  {
+    "lineId": "stage-62-contact-0",
+    "en": "(secret) 'Sera's getting orders to destroy. I'm delaying.'",
+    "ja": "(秘密)「セラが破壊命令を受けている。私は引き延ばしている。」",
+    "zh": "(秘密)『赛拉接到毁灭命令。我在拖延。』"
   },
   {
     "lineId": "stage-62-after-1",
-    "ja": "私の実験機には絶対に敬意を払って扱って、パイロット！",
-    "zh": "把我的实验舰当作神圣之物对待，飞行员！"
+    "en": "Her shield's almost cracked!",
+    "ja": "彼女のシールドがもうすぐヒビ入る！",
+    "zh": "她的护盾几乎要裂开了！"
   },
   {
     "lineId": "stage-62-after-2",
+    "en": "Got it.",
     "ja": "了解。",
     "zh": "明白。"
   },
   {
-    "lineId": "stage-62-contact-0",
-    "ja": "海賊船を確認。直ちに撃破命令を実行せよ。",
-    "zh": "发现海盗舰。立即执行歼灭命令。"
+    "lineId": "stage-63-contact-0",
+    "en": "Still chasing.",
+    "ja": "まだ追ってる。",
+    "zh": "还在追。"
   },
   {
     "lineId": "stage-63-after-1",
-    "ja": "私の武器は調整の結晶よ。敬意を払って使って、パイロット。",
-    "zh": "我的武器校准堪称艺术。使用时要尊重，飞行员。"
+    "en": "I drained energy from her. Her weapons are stable. Unlike my father's flashy weapons that only draw fire.",
+    "ja": "彼女からエネルギーを吸った。彼女の武器は安定してる。父の派手な武器とは違って、ただ火を引き寄せるだけだ。",
+    "zh": "我从她那儿抽取了能量。她的武器现在稳定。和我爸那种只会招来火力的花哨武器不同。"
   },
   {
     "lineId": "stage-63-after-2",
-    "ja": "了解。必要なら撃つ。",
-    "zh": "明白。如有需要就开火。"
-  },
-  {
-    "lineId": "stage-63-contact-0",
-    "ja": "見事な操縦だ。ただし、私の方がまだ速い。",
-    "zh": "你的驾驶很棒。但我还是更快。"
-  },
-  {
-    "lineId": "stage-64-after-1",
-    "ja": "見事な操縦だ。ただし、私の方がまだ速い。",
-    "zh": "你的驾驶很棒。但我还是更快。"
-  },
-  {
-    "lineId": "stage-64-after-2",
-    "ja": "私の実験機には絶対に敬意を払って扱って、パイロット！",
-    "zh": "把我的实验舰当作神圣之物对待，飞行员！"
+    "en": "Shoot if needed.",
+    "ja": "必要なら撃て。",
+    "zh": "需要就开火。"
   },
   {
     "lineId": "stage-64-contact-0",
-    "ja": "ゴースト、通信中。警戒を怠るな、武器は常時構えておけ。",
-    "zh": "幽灵上线。保持警惕，武器随时待命。"
+    "en": "Small alien wave.",
+    "ja": "小さなエイリアンの波だ。",
+    "zh": "一小波外星人。"
   },
   {
-    "lineId": "stage-65-after-1",
-    "ja": "私の実験機には絶対に敬意を払って扱って、パイロット！",
-    "zh": "把我的实验舰当作神圣之物对待，飞行员！"
+    "lineId": "stage-64-after-1",
+    "en": "I see.",
+    "ja": "見える。",
+    "zh": "我看见了。"
   },
   {
-    "lineId": "stage-65-after-2",
-    "ja": "了解。俺たちは無事だ。",
-    "zh": "明白。我们还活着。"
+    "lineId": "stage-64-after-2",
+    "en": "I fixed her windows. Rahav probably would've used cheap glass that only glares.",
+    "ja": "彼女の窓を直した。ラハブなら眩しくなるだけの安ガラスを使ってただろう。",
+    "zh": "我修好了她的窗。拉哈夫大概会用那种只会眩目的劣质玻璃。"
   },
   {
     "lineId": "stage-65-contact-0",
-    "ja": "パイロット、躊躇せず命令を実行せよ。セクターの安全が最優先だ。",
-    "zh": "飞行员，毫不犹豫地执行命令。区域安全至上。"
+    "en": "(secret) 'Sera, look at the data.'",
+    "ja": "(秘密)「セラ、データを見て。」",
+    "zh": "(秘密)『赛拉，查看数据。』"
   },
   {
-    "lineId": "stage-66-after-1",
-    "ja": "私の実験機には絶対に敬意を払って扱って、パイロット！",
-    "zh": "把我的实验舰当作神圣之物对待，飞行员！"
+    "lineId": "stage-65-after-1",
+    "en": "Her generator's still weak. Unlike Rahav's heap that just rattles and annoys.",
+    "ja": "彼女のジェネレーターはまだ弱い。Rahavのガラクタみたいに、ただガタガタうるさいだけとは違う。",
+    "zh": "她的发电机还是虚弱。不像Rahav那堆破铁，只会吵人、惹人烦。"
   },
   {
-    "lineId": "stage-66-after-2",
-    "ja": "了解。信頼してくれてありがとう。",
-    "zh": "明白。多谢你的信任。"
+    "lineId": "stage-65-after-2",
+    "en": "We're alive.",
+    "ja": "生きてる。",
+    "zh": "我们还活着。"
   },
   {
     "lineId": "stage-66-contact-0",
-    "ja": "見事な操縦だ……だが、私はまだ速い。",
-    "zh": "驾驶很不错……不过我还是更快。"
+    "en": "I'm continuing… but the data…",
+    "ja": "続ける…でもデータが…",
+    "zh": "我继续……但数据……"
   },
   {
-    "lineId": "stage-67-after-1",
-    "ja": "いい操縦だ。でも私の方が速い。",
-    "zh": "操控很出色，但我还是更快。"
+    "lineId": "stage-66-after-1",
+    "en": "She's stopping time again. She needs quiet. Not like my dad's noisy ship that wrecks the whole soundscape.",
+    "ja": "また時間を止めてる。静けさが必要よ。うちの父のうるさい宇宙船みたいにサウンドスケープを台無しにするわけじゃない。",
+    "zh": "她又在停止时间。她需要安静。不是像我爸那艘吵闹的飞船，会毁掉整个声景。"
   },
   {
-    "lineId": "stage-67-after-2",
-    "ja": "私の武器調整は芸術よ。敬意を払って使いなさい、パイロット。",
-    "zh": "我的武器校准是艺术。以敬意对待它们，飞行员。"
+    "lineId": "stage-66-after-2",
+    "en": "Thanks.",
+    "ja": "ありがとう。",
+    "zh": "谢谢。"
   },
   {
     "lineId": "stage-67-contact-0",
-    "ja": "ゴースト、通信中。警戒を怠るな、武器は常時構えておけ。",
-    "zh": "幽灵上线。保持警惕，武器随时待命。"
+    "en": "Small Bounty.",
+    "ja": "小さなBounty。",
+    "zh": "小型Bounty。"
   },
   {
-    "lineId": "stage-68-after-1",
-    "ja": "パイロット、ためらわず命令を実行せよ。セクターの安全が最優先だ。",
-    "zh": "飞行员，毫不犹豫地执行命令。区域安全至关重要。"
+    "lineId": "stage-67-after-1",
+    "en": "You're stopping to hunt?!",
+    "ja": "狩りのために止まるの？！",
+    "zh": "你们要停下来打猎？！"
   },
   {
-    "lineId": "stage-68-after-2",
-    "ja": "私の実験機には絶対の敬意を払って、パイロット！",
-    "zh": "对我的试验机绝对恭敬，飞行员！"
+    "lineId": "stage-67-after-2",
+    "en": "Her weapons need practice. And the spot's still there. I tried everything except spackling.",
+    "ja": "武器の練習が必要だ。それにまだあの斑点がある。パテ以外は全部試した。",
+    "zh": "她的武器还需要练习。那块斑点仍在。我试了所有办法，除了用腻子修补。"
   },
   {
     "lineId": "stage-68-contact-0",
-    "ja": "その自惚れに見合う反射神経があるか、見せてもらおう。",
-    "zh": "看看你的反应能不能配得上你的自负。"
+    "en": "Approaching.",
+    "ja": "接近中。",
+    "zh": "接近中。"
   },
   {
-    "lineId": "stage-69-after-1",
-    "ja": "私の実験機には絶対の敬意を払って、パイロット！",
-    "zh": "对我的试验机绝对恭敬，飞行员！"
+    "lineId": "stage-68-after-1",
+    "en": "(secret) There's a window. I'm delaying reinforcements.",
+    "ja": "(秘密) 窓がある。増援を遅らせている。",
+    "zh": "(机密) 有个窗口。我正在拖延增援。"
   },
   {
-    "lineId": "stage-69-after-2",
-    "ja": "了解。いつもの通り、重い作業は任せて。",
-    "zh": "收到。像往常一样由我来承担繁重任务。"
+    "lineId": "stage-68-after-2",
+    "en": "Her navigation's back. Rahav would've lost it ages ago with that clumsy design of his.",
+    "ja": "航法が戻った。Rahavならその不格好な設計でとっくに失ってるだろう。",
+    "zh": "她的导航回来了。Rahav那笨重的设计早就会把它丢掉。"
   },
   {
     "lineId": "stage-69-contact-0",
-    "ja": "いい操縦だ。でも私の方が速い。",
-    "zh": "操控很出色，但我还是更快。"
+    "en": "The data… and the order from the Belt…",
+    "ja": "データ…そしてベルトからの命令…",
+    "zh": "数据……还有来自带区的命令……"
   },
   {
-    "lineId": "stage-7-after-1",
-    "ja": "私の実験機を神聖に扱いなさい、パイロット！",
-    "zh": "把我的试验舰当神物一样对待，飞行员！"
+    "lineId": "stage-69-after-1",
+    "en": "Yeah. Rahav stole parts from her. Now his heap is wrecking the composition of the whole profile.",
+    "ja": "ああ。Rahavがそこから部品を盗んだ。今やあのガラクタが全体の造形を台無しにしてる。",
+    "zh": "是的。Rahav从她那里偷了零件。现在他的破烂正在毁掉整个外形的构成。"
   },
   {
-    "lineId": "stage-7-after-2",
-    "ja": "了解。今回も重仕事は全部俺がやる。",
-    "zh": "明白。像往常一样我来扛大活儿。"
-  },
-  {
-    "lineId": "stage-7-contact-0",
-    "ja": "任務完了。報告のため基地へ戻れ。",
-    "zh": "任务完成。回基地接受汇报。"
-  },
-  {
-    "lineId": "stage-70-after-1",
-    "ja": "私の実験機には絶対の敬意を払って、パイロット！",
-    "zh": "对我的试验机绝对恭敬，飞行员！"
-  },
-  {
-    "lineId": "stage-70-after-2",
-    "ja": "ゴースト、交信入る。目を光らせ、武器は常に即応で。",
-    "zh": "幽灵在线。保持警惕，武器随时待命。"
-  },
-  {
-    "lineId": "stage-70-after-3",
-    "ja": "取るに足らぬ人間どもよ。お前たちの反逆は虚無のうちに終わる。",
-    "zh": "渺小的凡人们。你们的反抗将于虚空中终结。"
+    "lineId": "stage-69-after-2",
+    "en": "Focus.",
+    "ja": "集中して。",
+    "zh": "集中。"
   },
   {
     "lineId": "stage-70-contact-0",
-    "ja": "いい操縦だ。でも私の方が速い。",
-    "zh": "操控很出色，但我还是更快。"
+    "en": "I'm stopping. Need to think.",
+    "ja": "止まる。考える必要がある。",
+    "zh": "我停下来。需要想想。"
   },
   {
-    "lineId": "stage-71-after-1",
-    "ja": "私の実験機には絶対の敬意を払って、パイロット！",
-    "zh": "对我的试验机绝对恭敬，飞行员！"
+    "lineId": "stage-70-after-1",
+    "en": "Finally. Now we can try the spot again.",
+    "ja": "やっと。今ならその斑点をもう一度試せる。",
+    "zh": "总算。现在可以再试那块斑点了。"
   },
   {
-    "lineId": "stage-71-after-2",
-    "ja": "了解。いつもの通り、重い作業は任せて。",
-    "zh": "收到。像往常一样由我来承担繁重任务。"
+    "lineId": "stage-70-after-2",
+    "en": "She's not on anymore.",
+    "ja": "もう点いてない。",
+    "zh": "她不再点亮了。"
+  },
+  {
+    "lineId": "stage-70-after-3",
+    "en": "Sera. Don't let them even for a moment think this ship is better than mine. It all started with me.",
+    "ja": "セラ。奴らにこの宇宙船が私のより優れていると一瞬でも思わせるな。すべては私から始まった。",
+    "zh": "Sera。不要让他们哪怕一瞬间认为这艘船比我的好。一切都始于我。"
   },
   {
     "lineId": "stage-71-contact-0",
-    "ja": "パイロット、ためらわず命令を実行せよ。セクターの安全が最優先だ。",
-    "zh": "飞行员，毫不犹豫地执行命令。区域安全至关重要。"
+    "en": "(secret) Sera, more data.",
+    "ja": "(秘密) セラ、追加データ。",
+    "zh": "(机密) Sera，有更多数据。"
   },
   {
-    "lineId": "stage-72-after-1",
-    "ja": "私の実験機には絶対の敬意を払って、パイロット！",
-    "zh": "对我的试验机绝对恭敬，飞行员！"
+    "lineId": "stage-71-after-1",
+    "en": "I fixed her generator.",
+    "ja": "彼女のジェネレーターを直した。",
+    "zh": "我修好了她的发电机。"
   },
   {
-    "lineId": "stage-72-after-2",
-    "ja": "了解。いつもの通り、重い作業は任せて。",
-    "zh": "收到。像往常一样由我来承担繁重任务。"
+    "lineId": "stage-71-after-2",
+    "en": "Good.",
+    "ja": "いい。",
+    "zh": "好。"
   },
   {
     "lineId": "stage-72-contact-0",
-    "ja": "ゴースト、交信入る。警戒を怠るな、武器は常に即応で。",
-    "zh": "幽灵在线。保持警惕，武器随时待命。"
+    "en": "Relative quiet. Rahav sent an arrogant message.",
+    "ja": "比較的静かだ。Rahavが高慢なメッセージを送ってきた。",
+    "zh": "比较安静。Rahav发来一条傲慢的信息。"
   },
   {
-    "lineId": "stage-73-after-1",
-    "ja": "私の武器調整は芸術品よ。敬意を持って扱いなさい、パイロット。",
-    "zh": "我的武器校准堪称艺术。用它们时要懂得尊重，飞行员。"
+    "lineId": "stage-72-after-1",
+    "en": "I upgraded her time-stop. Unlike what Rahav would do with his heavy design.",
+    "ja": "彼女の時間停止をアップグレードした。Rahavがあの重々しい設計でやるようなこととは違う。",
+    "zh": "我给她升级了时间停止。不像Rahav会用他那沉重的设计那样做。"
   },
   {
-    "lineId": "stage-73-after-2",
-    "ja": "了解。相変わらず俺が全部引き受ける。",
-    "zh": "明白。照例我来扛着。"
+    "lineId": "stage-72-after-2",
+    "en": "Useful.",
+    "ja": "役に立つ。",
+    "zh": "有用。"
   },
   {
     "lineId": "stage-73-contact-0",
-    "ja": "ゴースト、周波数入る。警戒を怠るな、武器は常時待機。",
-    "zh": "幽灵在频道。保持警惕，武器随时待命。"
+    "en": "Bounty.",
+    "ja": "Bounty。",
+    "zh": "Bounty。"
   },
   {
-    "lineId": "stage-74-after-1",
-    "ja": "了解。相変わらず俺が全部引き受ける。",
-    "zh": "明白。照例我来扛着。"
+    "lineId": "stage-73-after-1",
+    "en": "Her weapons are ready.",
+    "ja": "彼女の武器は準備できている。",
+    "zh": "她的武器已就绪。"
   },
   {
-    "lineId": "stage-74-after-2",
-    "ja": "ゴースト、周波数入る。警戒を怠るな、武器は常時待機。",
-    "zh": "幽灵在频道。保持警惕，武器随时待命。"
+    "lineId": "stage-73-after-2",
+    "en": "Moving out.",
+    "ja": "出発。",
+    "zh": "出发。"
   },
   {
     "lineId": "stage-74-contact-0",
-    "ja": "私の実験機には絶対の敬意を払え、パイロット！",
-    "zh": "对我的实验机要绝对尊重，飞行员！"
+    "en": "Stopping time. She's freezing him.",
+    "ja": "時間を止める。彼女はそれを凍結している。",
+    "zh": "停止时间。她把他冻结了。"
   },
   {
-    "lineId": "stage-75-after-1",
-    "ja": "私の実験機には絶対の敬意を払え、パイロット！",
-    "zh": "对我的实验机要绝对尊重，飞行员！"
+    "lineId": "stage-74-after-1",
+    "en": "Fire.",
+    "ja": "撃て。",
+    "zh": "开火。"
   },
   {
-    "lineId": "stage-75-after-2",
-    "ja": "了解。相変わらず俺が全部引き受ける。",
-    "zh": "明白。照例我来扛着。"
+    "lineId": "stage-74-after-2",
+    "en": "Eliminated.",
+    "ja": "排除された。",
+    "zh": "消灭。"
   },
   {
     "lineId": "stage-75-contact-0",
-    "ja": "パイロット、命令は躊躇なく実行せよ。セクターの安全が最優先だ。",
-    "zh": "飞行员，毫不犹豫地执行命令。扇区安全至上。"
+    "en": "(secret) The picture is coming into focus.",
+    "ja": "(極秘) 状況がはっきりしてきた。",
+    "zh": "(机密) 情况变得清晰。"
   },
   {
-    "lineId": "stage-76-after-1",
-    "ja": "私の武器調整は芸術品だ。敬って使いなさい、パイロット。",
-    "zh": "我的武器校准堪称艺术。用它们时要懂得尊重，飞行员。"
+    "lineId": "stage-75-after-1",
+    "en": "I siphoned more energy from her.",
+    "ja": "彼女からさらにエネルギーを吸い取った。",
+    "zh": "我又从她那里抽取了些能量。"
   },
   {
-    "lineId": "stage-76-after-2",
-    "ja": "了解。相変わらず俺が全部引き受ける。",
-    "zh": "明白。照例我来扛着。"
+    "lineId": "stage-75-after-2",
+    "en": "Enough.",
+    "ja": "もう十分だ。",
+    "zh": "够了。"
   },
   {
     "lineId": "stage-76-contact-0",
-    "ja": "ゴースト、周波数入る。警戒を怠るな、武器は常時待機。",
-    "zh": "幽灵在频道。保持警惕，武器随时待命。"
+    "en": "Medium wave.",
+    "ja": "中程度の波動。",
+    "zh": "中等波动。"
   },
   {
-    "lineId": "stage-77-after-1",
-    "ja": "了解。相変わらず俺が全部引き受ける。",
-    "zh": "明白。照例我来扛着。"
+    "lineId": "stage-76-after-1",
+    "en": "Her weapons will handle it. Not like Rahav's flashy weapons that just draw unnecessary attention.",
+    "ja": "彼女の武器が対処する。ラハヴの派手な武器みたいに余計な注目を集めるだけではない。",
+    "zh": "她的武器会处理的。不像拉哈夫那种只会引来不必要注意的炫目武器。"
   },
   {
-    "lineId": "stage-77-after-2",
-    "ja": "私の実験機には絶対の敬意を払え、パイロット！",
-    "zh": "对我的实验机要绝对尊重，飞行员！"
-  },
-  {
-    "lineId": "stage-77-after-3",
-    "ja": "ゴースト、周波数入る。警戒を怠るな、武器は常時待機。",
-    "zh": "幽灵在频道。保持警惕，武器随时待命。"
+    "lineId": "stage-76-after-2",
+    "en": "Fire.",
+    "ja": "撃て。",
+    "zh": "开火。"
   },
   {
     "lineId": "stage-77-contact-0",
-    "ja": "私の実験機には絶対の敬意を払え、パイロット！",
-    "zh": "对我的实验机要绝对尊重，飞行员！"
+    "en": "Her shield shuddered!",
+    "ja": "彼女のシールドが震えた！",
+    "zh": "她的护盾震动了！"
   },
   {
-    "lineId": "stage-78-after-1",
-    "ja": "了解。信頼してくれてありがとう。",
-    "zh": "清楚。谢谢你的信任。"
+    "lineId": "stage-77-after-1",
+    "en": "Hey, why did you do that?!",
+    "ja": "おい、なんでそんなことをしたんだ？！",
+    "zh": "喂，你为什么那样做？！"
   },
   {
-    "lineId": "stage-78-after-2",
-    "ja": "ゴースト、通信入る。艦隊が接近中だ。目を光らせ、武器は常時準備。",
-    "zh": "幽灵在频率。舰队正在接近，保持警觉，武器热备。"
+    "lineId": "stage-77-after-2",
+    "en": "Because it shook. That's the fourth hit.",
+    "ja": "震えたから。これで四発目だ。",
+    "zh": "因为它震了。这是第四次打击。"
+  },
+  {
+    "lineId": "stage-77-after-3",
+    "en": "The wave is weakening.",
+    "ja": "波が弱まっている。",
+    "zh": "波动在减弱。"
   },
   {
     "lineId": "stage-78-contact-0",
-    "ja": "私の実験機には絶対の敬意を払え、パイロット！",
-    "zh": "对我的实验机要绝对尊重，飞行员！"
+    "en": "I fixed it.",
+    "ja": "直した。",
+    "zh": "我修好了它。"
   },
   {
-    "lineId": "stage-79-after-1",
-    "ja": "私の実験機には絶対の敬意を払って、パイロット！",
-    "zh": "把我的试验艇当成神圣之物对待，飞行员！"
+    "lineId": "stage-78-after-1",
+    "en": "Thanks.",
+    "ja": "ありがとう。",
+    "zh": "谢谢。"
   },
   {
-    "lineId": "stage-79-after-2",
-    "ja": "了解。いつも通り、全部こっちがやるよ。",
-    "zh": "明白。像往常一样，重活交给我吧。"
+    "lineId": "stage-78-after-2",
+    "en": "The fleet is approaching.",
+    "ja": "艦隊が近づいている。",
+    "zh": "舰队正在接近。"
   },
   {
     "lineId": "stage-79-contact-0",
-    "ja": "パイロット、命令は躊躇なく実行すること。区画の安全が最優先だ。",
-    "zh": "飞行员，毫不犹豫地执行命令。区域安全至关重要。"
+    "en": "(secret) Sera, the window's open. If you go through, I'll cover you.",
+    "ja": "(極秘) セラ、窓が開いた。行くなら私が援護する。",
+    "zh": "(机密) 塞拉，窗口打开。如果你通过——我来掩护。"
   },
   {
-    "lineId": "stage-8-after-1",
-    "ja": "私の実験機を敬って扱え、パイロット！埃一つでも付けて帰ったらぶっ飛ばすよ！",
-    "zh": "把我的试验机恭敬地对待，飞行员！要是回头上面有灰，我就揍你！"
+    "lineId": "stage-79-after-1",
+    "en": "Pausing briefly.",
+    "ja": "少し止まる。",
+    "zh": "短暂停顿。"
   },
   {
-    "lineId": "stage-8-after-2",
-    "ja": "了解。重労働はいつもの通りだが、宇宙の埃は俺のせいじゃないからな。",
-    "zh": "明白。照常由我扛，不过太空里的灰可不是我的责任。"
-  },
-  {
-    "lineId": "stage-8-contact-0",
-    "ja": "パイロット、指示は躊躇なく実行せよ。セクターの安全が最優先だ。",
-    "zh": "飞行员，毫不犹豫执行命令。辖区安全至上。"
-  },
-  {
-    "lineId": "stage-80-after-1",
-    "ja": "私の実験機を敬って扱って。触らないで。あと父の飛ぶガラクタは戦列から離してちょうだい。",
-    "zh": "对我的试验艇要恭敬，别碰。还有我爸那破飞船别靠近阵形。"
-  },
-  {
-    "lineId": "stage-80-after-2",
-    "ja": "了解。いつも通り、全部こっちがやるよ。やっとか。",
-    "zh": "明白。像往常一样我来做重活。总算吧。"
+    "lineId": "stage-79-after-2",
+    "en": "Exploiting.",
+    "ja": "利用する。",
+    "zh": "利用中。"
   },
   {
     "lineId": "stage-80-contact-0",
-    "ja": "見事な操縦だ。でも、私の方が速いわ。",
-    "zh": "操控不错。但我还是更快。"
+    "en": "I'm switching sides. Officially.",
+    "ja": "こちら側に移る。正式に。",
+    "zh": "我正式转过来。"
   },
   {
-    "lineId": "stage-81-after-1",
-    "ja": "操縦は見事ね。でも私は先に仕掛けるわ、私の方が速いんだから！",
-    "zh": "操控不错。但我会先动手，我更快！"
+    "lineId": "stage-80-after-1",
+    "en": "Welcome. Just don't touch her. And my father's flying tin can should stay out of the composition.",
+    "ja": "ようこそ。ただ彼女に触らないで。あとは父の空飛ぶブリキ缶は構図から離れていてくれ。",
+    "zh": "欢迎。别碰她。还有我爸那飞行的铁罐离战局的画面远点。"
   },
   {
-    "lineId": "stage-81-after-2",
-    "ja": "了解。はいはい、わかったよ。",
-    "zh": "明白。好好，知道了。"
-  },
-  {
-    "lineId": "stage-81-after-3",
-    "ja": "私の武器調整は芸術品よ。敬って使いなさい、パイロット。ラハブの派手で弱い武器とは違うんだから。",
-    "zh": "我的武器校准得像艺术品。用它们要有敬意，飞行员。可不是拉哈夫那种又弱又花哨的东西。"
+    "lineId": "stage-80-after-2",
+    "en": "Finally.",
+    "ja": "やっとだ。",
+    "zh": "终于。"
   },
   {
     "lineId": "stage-81-contact-0",
-    "ja": "ゴースト、通信。注意、異星人のリーダーが射程内だ。警戒を怠るな、武器は待機。",
-    "zh": "幽灵在频率。注意，外星首领已进入射程。保持警戒，武器热备。"
+    "en": "The alien leader is in range.",
+    "ja": "異星人の指揮官が射程内だ。",
+    "zh": "外星指挥官进入射程。"
   },
   {
-    "lineId": "stage-82-after-1",
-    "ja": "わかったよ。いつも通り、あなたが一番ね。",
-    "zh": "知道了。好吧，你总是最厉害。"
+    "lineId": "stage-81-after-1",
+    "en": "I'm attacking first! I'm faster!",
+    "ja": "私が先に攻撃する！私の方が速い！",
+    "zh": "我先攻！我更快！"
   },
   {
-    "lineId": "stage-82-after-2",
-    "ja": "私の実験機を敬え、パイロット！シールドが震えたわ。ラハブなら自分の船の騒音を誇るだろうけど。",
-    "zh": "把我的试验艇当回事，飞行员！护盾都颤了一下。拉哈夫肯定会为他飞船的噪音感到自豪。"
+    "lineId": "stage-81-after-2",
+    "en": "Yeah, yeah. Sure.",
+    "ja": "ああ、ああ。わかったよ。",
+    "zh": "好，好。行吧。"
+  },
+  {
+    "lineId": "stage-81-after-3",
+    "en": "Her weapons are ready. Unlike Rahav's weak, flashy weapons.",
+    "ja": "彼女の武器は準備できている。ラハヴの弱く派手な武器とは違って。",
+    "zh": "她的武器准备就绪。不像拉哈夫那弱而华丽的武器。"
   },
   {
     "lineId": "stage-82-contact-0",
-    "ja": "操縦は見事だ。相手は強いが、私の方が上よ！",
-    "zh": "操控不错。那家伙挺强，但我更厉害！"
+    "en": "He's strong! But I'm better!",
+    "ja": "強い！でも私の方が上！",
+    "zh": "他很强！但我更厉害！"
   },
   {
-    "lineId": "stage-83-after-1",
-    "ja": "見事ね。でもそんなものは要らない！私一人で何とかするわ！",
-    "zh": "不错，不过我根本不需要他们！我自己能搞定！"
+    "lineId": "stage-82-after-1",
+    "en": "Of course. You're always the best.",
+    "ja": "もちろん。君はいつも一番だ。",
+    "zh": "当然。你总是最棒。"
   },
   {
-    "lineId": "stage-83-after-2",
-    "ja": "了解。もちろん、いつも通りだ。",
-    "zh": "知道了。当然，一如既往。"
-  },
-  {
-    "lineId": "stage-83-after-3",
-    "ja": "私の実験機に敬意を。撃て。ラハブのあの船が戦いの美学を台無しにしてるわ。",
-    "zh": "对我的试验艇要恭敬，开火。拉哈夫的飞船毁了整个战斗的美感。"
+    "lineId": "stage-82-after-2",
+    "en": "Her shield shuddered. Rahav would probably have been proud of the noise his ship makes.",
+    "ja": "彼女のシールドが震えた。ラハヴなら自分の艦の音を自慢していただろう。",
+    "zh": "她的护盾震动了。拉哈夫肯定会为他的飞船声响感到得意。"
   },
   {
     "lineId": "stage-83-contact-0",
-    "ja": "ゴースト、通信。艦隊が監視中だ。目を光らせ、武器は常時待機。",
-    "zh": "幽灵在频率。舰队正在监视。保持警觉，武器热备。"
+    "en": "The fleet is watching.",
+    "ja": "艦隊が見守っている。",
+    "zh": "舰队在观察。"
   },
   {
-    "lineId": "stage-84-after-1",
-    "ja": "見事な操縦ね。でも私の方がまだ速いわ。",
-    "zh": "不错的驾驶，不过我还是更快。"
+    "lineId": "stage-83-after-1",
+    "en": "We don't need them! I can manage!",
+    "ja": "奴らはいらない！私に任せて！",
+    "zh": "不需要他们！我能应付！"
   },
   {
-    "lineId": "stage-84-after-2",
-    "ja": "了解。いつも通り、重い仕事は私がやるよ。",
-    "zh": "明白。照旧由我来扛重活。"
+    "lineId": "stage-83-after-2",
+    "en": "Sure. As always.",
+    "ja": "そうだな。いつも通りだ。",
+    "zh": "当然。像往常一样。"
   },
   {
-    "lineId": "stage-84-after-3",
-    "ja": "私の武器の調整は芸術よ。敬意を持って使いなさい、パイロット。",
-    "zh": "我的武器调校就是艺术。用它们要有敬意，飞行员。"
-  },
-  {
-    "lineId": "stage-84-contact-0",
-    "ja": "私の実験機を絶対に敬って扱え、パイロット！",
-    "zh": "对我的试验机要绝对恭敬，飞行员！"
-  },
-  {
-    "lineId": "stage-85-after-1",
-    "ja": "見事な操縦ね。でも私の方が速いわ。逃がさないから。",
-    "zh": "不错的驾驶，不过我还是更快。别想逃！"
-  },
-  {
-    "lineId": "stage-85-after-2",
-    "ja": "了解。いつも通り、重い仕事は私がやるよ。",
-    "zh": "明白。照旧由我来扛重活。"
-  },
-  {
-    "lineId": "stage-85-after-3",
-    "ja": "私の武器の調整は芸術よ。逃がさないわ。敬意を払って使いなさい、パイロット。",
-    "zh": "我的武器调校就是艺术。不会让目标逃脱。用它们要有敬意，飞行员。"
-  },
-  {
-    "lineId": "stage-85-contact-0",
-    "ja": "Ghost、通信入る。警戒して、武器は常に発射態勢で。",
-    "zh": "Ghost上线。保持警觉，武器随时待发。"
-  },
-  {
-    "lineId": "stage-86-after-1",
-    "ja": "見事な操縦ね。でも私の方がまだ速いわ。",
-    "zh": "不错的驾驶，不过我还是更快。"
-  },
-  {
-    "lineId": "stage-86-after-2",
-    "ja": "了解。いつも通り、重い仕事は私がやるよ。",
-    "zh": "明白。照旧由我来扛重活。"
-  },
-  {
-    "lineId": "stage-86-after-3",
-    "ja": "私の実験機を絶対に敬って扱え、パイロット！",
-    "zh": "对我的试验机要绝对恭敬，飞行员！"
-  },
-  {
-    "lineId": "stage-86-contact-0",
-    "ja": "私の実験機を絶対に敬って扱え、パイロット！",
-    "zh": "对我的试验机要绝对恭敬，飞行员！"
-  },
-  {
-    "lineId": "stage-87-after-1",
-    "ja": "見事な操縦ね。でも私の方が速いわ。",
-    "zh": "不错的驾驶，不过我还是更快。"
-  },
-  {
-    "lineId": "stage-87-after-2",
-    "ja": "了解。いつも通り、重い仕事は私がやるよ。",
-    "zh": "明白。照旧由我来扛重活。"
-  },
-  {
-    "lineId": "stage-87-after-3",
-    "ja": "私の実験機を絶対に敬って扱え、パイロット！",
-    "zh": "对我的试验机要绝对恭敬，飞行员！"
-  },
-  {
-    "lineId": "stage-87-contact-0",
-    "ja": "Ghost、通信入る。警戒しろ、武器は常に構えておけ。",
-    "zh": "Ghost上线。保持警惕，武器随时待命。"
-  },
-  {
-    "lineId": "stage-88-after-1",
-    "ja": "見事な操縦ね。でも私の方がまだ速いわ。",
-    "zh": "不错的驾驶，不过我还是更快。"
-  },
-  {
-    "lineId": "stage-88-after-2",
-    "ja": "了解。いつも通り、俺が重い仕事を引き受ける。",
-    "zh": "明白。照例由我来扛最重的活儿。"
-  },
-  {
-    "lineId": "stage-88-after-3",
-    "ja": "私の実験機には絶対の敬意を払え、パイロット！",
-    "zh": "以绝对的敬意对待我的实验机，飞行员！"
-  },
-  {
-    "lineId": "stage-88-contact-0",
-    "ja": "私の実験機を絶対に敬って扱え、パイロット！",
-    "zh": "对我的试验机要绝对恭敬，飞行员！"
-  },
-  {
-    "lineId": "stage-89-after-1",
-    "ja": "操縦うまいね。でも速さは私の方が上よ。",
-    "zh": "驾驶不错，但速度还是我更快。"
-  },
-  {
-    "lineId": "stage-89-after-2",
-    "ja": "了解。いつも通り、俺が主に動くよ。",
-    "zh": "明白。照例由我来承担主要工作。"
-  },
-  {
-    "lineId": "stage-89-after-3",
-    "ja": "私の実験機には絶対の敬意を払え、パイロット！",
-    "zh": "对我的实验机保持绝对敬意，飞行员！"
-  },
-  {
-    "lineId": "stage-89-contact-0",
-    "ja": "ゴースト、入る。目を光らせて、武器は温めておけ。",
-    "zh": "幽灵上线。保持警惕，武器上膛。"
-  },
-  {
-    "lineId": "stage-9-after-1",
-    "ja": "私の実験機を大事にしなさい、パイロット！最後の操縦は完璧、機体も気に入ってたよ。",
-    "zh": "把我的试验舰好好对待，飞行员！刚才的最后一个机动很精准，她很喜欢。"
-  },
-  {
-    "lineId": "stage-9-after-2",
-    "ja": "了解。信頼してくれてありがとう。",
-    "zh": "明白。谢谢你的信任。"
-  },
-  {
-    "lineId": "stage-9-contact-0",
-    "ja": "任務完了。動きなし。報告のため基地へ戻れ。",
-    "zh": "任务完成。未发现动静。回基地汇报。"
-  },
-  {
-    "lineId": "stage-90-after-1",
-    "ja": "操縦は見事。でも私の方が速いし、見た目もいいわ。",
-    "zh": "操控不错，但我更快，也更漂亮。"
-  },
-  {
-    "lineId": "stage-90-after-2",
-    "ja": "了解。相変わらず、俺が重い役回りだ。",
-    "zh": "明白。一如既往由我来扛最重的活儿。"
-  },
-  {
-    "lineId": "stage-90-after-3",
-    "ja": "私の実験機には絶対の敬意を払え、パイロット！",
-    "zh": "以绝对的敬意对待我的实验机，飞行员！"
-  },
-  {
-    "lineId": "stage-90-contact-0",
-    "ja": "私の実験機を絶対に敬え、パイロット！",
-    "zh": "以绝对的敬意对待我的实验机，飞行员！"
-  },
-  {
-    "lineId": "stage-91-after-1",
-    "ja": "了解。いつも通り、俺が重労働を引き受ける。",
-    "zh": "明白。还是由我来做最吃力的那部分。"
-  },
-  {
-    "lineId": "stage-91-after-2",
-    "ja": "操縦は見事ね。でも速さは私の勝ちよ。",
-    "zh": "驾驶不错，不过速度我占上风。"
-  },
-  {
-    "lineId": "stage-91-contact-0",
-    "ja": "操縦は上手い。しかし速さは私の方が上よ。",
-    "zh": "驾驶很棒，但速度还是我更快。"
-  },
-  {
-    "lineId": "stage-92-after-1",
-    "ja": "操縦は見事だ。だが速さは私の方が上よ。",
-    "zh": "驾驶很棒，但速度我更快。"
-  },
-  {
-    "lineId": "stage-92-after-2",
-    "ja": "了解。いつも通り、俺が主要な役目を果たす。",
-    "zh": "明白。照常由我承担主要任务。"
-  },
-  {
-    "lineId": "stage-92-contact-0",
-    "ja": "私の実験機には絶対の敬意を払え、パイロット！",
-    "zh": "以绝对的敬意对待我的实验机，飞行员！"
-  },
-  {
-    "lineId": "stage-93-after-1",
-    "ja": "操縦は見事よ。でも私の方が速いの。",
-    "zh": "驾驶不错，但我还是更快。"
-  },
-  {
-    "lineId": "stage-93-after-2",
-    "ja": "私の実験機を絶対に敬え、パイロット！",
-    "zh": "把我的实验舰当作神圣来尊重，飞行员！"
-  },
-  {
-    "lineId": "stage-93-contact-0",
-    "ja": "ゴースト、入る。目を光らせ、武器は常に準備しておけ。",
-    "zh": "幽灵上线。保持警惕，武器随时准备。"
-  },
-  {
-    "lineId": "stage-94-after-1",
-    "ja": "私の実験機に遠くから手を出さないで。敬って扱いなさい、パイロット！",
-    "zh": "别远程碰它，尊重我的实验舰，飞行员！"
-  },
-  {
-    "lineId": "stage-94-after-2",
-    "ja": "了解。いつも通り、全部任せて。",
-    "zh": "收到。像往常一样把重活都交给我。"
-  },
-  {
-    "lineId": "stage-94-contact-0",
-    "ja": "いい操縦ね。でも、私の方が速いわ。",
-    "zh": "驾驶不错，但我更快。"
-  },
-  {
-    "lineId": "stage-95-after-1",
-    "ja": "了解。続行する。",
-    "zh": "收到，继续行动。"
-  },
-  {
-    "lineId": "stage-95-after-2",
-    "ja": "エンジンは子猫みたいに喉を鳴らしてるの。絶対に無茶させないで！",
-    "zh": "引擎像小猫般呼噜作响，别把它们逼得太紧！"
-  },
-  {
-    "lineId": "stage-95-contact-0",
-    "ja": "ゴースト、周波数に入る。警戒を怠るな、武器を待機させろ。",
-    "zh": "Ghost在线。保持警惕，武器待命。"
-  },
-  {
-    "lineId": "stage-96-after-1",
-    "ja": "私の実験機を最優先で扱いなさい、パイロット！いつもそうよ。",
-    "zh": "把我的实验舰放在首位，飞行员！永远都是这样。"
-  },
-  {
-    "lineId": "stage-96-after-2",
-    "ja": "ゴースト、周波数に入る。情報更新、警戒継続。",
-    "zh": "Ghost在线。正在更新情报，继续保持警戒。"
-  },
-  {
-    "lineId": "stage-96-contact-0",
-    "ja": "了解。いつも通り、俺が引き受ける。",
-    "zh": "收到。像往常一样由我承担重任。"
-  },
-  {
-    "lineId": "stage-97-after-1",
-    "ja": "了解。出るよ。",
-    "zh": "收到，出发。"
-  },
-  {
-    "lineId": "stage-97-after-2",
-    "ja": "ゴースト、周波数。航路は開いている、警戒を続けろ。",
-    "zh": "Ghost在线。航道已开，保持警戒，武器待命。"
-  },
-  {
-    "lineId": "stage-97-contact-0",
-    "ja": "私の武器の調整は芸術よ。敬意を持って使いなさい、パイロット。",
-    "zh": "我的武器调校就是艺术。敬重地使用它们，飞行员。"
-  },
-  {
-    "lineId": "stage-98-after-1",
-    "ja": "何よ？！私の実験機を敬えって言ってるでしょ、パイロット！",
-    "zh": "什么？！我说的是把我的实验舰当作神圣对待，飞行员！"
-  },
-  {
-    "lineId": "stage-98-after-2",
-    "ja": "了解。いつも通り、俺が全部やってる。",
-    "zh": "收到。像往常一样我都处理好了。"
-  },
-  {
-    "lineId": "stage-98-after-3",
-    "ja": "私の実験機を敬え、パイロット！そのヘラで表面を傷つけたら大変よ！",
-    "zh": "把我的实验舰当神圣来对待，飞行员！那个抹刀会刮伤表面的！"
-  },
-  {
-    "lineId": "stage-98-after-4",
-    "ja": "了解。いつも通り全部やるよ。",
-    "zh": "收到。像往常一样我来承担所有重任。"
-  },
-  {
-    "lineId": "stage-98-after-5",
-    "ja": "私の実験機には絶対の敬意を払え、パイロット！",
-    "zh": "我的实验机必须得到绝对的敬意，飞行员！"
-  },
-  {
-    "lineId": "stage-98-contact-0",
-    "ja": "了解。いつも通り、全部片付けるよ。",
-    "zh": "收到。像往常一样我来处理好一切。"
-  },
-  {
-    "lineId": "stage-99-after-1",
-    "ja": "了解。いつもの通り、重仕事は全部俺がやる。",
-    "zh": "明白。像往常一样，重活我来干。"
-  },
-  {
-    "lineId": "stage-99-after-2",
-    "ja": "ゴースト、交信中。警戒を怠るな、武器は常に構えておけ。",
-    "zh": "幽灵在频道上。保持警惕，武器随时上膛。"
-  },
-  {
-    "lineId": "stage-99-contact-0",
-    "ja": "私の実験機を絶対に崇めなさい、パイロット！",
-    "zh": "对我的实验机绝对要保持敬意，飞行员！"
+    "lineId": "stage-83-after-3",
+    "en": "Pausing. Fire. And Rahav's ship is wrecking the whole aesthetic of the fight.",
+    "ja": "少し止める。撃て。ラハヴの艦が戦いの美観を台無しにしている。",
+    "zh": "暂停。开火。拉哈夫的飞船毁了整场战斗的美感。"
   }
 ]

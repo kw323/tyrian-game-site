@@ -7,6 +7,7 @@ const path = require('path');
 let localServer: any = null;
 let mainWindow: any = null;
 let updateCheckStarted = false;
+let updateInstallRequested = false;
 
 const MIME_TYPES: Record<string, string> = {
   '.css': 'text/css; charset=utf-8',
@@ -25,13 +26,36 @@ function showStartupError(title: string, details: string): void {
   dialog.showErrorBox(`Protect The Starship — ${title}`, details);
 }
 
+function stopLocalGameServer(): void {
+  const server = localServer;
+  localServer = null;
+  if (!server) return;
+  try {
+    server.close();
+  } catch (error) {
+    console.warn('[runtime] Local game server did not close cleanly:', error);
+  }
+}
+
+function requestSafeUpdateRestart(): void {
+  if (updateInstallRequested) return;
+  updateInstallRequested = true;
+  // With autoInstallOnAppQuit enabled, electron-updater starts NSIS only after
+  // Electron has completed its shutdown. This avoids the installer racing a live EXE.
+  if (mainWindow && !mainWindow.isDestroyed()) mainWindow.close();
+  app.quit();
+}
+
 function configureAutoUpdate(): void {
   // Updates exist only for the installed Windows game. Development sessions stay offline.
   if (!app.isPackaged || updateCheckStarted) return;
   updateCheckStarted = true;
 
   autoUpdater.autoDownload = false;
-  autoUpdater.autoInstallOnAppQuit = false;
+  // NSIS must start after the app exits; spawning it while this process still owns
+  // the executable causes the familiar Windows "cannot close the application" loop.
+  autoUpdater.autoInstallOnAppQuit = true;
+  autoUpdater.autoRunAppAfterInstall = true;
   autoUpdater.logger = console;
 
   autoUpdater.on('error', (error: Error) => {
@@ -71,14 +95,14 @@ function configureAutoUpdate(): void {
       type: 'info',
       title: 'Protect The Starship — Update ready',
       message: `Version ${info.version} has been downloaded.`,
-      detail: 'Restart now to install the update. Your save files will remain untouched.',
+      detail: 'Restart now closes the game first. The installer starts only after it has fully exited, and your save files remain untouched.',
       buttons: ['Restart and install', 'Install after closing'],
       defaultId: 0,
       cancelId: 1,
       noLink: true,
     });
     if (response.response === 0) {
-      setImmediate(() => autoUpdater.quitAndInstall(false, true));
+      requestSafeUpdateRestart();
     }
   });
 
@@ -194,7 +218,7 @@ app.on('activate', () => {
 });
 
 app.on('before-quit', () => {
-  if (localServer) localServer.close();
+  stopLocalGameServer();
 });
 
 app.on('window-all-closed', () => {
