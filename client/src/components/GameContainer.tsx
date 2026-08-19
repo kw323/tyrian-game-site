@@ -82,6 +82,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
     // Android runs in landscape, where viewport width is usually larger than the mobile CSS breakpoint.
     // Native detection keeps the dedicated thumb controls active in that orientation.
     const showTouchControls = touchControlsEnabled && (isMobile || isNativeAndroid);
+    const showDirectTouchFlight = isNativeAndroid && touchControlsEnabled;
     const [touchFireActive, setTouchFireActive] = useState(false);
     const [touchAbilityPulse, setTouchAbilityPulse] = useState(false);
     const [gameplayLang, setGameplayLang] = useState<'he' | 'en' | 'ja' | 'zh' | 'es'>(() => {
@@ -89,9 +90,9 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
     });
     const gameplayLangRef = useRef(gameplayLang);
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const touchInputRef = useRef({ moveX: 0, moveY: 0, fire: false });
+    const touchInputRef = useRef({ moveX: 0, moveY: 0, targetX: null as number | null, targetY: null as number | null, fire: false });
     const mouseInputRef = useRef<{ targetX: number | null; targetY: number | null; fire: boolean }>({ targetX: null, targetY: null, fire: false });
-    const touchActionsRef = useRef<{ toggleAbility?: () => void }>({});
+    const touchActionsRef = useRef<{ toggleAbility?: () => void; advanceMission?: () => void }>({});
     const gameRef = useRef<Game | null>(null);
 
     const toggleLanguage = () => {
@@ -108,6 +109,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
         if (!showTouchControls) {
             touchInputRef.current.moveX = 0;
             touchInputRef.current.moveY = 0;
+            touchInputRef.current.targetX = null;
+            touchInputRef.current.targetY = null;
             touchInputRef.current.fire = false;
         }
     }, [showTouchControls]);
@@ -1099,6 +1102,14 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
 
 
+            touchActionsRef.current.advanceMission = () => {
+                if (showCommsModal) {
+                    advanceBriefing();
+                    return;
+                }
+                if (gameState.showLevelScreen || showBranchModal) advanceFromShop();
+            };
+
             const jumpToStage = (requestedStage: number): void => {
                 const targetStage = Math.max(1, Math.min(CampaignSystem.TOTAL_STAGES, Math.floor(requestedStage)));
                 gameState.level = targetStage;
@@ -1290,6 +1301,12 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 const mouseMoveY = mouseInput.targetY === null
                     ? 0
                     : Math.max(-1, Math.min(1, (mouseInput.targetY - (player.y + player.height / 2)) / 120));
+                const directTouchMoveX = touchInput.targetX === null
+                    ? 0
+                    : Math.max(-1, Math.min(1, (touchInput.targetX - (player.x + player.width / 2)) / 120));
+                const directTouchMoveY = touchInput.targetY === null
+                    ? 0
+                    : Math.max(-1, Math.min(1, (touchInput.targetY - (player.y + player.height / 2)) / 120));
                 const activeSeraForInput = game['entities'].find((entity: any) =>
                     entity instanceof SeraDuelEntity && !(entity instanceof SeraAllyShipEntity) && entity.isActive
                 ) as SeraDuelEntity | undefined;
@@ -1299,8 +1316,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     ? {}
                     : {
                         ...keys,
-                        moveX: Math.max(-1, Math.min(1, keyboardMoveX + touchInput.moveX + mouseMoveX)),
-                        moveY: Math.max(-1, Math.min(1, keyboardMoveY + touchInput.moveY + mouseMoveY))
+                        moveX: Math.max(-1, Math.min(1, keyboardMoveX + touchInput.moveX + mouseMoveX + directTouchMoveX)),
+                        moveY: Math.max(-1, Math.min(1, keyboardMoveY + touchInput.moveY + mouseMoveY + directTouchMoveY))
                     };
 
                 // Update player; keyboard arrows and the mobile joystick can be used together.
@@ -3708,7 +3725,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 inputManager.clear();
             };
             const canvas = game.getCanvas();
-            const getShopPoint = (event: MouseEvent): { x: number; y: number } => {
+            const getShopPoint = (event: MouseEvent | PointerEvent): { x: number; y: number } => {
                 const rect = canvas.getBoundingClientRect();
                 return {
                     x: (event.clientX - rect.left) * (canvas.width / rect.width),
@@ -3764,6 +3781,27 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 if (mouseControlsEnabled && !gameState.showLevelScreen && !showCommsModal) event.preventDefault();
             };
 
+            const setDirectTouchTarget = (event: PointerEvent): void => {
+                const point = getShopPoint(event);
+                touchInputRef.current.targetX = Math.max(player.width / 2, Math.min(canvas.width - player.width / 2, point.x));
+                touchInputRef.current.targetY = Math.max(player.height / 2, Math.min(GAME_CANVAS_HEIGHT - player.height / 2, point.y));
+            };
+            const handleCanvasTouchStart = (event: PointerEvent): void => {
+                if (!showDirectTouchFlight || event.pointerType !== 'touch' || gameState.showLevelScreen || showCommsModal) return;
+                event.preventDefault();
+                canvas.setPointerCapture(event.pointerId);
+                setDirectTouchTarget(event);
+            };
+            const handleCanvasTouchMove = (event: PointerEvent): void => {
+                if (!showDirectTouchFlight || event.pointerType !== 'touch' || gameState.showLevelScreen || showCommsModal) return;
+                event.preventDefault();
+                setDirectTouchTarget(event);
+            };
+            const releaseCanvasTouch = (event: PointerEvent): void => {
+                if (event.pointerType !== 'touch') return;
+                if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
+            };
+
             const handleCanvasClick = (event: MouseEvent): void => {
                 const point = getShopPoint(event);
                 if (!gameState.showLevelScreen && !showCommsModal) {
@@ -3789,6 +3827,10 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             canvas.addEventListener('mouseup', handleCanvasMouseUp);
             canvas.addEventListener('mouseleave', handleCanvasMouseLeave);
             canvas.addEventListener('contextmenu', handleCanvasContextMenu);
+            canvas.addEventListener('pointerdown', handleCanvasTouchStart);
+            canvas.addEventListener('pointermove', handleCanvasTouchMove);
+            canvas.addEventListener('pointerup', releaseCanvasTouch);
+            canvas.addEventListener('pointercancel', releaseCanvasTouch);
             canvas.addEventListener('click', handleCanvasClick);
 
             // Start the game
@@ -3831,12 +3873,17 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 window.removeEventListener('blur', handleWindowBlur);
                 inputManager.destroy();
                 touchActionsRef.current.toggleAbility = undefined;
+                touchActionsRef.current.advanceMission = undefined;
                 handleWindowBlur();
                 canvas.removeEventListener('mousemove', handleCanvasMouseMove);
                 canvas.removeEventListener('mousedown', handleCanvasMouseDown);
                 canvas.removeEventListener('mouseup', handleCanvasMouseUp);
                 canvas.removeEventListener('mouseleave', handleCanvasMouseLeave);
                 canvas.removeEventListener('contextmenu', handleCanvasContextMenu);
+                canvas.removeEventListener('pointerdown', handleCanvasTouchStart);
+                canvas.removeEventListener('pointermove', handleCanvasTouchMove);
+                canvas.removeEventListener('pointerup', releaseCanvasTouch);
+                canvas.removeEventListener('pointercancel', releaseCanvasTouch);
                 canvas.removeEventListener('click', handleCanvasClick);
                 canvas.style.cursor = 'default';
             };
@@ -3989,29 +4036,65 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     className="block w-full h-auto border-2 border-green-500 bg-black shadow-lg shadow-green-500/50"
                 />
                 {showTouchControls && (
-                    <div className="mobile-touch-layer" aria-label="Touch flight controls">
-                        <div className="mobile-joystick-zone">
-                            <span className="mobile-control-label">DRAG TO MOVE</span>
-                            <div
-                                className="mobile-joystick"
-                                role="slider"
-                                aria-label="Move ship"
-                                aria-valuemin={-1}
-                                aria-valuemax={1}
-                                aria-valuenow={0}
-                                onPointerDown={(event) => {
-                                    event.preventDefault();
-                                    event.currentTarget.setPointerCapture(event.pointerId);
-                                    updateTouchJoystick(event);
-                                }}
-                                onPointerMove={updateTouchJoystick}
-                                onPointerUp={releaseTouchJoystick}
-                                onPointerCancel={releaseTouchJoystick}
-                            >
-                                <span className="mobile-joystick-ring" />
-                                <span className="mobile-joystick-knob" />
+                    <div className={`mobile-touch-layer ${showDirectTouchFlight ? 'mobile-touch-layer--direct' : ''}`} aria-label="Touch flight controls">
+                        {showDirectTouchFlight ? (
+                            <div className="mobile-direct-flight-hint" aria-hidden="true">
+                                <span>DRAG THE BATTLEFIELD</span>
+                                <small>SHIP FOLLOWS YOUR TOUCH</small>
                             </div>
-                        </div>
+                        ) : (
+                            <div className="mobile-joystick-zone">
+                                <span className="mobile-control-label">DRAG TO MOVE</span>
+                                <div
+                                    className="mobile-joystick"
+                                    role="slider"
+                                    aria-label="Move ship"
+                                    aria-valuemin={-1}
+                                    aria-valuemax={1}
+                                    aria-valuenow={0}
+                                    onPointerDown={(event) => {
+                                        event.preventDefault();
+                                        event.currentTarget.setPointerCapture(event.pointerId);
+                                        updateTouchJoystick(event);
+                                    }}
+                                    onPointerMove={updateTouchJoystick}
+                                    onPointerUp={releaseTouchJoystick}
+                                    onPointerCancel={releaseTouchJoystick}
+                                >
+                                    <span className="mobile-joystick-ring" />
+                                    <span className="mobile-joystick-knob" />
+                                </div>
+                            </div>
+                        )}
+                        {showDirectTouchFlight && (
+                            <div className="mobile-android-command-zone">
+                                <button
+                                    type="button"
+                                    className="mobile-next-command"
+                                    aria-label="Continue dialogue or start mission"
+                                    onPointerDown={(event) => {
+                                        event.preventDefault();
+                                        SoundSystem.toggleSound(true);
+                                        SoundSystem.toggleMusic(true);
+                                        VoicePlaybackManager.primeFromGesture();
+                                        touchActionsRef.current.advanceMission?.();
+                                    }}
+                                >
+                                    NEXT / START
+                                </button>
+                                <button
+                                    type="button"
+                                    className="mobile-command-exit"
+                                    aria-label="Return to the Android title screen"
+                                    onPointerDown={(event) => {
+                                        event.preventDefault();
+                                        onReturnToTitle?.();
+                                    }}
+                                >
+                                    COMMAND
+                                </button>
+                            </div>
+                        )}
                         <div className="mobile-action-zone">
                             <button
                                 type="button"
@@ -4042,7 +4125,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             </div>
             <div className="text-center text-sm text-gray-400">
                 <p><span className="text-green-400 font-semibold">{movementKeysLabel}</span> move · <span className="text-green-400 font-semibold">{formatControlCode(activeControlBindings.fire)}</span> fires · <span className="text-green-400 font-semibold">{formatControlCode(activeControlBindings.tacticalAbility)}</span> toggles tactical {mouseControlsEnabled && <>· <span className="text-cyan-300 font-semibold">MOUSE</span> flies / left click fires</>}</p>
-                {showTouchControls && <p className="mobile-input-hint">On mobile: drag the left joystick, hold FIRE, and tap TACTICAL to start or stop the ability.</p>}
+                {showTouchControls && <p className="mobile-input-hint">{showDirectTouchFlight ? 'Android: drag anywhere on the battle field to fly. Hold FIRE and tap TACTICAL.' : 'On mobile: drag the left joystick, hold FIRE, and tap TACTICAL to start or stop the ability.'}</p>}
             </div>
         </div>
     );

@@ -5,6 +5,7 @@ export class VoicePlaybackManager {
     private static currentAudio: HTMLAudioElement | null = null;
     private static enabled = true;
     private static volume = 1.0;
+    private static gestureUnlocked = false;
 
     public static setEnabled(active: boolean): void {
         this.enabled = active;
@@ -19,6 +20,36 @@ export class VoicePlaybackManager {
         this.volume = Math.max(0, Math.min(1, val));
         if (this.currentAudio) {
             this.currentAudio.volume = this.volume;
+        }
+    }
+
+    public static primeFromGesture(): void {
+        if (this.gestureUnlocked || typeof window === 'undefined') return;
+        const primerLine = VoiceManifest.get('stage-1-contact-0');
+        if (!primerLine?.audioUrl) return;
+
+        try {
+            const primer = new Audio(this.resolveUrl(primerLine.audioUrl));
+            primer.muted = true;
+            primer.setAttribute('playsinline', '');
+            void primer.play().then(() => {
+                primer.pause();
+                primer.currentTime = 0;
+                this.gestureUnlocked = true;
+            }).catch(() => {
+                // The real line will retry on the next user gesture.
+            });
+        } catch (error) {
+            console.warn('VoicePlaybackManager gesture warm-up failed:', error);
+        }
+    }
+
+    private static resolveUrl(audioUrl: string): string {
+        if (typeof window === 'undefined') return audioUrl;
+        try {
+            return new URL(audioUrl, window.location.origin).toString();
+        } catch {
+            return audioUrl;
         }
     }
 
@@ -39,7 +70,9 @@ export class VoicePlaybackManager {
         this.stop();
 
         try {
-            const audio = new Audio(mapping.audioUrl);
+            const audio = new Audio(this.resolveUrl(mapping.audioUrl));
+            audio.preload = 'auto';
+            audio.setAttribute('playsinline', '');
             audio.volume = this.volume;
             this.currentAudio = audio;
 
@@ -57,9 +90,10 @@ export class VoicePlaybackManager {
                 if (this.currentAudio === audio) this.currentAudio = null;
             };
 
-            void audio.play().catch(() => {
+            void audio.play().catch((error) => {
                 SoundSystem.duckMusic(false);
                 if (this.currentAudio === audio) this.currentAudio = null;
+                console.warn(`Voice playback blocked or unavailable for ${lineId}:`, error);
             });
         } catch (err) {
             SoundSystem.duckMusic(false);

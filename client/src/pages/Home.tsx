@@ -8,6 +8,7 @@ import { SaveLoadModal } from '@/components/SaveLoadModal';
 import { ControlsSettingsModal } from '@/components/ControlsSettingsModal';
 import { SaveData, SaveSystem } from '@/game/core/SaveSystem';
 import { SoundSystem } from '@/game/core/SoundSystem';
+import { VoicePlaybackManager } from '@/game/core/VoicePlaybackManager';
 import { Capacitor } from '@capacitor/core';
 
 const RESUME_CHECKPOINT_KEY = 'tyrian_resume_checkpoint';
@@ -72,12 +73,14 @@ export default function Home() {
     }, [mouseControlsEnabled]);
 
     const startNewMission = () => {
+        VoicePlaybackManager.primeFromGesture();
         window.localStorage.removeItem(RESUME_CHECKPOINT_KEY);
         setSaveRevision((revision) => revision + 1);
         setLaunchMode('new');
     };
 
     const continueMission = () => {
+        VoicePlaybackManager.primeFromGesture();
         if (!resumePreview) {
             setShowLoadModal(true);
             return;
@@ -92,6 +95,7 @@ export default function Home() {
     };
 
     const loadSelectedSave = (data: SaveData) => {
+        VoicePlaybackManager.primeFromGesture();
         window.localStorage.setItem(RESUME_CHECKPOINT_KEY, JSON.stringify({
             level: data.level,
             score: data.score,
@@ -195,9 +199,41 @@ export default function Home() {
         </main>
     );
 
+    const androidTitleScreen = (
+        <main className="android-title-deck" aria-labelledby="android-game-title">
+            <header className="android-title-deck__header">
+                <span>ARK-9 // FLIGHT DECK</span>
+                <span className="signal-dot" />
+                <span>OFFLINE READY</span>
+            </header>
+            <section className="android-title-deck__hero">
+                <p>PROGRAM ZERO // STARSHIP DEFENSE COMMAND</p>
+                <h2 id="android-game-title">PROTECT <span>THE STARSHIP</span></h2>
+                <div className="android-title-deck__save-status">
+                    <span>{resumePreview ? `CHECKPOINT: STAGE ${resumePreview.level}` : 'NO ACTIVE CHECKPOINT'}</span>
+                    <span>{autoSave ? 'AUTOSAVE: READY' : 'AUTOSAVE: EMPTY'}</span>
+                </div>
+            </section>
+            <section className="android-launch-actions" aria-label="Android mission commands">
+                <button type="button" className="android-launch-actions__primary" onClick={startNewMission}>NEW MISSION</button>
+                <button type="button" className="android-launch-actions__continue" onClick={continueMission}>
+                    {resumePreview ? `CONTINUE STAGE ${resumePreview.level}` : 'LOAD SAVED MISSION'}
+                </button>
+                <button type="button" className="android-launch-actions__utility" onClick={() => setShowLoadModal(true)}>SAVES</button>
+            </section>
+            <section className="android-title-utilities" aria-label="Android game settings">
+                <button type="button" onClick={() => setShowDatabase(true)}>ENEMY INTEL</button>
+                <button type="button" onClick={() => setShowSystemsDatabase(true)}>SHIP SYSTEMS</button>
+                <button type="button" onClick={() => setMusicEnabled(SoundSystem.toggleMusic())}>MUSIC: {musicEnabled ? 'ON' : 'OFF'}</button>
+                <button type="button" onClick={() => setShowControlsModal(true)}>CONTROL GUIDE</button>
+            </section>
+            <p className="android-title-deck__footer">LANDSCAPE FLIGHT // DIRECT TOUCH STEERING // FULLSCREEN BATTLE</p>
+        </main>
+    );
+
     return (
         <div className={`tyrian-shell ${isNativeAndroid ? 'tyrian-shell--android' : ''}`}>
-            <header className="command-header">
+            {!isNativeAndroid && <header className="command-header">
                 <div className="command-header__inner">
                     <div className="brand-lockup">
                         <div className="brand-emblem" aria-hidden="true"><span /><i /></div>
@@ -212,16 +248,18 @@ export default function Home() {
                         <a href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="Open project source on GitHub"><Github size={19} /></a>
                     </div>
                 </div>
-            </header>
+            </header>}
 
             {launchMode ? (
-                <main className="command-main">
-                    <div className="flex justify-between items-center gap-3 mb-3">
-                        <span className="status-tag">{launchMode === 'new' ? 'NEW MISSION // STAGE 1' : `CONTINUE MISSION // STAGE ${resumePreview?.level ?? 1}`}</span>
-                        <button type="button" onClick={() => setLaunchMode(null)} className="console-button console-button--muted">RETURN TO TITLE</button>
-                    </div>
-                    <section className="launch-frame hud-frame">
-                        <div className="launch-frame__topline"><span>FLIGHT DECK // PILOT LINKED</span><span>INPUT: KEYBOARD // MOUSE {mouseControlsEnabled ? 'ARMED' : 'HIDDEN'} // TOUCH {touchControlsEnabled ? 'ARMED' : 'HIDDEN'}</span></div>
+                <main className={isNativeAndroid ? 'android-mission-shell' : 'command-main'}>
+                    {!isNativeAndroid && (
+                        <div className="flex justify-between items-center gap-3 mb-3">
+                            <span className="status-tag">{launchMode === 'new' ? 'NEW MISSION // STAGE 1' : `CONTINUE MISSION // STAGE ${resumePreview?.level ?? 1}`}</span>
+                            <button type="button" onClick={() => setLaunchMode(null)} className="console-button console-button--muted">RETURN TO TITLE</button>
+                        </div>
+                    )}
+                    <section className={`launch-frame hud-frame ${isNativeAndroid ? 'launch-frame--android' : ''}`}>
+                        {!isNativeAndroid && <div className="launch-frame__topline"><span>FLIGHT DECK // PILOT LINKED</span><span>INPUT: KEYBOARD // MOUSE {mouseControlsEnabled ? 'ARMED' : 'HIDDEN'} // TOUCH {touchControlsEnabled ? 'ARMED' : 'HIDDEN'}</span></div>}
                         <div className="game-window">
                             <GameContainer
                                 key={launchMode}
@@ -233,7 +271,7 @@ export default function Home() {
                         </div>
                     </section>
                 </main>
-            ) : titleScreen}
+            ) : (isNativeAndroid ? androidTitleScreen : titleScreen)}
 
             {showControlsModal && <ControlsSettingsModal isOpen={showControlsModal} onClose={() => setShowControlsModal(false)} />}
             {showDatabase && <EnemyDatabaseModal onClose={() => setShowDatabase(false)} />}
@@ -249,10 +287,10 @@ export default function Home() {
                 />
             )}
 
-            <footer className="command-footer">
+            {!isNativeAndroid && <footer className="command-footer">
                 <span>PROTECT THE STARSHIP // PROGRAM ZERO</span>
                 <span>ARK-9 FLIGHT NETWORK © 2026</span>
-            </footer>
+            </footer>}
         </div>
     );
 }

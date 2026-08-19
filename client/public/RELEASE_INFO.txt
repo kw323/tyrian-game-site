@@ -1,16 +1,17 @@
-PROTECT THE STARSHIP — FULL CAMPAIGN BUILD 1.1.0
+PROTECT THE STARSHIP — FULL CAMPAIGN BUILD 1.1.1
 
-This offline release contains the complete cumulative campaign build.
+This offline release contains the complete cumulative campaign build and the revised Android control experience.
 
 Included systems:
 - 101-stage campaign with pre-stage interactive briefings.
-- Story dialogue flow with keyboard and mouse navigation.
-- English voice-over assets for briefings and campaign contacts (539 packaged audio files).
+- Story dialogue flow with touch-friendly NEXT / START controls on Android.
+- English voice-over assets for briefings and campaign contacts (539 packaged audio files), warmed up from the first Android touch gesture.
 - Six weapon families with 25 progression ranks each and synchronized descriptions.
 - Reactor burst and full-recovery lockout system.
 - Distinct Raider, Military, and Alien combat movement and salvos.
 - Boss combat archetypes, Sera ally behavior, Archon reactor systems, Meltdown finale, epilogue, and credits.
 - Title screen, new/continue/save management, mouse flight, and customizable keyboard controls.
+- Android immersive landscape mode, fullscreen battle, direct touch steering, compact FIRE and TACTICAL actions, and automatic checkpoints.
 
 Offline runtime:
-The Windows edition starts a local server on 127.0.0.1 only while the game is open. It does not require an Internet connection.
+The Windows edition starts a local server on 127.0.0.1 only while the game is open. It does not require an Internet connection. Android packages all game and voice assets locally and does not require an Internet connection.

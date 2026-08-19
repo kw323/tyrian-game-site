@@ -802,3 +802,177 @@ a,
 @media (prefers-reduced-motion: reduce) {
   .game-stage-shell--touch .mobile-action-zone button { transition: none; }
 }
+
+/* Native Android mission view: no desktop chrome, only the combat surface and compact actions. */
+.android-mission-shell {
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background: #01050c;
+}
+.tyrian-shell--android:has(.android-mission-shell) {
+  overflow: hidden;
+  background: #01050c;
+}
+.launch-frame--android {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #01050c;
+  clip-path: none;
+}
+.launch-frame--android::before,
+.launch-frame--android::after { display: none; }
+.launch-frame--android .game-window {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: #01050c;
+}
+.launch-frame--android .game-window > div {
+  width: 100%;
+  height: 100%;
+  gap: 0;
+}
+.launch-frame--android .game-stage-shell {
+  width: 100% !important;
+  max-width: none !important;
+  max-height: 100dvh !important;
+  height: 100dvh;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  background: #01050c;
+}
+.launch-frame--android .game-stage-shell canvas {
+  width: auto !important;
+  height: 100dvh !important;
+  max-width: 100%;
+  margin: auto;
+  border: 0;
+  box-shadow: none;
+  object-fit: contain;
+}
+.launch-frame--android .game-stage-shell + div {
+  display: none;
+}
+.mobile-touch-layer--direct {
+  padding: max(0.45rem, env(safe-area-inset-top)) max(0.55rem, env(safe-area-inset-right)) max(0.55rem, env(safe-area-inset-bottom)) max(0.55rem, env(safe-area-inset-left)) !important;
+  align-items: flex-end !important;
+}
+.mobile-touch-layer--direct .mobile-direct-flight-hint {
+  align-self: flex-start;
+  margin: 0.3rem 0 0 0.45rem;
+  padding: 0.32rem 0.48rem;
+  border-left: 2px solid rgba(82, 217, 255, 0.55);
+  color: rgba(210, 246, 255, 0.72);
+  background: rgba(3, 10, 20, 0.38);
+  font: 700 0.47rem 'Space Mono', ui-monospace, monospace;
+  letter-spacing: 0.08em;
+  pointer-events: none;
+}
+.mobile-touch-layer--direct .mobile-direct-flight-hint small {
+  display: block;
+  margin-top: 0.16rem;
+  color: rgba(53, 242, 139, 0.68);
+  font-size: 0.39rem;
+}
+.mobile-touch-layer--direct .mobile-action-zone { gap: 0.38rem; }
+.mobile-touch-layer--direct .mobile-action-zone button {
+  width: clamp(60px, 10vw, 82px);
+  min-height: 42px;
+  font-size: 0.52rem;
+  opacity: 0.92;
+}
+.mobile-touch-layer--direct .mobile-action-zone small { display: none; }
+
+.mobile-touch-layer--direct .mobile-android-command-zone {
+  position: absolute;
+  left: max(0.55rem, env(safe-area-inset-left));
+  bottom: max(0.55rem, env(safe-area-inset-bottom));
+  display: grid;
+  gap: 0.32rem;
+  pointer-events: auto;
+}
+.mobile-touch-layer--direct .mobile-android-command-zone button {
+  min-height: 36px;
+  border: 1px solid rgba(82, 217, 255, 0.58);
+  padding: 0.46rem 0.62rem;
+  color: #d8f8ff;
+  background: rgba(3, 13, 24, 0.78);
+  font: 700 0.48rem 'Space Mono', ui-monospace, monospace;
+  letter-spacing: 0.07em;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.mobile-touch-layer--direct .mobile-next-command {
+  border-color: rgba(53, 242, 139, 0.8) !important;
+  color: #8dffbe !important;
+}
+.mobile-touch-layer--direct .mobile-command-exit { opacity: 0.72; }
+.mobile-touch-layer--direct .mobile-android-command-zone button:active { transform: scale(0.96); }
+
+/* Android title deck: an independent landscape menu, not a scaled desktop console. */
+.android-title-deck {
+  width: min(100% - 1.25rem, 980px);
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: max(0.8rem, env(safe-area-inset-top)) 0 max(0.75rem, env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(260px, 0.9fr);
+  grid-template-rows: auto 1fr auto;
+  gap: 0.8rem 1rem;
+  align-items: center;
+}
+.android-title-deck__header,
+.android-title-deck__footer {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: rgba(162, 235, 255, 0.72);
+  font: 700 0.52rem 'Space Mono', ui-monospace, monospace;
+  letter-spacing: 0.1em;
+}
+.android-title-deck__footer { justify-content: center; color: rgba(129, 235, 181, 0.55); }
+.android-title-deck__hero {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1rem clamp(1rem, 3vw, 2rem);
+  border: 1px solid rgba(53, 242, 139, 0.28);
+  background: radial-gradient(circle at 42% 48%, rgba(23, 125, 118, 0.22), transparent 18rem), rgba(2, 8, 16, 0.86);
+}
+.android-title-deck__hero p { margin: 0; color: var(--signal-cyan); font: 0.52rem 'Space Mono', ui-monospace, monospace; letter-spacing: 0.14em; }
+.android-title-deck__hero h2 { margin: 0.65rem 0 1rem; font: clamp(2.7rem, 7vw, 5.2rem)/0.82 'Rajdhani', sans-serif; letter-spacing: 0.04em; }
+.android-title-deck__hero h2 span { color: var(--signal-green); }
+.android-title-deck__save-status { display: grid; gap: 0.38rem; color: rgba(223, 248, 240, 0.68); font: 700 0.55rem 'Space Mono', ui-monospace, monospace; letter-spacing: 0.08em; }
+.android-launch-actions { display: grid; gap: 0.55rem; align-content: center; }
+.android-launch-actions button,
+.android-title-utilities button {
+  min-height: 50px;
+  border: 1px solid rgba(82, 217, 255, 0.42);
+  padding: 0.7rem 0.8rem;
+  color: #dffbff;
+  background: rgba(4, 15, 27, 0.9);
+  font: 700 0.68rem 'Space Mono', ui-monospace, monospace;
+  letter-spacing: 0.08em;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.android-launch-actions button:active,
+.android-title-utilities button:active { transform: scale(0.98); }
+.android-launch-actions__primary { border-color: var(--signal-green) !important; color: #8dffbe !important; background: rgba(11, 83, 56, 0.36) !important; }
+.android-launch-actions__continue { border-color: var(--signal-cyan) !important; color: #aeeeff !important; }
+.android-launch-actions__utility { color: rgba(236, 248, 241, 0.75) !important; }
+.android-title-utilities { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.45rem; }
+.android-title-utilities button { min-height: 42px; font-size: 0.48rem; }
+@media (max-width: 680px) {
+  .android-title-deck { grid-template-columns: 1fr; grid-template-rows: auto auto auto auto; overflow-y: auto; }
+  .android-title-deck__hero { min-height: 210px; }
+  .android-title-utilities { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
