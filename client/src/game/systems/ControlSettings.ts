@@ -1,5 +1,7 @@
 export const CONTROL_BINDINGS_STORAGE_KEY = 'tyrian_control_bindings';
+export const FLIGHT_CONTROL_MODE_STORAGE_KEY = 'tyrian_flight_control_mode';
 
+export type FlightControlMode = 'keyboard' | 'mouse';
 export type ControlAction = 'moveUp' | 'moveDown' | 'moveLeft' | 'moveRight' | 'fire' | 'tacticalAbility';
 export type ControlBindings = Record<ControlAction, string>;
 
@@ -39,6 +41,16 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function isUsableCode(value: unknown): value is string {
     return typeof value === 'string' && value.length > 0 && !RESERVED_CODES.has(value);
+}
+
+export function loadFlightControlMode(): FlightControlMode {
+    if (typeof window === 'undefined') return 'keyboard';
+    return window.localStorage.getItem(FLIGHT_CONTROL_MODE_STORAGE_KEY) === 'mouse' ? 'mouse' : 'keyboard';
+}
+
+export function saveFlightControlMode(mode: FlightControlMode): void {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem(FLIGHT_CONTROL_MODE_STORAGE_KEY, mode);
 }
 
 export function loadControlBindings(): ControlBindings {

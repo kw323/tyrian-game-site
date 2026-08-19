@@ -3,6 +3,7 @@ import {
     CONTROL_DEFINITIONS,
     ControlAction,
     ControlBindings,
+    FlightControlMode,
     formatControlCode,
     loadControlBindings,
     rebindControl,
@@ -13,9 +14,11 @@ interface Props {
     isOpen: boolean;
     onClose: () => void;
     onBindingsChanged?: (bindings: ControlBindings) => void;
+    flightControlMode: FlightControlMode;
+    onFlightControlModeChange: (mode: FlightControlMode) => void;
 }
 
-export function ControlsSettingsModal({ isOpen, onClose, onBindingsChanged }: Props) {
+export function ControlsSettingsModal({ isOpen, onClose, onBindingsChanged, flightControlMode, onFlightControlModeChange }: Props) {
     const [bindings, setBindings] = useState<ControlBindings>(() => loadControlBindings());
     const [capturing, setCapturing] = useState<ControlAction | null>(null);
     const [error, setError] = useState<string | null>(null);
@@ -70,10 +73,31 @@ export function ControlsSettingsModal({ isOpen, onClose, onBindingsChanged }: Pr
                 <div className="mb-5 flex items-start justify-between gap-4 border-b border-cyan-500/20 pb-4">
                     <div>
                         <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-cyan-300">Flight deck // input profile</p>
-                        <h2 id="control-settings-title" className="mt-1 text-xl font-bold text-cyan-200">Keyboard controls</h2>
-                        <p className="mt-1 text-sm text-slate-400">Select an action, then press the new key. Each flight action must use a unique key.</p>
+                        <h2 id="control-settings-title" className="mt-1 text-xl font-bold text-cyan-200">Flight controls</h2>
+                        <p className="mt-1 text-sm text-slate-400">Choose one flight mode. Keyboard bindings remain available for menus, weapons, and tactical commands.</p>
                     </div>
                     <button type="button" onClick={onClose} className="console-button console-button--muted">CLOSE</button>
+                </div>
+
+                <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2" role="group" aria-label="Flight control mode">
+                    <button
+                        type="button"
+                        onClick={() => onFlightControlModeChange('keyboard')}
+                        className={`rounded-lg border p-4 text-left transition-colors ${flightControlMode === 'keyboard' ? 'border-cyan-300 bg-cyan-400/15 text-cyan-100' : 'border-slate-700 bg-slate-900/70 text-slate-300 hover:border-cyan-500/60'}`}
+                        aria-pressed={flightControlMode === 'keyboard'}
+                    >
+                        <span className="block font-mono text-xs font-bold tracking-[0.15em]">KEYBOARD FLIGHT</span>
+                        <span className="mt-1 block text-xs leading-relaxed opacity-80">Arrow keys move. Space fires. The mouse cannot steer or fire during combat.</span>
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => onFlightControlModeChange('mouse')}
+                        className={`rounded-lg border p-4 text-left transition-colors ${flightControlMode === 'mouse' ? 'border-cyan-300 bg-cyan-400/15 text-cyan-100' : 'border-slate-700 bg-slate-900/70 text-slate-300 hover:border-cyan-500/60'}`}
+                        aria-pressed={flightControlMode === 'mouse'}
+                    >
+                        <span className="block font-mono text-xs font-bold tracking-[0.15em]">MOUSE FLIGHT</span>
+                        <span className="mt-1 block text-xs leading-relaxed opacity-80">Pointer steers inside the battlefield. Hold the left button to fire. Arrow keys do not steer during combat.</span>
+                    </button>
                 </div>
 
                 <div className="space-y-2">
@@ -99,7 +123,7 @@ export function ControlsSettingsModal({ isOpen, onClose, onBindingsChanged }: Pr
                 </div>
 
                 <div className="mt-4 rounded-lg border border-emerald-500/20 bg-emerald-950/20 p-3 text-xs leading-relaxed text-emerald-100">
-                    <b>MOUSE FLIGHT:</b> move the pointer inside the battlefield to guide the ship. Hold the left mouse button to fire. The mouse target remains smooth so the ship never teleports.
+                    <b>ACTIVE MODE:</b> {flightControlMode === 'keyboard' ? 'KEYBOARD FLIGHT — only the selected movement and fire keys control the ship in combat.' : 'MOUSE FLIGHT — pointer movement and left-click control the ship in combat.'}
                 </div>
                 {error && <p role="alert" className="mt-3 rounded border border-red-500/40 bg-red-950/50 p-3 text-sm text-red-200">{error}</p>}
 

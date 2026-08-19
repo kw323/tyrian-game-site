@@ -1,5 +1,6 @@
-export type CharacterId = 'naomi' | 'protagonist' | 'elena' | 'sera' | 'ghost' | 'rahav';
+export type CharacterId = 'naomi' | 'protagonist' | 'elena' | 'sera' | 'ghost' | 'rahav' | 'archon';
 import { getLocalizedBriefing, LocalizedContactLine } from './CampaignBriefingLocalizations';
+import { getSequencedStageDialogue } from './StageDialogueSequence';
 
 export type UpgradeBriefingKind = 'weapon' | 'generator' | 'ship';
 export type GameplayLanguage = 'he' | 'en' | 'ja' | 'zh';
@@ -8,6 +9,8 @@ export interface ContactLine {
     speaker: CharacterId;
     name: string;
     message: string;
+    /** Stable voice manifest key for this exact radio line, when voice-over exists. */
+    voiceLineId?: string;
 }
 
 export interface StageBriefing {
@@ -54,7 +57,9 @@ export class CampaignSystem {
         elena: '/manus-storage/character-elena-animated_dd6169d9.png',
         sera: '/manus-storage/sera-anime-v2_b1c96d90.png',
         ghost: '/manus-storage/ghost-anime-v2_43325ccc.png',
-        rahav: '/manus-storage/rahav-anime-portrait_280d5393.png'
+        rahav: '/manus-storage/rahav-anime-portrait_280d5393.png',
+        // The Archon has no portrait asset yet; the dialogue console renders its callsign fallback.
+        archon: '/assets/archon-comms-fallback.png'
     };
 
     private static CHARACTER_NAMES: Record<CharacterId, Record<GameplayLanguage, string>> = {
@@ -63,7 +68,8 @@ export class CampaignSystem {
         elena: { he: 'המפקדת אלנה וייל', en: 'Commander Elena Vail', ja: 'エレナ・ヴェール司令官', zh: '埃琳娜·维尔指挥官' },
         sera: { he: 'סרה קיין', en: 'Sera Kane', ja: 'セラ・ケイン', zh: '塞拉·凯恩' },
         ghost: { he: 'גוסט', en: 'GHOST', ja: 'ゴースト', zh: '幽灵' },
-        rahav: { he: 'פרופ׳ רהב', en: 'Prof. Rahav', ja: 'ラハブ教授', zh: '拉哈夫教授' }
+        rahav: { he: 'פרופ׳ רהב', en: 'Prof. Rahav', ja: 'ラハブ教授', zh: '拉哈夫教授' },
+        archon: { he: 'ארכון', en: 'ARCHON', ja: 'アーコン', zh: '执政官' }
     };
 
     private static ENGLISH_CHAPTERS: ChapterDefinition[] = [
@@ -5814,6 +5820,7 @@ export class CampaignSystem {
             : baseLine;
 
         if (custom) {
+            const authoredDialogueSequence = getSequencedStageDialogue(stageNum, lang) as ContactLine[] | undefined;
             return {
                 stage: stageNum,
                 chapter,
@@ -5827,7 +5834,8 @@ export class CampaignSystem {
                 bountyReward: custom.bountyReward,
                 contact: mergeLocalizedLine(custom.contact, localized?.contact),
                 inMissionComms: custom.inMissionComms ? mergeLocalizedLine(custom.inMissionComms, localized?.inMissionComms) : undefined,
-                dialogueSequence: custom.dialogueSequence?.map((line: ContactLine, index: number) => mergeLocalizedLine(line, localized?.dialogueSequence[index])),
+                // The authored voice catalog is the source of truth for every multi-line radio exchange.
+                dialogueSequence: authoredDialogueSequence ?? custom.dialogueSequence?.map((line: ContactLine, index: number) => mergeLocalizedLine(line, localized?.dialogueSequence[index])),
                 afterAction: custom.afterAction ? {
                     ...custom.afterAction,
                     name: localized?.afterAction.name ?? custom.afterAction.name,

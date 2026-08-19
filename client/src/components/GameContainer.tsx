@@ -1057,6 +1057,11 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             const getBriefingLines = () => stageBriefing.dialogueSequence ?? [stageBriefing.contact];
 
             const getBriefingVoiceLineId = (index: number): string => {
+                const lines = getBriefingLines();
+                const line = lines[Math.min(index, lines.length - 1)];
+                // Authored sequences carry an exact manifest key. The legacy fallback
+                // keeps older bespoke briefings operational while they are migrated.
+                if (line.voiceLineId) return line.voiceLineId;
                 const segment = index === 0 ? 'contact-0' : `after-${index}`;
                 return `stage-${gameState.level}-${segment}`;
             };
@@ -1351,12 +1356,13 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 const keys = inputManager.getKeys();
                 const touchInput = touchInputRef.current;
                 const mouseInput = mouseInputRef.current;
-                const mouseMoveX = mouseInput.targetX === null
-                    ? 0
-                    : Math.max(-1, Math.min(1, (mouseInput.targetX - (player.x + player.width / 2)) / 120));
-                const mouseMoveY = mouseInput.targetY === null
-                    ? 0
-                    : Math.max(-1, Math.min(1, (mouseInput.targetY - (player.y + player.height / 2)) / 120));
+                const keyboardFlightEnabled = !mouseControlsEnabled;
+                const mouseMoveX = mouseControlsEnabled && mouseInput.targetX !== null
+                    ? Math.max(-1, Math.min(1, (mouseInput.targetX - (player.x + player.width / 2)) / 120))
+                    : 0;
+                const mouseMoveY = mouseControlsEnabled && mouseInput.targetY !== null
+                    ? Math.max(-1, Math.min(1, (mouseInput.targetY - (player.y + player.height / 2)) / 120))
+                    : 0;
                 const directTouchMoveX = touchInput.targetX === null
                     ? 0
                     : Math.max(-1, Math.min(1, (touchInput.targetX - (player.x + player.width / 2)) / 120));
@@ -1366,8 +1372,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 const activeSeraForInput = game['entities'].find((entity: any) =>
                     entity instanceof SeraDuelEntity && !(entity instanceof SeraAllyShipEntity) && entity.isActive
                 ) as SeraDuelEntity | undefined;
-                const keyboardMoveX = (keys.ArrowRight ? 1 : 0) - (keys.ArrowLeft ? 1 : 0);
-                const keyboardMoveY = (keys.ArrowDown ? 1 : 0) - (keys.ArrowUp ? 1 : 0);
+                const keyboardMoveX = keyboardFlightEnabled ? (keys.ArrowRight ? 1 : 0) - (keys.ArrowLeft ? 1 : 0) : 0;
+                const keyboardMoveY = keyboardFlightEnabled ? (keys.ArrowDown ? 1 : 0) - (keys.ArrowUp ? 1 : 0) : 0;
                 const pilotKeys = activeSeraForInput?.isTimeLockingPlayer()
                     ? {}
                     : {
@@ -1376,7 +1382,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         moveY: Math.max(-1, Math.min(1, keyboardMoveY + touchInput.moveY + mouseMoveY + directTouchMoveY))
                     };
 
-                // Update player; keyboard arrows and the mobile joystick can be used together.
+                // Flight mode is exclusive: keyboard or pointer steers the ship, while touch remains mobile-only.
                 player.updateWithInput(deltaTime, pilotKeys, game.getCanvas().width, GAME_CANVAS_HEIGHT);
 
                 // Generate power; OVER POWER keeps the reactor at maximum output for its duration.
@@ -1396,8 +1402,9 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     player.speed = 7.5;
                 }
 
-                // Hold Space, the touch-fire control, or the left mouse button to fire.
-                if ((keys.Space || touchInput.fire || mouseInput.fire) && player.canShoot(performance.now() / 1000) && (hasUnlimitedPower || powerSystem.canShoot(player.weaponType, player.weaponLevel))) {
+                // Flight mode also controls firing: Space for keyboard mode, left click for mouse mode.
+                const flightFireActive = mouseControlsEnabled ? mouseInput.fire : keys.Space;
+                if ((flightFireActive || touchInput.fire) && player.canShoot(performance.now() / 1000) && (hasUnlimitedPower || powerSystem.canShoot(player.weaponType, player.weaponLevel))) {
                     const bulletPositions = player.shoot(performance.now() / 1000);
                     const criticalSalvo = player.rollCriticalSalvo();
                     const shotDamage = criticalSalvo

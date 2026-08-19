@@ -12,6 +12,7 @@ import { SaveData, SaveSystem } from '@/game/core/SaveSystem';
 import { DifficultyId, DifficultySystem } from '@/game/core/DifficultySystem';
 import { SoundSystem } from '@/game/core/SoundSystem';
 import { VoicePlaybackManager } from '@/game/core/VoicePlaybackManager';
+import { FlightControlMode, loadFlightControlMode, saveFlightControlMode } from '@/game/systems/ControlSettings';
 import { Capacitor } from '@capacitor/core';
 
 const RESUME_CHECKPOINT_KEY = 'tyrian_resume_checkpoint';
@@ -60,11 +61,7 @@ export default function Home() {
         if (stored !== null) return stored === 'true';
         return Capacitor.isNativePlatform() || window.matchMedia('(max-width: 767px)').matches;
     });
-    const [mouseControlsEnabled, setMouseControlsEnabled] = useState(() => {
-        if (typeof window === 'undefined') return true;
-        const stored = window.localStorage.getItem('tyrian_mouse_controls_enabled');
-        return stored === null ? true : stored === 'true';
-    });
+    const [flightControlMode, setFlightControlMode] = useState<FlightControlMode>(() => loadFlightControlMode());
 
     const resumePreview = useMemo(() => readResumePreview(), [saveRevision]);
     const manualSaveCount = useMemo(() => SaveSystem.getManualSaveCount(), [saveRevision]);
@@ -79,8 +76,8 @@ export default function Home() {
     }, [isNativeAndroid, touchControlsEnabled]);
 
     useEffect(() => {
-        window.localStorage.setItem('tyrian_mouse_controls_enabled', String(mouseControlsEnabled));
-    }, [mouseControlsEnabled]);
+        saveFlightControlMode(flightControlMode);
+    }, [flightControlMode]);
 
     useEffect(() => {
         window.localStorage.setItem('tyrian_gameplay_lang', gameplayLanguage);
@@ -188,13 +185,13 @@ export default function Home() {
                 <main className={isNativeAndroid ? 'android-mission-shell' : 'command-main'}>
                     {!isNativeAndroid && <div className="flex justify-between items-center gap-3 mb-3"><span className="status-tag">{initialStage ? `TEST STAGE // ${initialStage}` : launchMode === 'new' ? 'NEW MISSION // STAGE 1' : `CONTINUE MISSION // STAGE ${resumePreview?.level ?? 1}`}</span><button type="button" onClick={() => { setInitialStage(null); setLaunchMode(null); }} className="console-button console-button--muted">RETURN TO COMMAND CENTER</button></div>}
                     <section className={`launch-frame hud-frame ${isNativeAndroid ? 'launch-frame--android' : ''}`}>
-                        {!isNativeAndroid && <div className="launch-frame__topline"><span>FLIGHT DECK // PILOT LINKED</span><span>INPUT: KEYBOARD // MOUSE {mouseControlsEnabled ? 'ARMED' : 'HIDDEN'} // TOUCH {touchControlsEnabled ? 'ARMED' : 'HIDDEN'}</span></div>}
-                        <div className="game-window"><GameContainer key={`${launchMode}-${initialStage ?? 'standard'}`} touchControlsEnabled={touchControlsEnabled} mouseControlsEnabled={mouseControlsEnabled} launchMode={launchMode} initialStage={initialStage ?? undefined} onReturnToTitle={() => { setInitialStage(null); setLaunchMode(null); }} /></div>
+                        {!isNativeAndroid && <div className="launch-frame__topline"><span>FLIGHT DECK // PILOT LINKED</span><span>FLIGHT INPUT: {flightControlMode === 'mouse' ? 'MOUSE // ARMED' : 'KEYBOARD // ARMED'} // TOUCH {touchControlsEnabled ? 'ARMED' : 'HIDDEN'}</span></div>}
+                        <div className="game-window"><GameContainer key={`${launchMode}-${initialStage ?? 'standard'}`} touchControlsEnabled={touchControlsEnabled} mouseControlsEnabled={flightControlMode === 'mouse'} launchMode={launchMode} initialStage={initialStage ?? undefined} onReturnToTitle={() => { setInitialStage(null); setLaunchMode(null); }} /></div>
                     </section>
                 </main>
             ) : (isNativeAndroid ? androidTitleScreen : commandCenter)}
 
-            {showControlsModal && <ControlsSettingsModal isOpen={showControlsModal} onClose={() => setShowControlsModal(false)} />}
+            {showControlsModal && <ControlsSettingsModal isOpen={showControlsModal} onClose={() => setShowControlsModal(false)} flightControlMode={flightControlMode} onFlightControlModeChange={setFlightControlMode} />}
             {showDatabase && <EnemyDatabaseModal onClose={() => setShowDatabase(false)} />}
             {showSystemsDatabase && <PlayerSystemsModal onClose={() => setShowSystemsDatabase(false)} />}
             {showMissionArchive && <MissionArchiveModal onClose={() => setShowMissionArchive(false)} />}

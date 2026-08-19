@@ -2315,5 +2315,40 @@
     "speaker": "sera",
     "text": "Impressive piloting. But I am still faster.",
     "heText": "ואני הולכת לסדר את הצבא הכי טוב שאפשר! ניפגש כשהגלקסיה תהיה פחות מביכה."
+  },
+  {
+    "lineId": "stage-101-contact-0",
+    "stage": 101,
+    "speaker": "ghost",
+    "text": "The super-boss awaits, pilot. The Archon Mothership is blazing with dark energy.",
+    "heText": "הבוס הגדול לפניך, טייס. ספינת האם של הארכון קורנת באנרגיה חשוכה."
+  },
+  {
+    "lineId": "stage-101-after-1",
+    "stage": 101,
+    "speaker": "elena",
+    "text": "This is the final battle for Ark-9. Show them what a Program Zero pilot can do!",
+    "heText": "זהו הקרב האחרון על ארק-9. תראה להם ממה עשוי טייס פרויקט Zero!"
+  },
+  {
+    "lineId": "stage-101-after-2",
+    "stage": 101,
+    "speaker": "naomi",
+    "text": "And watch my ship! I built it myself against my father, not so some alien could recycle it into tin foil!",
+    "heText": "ותזהר על החללית שלי! פיתחתי אותה לבד מול אבא שלי, לא כדי שאיזה חייזר ימחזר אותה לפחית!"
+  },
+  {
+    "lineId": "stage-101-after-3",
+    "stage": 101,
+    "speaker": "sera",
+    "text": "I am covering your left flank, pilot. Do not worry, I will leave you enough room to look heroic.",
+    "heText": "אני מחפה עליך מאגף שמאל, טייס. אל תדאג, אני אשאיר לך מספיק מקום להיראות הרואי."
+  },
+  {
+    "lineId": "stage-101-after-4",
+    "stage": 101,
+    "speaker": "protagonist",
+    "text": "Copy that. Engaging all systems.",
+    "heText": "קיבלתי. מפעילים את כל המערכות."
   }
 ]

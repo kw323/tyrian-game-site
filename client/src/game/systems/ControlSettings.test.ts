@@ -2,10 +2,15 @@ import { describe, expect, it } from 'vitest';
 import {
     DEFAULT_CONTROL_BINDINGS,
     formatControlCode,
+    loadFlightControlMode,
     rebindControl,
 } from './ControlSettings';
 
 describe('Control settings', () => {
+    it('defaults to keyboard flight so pointer movement cannot steer unexpectedly', () => {
+        expect(loadFlightControlMode()).toBe('keyboard');
+    });
+
     it('keeps the expected flight defaults', () => {
         expect(DEFAULT_CONTROL_BINDINGS).toMatchObject({
             moveUp: 'ArrowUp',
