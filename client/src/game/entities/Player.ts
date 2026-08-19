@@ -235,6 +235,8 @@ export class Player extends Entity {
             for (let index = 0; index < profile.projectileCount; index++) {
                 bullets.push({ x: centerX + (index - midpoint) * 24, y: centerY, type: 'heavy' });
             }
+        } else if (this.weaponType === 'arc') {
+            bullets.push({ x: centerX, y: centerY, type: 'arc', angle: 0 });
         } else if (this.weaponType === 'void_lance') {
             const profile = getWeaponRuntimeProfile('void_lance', this.weaponLevel);
             const midpoint = (profile.projectileCount - 1) / 2;

@@ -1,3 +1,5 @@
+import type { ElementalCoreSaveState } from './ElementalCoreSystem';
+
 export interface SaveData {
     slotId: string;
     slotName: string;
@@ -11,6 +13,7 @@ export interface SaveData {
     currentWeapon: string;
     tacticalAbilityLevels?: Record<string, number>;
     selectedTacticalAbility?: string;
+    elementalCoreState?: ElementalCoreSaveState;
     tacticalAbilityState?: {
         levels: Record<string, number>;
         selectedAbility: string;

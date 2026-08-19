@@ -1,4 +1,4 @@
-export type RuntimeWeaponType = 'straight' | 'spread' | 'homing' | 'heavy' | 'laser' | 'void_lance';
+export type RuntimeWeaponType = 'straight' | 'spread' | 'homing' | 'heavy' | 'laser' | 'arc' | 'void_lance';
 
 export interface WeaponRuntimeProfile {
     projectileCount: number;
@@ -20,6 +20,9 @@ export interface WeaponRuntimeProfile {
     voidSuctionStrength?: number;
     voidProjectileSpeed?: number;
     voidProjectileCaptureRadius?: number;
+    arcChainJumps?: number;
+    arcChainRange?: number;
+    arcProjectileSpeed?: number;
 }
 
 /**
@@ -82,6 +85,13 @@ export function getWeaponRuntimeProfile(type: RuntimeWeaponType, requestedLevel:
                 laserSecondaryTargets: Math.max(1, Math.floor(primaryTargets * 0.6))
             };
         }
+        case 'arc':
+            return {
+                projectileCount: 1,
+                arcChainJumps: rank >= 22 ? 6 : rank >= 17 ? 5 : rank >= 12 ? 4 : rank >= 7 ? 3 : 2,
+                arcChainRange: 158 + level * 4,
+                arcProjectileSpeed: 13 + level * 0.08
+            };
         case 'void_lance':
             return {
                 projectileCount: rank >= 22 ? 4 : rank >= 14 ? 3 : rank >= 7 ? 2 : 1,
@@ -118,6 +128,8 @@ export function getWeaponUpgradeDescription(
             return `Rank ${rank}: ${profile.projectileCount} shell${profile.projectileCount === 1 ? '' : 's'} • ${profile.heavyFragmentCount} fragments${profile.heavyCascadePellets ? ` • ${profile.heavyCascadePellets}-pellet cascade` : ''} • ${baseStats}`;
         case 'laser':
             return `Rank ${rank}: ${profile.projectileCount} beam${profile.projectileCount === 1 ? '' : 's'} • width ${profile.laserPrimaryWidth?.toFixed(1)} • pierces ${profile.laserPrimaryTargets} • ${baseStats}`;
+        case 'arc':
+            return `Rank ${rank}: fixed lightning • ${profile.arcChainJumps} jumps • each jump deals 50% less • range ${profile.arcChainRange} • ${baseStats}`;
         case 'void_lance':
             return `Rank ${rank}: ${profile.projectileCount} slow singularit${profile.projectileCount === 1 ? 'y' : 'ies'} • radius ${profile.voidFieldRadius} • ${profile.voidFieldDuration?.toFixed(2)}s • pull ${profile.voidSuctionStrength?.toFixed(2)} • ${baseStats}`;
     }

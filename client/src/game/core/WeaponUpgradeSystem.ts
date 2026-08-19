@@ -6,6 +6,7 @@ export enum WeaponType {
     HOMING = 'homing',
     HEAVY = 'heavy',
     LASER = 'laser',
+    ARC = 'arc',
     VOID_LANCE = 'void_lance'
 }
 
@@ -32,6 +33,7 @@ export class WeaponUpgradeSystem {
         this.currentLevel.set(WeaponType.HOMING, -1);
         this.currentLevel.set(WeaponType.HEAVY, -1);
         this.currentLevel.set(WeaponType.LASER, -1);
+        this.currentLevel.set(WeaponType.ARC, -1);
         this.currentLevel.set(WeaponType.VOID_LANCE, -1);
     }
 
@@ -181,6 +183,16 @@ export class WeaponUpgradeSystem {
             { level: 24, cost: 25165824000, damage: 115, fireRate: 17.6, description: 'Absolute controlled annihilation', requiredShip: 3 }
         ]);
 
+        // CHAIN LIGHTNING (25 levels) — it is always electrical and cannot equip an elemental core.
+        this.weaponLevels.set(WeaponType.ARC, Array.from({ length: 25 }, (_, level) => ({
+            level,
+            cost: 2_200,
+            damage: Math.round(34 * Math.pow(1.075, level)),
+            fireRate: Number((3.2 + level * 0.17).toFixed(2)),
+            description: 'Fixed-element chain lightning',
+            ...(level >= 19 ? { requiredShip: 3 } : level >= 14 ? { requiredShip: 2 } : level >= 8 ? { requiredShip: 1 } : {})
+        })));
+
         // BLACK HOLE PROJECTILE (25 levels)
         this.weaponLevels.set(WeaponType.VOID_LANCE, [
             { level: 0, cost: 0, damage: 26, fireRate: 1.9, description: 'Black hole seed + short pull' },
@@ -235,6 +247,7 @@ export class WeaponUpgradeSystem {
             [WeaponType.HOMING]: 1000,
             [WeaponType.HEAVY]: 750,
             [WeaponType.LASER]: 1500,
+            [WeaponType.ARC]: 2200,
             [WeaponType.VOID_LANCE]: 3500
         };
 
@@ -386,6 +399,7 @@ export class WeaponUpgradeSystem {
         this.currentLevel.set(WeaponType.HOMING, -1);
         this.currentLevel.set(WeaponType.HEAVY, -1);
         this.currentLevel.set(WeaponType.LASER, -1);
+        this.currentLevel.set(WeaponType.ARC, -1);
         this.currentLevel.set(WeaponType.VOID_LANCE, -1);
         this.secretWeaponUnlocked = false;
     }

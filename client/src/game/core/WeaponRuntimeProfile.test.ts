@@ -28,7 +28,7 @@ describe('Weapon runtime profile', () => {
             }
         }
 
-        expect(ranksChecked).toBe(150);
+        expect(ranksChecked).toBe(175);
     });
 
     it('spawns exactly the number of projectiles promised by each rank profile', () => {
@@ -69,6 +69,14 @@ describe('Weapon runtime profile', () => {
             expect(quadrants).toContain('1:1');
             expect(quadrants).toContain('-1:1');
         }
+    });
+
+    it('scales Chain Lightning jump limits while preserving half-damage decay design', () => {
+        expect(getWeaponRuntimeProfile('arc', 0).arcChainJumps).toBe(2);
+        expect(getWeaponRuntimeProfile('arc', 6).arcChainJumps).toBe(3);
+        expect(getWeaponRuntimeProfile('arc', 11).arcChainJumps).toBe(4);
+        expect(getWeaponRuntimeProfile('arc', 16).arcChainJumps).toBe(5);
+        expect(getWeaponRuntimeProfile('arc', 24).arcChainJumps).toBe(6);
     });
 
     it('applies laser and gravity-well profile values to their gameplay entities', () => {

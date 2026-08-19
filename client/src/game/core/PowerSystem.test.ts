@@ -13,6 +13,7 @@ describe('PowerSystem high-rank balance', () => {
         expect(power.getWeaponCost('homing', 24)).toBe(26);
         expect(power.getWeaponCost('heavy', 24)).toBe(51);
         expect(power.getWeaponCost('laser', 24)).toBe(27);
+        expect(power.getWeaponCost('arc', 24)).toBe(28.5);
         expect(power.getWeaponCost('void_lance', 24)).toBe(73);
     });
 

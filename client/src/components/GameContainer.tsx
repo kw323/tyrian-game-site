@@ -8,11 +8,13 @@ import { HomingBullet } from '@/game/entities/HomingBullet';
 import { HeavyBullet } from '@/game/entities/HeavyBullet';
 import { LaserBullet } from '@/game/entities/LaserBullet';
 import { BlackHoleBullet } from '@/game/entities/BlackHoleBullet';
+import { ChainLightningBullet } from '@/game/entities/ChainLightningBullet';
 import { Enemy } from '@/game/entities/Enemy';
 import { EnemyAdvanced, EnemyShot } from '@/game/entities/EnemyAdvanced';
 import { EnemyBullet } from '@/game/entities/EnemyBullet';
 import { Explosion } from '@/game/entities/Explosion';
 import { WeaponUpgradeSystem, WeaponType } from '@/game/core/WeaponUpgradeSystem';
+import { ElementalCoreSystem, ElementalCoreSaveState, ElementalCoreType, ELEMENTAL_CORE_ORDER } from '@/game/core/ElementalCoreSystem';
 import { getHeavyFragmentAngles, getWeaponRuntimeProfile } from '@/game/core/WeaponRuntimeProfile';
 import { StarField } from '@/game/systems/StarField';
 import { InputManager } from '@/game/systems/InputManager';
@@ -63,13 +65,14 @@ interface ResumeCheckpoint {
     pilotSkillsState?: any;
     tacticalAbilityState?: TacticalAbilitySaveState;
     equipmentState?: any;
+    elementalCoreState?: ElementalCoreSaveState;
 }
 
 const RESUME_CHECKPOINT_KEY = 'tyrian_resume_checkpoint';
 const GAME_CANVAS_HEIGHT = 900;
 const SHOP_CANVAS_HEIGHT = 1150;
 const COMBAT_REWARD_MULTIPLIER = 0.75;
-type ShopScreen = 'hub' | 'weapons' | 'systems' | 'abilities' | 'pilot_skills' | 'equipment' | 'finale_victory';
+type ShopScreen = 'hub' | 'weapons' | 'elements' | 'systems' | 'abilities' | 'pilot_skills' | 'equipment' | 'finale_victory';
 
 const LANGUAGE_OPTIONS: Array<{ id: GameplayLanguage; label: string; menuLabel: string }> = [
     { id: 'he', label: 'עברית', menuLabel: 'עברית / Hebrew' },
@@ -190,9 +193,11 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             let difficultyProfile: DifficultyProfile = DifficultySystem.get(difficultyId);
             enemySpawner.setDifficultyProfile(difficultyProfile);
             const weaponSystem = new WeaponUpgradeSystem();
+            const elementalCoreSystem = new ElementalCoreSystem();
             const powerSystem = new PowerSystem();
             const shipSystem = new ShipUpgradeSystem();
             if (resumeData?.weaponState) weaponSystem.loadSaveState(resumeData.weaponState);
+            if (resumeData?.elementalCoreState) elementalCoreSystem.loadSaveState(resumeData.elementalCoreState);
             if (typeof resumeData?.generatorLevel === 'number') powerSystem.loadSaveState(resumeData.generatorLevel);
             if (typeof resumeData?.shipId === 'number') shipSystem.loadSaveState(resumeData.shipId);
             if (typeof resumeData?.shieldLevel === 'number') shieldLevel = Math.max(1, Math.min(10, Math.floor(resumeData.shieldLevel)));
@@ -395,9 +400,11 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                             ? 'homing'
                             : type === WeaponType.LASER
                                 ? 'laser'
-                                : type === WeaponType.VOID_LANCE
-                                    ? 'void_lance'
-                                    : 'heavy';
+                                : type === WeaponType.ARC
+                                    ? 'arc'
+                                    : type === WeaponType.VOID_LANCE
+                                        ? 'void_lance'
+                                        : 'heavy';
                 const damageBonus = pilotSkillSystem.getBonusMultiplier('weapon_damage');
                 const fireRateBonus = pilotSkillSystem.getBonusMultiplier('fire_rate');
                 const finalDamage = Math.round(stats.damage * damageBonus);
@@ -432,6 +439,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 if (type === WeaponType.HOMING) return 'Homing Missiles';
                 if (type === WeaponType.HEAVY) return 'Heavy Cannon';
                 if (type === WeaponType.LASER) return 'Pulse Laser';
+                if (type === WeaponType.ARC) return 'Chain Lightning';
                 return weaponSystem.isSecretWeaponUnlocked() ? 'Black Hole Projectile' : 'UNKNOWN';
             };
 
@@ -480,6 +488,17 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 weaponSystem.setCurrentWeapon(type);
                 syncPlayerWeapon(type);
                 setWeaponHoverBriefing(type);
+            };
+
+            const upgradeElementalCore = (core: ElementalCoreType): void => {
+                const cost = elementalCoreSystem.upgrade(core, gameState.score);
+                if (cost === null) return;
+                gameState.score -= cost;
+                elementalCoreSystem.selectCore(core);
+                const profile = elementalCoreSystem.getProfile(core);
+                testNoticeText = `ELEMENT CORE // ${profile.name} // RANK ${profile.rank}`;
+                testNoticeUntil = performance.now() + 3000;
+                SoundSystem.playUpgrade();
             };
 
             const downgradeWeapon = (type: WeaponType): void => {
@@ -775,6 +794,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 generatorLevel: powerSystem.generatorLevel,
                 shieldLevel,
                 weaponState: weaponSystem.getSaveState(),
+                elementalCoreState: elementalCoreSystem.getSaveState(),
                 tacticalAbilityState: tacticalAbilitySystem.getSaveState(),
                 pilotSkillsState: pilotSkillSystem.getSaveState(),
                 equipmentState: equipmentSystem.getState()
@@ -795,6 +815,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     shieldLevel: checkpoint.shieldLevel ?? 1,
                     weaponLevels: weaponState.weaponLevels ?? {},
                     currentWeapon: weaponState.currentWeapon ?? 'straight',
+                    elementalCoreState: checkpoint.elementalCoreState,
                     tacticalAbilityState: checkpoint.tacticalAbilityState,
                     maxUnlockedLevel: Math.max(maxUnlockedLevel, checkpoint.level)
                 });
@@ -1273,6 +1294,85 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 }
             };
 
+            const elementalBurns = new Map<Enemy | EnemyAdvanced | Boss, { remaining: number; tick: number; damage: number }>();
+
+            const applyElementalCore = (target: Enemy | EnemyAdvanced | Boss, baseDamage: number, sourceX: number, sourceY: number): void => {
+                // The two fixed-identity weapons deliberately ignore switchable cores.
+                if (player.weaponType === 'arc' || player.weaponType === 'void_lance') return;
+                const core = elementalCoreSystem.getActiveCore();
+                const rank = elementalCoreSystem.getRank(core);
+                const targetX = target.x + target.width / 2;
+                const targetY = target.y + target.height / 2;
+                const deltaX = targetX - sourceX;
+                const deltaY = targetY - sourceY;
+                const distance = Math.max(1, Math.hypot(deltaX, deltaY));
+
+                if (core === 'cryo') {
+                    const multiplier = Math.max(0.5, 0.82 - rank * 0.055);
+                    const duration = 1.2 + rank * 0.45;
+                    if (target instanceof EnemyAdvanced) target.slowDown(multiplier, duration);
+                    else target.applySlow(multiplier, duration);
+                    return;
+                }
+
+                if (core === 'fire') {
+                    const existing = elementalBurns.get(target);
+                    elementalBurns.set(target, {
+                        remaining: Math.max(existing?.remaining ?? 0, 2.4 + rank * 0.45),
+                        tick: Math.min(existing?.tick ?? 0.45, 0.45),
+                        damage: Math.max(existing?.damage ?? 0, baseDamage * (0.09 + rank * 0.025))
+                    });
+                    return;
+                }
+
+                if (core === 'corrosion') {
+                    // Corrosion is a direct armor breach: it adds a small portion of the
+                    // trigger damage, making sustained fire effective against tough targets.
+                    target.takeDamage(baseDamage * (0.08 + rank * 0.028));
+                    return;
+                }
+
+                if (core === 'kinetic') {
+                    const force = 1.4 + rank * 0.7;
+                    const knockX = (deltaX / distance) * force;
+                    const knockY = (deltaY / distance) * force;
+                    if (target instanceof EnemyAdvanced) target.applyKnockback(knockX, knockY);
+                    else target.applyKnockback(knockX, knockY, target instanceof Boss ? 0.18 : 1);
+                    return;
+                }
+
+                // Plasma creates a short-range rupture around the struck target. It is
+                // intentionally burst-oriented rather than another damage-over-time effect.
+                const radius = 42 + rank * 11;
+                const splashDamage = baseDamage * (0.12 + rank * 0.025);
+                game['entities'].forEach((nearby: any) => {
+                    if (nearby === target || !(nearby instanceof Enemy || nearby instanceof EnemyAdvanced) || !nearby.isActive) return;
+                    const nearX = nearby.x + nearby.width / 2;
+                    const nearY = nearby.y + nearby.height / 2;
+                    if (Math.hypot(nearX - targetX, nearY - targetY) <= radius) {
+                        nearby.takeDamage(splashDamage);
+                        registerEnemyDefeat(nearby);
+                    }
+                });
+            };
+
+            const updateElementalBurns = (deltaTime: number): void => {
+                elementalBurns.forEach((burn, target) => {
+                    if (!target.isActive) {
+                        elementalBurns.delete(target);
+                        return;
+                    }
+                    burn.remaining -= deltaTime;
+                    burn.tick -= deltaTime;
+                    if (burn.tick <= 0 && burn.remaining > 0) {
+                        target.takeDamage(burn.damage);
+                        burn.tick += 0.45;
+                        if (target instanceof Enemy || target instanceof EnemyAdvanced) registerEnemyDefeat(target);
+                    }
+                    if (burn.remaining <= 0) elementalBurns.delete(target);
+                });
+            };
+
             const registerBossDefeat = (boss: Boss): void => {
                 if (!boss.isActive && !boss.isAlive()) {
                     if (boss instanceof FinalBossPart) {
@@ -1475,6 +1575,14 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                                 }
                             );
                             game.addEntity(hBullet);
+                        } else if (bulletData.type === 'arc') {
+                            game.addEntity(new ChainLightningBullet(
+                                bulletData.x,
+                                bulletData.y,
+                                shotDamage,
+                                player.weaponLevel,
+                                bulletData.angle || 0
+                            ));
                         } else if (bulletData.type === 'void_lance') {
                             const bullet = new BlackHoleBullet(
                                 bulletData.x,
@@ -1756,6 +1864,38 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     target.takeDamage(damage);
                     return true;
                 };
+                const resolveChainLightning = (bolt: ChainLightningBullet, initialTarget: Enemy | EnemyAdvanced | Boss): void => {
+                    if (!bolt.canStrike(initialTarget)) return;
+                    let currentTarget: Enemy | EnemyAdvanced | Boss | null = initialTarget;
+                    let sourceX = bolt.x + bolt.width / 2;
+                    let sourceY = bolt.y + bolt.height / 2;
+                    let damage = bolt.damage;
+                    let jumpsLeft = bolt.chainJumps;
+
+                    while (currentTarget && damage >= 1) {
+                        bolt.registerStrike(sourceX, sourceY, currentTarget, damage);
+                        currentTarget.takeDamage(damage);
+                        if (currentTarget instanceof Enemy || currentTarget instanceof EnemyAdvanced) registerEnemyDefeat(currentTarget);
+                        else registerBossDefeat(currentTarget);
+
+                        sourceX = currentTarget.x + currentTarget.width / 2;
+                        sourceY = currentTarget.y + currentTarget.height / 2;
+                        if (jumpsLeft-- <= 0) break;
+                        damage *= 0.5;
+
+                        const nextTarget = game['entities']
+                            .filter((entity: any) => (entity instanceof Enemy || entity instanceof EnemyAdvanced || entity instanceof Boss) && entity.isActive && !bolt.hasStruck(entity))
+                            .map((entity: Enemy | EnemyAdvanced | Boss) => ({
+                                entity,
+                                distance: Math.hypot((entity.x + entity.width / 2) - sourceX, (entity.y + entity.height / 2) - sourceY)
+                            }))
+                            .filter(({ distance }: { distance: number }) => distance <= bolt.chainRange)
+                            .sort((a: { distance: number }, b: { distance: number }) => a.distance - b.distance)[0]?.entity ?? null;
+                        currentTarget = nextTarget;
+                    }
+                    bolt.finishChain();
+                };
+
                 const applyBlackHoleField = (bullet: BlackHoleBullet): void => {
                     game['entities'].forEach((target: any) => {
                         const isEnemy = target instanceof Enemy || target instanceof EnemyAdvanced;
@@ -1808,12 +1948,13 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 game['entities'].forEach((entity: any) => {
                     if (entity instanceof BlackHoleBullet && entity.isActive) applyBlackHoleField(entity);
                 });
+                updateElementalBurns(deltaTime);
                 const collisions = collisionSystem.getCollisions();
                                 collisions.forEach((collision: any) => {
                     const { entityA, entityB } = collision;
-                    const playerProjectile = entityA instanceof Bullet || entityA instanceof HomingBullet || entityA instanceof HeavyBullet || entityA instanceof LaserBullet || entityA instanceof BlackHoleBullet
+                    const playerProjectile = entityA instanceof Bullet || entityA instanceof HomingBullet || entityA instanceof HeavyBullet || entityA instanceof LaserBullet || entityA instanceof ChainLightningBullet || entityA instanceof BlackHoleBullet
                         ? entityA
-                        : entityB instanceof Bullet || entityB instanceof HomingBullet || entityB instanceof HeavyBullet || entityB instanceof LaserBullet || entityB instanceof BlackHoleBullet
+                        : entityB instanceof Bullet || entityB instanceof HomingBullet || entityB instanceof HeavyBullet || entityB instanceof LaserBullet || entityB instanceof ChainLightningBullet || entityB instanceof BlackHoleBullet
                             ? entityB
                             : null;
                     const alliedSera = entityA instanceof SeraAllyShipEntity
@@ -1869,13 +2010,19 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     }
 
                     // Continuous laser beams can pierce multiple targets, with per-beam falloff and a target quota.
-                    if (entityA instanceof LaserBullet && (entityB instanceof Enemy || entityB instanceof EnemyAdvanced) && entityA.intersectsTarget(entityB)) {
+                    if (entityA instanceof LaserBullet && entityA.isPlayerBullet && (entityB instanceof Enemy || entityB instanceof EnemyAdvanced) && entityA.intersectsTarget(entityB)) {
                         const damage = entityA.getDamageForTarget(entityB);
-                        if (damage > 0 && entityB.isActive) entityB.takeDamage(damage);
+                        if (damage > 0 && entityB.isActive) {
+                            entityB.takeDamage(damage);
+                            applyElementalCore(entityB, damage, entityA.x, entityA.y);
+                        }
                         registerEnemyDefeat(entityB);
-                    } else if (entityB instanceof LaserBullet && (entityA instanceof Enemy || entityA instanceof EnemyAdvanced) && entityB.intersectsTarget(entityA)) {
+                    } else if (entityB instanceof LaserBullet && entityB.isPlayerBullet && (entityA instanceof Enemy || entityA instanceof EnemyAdvanced) && entityB.intersectsTarget(entityA)) {
                         const damage = entityB.getDamageForTarget(entityA);
-                        if (damage > 0 && entityA.isActive) entityA.takeDamage(damage);
+                        if (damage > 0 && entityA.isActive) {
+                            entityA.takeDamage(damage);
+                            applyElementalCore(entityA, damage, entityB.x, entityB.y);
+                        }
                         registerEnemyDefeat(entityA);
                     }
 
@@ -1886,6 +2033,15 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     } else if (entityB instanceof BlackHoleBullet && (entityA instanceof Enemy || entityA instanceof EnemyAdvanced)) {
                         applyBlackHoleImpact(entityB, entityA);
                         registerEnemyDefeat(entityA);
+                    }
+
+                    // Chain Lightning has a fixed electrical identity and resolves its full chain on the first hit.
+                    if (entityA instanceof ChainLightningBullet && (entityB instanceof Enemy || entityB instanceof EnemyAdvanced || entityB instanceof Boss)) {
+                        resolveChainLightning(entityA, entityB);
+                        return;
+                    } else if (entityB instanceof ChainLightningBullet && (entityA instanceof Enemy || entityA instanceof EnemyAdvanced || entityA instanceof Boss)) {
+                        resolveChainLightning(entityB, entityA);
+                        return;
                     }
 
                     // Friendly Sera rounds use the enemy-bullet renderer, but damage hostile entities only.
@@ -1911,6 +2067,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                                 entityB.takeDamage(entityA.damage);
                                 entityA.isActive = false;
                             }
+                            applyElementalCore(entityB, entityA.damage, entityA.x, entityA.y);
                         }
                         registerEnemyDefeat(entityB);
                     } else if ((entityA instanceof Enemy || entityA instanceof EnemyAdvanced) && (entityB instanceof Bullet || entityB instanceof HomingBullet || entityB instanceof HeavyBullet) && !(entityB instanceof BlackHoleBullet)) {
@@ -1920,21 +2077,28 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                                 entityA.takeDamage(entityB.damage);
                                 entityB.isActive = false;
                             }
+                            applyElementalCore(entityA, entityB.damage, entityB.x, entityB.y);
                         }
                         registerEnemyDefeat(entityA);
                     }
 
                     // Player laser hits boss and consumes one penetration slot for this beam.
-                    if (entityA instanceof LaserBullet && entityB instanceof Boss && entityA.intersectsTarget(entityB)) {
+                    if (entityA instanceof LaserBullet && entityA.isPlayerBullet && entityB instanceof Boss && entityA.intersectsTarget(entityB)) {
                         const damage = entityA.getDamageForTarget(entityB);
-                        if (damage > 0 && entityB.isActive) entityB.takeDamage(damage);
+                        if (damage > 0 && entityB.isActive) {
+                            entityB.takeDamage(damage);
+                            applyElementalCore(entityB, damage, entityA.x, entityA.y);
+                        }
                         if (entityB.isActive && !entityB.isAlive()) {
                             entityB.isActive = false;
                             registerBossDefeat(entityB);
                         }
-                    } else if (entityB instanceof LaserBullet && entityA instanceof Boss && entityB.intersectsTarget(entityA)) {
+                    } else if (entityB instanceof LaserBullet && entityB.isPlayerBullet && entityA instanceof Boss && entityB.intersectsTarget(entityA)) {
                         const damage = entityB.getDamageForTarget(entityA);
-                        if (damage > 0 && entityA.isActive) entityA.takeDamage(damage);
+                        if (damage > 0 && entityA.isActive) {
+                            entityA.takeDamage(damage);
+                            applyElementalCore(entityA, damage, entityB.x, entityB.y);
+                        }
                         if (entityA.isActive && !entityA.isAlive()) {
                             entityA.isActive = false;
                             registerBossDefeat(entityA);
@@ -1958,23 +2122,25 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
                     // Player rounds hit the boss. Heavy rounds retain remaining impact force.
                     if ((entityA instanceof Bullet || entityA instanceof HomingBullet || entityA instanceof HeavyBullet) && !(entityA instanceof BlackHoleBullet) && entityB instanceof Boss) {
+                        const damage = entityA.damage;
                         if (entityA instanceof HeavyBullet) applyHeavyImpact(entityA, entityB);
                         else {
-                            const damage = entityA instanceof HomingBullet ? 15 : 10;
                             entityB.takeDamage(damage);
                             entityA.isActive = false;
                         }
+                        applyElementalCore(entityB, damage, entityA.x, entityA.y);
                         if (entityB.isActive && !entityB.isAlive()) {
                             entityB.isActive = false;
                             registerBossDefeat(entityB);
                         }
                     } else if ((entityB instanceof Bullet || entityB instanceof HomingBullet || entityB instanceof HeavyBullet) && !(entityB instanceof BlackHoleBullet) && entityA instanceof Boss) {
+                        const damage = entityB.damage;
                         if (entityB instanceof HeavyBullet) applyHeavyImpact(entityB, entityA);
                         else {
-                            const damage = entityB instanceof HomingBullet ? 15 : 10;
                             entityA.takeDamage(damage);
                             entityB.isActive = false;
                         }
+                        applyElementalCore(entityA, damage, entityB.x, entityB.y);
                         if (entityA.isActive && !entityA.isAlive()) {
                             entityA.isActive = false;
                             registerBossDefeat(entityA);
@@ -2259,6 +2425,18 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     ? `REACTOR RECOVERY ${Math.floor(powerSystem.getReactorRecoveryPercent() * 100)}% // WEAPONS OFFLINE`
                     : 'Power: ' + Math.floor(powerSystem.currentPower) + '/' + Math.floor(powerSystem.getMaxPower());
                 ctx.fillText(powerReadout, barX + 160, powerBarY + 10);
+
+                const activeCoreProfile = elementalCoreSystem.getProfile(elementalCoreSystem.getActiveCore());
+                const fixedElementWeapon = player.weaponType === 'arc' || player.weaponType === 'void_lance';
+                ctx.fillStyle = fixedElementWeapon ? (player.weaponType === 'arc' ? '#f8ff79' : '#b06cff') : activeCoreProfile.color;
+                ctx.font = 'bold 13px monospace';
+                ctx.fillText(
+                    fixedElementWeapon
+                        ? `ELEMENT: FIXED ${player.weaponType === 'arc' ? 'ELECTRIC // CHAIN LIGHTNING' : 'VOID // BLACK HOLE'}`
+                        : `ELEMENT [1–5]: ${activeCoreProfile.name} // RANK ${activeCoreProfile.rank}/5`,
+                    760,
+                    72
+                );
 
                 // Tactical ability readout: only the selected module can be armed at once.
                 const abilityBarY = 250;
@@ -2827,11 +3005,12 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     const secretWeaponUnlocked = weaponSystem.isSecretWeaponUnlocked();
                     const drawShopNav = (active: ShopScreen): void => {
                         const navY = 96;
-                        const navWidth = 176;
-                        const navGap = 16;
+                        const navWidth = 142;
+                        const navGap = 10;
                         const navItems: Array<{ id: ShopScreen; label: string; color: string }> = [
                             { id: 'hub', label: 'CONTROL DECK', color: '#00CCDD' },
                             { id: 'weapons', label: 'WEAPON BAY', color: '#00FF88' },
+                            { id: 'elements', label: 'ELEMENT CORES', color: '#b5f58a' },
                             { id: 'systems', label: 'HULL SYSTEMS', color: '#FFD166' },
                             { id: 'abilities', label: 'TACTICAL OPS', color: '#c59cff' },
                             { id: 'pilot_skills', label: 'PILOT SKILLS', color: '#38bdf8' },
@@ -2985,6 +3164,34 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     }
 
                     drawShopNav(shopScreen);
+
+                    if (shopScreen === 'elements') {
+                        drawCard(28, 156, 1144, 650, 'ELEMENT CORE BAY // SWITCH IN FLIGHT WITH 1–5', '#b5f58a');
+                        const descriptions: Record<ElementalCoreType, string> = {
+                            cryo: 'Slow movement; bosses receive a reduced slow.',
+                            fire: 'Refreshes a burning damage-over-time effect.',
+                            corrosion: 'Breaches armor with bonus impact damage.',
+                            kinetic: 'Pushes targets away from the impact lane.',
+                            plasma: 'Creates a short-range rupture around the target.'
+                        };
+                        elementalCoreSystem.getAllProfiles().forEach((profile, index) => {
+                            const y = 206 + index * 108;
+                            const active = elementalCoreSystem.getActiveCore() === profile.id;
+                            drawCard(52, y, 1092, 88, `${index + 1} // ${profile.name} CORE // RANK ${profile.rank}/5`, active ? '#ffffff' : profile.color);
+                            ctx.fillStyle = '#dbe9ee';
+                            ctx.font = '14px Arial';
+                            ctx.textAlign = 'left';
+                            ctx.fillText(descriptions[profile.id], 72, y + 54);
+                            const nextLabel = profile.nextCost === null ? 'MAX RANK' : `UPGRADE  ${profile.nextCost} CREDITS`;
+                            const canUpgrade = profile.nextCost !== null && gameState.score >= profile.nextCost;
+                            drawButton(`element-select-${profile.id}`, active ? 'ACTIVE' : 'SET ACTIVE', 760, y + 24, 128, 38, active ? '#ffffff' : profile.color, () => elementalCoreSystem.selectCore(profile.id));
+                            drawButton(`element-upgrade-${profile.id}`, nextLabel, 904, y + 24, 210, 38, profile.nextCost === null ? '#00FF88' : (canUpgrade ? profile.color : '#ff6666'), () => upgradeElementalCore(profile.id));
+                        });
+                        ctx.fillStyle = '#8ea6b2';
+                        ctx.font = '13px Arial';
+                        ctx.fillText('Black Hole and Chain Lightning have fixed identities: they do not consume or replace the active core.', 52, 760);
+                        drawShopFooter();
+                    }
 
                     if (shopScreen === 'pilot_skills') {
                         drawCard(28, 156, 1144, 920, 'PILOT SPECIALIZATION // SURVIVAL • REACTOR • COMBAT', '#38bdf8');
@@ -3385,7 +3592,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                             { key: '3', name: 'Homing Missiles', type: WeaponType.HOMING, accent: '#ff66dd', locked: false },
                             { key: '4', name: 'Split Bomb', type: WeaponType.HEAVY, accent: '#ffb347', locked: false },
                             { key: '5', name: 'Pulse Laser', type: WeaponType.LASER, accent: '#00ffff', locked: false },
-                            { key: '6', name: secretWeaponUnlocked ? 'Black Hole Projectile' : 'UNKNOWN', type: WeaponType.VOID_LANCE, accent: '#b06cff', locked: !secretWeaponUnlocked }
+                            { key: '6', name: 'Chain Lightning', type: WeaponType.ARC, accent: '#f8ff79', locked: false },
+                            { key: '7', name: secretWeaponUnlocked ? 'Black Hole Projectile' : 'UNKNOWN', type: WeaponType.VOID_LANCE, accent: '#b06cff', locked: !secretWeaponUnlocked }
                         ];
                         weaponOptions.forEach((weapon, index) => {
                             const rowY = 342 + index * 92;
@@ -3562,7 +3770,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         { key: '3', name: 'Homing Missiles', type: WeaponType.HOMING, accent: '#ff66dd', locked: false },
                         { key: '4', name: 'Split Bomb', type: WeaponType.HEAVY, accent: '#ffb347', locked: false },
                         { key: '5', name: 'Pulse Laser', type: WeaponType.LASER, accent: '#00ffff', locked: false },
-                        { key: '6', name: secretWeaponUnlocked ? 'Black Hole Projectile' : 'UNKNOWN', type: WeaponType.VOID_LANCE, accent: '#b06cff', locked: !secretWeaponUnlocked }
+                        { key: '6', name: 'Chain Lightning', type: WeaponType.ARC, accent: '#f8ff79', locked: false },
+                        { key: '7', name: secretWeaponUnlocked ? 'Black Hole Projectile' : 'UNKNOWN', type: WeaponType.VOID_LANCE, accent: '#b06cff', locked: !secretWeaponUnlocked }
                     ];
 
                     weaponOptions.forEach((weapon, index) => {
@@ -3780,46 +3989,25 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 // A user key press is a valid browser gesture for resuming the AudioContext.
                 if (!gameState.gameOver && !gameState.showLevelScreen) SoundSystem.startMusic();
 
-                // Weapon selection available anytime (except game over)
+                // Weapon selection is locked to the Ready Room. During combat, 1–5 switch
+                // the active elemental core instead; Black Hole and Chain Lightning keep their
+                // fixed identities and deliberately ignore this switch.
                 if (!gameState.gameOver && !gameState.showLevelScreen) {
                     if (inputManager.isActionPressed('tacticalAbility')) {
                         e.preventDefault();
                         if (!e.repeat) toggleTacticalAbility();
                         return;
-                    } else if (e.key === '1') {
+                    }
+                    const coreIndex = Number(e.key) - 1;
+                    if (!e.repeat && Number.isInteger(coreIndex) && coreIndex >= 0 && coreIndex < ELEMENTAL_CORE_ORDER.length) {
                         e.preventDefault();
-                        weaponSystem.setCurrentWeapon(WeaponType.STRAIGHT);
-                        const stats = weaponSystem.getCurrentWeaponStats();
-                        if (stats) player.setWeapon('straight', weaponSystem.getCurrentLevel(WeaponType.STRAIGHT), stats.fireRate, stats.damage);
-                        return;
-                    } else if (e.key === '2') {
-                        e.preventDefault();
-                        if (weaponSystem.setCurrentWeapon(WeaponType.SPREAD)) {
-                            const stats = weaponSystem.getCurrentWeaponStats();
-                            if (stats) player.setWeapon('spread', weaponSystem.getCurrentLevel(WeaponType.SPREAD), stats.fireRate, stats.damage);
-                        }
-                        return;
-                    } else if (e.key === '3') {
-                        e.preventDefault();
-                        if (weaponSystem.setCurrentWeapon(WeaponType.HOMING)) {
-                            const stats = weaponSystem.getCurrentWeaponStats();
-                            if (stats) player.setWeapon('homing', weaponSystem.getCurrentLevel(WeaponType.HOMING), stats.fireRate, stats.damage);
-                        }
-                        return;
-                    } else if (e.key === '4') {
-                        e.preventDefault();
-                        if (weaponSystem.setCurrentWeapon(WeaponType.HEAVY)) {
-                            const stats = weaponSystem.getCurrentWeaponStats();
-                            if (stats) player.setWeapon('heavy', weaponSystem.getCurrentLevel(WeaponType.HEAVY), stats.fireRate, stats.damage);
-                        }
-                        return;
-                    } else if (e.key === '5') {
-                        e.preventDefault();
-                        selectWeapon(WeaponType.LASER);
-                        return;
-                    } else if (e.key === '6') {
-                        e.preventDefault();
-                        selectWeapon(WeaponType.VOID_LANCE);
+                        const core = ELEMENTAL_CORE_ORDER[coreIndex];
+                        elementalCoreSystem.selectCore(core);
+                        const profile = elementalCoreSystem.getProfile(core);
+                        testNoticeText = (player.weaponType === 'arc' || player.weaponType === 'void_lance')
+                            ? `${getWeaponDisplayName(weaponSystem.getCurrentWeapon()).toUpperCase()} // FIXED ELEMENT // CORE STORED: ${profile.name}`
+                            : `ELEMENT CORE // ${profile.name} // RANK ${profile.rank}`;
+                        testNoticeUntil = performance.now() + 1800;
                         return;
                     }
                 }
@@ -3859,6 +4047,9 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         e.preventDefault();
                         selectWeapon(WeaponType.LASER);
                     } else if (e.key === '6') {
+                        e.preventDefault();
+                        selectWeapon(WeaponType.ARC);
+                    } else if (e.key === '7') {
                         e.preventDefault();
                         selectWeapon(WeaponType.VOID_LANCE);
                     } else if (e.key === 'Shift' && e.code === 'Digit4') {
@@ -3904,6 +4095,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         bossDefeatedAt = null;
                         enemySpawner.reset();
                         weaponSystem.reset();
+                        elementalCoreSystem.reset();
                         powerSystem.reset();
                         tacticalAbilitySystem.reset();
                         resetStageRuntime();
