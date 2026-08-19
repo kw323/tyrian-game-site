@@ -1,190 +1,111 @@
+export type PilotSkillBranch = 'survival' | 'reactor' | 'combat';
+
+export type PilotSkillId =
+    | 'hull_integrity'
+    | 'collision_resist'
+    | 'aegis_protocol'
+    | 'generator_output'
+    | 'capacitor_reserve'
+    | 'weapon_efficiency'
+    | 'weapon_damage'
+    | 'fire_rate'
+    | 'critical_targeting';
+
 export interface PilotSkillNode {
-    id: string;
+    id: PilotSkillId;
+    branch: PilotSkillBranch;
     name: string;
     description: string;
     level: number;
     maxLevel: number;
-    pointsInvested: number;
     bonusPerPoint: number;
-    statType: 
-        | 'hull_integrity' 
-        | 'collision_resist' 
-        | 'shield_capacity' 
-        | 'shield_regen' 
-        | 'generator_capacity' 
-        | 'generator_output' 
-        | 'weapon_damage' 
-        | 'fire_rate' 
-        | 'projectile_speed' 
-        | 'ability_duration'
-        | 'crit_chance'
-        | 'crit_damage';
-    milestonesUnlocked: number[]; // e.g. [5, 10]
 }
 
-export class PilotSkillSystem {
-    private xp: number = 0;
-    private rank: number = 1;
-    private skillPoints: number = 0;
-    private totalXpForNextRank: number = 250;
+export interface PilotSkillSaveState {
+    version: 2;
+    xp: number;
+    rank: number;
+    skillPoints: number;
+    totalXpForNextRank: number;
+    nodes: Record<string, { level: number }>;
+}
 
-    private nodes: Map<string, PilotSkillNode> = new Map([
+/**
+ * The pilot develops through three readable specialties. Every rank awards a
+ * single point, so choices remain meaningful instead of becoming a checklist.
+ */
+export class PilotSkillSystem {
+    public static readonly MAX_RANK = 30;
+    public static readonly XP_FOR_RANK_ONE = 140;
+    public static readonly XP_GROWTH = 1.19;
+    public static readonly XP_REQUIREMENT_CAP = 6000;
+
+    private xp = 0;
+    private rank = 1;
+    private skillPoints = 0;
+    private totalXpForNextRank = PilotSkillSystem.XP_FOR_RANK_ONE;
+
+    private nodes: Map<PilotSkillId, PilotSkillNode> = new Map([
         ['hull_integrity', {
-            id: 'hull_integrity',
-            name: 'Hull Structural Integrity',
-            description: 'Increases maximum base hull strength by +2% per rank.',
-            level: 0,
-            maxLevel: 10,
-            pointsInvested: 0,
-            bonusPerPoint: 0.02,
-            statType: 'hull_integrity',
-            milestonesUnlocked: []
+            id: 'hull_integrity', branch: 'survival', name: 'Hull Integrity',
+            description: '+4% maximum hull strength per rank.', level: 0, maxLevel: 5, bonusPerPoint: 0.04
         }],
         ['collision_resist', {
-            id: 'collision_resist',
-            name: 'Impact Dampeners',
-            description: 'Reduces collision damage taken from enemies by +2% per rank.',
-            level: 0,
-            maxLevel: 10,
-            pointsInvested: 0,
-            bonusPerPoint: 0.02,
-            statType: 'collision_resist',
-            milestonesUnlocked: []
+            id: 'collision_resist', branch: 'survival', name: 'Impact Dampeners',
+            description: '-4% collision damage per rank.', level: 0, maxLevel: 5, bonusPerPoint: 0.04
         }],
-        ['shield_capacity', {
-            id: 'shield_capacity',
-            name: 'Aegis Shield Capacity',
-            description: 'Increases maximum shield capacity by +2% per rank.',
-            level: 0,
-            maxLevel: 10,
-            pointsInvested: 0,
-            bonusPerPoint: 0.02,
-            statType: 'shield_capacity',
-            milestonesUnlocked: []
-        }],
-        ['shield_regen', {
-            id: 'shield_regen',
-            name: 'Resonant Shield Regeneration',
-            description: 'Increases shield regeneration rate by +2.5% per rank.',
-            level: 0,
-            maxLevel: 10,
-            pointsInvested: 0,
-            bonusPerPoint: 0.025,
-            statType: 'shield_regen',
-            milestonesUnlocked: []
-        }],
-        ['generator_capacity', {
-            id: 'generator_capacity',
-            name: 'Antimatter Core Capacity',
-            description: 'Increases max power capacity by +2% per rank.',
-            level: 0,
-            maxLevel: 10,
-            pointsInvested: 0,
-            bonusPerPoint: 0.02,
-            statType: 'generator_capacity',
-            milestonesUnlocked: []
+        ['aegis_protocol', {
+            id: 'aegis_protocol', branch: 'survival', name: 'Aegis Protocol',
+            description: '+4% shield capacity and recharge rate per rank.', level: 0, maxLevel: 5, bonusPerPoint: 0.04
         }],
         ['generator_output', {
-            id: 'generator_output',
-            name: 'Reactor Flux Induction',
-            description: 'Increases power generation speed by +2% per rank.',
-            level: 0,
-            maxLevel: 10,
-            pointsInvested: 0,
-            bonusPerPoint: 0.02,
-            statType: 'generator_output',
-            milestonesUnlocked: []
+            id: 'generator_output', branch: 'reactor', name: 'Reactor Flux',
+            description: '+4% reactor output per rank.', level: 0, maxLevel: 5, bonusPerPoint: 0.04
+        }],
+        ['capacitor_reserve', {
+            id: 'capacitor_reserve', branch: 'reactor', name: 'Capacitor Reserve',
+            description: '+6% maximum reactor energy per rank.', level: 0, maxLevel: 5, bonusPerPoint: 0.06
+        }],
+        ['weapon_efficiency', {
+            id: 'weapon_efficiency', branch: 'reactor', name: 'Thermal Cycling',
+            description: '+4% weapon-energy efficiency per rank.', level: 0, maxLevel: 5, bonusPerPoint: 0.04
         }],
         ['weapon_damage', {
-            id: 'weapon_damage',
-            name: 'Ballistic Caliber & Charge',
-            description: 'Increases weapon output damage by +2% per rank.',
-            level: 0,
-            maxLevel: 10,
-            pointsInvested: 0,
-            bonusPerPoint: 0.02,
-            statType: 'weapon_damage',
-            milestonesUnlocked: []
+            id: 'weapon_damage', branch: 'combat', name: 'Weapons Calibration',
+            description: '+3% weapon damage per rank.', level: 0, maxLevel: 5, bonusPerPoint: 0.03
         }],
         ['fire_rate', {
-            id: 'fire_rate',
-            name: 'Overclocked Fire Relays',
-            description: 'Increases weapon firing rate by +1.8% per rank.',
-            level: 0,
-            maxLevel: 10,
-            pointsInvested: 0,
-            bonusPerPoint: 0.018,
-            statType: 'fire_rate',
-            milestonesUnlocked: []
+            id: 'fire_rate', branch: 'combat', name: 'Fire Relays',
+            description: '+2% firing rate per rank.', level: 0, maxLevel: 5, bonusPerPoint: 0.02
         }],
-        ['projectile_speed', {
-            id: 'projectile_speed',
-            name: 'Magnetic Accelerator Coils',
-            description: 'Increases projectile flight speed by +2% per rank.',
-            level: 0,
-            maxLevel: 10,
-            pointsInvested: 0,
-            bonusPerPoint: 0.02,
-            statType: 'projectile_speed',
-            milestonesUnlocked: []
-        }],
-        ['ability_duration', {
-            id: 'ability_duration',
-            name: 'Temporal Resonance Matrix',
-            description: 'Extends tactical ability active duration by +2% per rank.',
-            level: 0,
-            maxLevel: 10,
-            pointsInvested: 0,
-            bonusPerPoint: 0.02,
-            statType: 'ability_duration',
-            milestonesUnlocked: []
-        }],
-        ['crit_chance', {
-            id: 'crit_chance',
-            name: 'Precision Targeting (Crit Chance)',
-            description: 'Increases critical hit chance by +0.5% per rank (max +5%).',
-            level: 0,
-            maxLevel: 10,
-            pointsInvested: 0,
-            bonusPerPoint: 0.005,
-            statType: 'crit_chance',
-            milestonesUnlocked: []
-        }],
-        ['crit_damage', {
-            id: 'crit_damage',
-            name: 'Destructive Focus (Crit Damage)',
-            description: 'Increases critical hit multiplier by +1.5% per rank (max +15%).',
-            level: 0,
-            maxLevel: 10,
-            pointsInvested: 0,
-            bonusPerPoint: 0.015,
-            statType: 'crit_damage',
-            milestonesUnlocked: []
+        ['critical_targeting', {
+            id: 'critical_targeting', branch: 'combat', name: 'Critical Targeting',
+            description: '+3% critical-salvo chance per rank. Critical salvos deal 1.75× damage.', level: 0, maxLevel: 5, bonusPerPoint: 0.03
         }]
     ]);
-
-    constructor() {}
 
     public getXP(): number { return this.xp; }
     public getRank(): number { return this.rank; }
     public getSkillPoints(): number { return this.skillPoints; }
     public getNextRankXpRequirement(): number { return this.totalXpForNextRank; }
+    public isMaxRank(): boolean { return this.rank >= PilotSkillSystem.MAX_RANK; }
 
-    public addXP(amount: number): boolean {
-        if (amount <= 0) return false;
-        this.xp += amount;
-        let leveledUp = false;
-        while (this.xp >= this.totalXpForNextRank) {
+    public addXP(amount: number): { rankedUp: boolean; ranksGained: number } {
+        if (amount <= 0 || this.isMaxRank()) return { rankedUp: false, ranksGained: 0 };
+        this.xp += Math.floor(amount);
+        let ranksGained = 0;
+        while (!this.isMaxRank() && this.xp >= this.totalXpForNextRank) {
             this.xp -= this.totalXpForNextRank;
             this.rank++;
-            this.skillPoints += 3; // 3 skill points per pilot rank
-            this.totalXpForNextRank = Math.floor(this.totalXpForNextRank * 1.35);
-            leveledUp = true;
+            this.skillPoints++;
+            ranksGained++;
+            this.totalXpForNextRank = this.getRequirementForRank(this.rank);
         }
-        return leveledUp;
+        if (this.isMaxRank()) this.xp = 0;
+        return { rankedUp: ranksGained > 0, ranksGained };
     }
 
-    public getNode(id: string): PilotSkillNode | undefined {
+    public getNode(id: PilotSkillId): PilotSkillNode | undefined {
         return this.nodes.get(id);
     }
 
@@ -192,108 +113,101 @@ export class PilotSkillSystem {
         return Array.from(this.nodes.values());
     }
 
-    public investPoint(id: string): boolean {
+    public getNodesByBranch(branch: PilotSkillBranch): PilotSkillNode[] {
+        return this.getAllNodes().filter((node) => node.branch === branch);
+    }
+
+    public investPoint(id: PilotSkillId): boolean {
         const node = this.nodes.get(id);
         if (!node || this.skillPoints <= 0 || node.level >= node.maxLevel) return false;
         node.level++;
-        node.pointsInvested++;
         this.skillPoints--;
         return true;
     }
 
-    public consumeSkillPoints(amount: number): void {
-        this.skillPoints = Math.max(0, this.skillPoints - amount);
-    }
-
-    public resetSkills(): number {
-        let refundedCredits = 0;
-        let refundedPoints = 0;
-        this.nodes.forEach(node => {
-            refundedPoints += node.level;
+    public resetSkills(): void {
+        this.nodes.forEach((node) => {
+            this.skillPoints += node.level;
             node.level = 0;
-            node.pointsInvested = 0;
-            node.milestonesUnlocked.forEach(mLevel => {
-                refundedCredits += (mLevel === 5 ? 150000 : 750000);
-            });
-            node.milestonesUnlocked = [];
         });
-        this.skillPoints += refundedPoints;
-        return refundedCredits;
     }
 
-    public canUnlockMilestone(id: string, milestoneLevel: number): boolean {
+    public getBonusMultiplier(id: PilotSkillId): number {
         const node = this.nodes.get(id);
-        if (!node) return false;
-        if (node.level < milestoneLevel) return false;
-        return !node.milestonesUnlocked.includes(milestoneLevel);
+        return node ? 1 + node.level * node.bonusPerPoint : 1;
     }
 
-    public unlockMilestone(id: string, milestoneLevel: number, currentCredits: number, currentStage: number, currentSkillPoints: number): { success: boolean; cost: number; pointsCost: number; error?: string } {
+    public getDamageReduction(id: 'collision_resist'): number {
         const node = this.nodes.get(id);
-        if (!node) return { success: false, cost: 0, pointsCost: 0, error: 'Skill not found' };
-        if (node.level < milestoneLevel) return { success: false, cost: 0, pointsCost: 0, error: `Requires skill level ${milestoneLevel}` };
-        if (node.milestonesUnlocked.includes(milestoneLevel)) return { success: false, cost: 0, pointsCost: 0, error: 'Already unlocked' };
-
-        // Balanced strict requirements: M5 requires 3 skill points, 150,000 credits, and stage >= 25.
-        // M10 requires 6 skill points, 750,000 credits, and stage >= 70.
-        const cost = milestoneLevel === 5 ? 150000 : 750000;
-        const pointsCost = milestoneLevel === 5 ? 3 : 6;
-        const requiredStage = milestoneLevel === 5 ? 25 : 70;
-
-        if (currentCredits < cost) return { success: false, cost, pointsCost, error: `Requires ${cost.toLocaleString()} credits` };
-        if (currentSkillPoints < pointsCost) return { success: false, cost, pointsCost, error: `Requires ${pointsCost} unspent skill points` };
-        if (currentStage < requiredStage) return { success: false, cost, pointsCost, error: `Requires Campaign Stage ${requiredStage}+` };
-
-        node.milestonesUnlocked.push(milestoneLevel);
-        return { success: true, cost, pointsCost };
+        return node ? node.level * node.bonusPerPoint : 0;
     }
 
-    public getBonusMultiplier(statType: PilotSkillNode['statType']): number {
-        const node = this.nodes.get(statType);
-        if (!node) return 1.0;
-        let baseBonus = 1.0 + (node.level * node.bonusPerPoint);
-        // Add balanced milestone perks bonus (+1.5% for M5, +3.5% for M10)
-        if (node.milestonesUnlocked.includes(5)) baseBonus += 0.015;
-        if (node.milestonesUnlocked.includes(10)) baseBonus += 0.035;
-        return baseBonus;
+    public getCriticalChance(): number {
+        const node = this.nodes.get('critical_targeting');
+        return node ? node.level * node.bonusPerPoint : 0;
     }
 
-    public getSaveState(): any {
-        const nodesState: Record<string, any> = {};
-        this.nodes.forEach((node, id) => {
-            nodesState[id] = {
-                level: node.level,
-                pointsInvested: node.pointsInvested,
-                milestonesUnlocked: [...node.milestonesUnlocked]
-            };
-        });
+    public getCriticalDamageMultiplier(): number {
+        return 1.75;
+    }
+
+    public getSaveState(): PilotSkillSaveState {
+        const nodes: Record<string, { level: number }> = {};
+        this.nodes.forEach((node, id) => { nodes[id] = { level: node.level }; });
         return {
+            version: 2,
             xp: this.xp,
             rank: this.rank,
             skillPoints: this.skillPoints,
             totalXpForNextRank: this.totalXpForNextRank,
-            nodes: nodesState
+            nodes
         };
     }
 
     public loadSaveState(state: any): void {
-        if (!state) return;
-        if (typeof state.xp === 'number') this.xp = state.xp;
-        if (typeof state.rank === 'number') this.rank = state.rank;
-        if (typeof state.skillPoints === 'number') this.skillPoints = state.skillPoints;
-        if (typeof state.totalXpForNextRank === 'number') this.totalXpForNextRank = state.totalXpForNextRank;
-        if (state.nodes && typeof state.nodes === 'object') {
-            Object.keys(state.nodes).forEach(id => {
-                const node = this.nodes.get(id);
-                const saved = state.nodes[id];
-                if (node && saved) {
-                    node.level = Math.max(0, Math.min(node.maxLevel, Number(saved.level) || 0));
-                    node.pointsInvested = Math.max(0, Math.min(node.maxLevel, Number(saved.pointsInvested) || 0));
-                    if (Array.isArray(saved.milestonesUnlocked)) {
-                        node.milestonesUnlocked = [...saved.milestonesUnlocked];
-                    }
-                }
-            });
+        if (!state || typeof state !== 'object') return;
+        if (state.version === 2) {
+            this.rank = this.clampRank(state.rank);
+            this.xp = Math.max(0, Number(state.xp) || 0);
+            this.skillPoints = Math.max(0, Math.floor(Number(state.skillPoints) || 0));
+            this.totalXpForNextRank = this.isMaxRank() ? 0 : this.getRequirementForRank(this.rank);
+            if (state.nodes && typeof state.nodes === 'object') {
+                this.nodes.forEach((node, id) => {
+                    const saved = state.nodes[id];
+                    node.level = Math.max(0, Math.min(node.maxLevel, Math.floor(Number(saved?.level) || 0)));
+                });
+            }
+            return;
         }
+
+        // Legacy saves had twelve 10-rank nodes, three points per rank, and paid milestones.
+        // Refund every legacy investment into the new tree so no existing pilot loses progress.
+        const legacyNodes = state.nodes && typeof state.nodes === 'object' ? state.nodes : {};
+        let refundedLegacyPoints = 0;
+        Object.values(legacyNodes).forEach((saved: any) => {
+            const level = Math.max(0, Math.floor(Number(saved?.level) || 0));
+            refundedLegacyPoints += level;
+            if (Array.isArray(saved?.milestonesUnlocked)) {
+                if (saved.milestonesUnlocked.includes(5)) refundedLegacyPoints += 3;
+                if (saved.milestonesUnlocked.includes(10)) refundedLegacyPoints += 6;
+            }
+        });
+        this.rank = this.clampRank(state.rank);
+        this.xp = 0;
+        this.totalXpForNextRank = this.isMaxRank() ? 0 : this.getRequirementForRank(this.rank);
+        this.skillPoints = Math.max(0, Math.floor(Number(state.skillPoints) || 0)) + refundedLegacyPoints;
+        this.nodes.forEach((node) => { node.level = 0; });
+    }
+
+    private clampRank(value: unknown): number {
+        return Math.max(1, Math.min(PilotSkillSystem.MAX_RANK, Math.floor(Number(value) || 1)));
+    }
+
+    private getRequirementForRank(rank: number): number {
+        const progressionIndex = Math.max(0, rank - 1);
+        return Math.min(
+            PilotSkillSystem.XP_REQUIREMENT_CAP,
+            Math.round(PilotSkillSystem.XP_FOR_RANK_ONE * Math.pow(PilotSkillSystem.XP_GROWTH, progressionIndex))
+        );
     }
 }

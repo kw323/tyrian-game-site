@@ -12,6 +12,8 @@ export class Player extends Entity {
     public weaponLevel: number = 0;
     public weaponFireRate: number = 6;
     public weaponDamage: number = 10;
+    public criticalChance: number = 0;
+    public criticalDamageMultiplier: number = 1.75;
     public shield: number = 65;
     public maxShield: number = 65;
     public shieldRegenRate: number = 4;
@@ -262,6 +264,15 @@ export class Player extends Entity {
         }
 
         return bullets;
+    }
+
+    public setCriticalProfile(chance: number, damageMultiplier: number = 1.75): void {
+        this.criticalChance = Math.max(0, Math.min(1, chance));
+        this.criticalDamageMultiplier = Math.max(1, damageMultiplier);
+    }
+
+    public rollCriticalSalvo(): boolean {
+        return this.criticalChance > 0 && Math.random() < this.criticalChance;
     }
 
     public setWeapon(type: string, level: number, fireRate: number, damage: number): void {

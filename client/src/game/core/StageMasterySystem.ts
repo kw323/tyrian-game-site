@@ -5,6 +5,8 @@ export interface StageTelemetry {
     eliminationPercent: number;
     shieldHits: number;
     shieldDamageAbsorbed: number;
+    hullDamageTaken: number;
+    totalDamageTaken: number;
     cleanShieldRun: boolean;
     weaponClearRun: boolean;
 }
@@ -33,7 +35,7 @@ export interface StageMasteryResult {
 export class StageMasterySystem {
     public static readonly STREAK_LENGTH = 10;
     public static readonly MAX_ACCEPTED_SHIELD_HITS = 1;
-    public static readonly MAX_ACCEPTED_SHIELD_DAMAGE = 8;
+    public static readonly MAX_ACCEPTED_SHIELD_DAMAGE = 20;
     public static readonly WEAPON_CLEAR_THRESHOLD = 0.95;
 
     private currentLevel = 1;
@@ -41,6 +43,7 @@ export class StageMasterySystem {
     private enemiesDefeated = 0;
     private shieldHits = 0;
     private shieldDamageAbsorbed = 0;
+    private hullDamageTaken = 0;
     private finalized = false;
     private aegisStreak = 0;
     private weaponStreak = 0;
@@ -54,6 +57,7 @@ export class StageMasterySystem {
         this.enemiesDefeated = 0;
         this.shieldHits = 0;
         this.shieldDamageAbsorbed = 0;
+        this.hullDamageTaken = 0;
         this.finalized = false;
     }
 
@@ -69,6 +73,13 @@ export class StageMasterySystem {
         if (damageAbsorbed <= 0) return;
         this.shieldHits += 1;
         this.shieldDamageAbsorbed += damageAbsorbed;
+    }
+
+    public recordPlayerDamage(totalDamage: number, shieldDamageAbsorbed: number): void {
+        const safeTotal = Math.max(0, totalDamage);
+        const safeShieldDamage = Math.min(safeTotal, Math.max(0, shieldDamageAbsorbed));
+        if (safeShieldDamage > 0) this.recordShieldImpact(safeShieldDamage);
+        this.hullDamageTaken += Math.max(0, safeTotal - safeShieldDamage);
     }
 
     public finalizeStage(): StageMasteryResult | null {
@@ -87,6 +98,7 @@ export class StageMasterySystem {
         const cleanShieldRun = this.shieldHits <= StageMasterySystem.MAX_ACCEPTED_SHIELD_HITS
             && this.shieldDamageAbsorbed <= StageMasterySystem.MAX_ACCEPTED_SHIELD_DAMAGE;
         const weaponClearRun = this.enemiesSpawned > 0 && eliminationPercent >= StageMasterySystem.WEAPON_CLEAR_THRESHOLD * 100;
+        const totalDamageTaken = this.shieldDamageAbsorbed + this.hullDamageTaken;
         const telemetry: StageTelemetry = {
             level: this.currentLevel,
             enemiesSpawned: this.enemiesSpawned,
@@ -94,6 +106,8 @@ export class StageMasterySystem {
             eliminationPercent,
             shieldHits: this.shieldHits,
             shieldDamageAbsorbed: this.shieldDamageAbsorbed,
+            hullDamageTaken: this.hullDamageTaken,
+            totalDamageTaken,
             cleanShieldRun,
             weaponClearRun
         };

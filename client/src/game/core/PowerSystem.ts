@@ -5,6 +5,8 @@ export class PowerSystem {
     public generatorOutput: number = 15; // Power generated per second at level 0
     private reactorRecovering: boolean = false;
     private readonly reactorRecoveryOutputMultiplier: number = 0.6;
+    private capacitorMultiplier: number = 1;
+    private weaponEfficiencyMultiplier: number = 1;
     
     // Energy cost per weapon trigger pull (extended to 25 ranks).
     public shieldRegenCost: number = 3; // Cost to regenerate shield
@@ -26,15 +28,21 @@ export class PowerSystem {
         return (this.generatorOutput + (this.generatorLevel * 8.5)) * bonusMultiplier;
     }
 
+    public setPilotModifiers(capacitorMultiplier: number = 1, weaponEfficiencyMultiplier: number = 1): void {
+        const safeCapacitorMultiplier = Math.max(1, capacitorMultiplier);
+        this.capacitorMultiplier = safeCapacitorMultiplier;
+        this.weaponEfficiencyMultiplier = Math.max(1, weaponEfficiencyMultiplier);
+        this.currentPower = Math.min(this.currentPower, this.getMaxPower());
+    }
+
     public getMaxPower(): number {
-        // Max power stays constant - only generation rate increases
-        return this.maxPower;
+        return Math.round(this.maxPower * this.capacitorMultiplier);
     }
 
     public getWeaponCost(weaponType: string, level: number): number {
         const costs = this.weaponCosts.get(weaponType);
         if (!costs || level < 0 || level >= costs.length) return 0;
-        return costs[level];
+        return costs[level] / this.weaponEfficiencyMultiplier;
     }
 
     public getShieldRegenCost(): number {

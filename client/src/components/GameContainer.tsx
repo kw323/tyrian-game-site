@@ -33,6 +33,7 @@ import { SoundSystem } from '@/game/core/SoundSystem';
 import { BranchSystem, BranchRoute } from '@/game/story/BranchSystem';
 import { BackgroundRenderer } from '@/game/story/BackgroundRenderer';
 import { StageMasteryResult, StageMasterySystem } from '@/game/core/StageMasterySystem';
+import { calculateStagePerformanceXP, StagePerformanceXPResult } from '@/game/core/StagePerformanceXP';
 import { MissionTargetEntity } from '@/game/entities/MissionTargetEntity';
 import { GravityWell } from '@/game/entities/GravityWell';
 import { EquipmentDropEntity } from '@/game/entities/EquipmentDropEntity';
@@ -286,6 +287,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             let seraAlly: SeraAllyShipEntity | null = null;
             let lastStageMasteryResult: StageMasteryResult | null = null;
             let stageTelemetryFinalized = false;
+            let lastStagePerformanceXp: StagePerformanceXPResult | null = null;
+            let sectorSealed = false;
             let isTestSession = false;
             let mCheatStartedAt: number | null = null;
             let mCheatLastGrantAt: number | null = null;
@@ -398,8 +401,12 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 const damageBonus = pilotSkillSystem.getBonusMultiplier('weapon_damage');
                 const fireRateBonus = pilotSkillSystem.getBonusMultiplier('fire_rate');
                 const finalDamage = Math.round(stats.damage * damageBonus);
-                const finalFireRate = Math.max(0.04, stats.fireRate / fireRateBonus);
+                const finalFireRate = Math.max(0.04, stats.fireRate * fireRateBonus);
                 player.setWeapon(playerWeapon, weaponSystem.getCurrentLevel(type), finalFireRate, finalDamage);
+                player.setCriticalProfile(
+                    pilotSkillSystem.getCriticalChance(),
+                    pilotSkillSystem.getCriticalDamageMultiplier()
+                );
             };
 
             const findNearestHomingTarget = (x: number, y: number): Enemy | EnemyAdvanced | Boss | MissionTargetEntity | null => {
@@ -580,8 +587,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 const hullRatio = Math.max(0, Math.min(1, player.health / previousMaxHull));
                 const shieldRatio = Math.max(0, Math.min(1, player.shield / previousMaxShield));
                 const hullMultiplier = pilotSkillSystem.getBonusMultiplier('hull_integrity');
-                const shieldSkillMultiplier = pilotSkillSystem.getBonusMultiplier('shield_capacity');
-                const shieldRegenMultiplier = pilotSkillSystem.getBonusMultiplier('shield_regen');
+                const shieldSkillMultiplier = pilotSkillSystem.getBonusMultiplier('aegis_protocol');
+                const shieldRegenMultiplier = pilotSkillSystem.getBonusMultiplier('aegis_protocol');
                 const equipmentShieldMultiplier = 1 + (equipmentSystem.getActiveBonuses().shieldCap / 100);
                 const permanentShieldCapacity = Math.max(0, shieldLevel - 1) * SHIELD_UPGRADE_CAPACITY;
                 const permanentShieldRegen = Math.max(0, shieldLevel - 1) * SHIELD_UPGRADE_REGEN;
@@ -618,7 +625,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     maxShield: player.maxShield,
                     shieldRegenRate: player.baseShieldRegenRate,
                     generatorLevel: powerSystem.generatorLevel,
-                    generatorOutput: powerSystem.getGeneratorOutput((pilotSkillSystem.getBonusMultiplier('generator_output') * pilotSkillSystem.getBonusMultiplier('generator_capacity'))),
+                    generatorOutput: powerSystem.getGeneratorOutput(pilotSkillSystem.getBonusMultiplier('generator_output')),
                     maxPower: powerSystem.getMaxPower(),
                     ability: abilityLevel > 0 ? selectedAbility : null,
                     abilityLevel,
@@ -749,13 +756,13 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
             const applyPlayerDamage = (damage: number, isCollision = false): boolean => {
                 const collisionMultiplier = isCollision
-                    ? Math.max(0.5, 2 - pilotSkillSystem.getBonusMultiplier('collision_resist'))
+                    ? Math.max(0.5, 1 - pilotSkillSystem.getDamageReduction('collision_resist'))
                     : 1;
                 const adjustedDamage = Math.max(0, damage * collisionMultiplier);
                 const shieldBefore = player.shield;
                 const isDead = player.takeDamage(adjustedDamage);
                 const absorbed = Math.min(shieldBefore, adjustedDamage);
-                if (absorbed > 0) stageMasterySystem.recordShieldImpact(absorbed);
+                stageMasterySystem.recordPlayerDamage(adjustedDamage, absorbed);
                 return isDead;
             };
 
@@ -845,12 +852,16 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 saveResumeCheckpoint(`MISSION FAILED // ${reason}`);
             };
 
-            const finalizeStageTelemetry = (): void => {
+            const finalizeStageTelemetry = (awardPerformanceXp = false): void => {
                 if (stageTelemetryFinalized) return;
                 lastStageMasteryResult = stageMasterySystem.finalizeStage();
                 stageTelemetryFinalized = true;
                 localStorage.setItem('tyrian_stage_mastery', JSON.stringify(stageMasterySystem.getSaveState()));
                 if (!lastStageMasteryResult) return;
+                if (awardPerformanceXp) {
+                    lastStagePerformanceXp = calculateStagePerformanceXP(lastStageMasteryResult.telemetry, player.maxHealth, player.maxShield);
+                    awardPilotXp(lastStagePerformanceXp.totalXp, `STAGE XP +${lastStagePerformanceXp.totalBonusPercent}%`);
+                }
                 if (lastStageMasteryResult.rewards.aegisMasteryUnlocked) {
                     applyPlayerDefenseProfile(false, true);
                     testNoticeText = 'MASTERY UNLOCKED // AEGIS MATRIX';
@@ -1033,6 +1044,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 stageHazards = [];
                 stageHazardKind = null;
                 missionEventSpawned = false;
+                sectorSealed = false;
+                lastStagePerformanceXp = null;
                 powerSystem.refillForStage();
                 tacticalAbilitySystem.resetStage();
                 player.resetForStage(
@@ -1214,18 +1227,23 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 ? window.setTimeout(() => jumpToStage(initialStage), 0)
                 : null;
 
+            const awardPilotXp = (amount: number, source: string): void => {
+                const result = pilotSkillSystem.addXP(amount);
+                if (!result.rankedUp) return;
+                testNoticeText = `PILOT RANK UP // ${source} // RANK ${pilotSkillSystem.getRank()} // +${result.ranksGained} SKILL POINT${result.ranksGained === 1 ? '' : 'S'}`;
+                testNoticeUntil = performance.now() + 4500;
+                SoundSystem.playUpgrade();
+            };
+
             const registerEnemyDefeat = (enemy: Enemy | EnemyAdvanced): void => {
                 if (!enemy.isActive && !enemy.rewardGranted) {
                     enemy.rewardGranted = true;
                     gameState.enemyDefeated(enemy.points ?? 100);
                     stageMasterySystem.recordEnemyDefeat();
                     tacticalAbilitySystem.addKillCharge(enemy.points ?? 100, shipSystem.getCurrentShipId());
-                    const enemyXp = Math.max(5, Math.floor((enemy.points ?? 100) * 0.1));
-                    if (pilotSkillSystem.addXP(enemyXp)) {
-                        testNoticeText = `PILOT RANK UP // RANK ${pilotSkillSystem.getRank()} // +1 SKILL POINT`;
-                        testNoticeUntil = performance.now() + 4500;
-                        SoundSystem.playUpgrade();
-                    }
+                    // Kills give only a small XP contribution; the main reward is stage performance.
+                    const enemyXp = Math.max(1, Math.floor((enemy.points ?? 100) * 0.03));
+                    awardPilotXp(enemyXp, 'COMBAT XP');
                     const isSpecialEnemy = enemy instanceof EnemyAdvanced && enemy.isSpecial;
                     if (isSpecialEnemy && weaponSystem.unlockSecretWeapon()) {
                         upgradeBriefing = CampaignSystem.getUpgradeBriefing('weapon', 'Black Hole Projectile', 1);
@@ -1266,22 +1284,15 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         return;
                     }
                     if (boss instanceof SeraDuelEntity) {
+                        stageMasterySystem.recordEnemyDefeat();
                         resolveSeraDuelOutcome('win');
                         game.addEntity(new Explosion(boss.x, boss.y, 30));
-                        if (pilotSkillSystem.addXP(250)) {
-                            testNoticeText = `PILOT RANK UP // RANK ${pilotSkillSystem.getRank()} // +1 SKILL POINT`;
-                            testNoticeUntil = performance.now() + 4500;
-                            SoundSystem.playUpgrade();
-                        }
+                        awardPilotXp(45, 'SERA DUEL');
                         return;
                     }
                     gameState.addScore(Math.floor(boss.getReward() * COMBAT_REWARD_MULTIPLIER));
                     stageMasterySystem.recordEnemyDefeat();
-                    if (pilotSkillSystem.addXP(350)) {
-                        testNoticeText = `PILOT RANK UP // RANK ${pilotSkillSystem.getRank()} // +1 SKILL POINT`;
-                        testNoticeUntil = performance.now() + 4500;
-                        SoundSystem.playUpgrade();
-                    }
+                    awardPilotXp(60, 'BOSS DEFEAT');
 
                     // Guaranteed Boss Equipment Drop Drop Entity (Always Tier 1)
                     const types: EquipmentPartType[] = ['engine', 'shield', 'generator', 'weapon', 'computer'];
@@ -1369,7 +1380,11 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 player.updateWithInput(deltaTime, pilotKeys, game.getCanvas().width, GAME_CANVAS_HEIGHT);
 
                 // Generate power; OVER POWER keeps the reactor at maximum output for its duration.
-                powerSystem.generatePower(deltaTime, (pilotSkillSystem.getBonusMultiplier('generator_output') * pilotSkillSystem.getBonusMultiplier('generator_capacity')));
+                powerSystem.setPilotModifiers(
+                    pilotSkillSystem.getBonusMultiplier('capacitor_reserve'),
+                    pilotSkillSystem.getBonusMultiplier('weapon_efficiency')
+                );
+                powerSystem.generatePower(deltaTime, pilotSkillSystem.getBonusMultiplier('generator_output'));
                 if (hasUnlimitedPower) powerSystem.forceReactorOnline();
 
                 // A depleted reactor keeps movement available, but with a small recovery penalty.
@@ -1384,17 +1399,21 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 // Hold Space, the touch-fire control, or the left mouse button to fire.
                 if ((keys.Space || touchInput.fire || mouseInput.fire) && player.canShoot(performance.now() / 1000) && (hasUnlimitedPower || powerSystem.canShoot(player.weaponType, player.weaponLevel))) {
                     const bulletPositions = player.shoot(performance.now() / 1000);
+                    const criticalSalvo = player.rollCriticalSalvo();
+                    const shotDamage = criticalSalvo
+                        ? Math.round(player.weaponDamage * player.criticalDamageMultiplier)
+                        : player.weaponDamage;
                     const weaponCost = powerSystem.getWeaponCost(player.weaponType, player.weaponLevel);
                     if (!hasUnlimitedPower) powerSystem.consumePower(weaponCost);
                     
                     bulletPositions.forEach((bulletData: any) => {
                         const cloaked = tacticalAbilitySystem.isPhaseCloaked();
                         if (bulletData.type === 'straight') {
-                            const bullet = new Bullet(bulletData.x, bulletData.y, 8, 8, 25, player.weaponDamage, '#FFD700', bulletData.angle || 0);
+                            const bullet = new Bullet(bulletData.x, bulletData.y, 8, 8, 25, shotDamage, criticalSalvo ? '#ff77e8' : '#FFD700', bulletData.angle || 0);
                             (bullet as any).isCloaked = cloaked;
                             game.addEntity(bullet);
                         } else if (bulletData.type === 'spread') {
-                            const bullet = new Bullet(bulletData.x, bulletData.y, 8, 8, 25, player.weaponDamage, '#FFD700', bulletData.angle || 0);
+                            const bullet = new Bullet(bulletData.x, bulletData.y, 8, 8, 25, shotDamage, criticalSalvo ? '#ff77e8' : '#FFD700', bulletData.angle || 0);
                             (bullet as any).isCloaked = cloaked;
                             game.addEntity(bullet);
                         } else if (bulletData.type === 'homing') {
@@ -1408,7 +1427,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                                 6,
                                 6,
                                 bulletData.speed ?? 11,
-                                player.weaponDamage,
+                                shotDamage,
                                 targetX,
                                 targetY,
                                 target,
@@ -1429,7 +1448,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                                 hSize,
                                 hSize,
                                 14,
-                                player.weaponDamage,
+                                shotDamage,
                                 bulletData.angle || 0,
                                 hLevel,
                                 (splitX, splitY, level, baseDamage) => {
@@ -1453,7 +1472,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                             const bullet = new BlackHoleBullet(
                                 bulletData.x,
                                 bulletData.y,
-                                player.weaponDamage,
+                                shotDamage,
                                 player.weaponLevel,
                                 bulletData.angle || 0
                             );
@@ -1462,7 +1481,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                             const beam = new LaserBullet(
                                 bulletData.x,
                                 bulletData.y,
-                                player.weaponDamage,
+                                shotDamage,
                                 player.weaponLevel,
                                 true,
                                 bulletData.angle ?? 0,
@@ -1495,7 +1514,15 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
                 if (!missionEventSpawned && gameState.levelTimeElapsed >= 45) spawnMissionTarget();
 
-                const newEnemies = gameState.level === 31
+                const bossStageForSpawns = gameState.level % 3 === 0 || gameState.level === 31 || gameState.level === 101;
+                const waveWindowOpen = bossStageForSpawns || gameState.levelTimeElapsed < gameState.levelDuration;
+                if (!bossStageForSpawns && !waveWindowOpen && !sectorSealed) {
+                    sectorSealed = true;
+                    testNoticeText = 'SECTOR SEALED // CLEAR REMAINING HOSTILES';
+                    testNoticeUntil = performance.now() + 5500;
+                    SoundSystem.playCriticalComms('elena', 'warning');
+                }
+                const newEnemies = gameState.level === 31 || !waveWindowOpen
                     ? []
                     : enemySpawner.update(deltaTime, game['entities'], gameState.level);
                 stageMasterySystem.recordEnemySpawn(newEnemies.length);
@@ -2046,9 +2073,14 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     spawnMissionTarget();
                 }
                 const bossStage = gameState.level % 3 === 0 || gameState.level === 31 || gameState.level === 101;
+                const activeHostiles = game['entities'].filter((entity: any) => entity.isActive && (
+                    entity instanceof Enemy || entity instanceof EnemyAdvanced || entity instanceof Boss ||
+                    (entity instanceof MissionTargetEntity && entity.missionType === 'bounty')
+                )).length;
                 const bossGracePeriodComplete = bossDefeatedAt !== null && currentTime - bossDefeatedAt >= 5;
-                if ((!bossStage && gameState.isLevelComplete()) || (bossStage && bossGracePeriodComplete)) {
-                    finalizeStageTelemetry();
+                const regularStageClear = !bossStage && gameState.isLevelComplete() && activeHostiles === 0;
+                if (regularStageClear || (bossStage && bossGracePeriodComplete)) {
+                    finalizeStageTelemetry(true);
                     gameState.levelComplete = true;
                     gameState.showLevelScreen = true;
                     if (gameState.level === 101) {
@@ -2843,6 +2875,20 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         const eventInfo = getExpectedEventInfo(gameState.level, stageBriefing.missionType, stageEvent);
 
                         drawCard(28, 156, 944, 570, `MISSION BRIEFING // ${stageBriefing.operationCode.toUpperCase()}`, '#00CCDD');
+                        if (lastStagePerformanceXp && lastStageMasteryResult) {
+                            const report = lastStagePerformanceXp;
+                            const telemetry = lastStageMasteryResult.telemetry;
+                            drawCard(52, 180, 896, 132, `FLIGHT REPORT // STAGE ${telemetry.level} // +${report.totalXp} XP`, report.superBonusPercent > 0 ? '#ff77e8' : '#38bdf8');
+                            ctx.fillStyle = '#dbe9ee';
+                            ctx.font = 'bold 14px monospace';
+                            ctx.fillText(`BASE ${report.baseXp}  •  ELIMINATION ${telemetry.eliminationPercent.toFixed(0)}%  •  DAMAGE ${report.damagePercent.toFixed(1)}%`, 72, 234);
+                            ctx.fillStyle = report.fullClear ? '#00ff88' : '#ffd166';
+                            ctx.fillText(`${report.fullClear ? 'CLEAN SWEEP +30%' : report.eliminationBonusPercent > 0 ? 'HIGH ELIMINATION +10%' : 'ELIMINATION BONUS LOST'}`, 72, 262);
+                            ctx.fillStyle = report.noHit ? '#00ff88' : '#8ea4b2';
+                            ctx.fillText(`${report.noHit ? 'NO HIT +30%' : report.survivalBonusPercent > 0 ? `LOW DAMAGE +${report.survivalBonusPercent}%` : 'SURVIVAL BONUS LOST'}`, 370, 262);
+                            ctx.fillStyle = report.superBonusPercent > 0 ? '#ff77e8' : '#526874';
+                            ctx.fillText(report.superBonusPercent > 0 ? 'SUPER BONUS +50%' : 'SUPER BONUS // REQUIRE NO HIT + CLEAN SWEEP', 610, 262);
+                        }
                         ctx.textAlign = 'left';
                         ctx.fillStyle = '#FFD166';
                         ctx.font = 'bold 20px Arial';
@@ -2904,7 +2950,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     drawShopNav(shopScreen);
 
                     if (shopScreen === 'pilot_skills') {
-                        drawCard(28, 156, 1144, 920, 'PILOT EXPERIENCE, TALENT & CRITICAL SKILLS', '#38bdf8');
+                        drawCard(28, 156, 1144, 920, 'PILOT SPECIALIZATION // SURVIVAL • REACTOR • COMBAT', '#38bdf8');
                         const rank = pilotSkillSystem.getRank();
                         const xp = pilotSkillSystem.getXP();
                         const nextXp = pilotSkillSystem.getNextRankXpRequirement();
@@ -2913,16 +2959,17 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         ctx.textAlign = 'left';
                         ctx.fillStyle = '#38bdf8';
                         ctx.font = 'bold 17px Arial';
-                        ctx.fillText(`PILOT RANK ${rank}  •  AVAILABLE SKILL POINTS: ${points}`, 52, 202);
+                        ctx.fillText(`PILOT RANK ${rank}/${PilotSkillSystem.MAX_RANK}  •  AVAILABLE SKILL POINTS: ${points}`, 52, 202);
                         ctx.fillStyle = '#8ea4b2';
                         ctx.font = '12px Arial';
-                        ctx.fillText(`Experience: ${xp} / ${nextXp} XP to next rank. Invest points in skill cards below.`, 52, 224);
+                        ctx.fillText(pilotSkillSystem.isMaxRank() ? 'MAXIMUM PILOT RANK // SPECIALIZE YOUR BUILD' : `Experience: ${xp} / ${nextXp} XP to next rank. One rank earns one skill point.`, 52, 224);
 
-                        drawButton('pilot-respec', 'RESET SKILLS [RESPEC]', 920, 185, 228, 36, '#ff6666', () => {
-                            const refunded = pilotSkillSystem.resetSkills();
+                        drawButton('pilot-respec', 'RESET BUILD // REFUND POINTS', 920, 185, 228, 36, '#ff6666', () => {
+                            pilotSkillSystem.resetSkills();
                             applyPlayerDefenseProfile(false, false);
-                            gameState.score += refunded;
-                            testNoticeText = `SKILLS RESET // REFUNDED ALL POINTS & ${refunded.toLocaleString()} CREDITS`;
+                            powerSystem.setPilotModifiers(1, 1);
+                            syncPlayerWeapon(weaponSystem.getCurrentWeapon());
+                            testNoticeText = 'SKILL BUILD RESET // ALL POINTS REFUNDED';
                             testNoticeUntil = performance.now() + 4500;
                             SoundSystem.playUpgrade();
                         });
@@ -2937,82 +2984,58 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         ctx.fillRect(54, 238, Math.floor(1092 * xpRatio), 8);
 
                         const nodes = pilotSkillSystem.getAllNodes();
+                        const branchHeaders = [
+                            { label: 'SURVIVAL // HULL & AEGIS', color: '#42e8bf' },
+                            { label: 'REACTOR // POWER MANAGEMENT', color: '#75d8e7' },
+                            { label: 'COMBAT // WEAPON CONTROL', color: '#ffd166' }
+                        ];
                         let hoveredSkillNode: any = null;
+
+                        branchHeaders.forEach((branch, index) => {
+                            const branchY = 265 + index * 150;
+                            ctx.fillStyle = branch.color;
+                            ctx.font = 'bold 13px Arial';
+                            ctx.fillText(branch.label, 52, branchY);
+                        });
 
                         nodes.forEach((node, index) => {
                             const col = index % 3;
                             const row = Math.floor(index / 3);
                             const cardX = 52 + col * 372;
-                            const cardY = 265 + row * 132;
-
+                            const cardY = 277 + row * 150;
+                            const branchColor = branchHeaders[row]?.color ?? '#38bdf8';
                             const isCardHovered = hoveredShopItem === `skill-card-${node.id}`;
                             ctx.fillStyle = isCardHovered ? '#102b3b' : '#0b1e2d';
-                            ctx.fillRect(cardX, cardY, 350, 120);
-                            ctx.strokeStyle = isCardHovered ? '#38bdf8' : '#284b5d';
-                            ctx.strokeRect(cardX, cardY, 350, 120);
-
+                            ctx.fillRect(cardX, cardY, 350, 126);
+                            ctx.strokeStyle = isCardHovered ? '#ffffff' : branchColor;
+                            ctx.strokeRect(cardX, cardY, 350, 126);
                             ctx.fillStyle = '#dbe9ee';
                             ctx.font = 'bold 13px Arial';
                             ctx.fillText(node.name, cardX + 14, cardY + 24);
-
-                            ctx.fillStyle = '#FFD700';
+                            ctx.fillStyle = branchColor;
                             ctx.font = '12px Arial';
-                            ctx.fillText(`Level ${node.level} / ${node.maxLevel}`, cardX + 14, cardY + 44);
-
-                            // Invest Button inside card
+                            ctx.fillText(`LEVEL ${node.level}/${node.maxLevel}`, cardX + 14, cardY + 46);
+                            ctx.fillStyle = '#8ea4b2';
+                            ctx.font = '12px Arial';
+                            drawWrappedText(ctx, node.description, cardX + 14, cardY + 66, 320, 14, 2);
                             const canInvest = points > 0 && node.level < node.maxLevel;
-                            drawButton(`invest-${node.id}`, 'INVEST +1', cardX + 14, cardY + 65, 105, 30, canInvest ? '#00FF88' : '#526874', () => {
+                            drawButton(`invest-${node.id}`, 'INVEST +1', cardX + 214, cardY + 84, 118, 28, canInvest ? branchColor : '#526874', () => {
                                 if (pilotSkillSystem.investPoint(node.id)) {
-                                    if (node.id === 'hull_integrity' || node.id === 'shield_capacity' || node.id === 'shield_regen') {
-                                        applyPlayerDefenseProfile(false, false);
+                                    if (node.id === 'hull_integrity' || node.id === 'aegis_protocol') applyPlayerDefenseProfile(false, false);
+                                    if (node.id === 'generator_output' || node.id === 'capacitor_reserve' || node.id === 'weapon_efficiency') {
+                                        powerSystem.setPilotModifiers(
+                                            pilotSkillSystem.getBonusMultiplier('capacitor_reserve'),
+                                            pilotSkillSystem.getBonusMultiplier('weapon_efficiency')
+                                        );
+                                    }
+                                    if (node.id === 'weapon_damage' || node.id === 'fire_rate' || node.id === 'critical_targeting') {
+                                        syncPlayerWeapon(weaponSystem.getCurrentWeapon());
                                     }
                                     SoundSystem.playUpgrade();
                                 }
                             });
-
-                            // Milestone 5 inside card
-                            const m5Unlocked = node.milestonesUnlocked.includes(5);
-                            const m5Ready = node.level >= 5 && !m5Unlocked;
-                            const m5Color = m5Unlocked ? '#00FF88' : m5Ready ? '#FFD166' : '#526874';
-                            drawButton(`milestone-5-${node.id}`, m5Unlocked ? 'M5 OK' : 'M5: 3pts/150K', cardX + 128, cardY + 65, 105, 24, m5Color, () => {
-                                if (m5Ready) {
-                                    const res = pilotSkillSystem.unlockMilestone(node.id, 5, gameState.score, gameState.level, points);
-                                    if (res.success) {
-                                        gameState.score -= res.cost;
-                                        pilotSkillSystem.consumeSkillPoints(res.pointsCost);
-                                        SoundSystem.playUpgrade();
-                                    }
-                                }
-                            });
-
-                            // Milestone 10 inside card
-                            const m10Unlocked = node.milestonesUnlocked.includes(10);
-                            const m10Ready = node.level >= 10 && !m10Unlocked;
-                            const m10Color = m10Unlocked ? '#00FF88' : m10Ready ? '#FFD166' : '#526874';
-                            drawButton(`milestone-10-${node.id}`, m10Unlocked ? 'M10 OK' : 'M10: 6pts/750K', cardX + 238, cardY + 65, 100, 24, m10Color, () => {
-                                if (m10Ready) {
-                                    const res = pilotSkillSystem.unlockMilestone(node.id, 10, gameState.score, gameState.level, points);
-                                    if (res.success) {
-                                        gameState.score -= res.cost;
-                                        pilotSkillSystem.consumeSkillPoints(res.pointsCost);
-                                        SoundSystem.playUpgrade();
-                                    }
-                                }
-                            });
-
-                            // Hover hitbox
-                            shopHitboxes.push({
-                                id: `skill-card-${node.id}`,
-                                x: cardX,
-                                y: cardY,
-                                width: 350,
-                                height: 120,
-                                action: () => {}
-                            });
-
-                            if (hoveredShopItem === `skill-card-${node.id}`) {
-                                hoveredSkillNode = node;
-                            }
+                            shopHitboxes.push({ id: `skill-card-${node.id}`, x: cardX, y: cardY, width: 350, height: 126, action: () => {} });
+                            if (hoveredShopItem === `skill-card-${node.id}`) hoveredSkillNode = node;
                         });
 
                         // Hover Inspector Panel for Skills at bottom
@@ -3030,7 +3053,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                             ctx.fillStyle = '#dbe9ee';
                             ctx.font = '13px Arial';
                             ctx.fillText(`• Description: ${hoveredSkillNode.description}`, 72, 846);
-                            ctx.fillText(`• Status: Milestone 5 (${hoveredSkillNode.milestonesUnlocked.includes(5) ? 'Unlocked' : 'Locked'}), Milestone 10 (${hoveredSkillNode.milestonesUnlocked.includes(10) ? 'Unlocked' : 'Locked'})`, 72, 870);
+                            ctx.fillText(`• Branch: ${hoveredSkillNode.branch.toUpperCase()}  •  Every rank costs one skill point.`, 72, 870);
                         }
                         return;
                     }
@@ -3386,7 +3409,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         ctx.fillText(`LEVEL ${powerSystem.generatorLevel + 1}/50`, 72, 372);
                         ctx.fillStyle = '#dbe9ee';
                         ctx.font = '14px Arial';
-                        ctx.fillText(`Output ${powerSystem.getGeneratorOutput((pilotSkillSystem.getBonusMultiplier('generator_output') * pilotSkillSystem.getBonusMultiplier('generator_capacity'))).toFixed(0)} power/sec`, 72, 398);
+                        ctx.fillText(`Output ${powerSystem.getGeneratorOutput(pilotSkillSystem.getBonusMultiplier('generator_output')).toFixed(0)} power/sec`, 72, 398);
                         ctx.fillStyle = '#8ea6b2';
                         ctx.fillText('Generator upgrades increase recharge speed; capacity remains fixed.', 72, 424);
                         drawButton('systems-generator-upgrade', powerSystem.canUpgradeGenerator() ? `UPGRADE  ${nextGeneratorCost} PTS` : 'MAX GENERATOR', actionX, 365, 138, 42, generatorCanBuy ? '#00FF88' : '#ff6666', upgradeGenerator);
@@ -3555,7 +3578,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     ctx.fillText(`Generator  •  LEVEL ${powerSystem.generatorLevel + 1}/15`, rightX + 16, generatorY + 12);
                     ctx.fillStyle = '#8ea6b2';
                     ctx.font = '14px Arial';
-                    ctx.fillText(`Output: ${powerSystem.getGeneratorOutput((pilotSkillSystem.getBonusMultiplier('generator_output') * pilotSkillSystem.getBonusMultiplier('generator_capacity'))).toFixed(0)} power/sec`, rightX + 16, generatorY + 31);
+                    ctx.fillText(`Output: ${powerSystem.getGeneratorOutput(pilotSkillSystem.getBonusMultiplier('generator_output')).toFixed(0)} power/sec`, rightX + 16, generatorY + 31);
                     const generatorCanAdvance = powerSystem.canUpgradeGenerator() && shipSystem.canUpgradeGenerator(powerSystem.generatorLevel + 1);
                     const generatorStatus = !powerSystem.canUpgradeGenerator() ? 'MAXIMUM LEVEL' : !shipSystem.canUpgradeGenerator(powerSystem.generatorLevel + 1) ? `Requires a larger ship (cap ${shipSystem.getCurrentShip().generatorCapacity})` : `Next level: ${nextGeneratorCost} pts`;
                     ctx.fillText(generatorStatus, rightX + 16, generatorY + 48);
