@@ -24,6 +24,7 @@ import { Boss } from '@/game/entities/Boss';
 import { SeraDuelEntity, SeraMirrorLoadout, SeraShot } from '@/game/entities/SeraDuelEntity';
 import { SeraAllyShipEntity, SeraAllyLoadout } from '@/game/entities/SeraAllyShipEntity';
 import { ShipUpgradeSystem } from '@/game/core/ShipUpgradeSystem';
+import { AEGIS_MASTERY_CAPACITY, AEGIS_MASTERY_REGEN, getShipDefenseProfile, SHIELD_UPGRADE_CAPACITY, SHIELD_UPGRADE_REGEN } from '@/game/core/ShipDefenseProfile';
 import { TacticalAbilitySystem, TacticalAbilityType, TacticalAbilitySaveState } from '@/game/core/TacticalAbilitySystem';
 import { PilotSkillSystem } from '@/game/core/PilotSkillSystem';
 import { EquipmentSystem, EquipmentPartType } from '@/game/core/EquipmentSystem';
@@ -499,10 +500,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 if (shieldLevel >= 10 || gameState.score < shieldCost) return;
                 gameState.score -= shieldCost;
                 shieldLevel++;
-                player.maxShield += 30;
-                player.shield = player.maxShield;
-                player.baseShieldRegenRate += 2;
-                player.shieldRegenRate = player.baseShieldRegenRate;
+                applyPlayerDefenseProfile(false, true);
                 upgradeBriefing = CampaignSystem.getUpgradeBriefing('generator', 'Shield System', shieldLevel);
                 SoundSystem.playUpgrade();
             };
@@ -514,6 +512,10 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 const result = shipSystem.upgradeShip(gameState.score);
                 if (result) {
                     gameState.score -= result.cost;
+                    player.shipTier = result.newShip.id;
+                    player.width = result.newShip.width;
+                    player.height = result.newShip.height;
+                    applyPlayerDefenseProfile(true, true);
                     upgradeBriefing = CampaignSystem.getUpgradeBriefing('ship', result.newShip.name, result.newShip.id + 1);
                 }
             };
@@ -569,21 +571,31 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 7.5
             );
             player.shipTier = shipSystem.getCurrentShipId();
-            if (stageMasterySystem.hasAegisMastery()) {
-                player.maxShield += 35;
-                player.baseShieldRegenRate += 2;
+
+            /** Rebuild defense from ship class, permanent shield upgrades, skills, and equipped shield hardware. */
+            const applyPlayerDefenseProfile = (refillHull = false, refillShield = false): void => {
+                const profile = getShipDefenseProfile(shipSystem.getCurrentShipId());
+                const previousMaxHull = Math.max(1, player.maxHealth);
+                const previousMaxShield = Math.max(1, player.maxShield);
+                const hullRatio = Math.max(0, Math.min(1, player.health / previousMaxHull));
+                const shieldRatio = Math.max(0, Math.min(1, player.shield / previousMaxShield));
+                const hullMultiplier = pilotSkillSystem.getBonusMultiplier('hull_integrity');
+                const shieldSkillMultiplier = pilotSkillSystem.getBonusMultiplier('shield_capacity');
+                const shieldRegenMultiplier = pilotSkillSystem.getBonusMultiplier('shield_regen');
+                const equipmentShieldMultiplier = 1 + (equipmentSystem.getActiveBonuses().shieldCap / 100);
+                const permanentShieldCapacity = Math.max(0, shieldLevel - 1) * SHIELD_UPGRADE_CAPACITY;
+                const permanentShieldRegen = Math.max(0, shieldLevel - 1) * SHIELD_UPGRADE_REGEN;
+                const masteryCapacity = stageMasterySystem.hasAegisMastery() ? AEGIS_MASTERY_CAPACITY : 0;
+                const masteryRegen = stageMasterySystem.hasAegisMastery() ? AEGIS_MASTERY_REGEN : 0;
+
+                player.maxHealth = Math.round(profile.hullHealth * hullMultiplier);
+                player.maxShield = Math.round((profile.shieldCapacity + permanentShieldCapacity + masteryCapacity) * shieldSkillMultiplier * equipmentShieldMultiplier);
+                player.baseShieldRegenRate = (profile.shieldRegenRate + permanentShieldRegen + masteryRegen) * shieldRegenMultiplier;
                 player.shieldRegenRate = player.baseShieldRegenRate;
-                player.shield = player.maxShield;
-            }
-            for (let appliedShieldLevel = 1; appliedShieldLevel < shieldLevel; appliedShieldLevel++) {
-                player.maxShield += 30;
-                player.baseShieldRegenRate += 2;
-            }
-            // Apply pilot skill tree bonuses
-            const shieldBonus = pilotSkillSystem.getBonusMultiplier('shield_capacity');
-            player.maxShield = Math.round(player.maxShield * shieldBonus);
-            player.shieldRegenRate = player.baseShieldRegenRate * shieldBonus;
-            player.shield = player.maxShield;
+                player.health = refillHull ? player.maxHealth : Math.min(player.maxHealth, Math.round(player.maxHealth * hullRatio));
+                player.shield = refillShield ? player.maxShield : Math.min(player.maxShield, Math.round(player.maxShield * shieldRatio));
+            };
+            applyPlayerDefenseProfile(true, true);
 
             player.weaponMasteryUnlocked = stageMasterySystem.hasWeaponMastery();
             player.setWeapon('straight', 0, 6, 10);
@@ -735,10 +747,14 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 });
             };
 
-            const applyPlayerDamage = (damage: number): boolean => {
+            const applyPlayerDamage = (damage: number, isCollision = false): boolean => {
+                const collisionMultiplier = isCollision
+                    ? Math.max(0.5, 2 - pilotSkillSystem.getBonusMultiplier('collision_resist'))
+                    : 1;
+                const adjustedDamage = Math.max(0, damage * collisionMultiplier);
                 const shieldBefore = player.shield;
-                const isDead = player.takeDamage(damage);
-                const absorbed = Math.min(shieldBefore, Math.max(0, damage));
+                const isDead = player.takeDamage(adjustedDamage);
+                const absorbed = Math.min(shieldBefore, adjustedDamage);
                 if (absorbed > 0) stageMasterySystem.recordShieldImpact(absorbed);
                 return isDead;
             };
@@ -836,10 +852,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 localStorage.setItem('tyrian_stage_mastery', JSON.stringify(stageMasterySystem.getSaveState()));
                 if (!lastStageMasteryResult) return;
                 if (lastStageMasteryResult.rewards.aegisMasteryUnlocked) {
-                    player.maxShield += 35;
-                    player.baseShieldRegenRate += 2;
-                    player.shieldRegenRate = player.baseShieldRegenRate;
-                    player.shield = player.maxShield;
+                    applyPlayerDefenseProfile(false, true);
                     testNoticeText = 'MASTERY UNLOCKED // AEGIS MATRIX';
                     testNoticeUntil = performance.now() + 5500;
                     SoundSystem.playUpgrade();
@@ -1660,11 +1673,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         }
 
                         if (other === player) {
-                            if (entity.kind === 'massive') {
-                                player.takeDamage(35);
-                            } else {
-                                player.takeDamage(20);
-                            }
+                            applyPlayerDamage(entity.kind === 'massive' ? 35 : 20, true);
                             entity.takeDamage(25);
                             return;
                         }
@@ -1997,7 +2006,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     // Enemy hulls still exist during VOID ARMOR, but their collision cannot damage the player.
                     if ((entityA instanceof Enemy || entityA instanceof EnemyAdvanced) && entityB instanceof Player) {
                         if (!tacticalAbilitySystem.isVoidArmored()) {
-                            const isDead = applyPlayerDamage(1);
+                            const collisionDamage = entityA instanceof EnemyAdvanced ? 28 : 20;
+                            const isDead = applyPlayerDamage(collisionDamage, true);
                             entityA.isActive = false;
                             if (isDead) {
                                 handlePlayerDefeat();
@@ -2008,7 +2018,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         }
                     } else if (entityA instanceof Player && (entityB instanceof Enemy || entityB instanceof EnemyAdvanced)) {
                         if (!tacticalAbilitySystem.isVoidArmored()) {
-                            const isDead = applyPlayerDamage(1);
+                            const collisionDamage = entityB instanceof EnemyAdvanced ? 28 : 20;
+                            const isDead = applyPlayerDamage(collisionDamage, true);
                             entityB.isActive = false;
                             if (isDead) {
                                 handlePlayerDefeat();
@@ -2155,7 +2166,10 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 ctx.strokeRect(barX, barY, barWidth, barHeight);
                 ctx.fillStyle = '#00CCDD';
                 ctx.font = '12px Arial';
-                ctx.fillText('Shield: ' + Math.floor(player.shield) + '/' + player.maxShield, barX + 160, barY + 10);
+                const shieldReadout = player.shieldRegenDelay > 0
+                    ? `Shield: ${Math.floor(player.shield)}/${player.maxShield}  •  RECHARGE ${player.shieldRegenDelay.toFixed(1)}s`
+                    : `Shield: ${Math.floor(player.shield)}/${player.maxShield}  •  +${player.shieldRegenRate.toFixed(1)}/s`;
+                ctx.fillText(shieldReadout, barX + 160, barY + 10);
 
                 // Draw power bar
                 const powerBarY = 220;
@@ -2906,6 +2920,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
                         drawButton('pilot-respec', 'RESET SKILLS [RESPEC]', 920, 185, 228, 36, '#ff6666', () => {
                             const refunded = pilotSkillSystem.resetSkills();
+                            applyPlayerDefenseProfile(false, false);
                             gameState.score += refunded;
                             testNoticeText = `SKILLS RESET // REFUNDED ALL POINTS & ${refunded.toLocaleString()} CREDITS`;
                             testNoticeUntil = performance.now() + 4500;
@@ -2948,6 +2963,9 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                             const canInvest = points > 0 && node.level < node.maxLevel;
                             drawButton(`invest-${node.id}`, 'INVEST +1', cardX + 14, cardY + 65, 105, 30, canInvest ? '#00FF88' : '#526874', () => {
                                 if (pilotSkillSystem.investPoint(node.id)) {
+                                    if (node.id === 'hull_integrity' || node.id === 'shield_capacity' || node.id === 'shield_regen') {
+                                        applyPlayerDefenseProfile(false, false);
+                                    }
                                     SoundSystem.playUpgrade();
                                 }
                             });
@@ -3060,7 +3078,9 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
                             if (equipped) {
                                 drawButton(`unequip-${slot.type}`, 'UNMOUNT', slot.x - 55, slot.y + 5, 110, 17, '#ff6666', () => {
-                                    equipmentSystem.unequipPart(slot.type);
+                                    if (equipmentSystem.unequipPart(slot.type) && slot.type === 'shield') {
+                                        applyPlayerDefenseProfile(false, false);
+                                    }
                                 });
                             }
                         });
@@ -3184,7 +3204,9 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                                 ctx.fillText(`T${part.tier} • L${part.level}`, partX + 42, partY + 42);
 
                                 drawButton(`mount-${part.id}`, part.equippedSlot ? 'MOUNTED' : 'MOUNT', partX + 8, partY + 54, 64, 24, '#00FF88', () => {
-                                    equipmentSystem.equipPart(part.id);
+                                    if (equipmentSystem.equipPart(part.id) && part.type === 'shield') {
+                                        applyPlayerDefenseProfile(false, false);
+                                    }
                                 });
 
                                 const calibCost = equipmentSystem.getCalibrationCost(part);
@@ -3193,6 +3215,9 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                                     const res = equipmentSystem.calibratePart(part.id, gameState.score);
                                     if (res.success) {
                                         gameState.score -= res.cost;
+                                        if (part.type === 'shield' && part.equippedSlot) {
+                                            applyPlayerDefenseProfile(false, false);
+                                        }
                                         SoundSystem.playUpgrade();
                                     }
                                 });
@@ -3229,7 +3254,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                             const nextCost = equipmentSystem.getCalibrationCost(hoveredPartData);
                             let bonusDesc = '';
                             if (hoveredPartData.type === 'engine') bonusDesc = `Grants +${(2 + (hoveredPartData.tier - 1) * 1 + hoveredPartData.level * 0.4).toFixed(1)}% movement speed and agility.`;
-                            else if (hoveredPartData.type === 'shield') bonusDesc = `Grants +${(3 + (hoveredPartData.tier - 1) * 2 + hoveredPartData.level * 0.5).toFixed(1)}% shield capacity and recharge rate.`;
+                            else if (hoveredPartData.type === 'shield') bonusDesc = `Grants +${(3 + (hoveredPartData.tier - 1) * 2 + hoveredPartData.level * 0.5).toFixed(1)}% shield capacity.`;
                             else if (hoveredPartData.type === 'generator') bonusDesc = `Grants +${(3 + (hoveredPartData.tier - 1) * 2 + hoveredPartData.level * 0.5).toFixed(1)}% generator power output speed.`;
                             else if (hoveredPartData.type === 'weapon') bonusDesc = `Grants +${(2 + (hoveredPartData.tier - 1) * 1.5 + hoveredPartData.level * 0.4).toFixed(1)}% weapon damage and rate.`;
                             else if (hoveredPartData.type === 'computer') bonusDesc = `Grants +${(1.5 + (hoveredPartData.tier - 1) * 1 + hoveredPartData.level * 0.3).toFixed(1)}% crit chance & +${(5 + (hoveredPartData.tier - 1) * 3 + hoveredPartData.level * 1.0).toFixed(1)}% crit damage.`;
@@ -3372,9 +3397,9 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         ctx.fillText(`LEVEL ${shieldLevel}/10`, 72, 500);
                         ctx.fillStyle = '#dbe9ee';
                         ctx.font = '14px Arial';
-                        ctx.fillText(`Max ${player.maxShield}  •  Recharge ${player.shieldRegenRate}/s`, 72, 526);
+                        ctx.fillText(`Max ${player.maxShield}  •  Recharge ${player.shieldRegenRate.toFixed(1)}/s after 2.5s`, 72, 526);
                         ctx.fillStyle = '#8ea6b2';
-                        ctx.fillText(`Next calibration: ${shieldCost} pts`, 72, 552);
+                        ctx.fillText(`Temporary layer: overflow reaches the hull. Next calibration: ${shieldCost} pts`, 72, 552);
                         drawButton('systems-shield-upgrade', shieldLevel < 10 ? `UPGRADE  ${shieldCost} PTS` : 'MAX SHIELD', actionX, 493, 138, 42, canBuyShield ? '#00FFCC' : '#ff6666', upgradeShield);
 
                         drawCard(systemsX, 584, systemsWidth, 396, `HULL FLEET // ACTIVE: ${shipSystem.getCurrentShip().name}`, '#f4fbff');
@@ -3396,7 +3421,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                             ctx.fillText(`${['S', 'I', 'D', 'B', 'D', 'A'][index] || 'X'}. ${ship.name}${isCurrent ? '  // ACTIVE HULL' : ''}`, 72, shipY + 10);
                             ctx.fillStyle = '#8ea4b2';
                             ctx.font = '12px Arial';
-                            ctx.fillText(`Weapon capacity ${ship.weaponCapacity}  •  Generator capacity ${ship.generatorCapacity}`, 72, shipY + 28);
+                            const defenseProfile = getShipDefenseProfile(ship.id);
+                            ctx.fillText(`Hull ${defenseProfile.hullHealth}  •  Aegis ${defenseProfile.shieldCapacity}  •  Weapons ${ship.weaponCapacity}  •  Generator ${ship.generatorCapacity}`, 72, shipY + 28);
                             drawButton(`systems-ship-${ship.id}`, isCurrent ? 'ACTIVE' : ship.id < shipSystem.getCurrentShipId() ? 'OWNED' : `BUY  ${ship.cost} PTS`, actionX, shipY + 2, 138, 38, isCurrent ? '#00FF88' : canBuy ? '#FFD166' : '#ff6666', () => purchaseShip(ship.id));
                         });
                         // drawShopFooter removed per user request to eliminate bottom buttons area

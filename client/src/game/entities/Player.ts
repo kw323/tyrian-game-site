@@ -1,5 +1,6 @@
 import { Entity } from '../core/Entity';
 import { getWeaponRuntimeProfile } from '../core/WeaponRuntimeProfile';
+import { getShipDefenseProfile } from '../core/ShipDefenseProfile';
 
 export class Player extends Entity {
     public speed: number;
@@ -11,18 +12,27 @@ export class Player extends Entity {
     public weaponLevel: number = 0;
     public weaponFireRate: number = 6;
     public weaponDamage: number = 10;
-    public shield: number = 50;
-    public maxShield: number = 50;
-    public shieldRegenRate: number = 5; // Shield regenerates per second
-    public baseShieldRegenRate: number = 5;
-    public health: number = 4;
-    public maxHealth: number = 4;
+    public shield: number = 65;
+    public maxShield: number = 65;
+    public shieldRegenRate: number = 4;
+    public baseShieldRegenRate: number = 4;
+    /** Recovery pause after a hit prevents the shield from acting as permanent armor. */
+    public shieldRegenDelay: number = 0;
+    public health: number = 220;
+    public maxHealth: number = 220;
     public weaponMasteryUnlocked: boolean = false;
     public shipTier: number = 0;
 
     constructor(x: number, y: number, width: number, height: number, speed: number) {
         super(x, y, width, height);
         this.speed = speed;
+        const profile = getShipDefenseProfile(0);
+        this.maxHealth = profile.hullHealth;
+        this.health = profile.hullHealth;
+        this.maxShield = profile.shieldCapacity;
+        this.shield = profile.shieldCapacity;
+        this.baseShieldRegenRate = profile.shieldRegenRate;
+        this.shieldRegenRate = profile.shieldRegenRate;
     }
 
     public updateWithInput(deltaTime: number, keys: any, gameWidth: number, gameHeight: number): void {
@@ -36,8 +46,11 @@ export class Player extends Entity {
         this.x = Math.max(0, Math.min(gameWidth - this.width, this.x + (moveX / normalizer) * step));
         this.y = Math.max(0, Math.min(gameHeight - this.height, this.y + (moveY / normalizer) * step));
 
-        // Regenerate shield
-        if (this.shield < this.maxShield) {
+        // The shield recovers only after the craft has been clear of damage for a moment.
+        if (this.shieldRegenDelay > 0) {
+            const remainingDelay = Math.max(0, this.shieldRegenDelay - deltaTime);
+            this.shieldRegenDelay = remainingDelay < 0.0001 ? 0 : remainingDelay;
+        } else if (this.shield < this.maxShield) {
             this.shield = Math.min(this.shield + this.shieldRegenRate * deltaTime, this.maxShield);
         }
     }
@@ -52,6 +65,7 @@ export class Player extends Entity {
         this.y = spawnY;
         this.health = this.maxHealth;
         this.shield = this.maxShield;
+        this.shieldRegenDelay = 0;
         this.lastShotTime = 0;
         this.isActive = true;
     }
@@ -147,16 +161,21 @@ export class Player extends Entity {
     }
 
     public takeDamage(damage: number): boolean {
+        let remainingDamage = Math.max(0, damage);
+        if (remainingDamage <= 0) return this.health <= 0;
+
+        this.shieldRegenDelay = 2.5;
         if (this.shield > 0) {
-            this.shield -= damage;
-            if (this.shield < 0) {
-                this.shield = 0;
-            }
-            return false; // Shield absorbed damage
-        } else {
-            this.health--;
-            return this.health <= 0; // Return true if dead
+            const absorbed = Math.min(this.shield, remainingDamage);
+            this.shield -= absorbed;
+            remainingDamage -= absorbed;
         }
+
+        // A depleted shield does not discard excess impact damage: it carries into the hull.
+        if (remainingDamage > 0) {
+            this.health = Math.max(0, this.health - remainingDamage);
+        }
+        return this.health <= 0;
     }
 
     public setCombatMultipliers(fireMultiplier: number, shieldRegenMultiplier: number): void {
