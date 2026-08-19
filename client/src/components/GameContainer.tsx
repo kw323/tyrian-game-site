@@ -282,8 +282,9 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             let seraAlly: SeraAllyShipEntity | null = null;
             let lastStageMasteryResult: StageMasteryResult | null = null;
             let stageTelemetryFinalized = false;
+            let isTestSession = false;
             let mCheatStartedAt: number | null = null;
-            let mCheatGranted = false;
+            let mCheatLastGrantAt: number | null = null;
             let testNoticeUntil = 0;
             let testNoticeText = '';
 
@@ -746,6 +747,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
             const persistAutosave = (reason: string): ResumeCheckpoint => {
                 const checkpoint = buildResumeCheckpoint(reason);
+                if (isTestSession) return checkpoint;
                 localStorage.setItem(RESUME_CHECKPOINT_KEY, JSON.stringify(checkpoint));
                 setResumeCheckpoint(checkpoint);
 
@@ -1135,6 +1137,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
             const jumpToStage = (requestedStage: number): void => {
                 const targetStage = Math.max(1, Math.min(CampaignSystem.TOTAL_STAGES, Math.floor(requestedStage)));
+                isTestSession = true;
                 gameState.level = targetStage;
                 initialLaunchPending = false;
                 shopScreen = 'hub';
@@ -1172,20 +1175,6 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 deploySeraAlly();
                 testNoticeText = `TEST MODE // STAGE ${targetStage} LOADED`;
                 testNoticeUntil = performance.now() + 5000;
-            };
-
-            const requestStageJump = (): void => {
-                const rawTarget = window.prompt(
-                    'TEST MODE — STAGE JUMP\nEnter a whole-number stage from 1 to 100, then press OK. The selected stage starts immediately.',
-                    String(gameState.level)
-                );
-                if (rawTarget === null) return;
-                const targetStage = Number(rawTarget.trim());
-                if (!Number.isFinite(targetStage) || targetStage < 1 || targetStage > CampaignSystem.TOTAL_STAGES) {
-                    window.alert('Enter a whole-number stage from 1 to 100.');
-                    return;
-                }
-                jumpToStage(targetStage);
             };
 
             const handleStageJumpEvent = (event: Event) => {
@@ -1290,12 +1279,16 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             // Override update
             game.update = function(deltaTime: number) {
                 const now = performance.now();
-                if (mCheatStartedAt !== null && !mCheatGranted && now - mCheatStartedAt >= 8000) {
-                    gameState.score += 1_000_000_099;
-                    mCheatGranted = true;
-                    testNoticeText = 'TEST MODE // +1,000,000,099 CREDITS';
-                    testNoticeUntil = now + 5000;
-                    SoundSystem.playUpgrade();
+                if (mCheatStartedAt !== null && now - mCheatStartedAt >= 700) {
+                    const grantInterval = 200;
+                    if (mCheatLastGrantAt === null || now - mCheatLastGrantAt >= grantInterval) {
+                        isTestSession = true;
+                        gameState.score = Math.min(999_999_999, gameState.score + 250_000);
+                        mCheatLastGrantAt = now;
+                        testNoticeText = 'TEST MODE // M HELD // +250,000 CREDITS';
+                        testNoticeUntil = now + 900;
+                        SoundSystem.playUpgrade();
+                    }
                 }
                 const stageIsActive = !gameState.gameOver && !gameState.showLevelScreen;
                 if (!stageIsActive) {
@@ -3562,15 +3555,17 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     e.preventDefault();
                     if (mCheatStartedAt === null) {
                         mCheatStartedAt = performance.now();
-                        mCheatGranted = false;
-                        testNoticeText = 'TEST MODE // HOLD M 8s TO GRANT CREDITS';
-                        testNoticeUntil = performance.now() + 8000;
+                        mCheatLastGrantAt = null;
+                        testNoticeText = 'TEST MODE // HOLD M FOR DEV CREDITS';
+                        testNoticeUntil = performance.now() + 1200;
                     }
                     return;
                 }
                 if (e.key === 'l' || e.key === 'L') {
                     e.preventDefault();
-                    requestStageJump();
+                    setShowStageMapModal(true);
+                    testNoticeText = 'TEST MODE // STAGE SELECT OPENED';
+                    testNoticeUntil = performance.now() + 2400;
                     return;
                 }
                     if (showAfterActionModal) {
@@ -3727,10 +3722,12 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             const handleKeyUp = (e: KeyboardEvent): void => {
                 if (e.key === 'm' || e.key === 'M') {
                     mCheatStartedAt = null;
-                    mCheatGranted = false;
+                    mCheatLastGrantAt = null;
                 }
             };
             const handleWindowBlur = (): void => {
+                mCheatStartedAt = null;
+                mCheatLastGrantAt = null;
                 touchInputRef.current.moveX = 0;
                 setTouchFireActive(false);
                 touchInputRef.current.moveY = 0;
@@ -4022,11 +4019,6 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
     const triggerStageJump = (requestedStage: number): void => {
         const targetStage = Math.max(1, Math.min(CampaignSystem.TOTAL_STAGES, Math.floor(requestedStage)));
-        setMaxUnlockedLevel((prev) => {
-            const nextMax = Math.max(prev, targetStage);
-            localStorage.setItem('tyrian_max_unlocked_level', String(nextMax));
-            return nextMax;
-        });
         if (gameRef.current) {
             // Trigger jump through window custom event or direct reset if game instance is active
             window.dispatchEvent(new CustomEvent('tyrian:jump-to-stage', { detail: targetStage }));
@@ -4038,6 +4030,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             {showStageMapModal && (
                 <StageSelectModal
                     maxUnlockedLevel={maxUnlockedLevel}
+                    allowAllStages
                     onSelectStage={(stageNum) => {
                         setShowStageMapModal(false);
                         triggerStageJump(stageNum);

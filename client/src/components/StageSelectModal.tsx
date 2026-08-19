@@ -3,11 +3,12 @@ import { CampaignStages, StageDefinition } from '@/game/story/CampaignStages';
 
 interface Props {
     maxUnlockedLevel: number;
+    allowAllStages?: boolean;
     onSelectStage: (stageNum: number) => void;
     onClose: () => void;
 }
 
-export function StageSelectModal({ maxUnlockedLevel, onSelectStage, onClose }: Props) {
+export function StageSelectModal({ maxUnlockedLevel, allowAllStages = false, onSelectStage, onClose }: Props) {
     const [selectedChapter, setSelectedChapter] = useState(1);
     const stages = CampaignStages.getAllStages();
     const chapterStages = stages.filter((s) => s.chapter === selectedChapter);
@@ -17,8 +18,8 @@ export function StageSelectModal({ maxUnlockedLevel, onSelectStage, onClose }: P
             <div className="bg-slate-900 border border-teal-500/50 rounded-xl max-w-4xl w-full p-6 shadow-2xl shadow-teal-950/60 text-white flex flex-col max-h-[85vh]">
                 <div className="flex items-center justify-between mb-6 border-b border-teal-500/30 pb-4">
                     <div>
-                        <h2 className="text-2xl font-bold text-teal-400">Campaign Star Map // 100 Stages</h2>
-                        <p className="text-xs text-gray-400 mt-1">Select any unlocked sector stage to launch your campaign mission.</p>
+                        <h2 className="text-2xl font-bold text-teal-400">Campaign Star Map // 101 Stages</h2>
+                        <p className="text-xs text-gray-400 mt-1">{allowAllStages ? 'TEST MODE: select any campaign stage to launch immediately. Progress and autosaves remain unchanged.' : 'Select any unlocked sector stage to launch your campaign mission.'}</p>
                     </div>
                     <button
                         onClick={onClose}
@@ -46,7 +47,7 @@ export function StageSelectModal({ maxUnlockedLevel, onSelectStage, onClose }: P
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 overflow-y-auto pr-2 custom-scrollbar flex-1 mb-6">
                     {chapterStages.map((stage: StageDefinition) => {
-                        const isUnlocked = stage.stageNumber <= maxUnlockedLevel;
+                        const isUnlocked = allowAllStages || stage.stageNumber <= maxUnlockedLevel;
                         return (
                             <div
                                 key={stage.stageNumber}
@@ -74,7 +75,7 @@ export function StageSelectModal({ maxUnlockedLevel, onSelectStage, onClose }: P
                                 <p className="text-xs text-gray-400 mb-3">{stage.description}</p>
                                 <div className="flex justify-between items-center text-[11px] font-mono text-gray-500 pt-2 border-t border-slate-900">
                                     <span>Goal: {stage.objective}</span>
-                                    <span>{isUnlocked ? 'UNLOCKED' : 'LOCKED'}</span>
+                                    <span>{allowAllStages ? 'TEST ACCESS' : isUnlocked ? 'UNLOCKED' : 'LOCKED'}</span>
                                 </div>
                             </div>
                         );
