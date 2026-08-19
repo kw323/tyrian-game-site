@@ -2375,89 +2375,154 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
                 if (showCommsModal) {
                     shopHitboxes.length = 0;
-                    ctx.fillStyle = 'rgba(2, 6, 20, 0.98)';
-                    ctx.fillRect(0, 0, game.getCanvas().width, game.getCanvas().height);
-
                     const canvasWidth = game.getCanvas().width;
+                    const canvasHeight = game.getCanvas().height;
+                    const isRightToLeft = gameplayLangRef.current === 'he';
+                    const dialogueFont = gameplayLangRef.current === 'ja'
+                        ? '"Yu Gothic", "Noto Sans JP", Arial, sans-serif'
+                        : gameplayLangRef.current === 'zh'
+                            ? '"Microsoft YaHei", "Noto Sans SC", Arial, sans-serif'
+                            : 'Arial, sans-serif';
                     const addButton = (id: string, x: number, y: number, width: number, height: number, action: () => void): void => {
                         shopHitboxes.push({ id, x, y, width, height, action });
                     };
                     const drawButton = (id: string, label: string, x: number, y: number, width: number, height: number, color: string, action: () => void): void => {
                         const isHovered = hoveredShopItem === id;
-                        ctx.fillStyle = isHovered ? '#173c4b' : '#0b1e2d';
+                        ctx.fillStyle = isHovered ? 'rgba(31, 91, 104, 0.96)' : 'rgba(7, 27, 45, 0.96)';
                         ctx.fillRect(x, y, width, height);
                         ctx.strokeStyle = isHovered ? '#ffffff' : color;
-                        ctx.lineWidth = isHovered ? 2 : 1;
+                        ctx.lineWidth = isHovered ? 3 : 2;
                         ctx.strokeRect(x, y, width, height);
                         ctx.fillStyle = color;
-                        ctx.font = 'bold 15px Arial';
+                        ctx.font = `bold 18px ${dialogueFont}`;
                         ctx.textAlign = 'center';
-                        ctx.fillText(label, x + width / 2, y + height / 2 + 4);
+                        ctx.fillText(label, x + width / 2, y + height / 2 + 6);
                         addButton(id, x, y, width, height, action);
                     };
-                    ctx.textAlign = 'center';
-                    ctx.fillStyle = '#00CCDD';
-                    ctx.font = 'bold 36px Arial';
-                    ctx.fillText(`STAGE ${gameState.level} // MISSION COMMS`, canvasWidth / 2, 64);
 
-                    ctx.fillStyle = '#FFD166';
-                    ctx.font = 'bold 20px Arial';
-                    ctx.fillText(stageBriefing.title, canvasWidth / 2, 102);
-                    ctx.fillStyle = '#75d8e7';
-                    ctx.font = '14px monospace';
-                    ctx.fillText(`${stageBriefing.operationCode}  •  ${stageBriefing.location}`, canvasWidth / 2, 126);
+                    ctx.fillStyle = 'rgba(1, 8, 20, 0.985)';
+                    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+                    const gridColor = 'rgba(82, 217, 255, 0.055)';
+                    ctx.strokeStyle = gridColor;
+                    ctx.lineWidth = 1;
+                    for (let x = 0; x <= canvasWidth; x += 48) {
+                        ctx.beginPath();
+                        ctx.moveTo(x, 0);
+                        ctx.lineTo(x, canvasHeight);
+                        ctx.stroke();
+                    }
+                    for (let y = 0; y <= canvasHeight; y += 48) {
+                        ctx.beginPath();
+                        ctx.moveTo(0, y);
+                        ctx.lineTo(canvasWidth, y);
+                        ctx.stroke();
+                    }
 
-                    // Dialog box
-                    const boxX = 64;
-                    const boxY = 160;
-                    const boxWidth = canvasWidth - 128;
-                    const boxHeight = 440;
-                    ctx.fillStyle = '#06121e';
-                    ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
-                    ctx.strokeStyle = stageBriefing.contact.speaker === 'sera' ? '#ff6b6b' : '#00d9b5';
-                    ctx.lineWidth = 2;
-                    ctx.strokeRect(boxX, boxY, boxWidth, boxHeight);
-
-                    drawPortrait(ctx, stageBriefing.contact.speaker, boxX + 28, boxY + 28, 96);
-                    ctx.textAlign = 'left';
                     const dialogueLines = stageBriefing.dialogueSequence ?? [{ speaker: stageBriefing.contact.speaker, name: stageBriefing.contact.name, message: stageBriefing.contact.message }];
                     const activeLine = dialogueLines[Math.min(commsParagraphIndex, dialogueLines.length - 1)];
+                    const accentColor = activeLine.speaker === 'sera' ? '#ff8a9c' : activeLine.speaker === 'ghost' ? '#d6a5ff' : '#72ffe1';
+                    const alertColor = activeLine.speaker === 'sera' ? '#ff6b6b' : '#00d9b5';
+                    const panelX = 42;
+                    const panelY = 122;
+                    const panelWidth = canvasWidth - 84;
+                    const panelHeight = 576;
+                    const portraitSize = 150;
+                    const contentX = panelX + 204;
+                    const contentRight = panelX + panelWidth - 34;
+                    const contentWidth = contentRight - contentX;
 
-                    drawPortrait(ctx, activeLine.speaker, boxX + 28, boxY + 28, 96);
                     ctx.textAlign = 'left';
-                    ctx.fillStyle = activeLine.speaker === 'sera' ? '#ff9b9b' : '#72ffe1';
-                    ctx.font = 'bold 20px Arial';
-                    ctx.fillText(`${activeLine.name}  •  SECURE COMMS`, boxX + 144, boxY + 54);
-                    ctx.fillStyle = '#f0b84e';
-                    ctx.font = 'bold 14px monospace';
-                    ctx.fillText(`BRIEFING SEGMENT ${commsParagraphIndex + 1} / ${dialogueLines.length} // CHAPTER ${stageBriefing.chapter}`, boxX + 144, boxY + 80);
+                    ctx.fillStyle = '#52d9ff';
+                    ctx.font = 'bold 15px "Space Mono", monospace';
+                    ctx.fillText('INCOMING // PRIORITY MISSION COMMUNICATION', panelX, 40);
+                    ctx.textAlign = 'right';
+                    ctx.fillStyle = '#9bb8c5';
+                    ctx.font = 'bold 14px "Space Mono", monospace';
+                    ctx.fillText(`STAGE ${String(gameState.level).padStart(3, '0')}  •  CHAPTER ${stageBriefing.chapter}`, canvasWidth - panelX, 40);
+                    ctx.textAlign = 'center';
+                    ctx.fillStyle = '#f6ffff';
+                    ctx.font = `bold 32px ${dialogueFont}`;
+                    ctx.fillText(stageBriefing.title, canvasWidth / 2, 82);
+                    ctx.fillStyle = '#f4c66a';
+                    ctx.font = `bold 16px ${dialogueFont}`;
+                    ctx.fillText(`${stageBriefing.operationCode}  //  ${stageBriefing.location}`, canvasWidth / 2, 108);
 
-                    ctx.fillStyle = '#dbe9ee';
-                    ctx.font = '16px Arial';
-                    drawWrappedText(ctx, activeLine.message, boxX + 144, boxY + 120, boxWidth - 168, 24, 4);
+                    ctx.fillStyle = 'rgba(5, 23, 43, 0.97)';
+                    ctx.fillRect(panelX, panelY, panelWidth, panelHeight);
+                    ctx.strokeStyle = alertColor;
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(panelX, panelY, panelWidth, panelHeight);
+                    ctx.fillStyle = accentColor;
+                    ctx.fillRect(panelX, panelY, 7, panelHeight);
+                    ctx.fillStyle = 'rgba(82, 217, 255, 0.12)';
+                    ctx.fillRect(panelX + 24, panelY + 28, 156, portraitSize + 48);
+                    ctx.strokeStyle = accentColor;
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(panelX + 24, panelY + 28, 156, portraitSize + 48);
+                    drawPortrait(ctx, activeLine.speaker, panelX + 27, panelY + 31, portraitSize);
+                    ctx.textAlign = 'center';
+                    ctx.fillStyle = accentColor;
+                    ctx.font = 'bold 13px "Space Mono", monospace';
+                    ctx.fillText('OPEN COMMS', panelX + 102, panelY + 205);
+                    ctx.fillStyle = '#8da9b8';
+                    ctx.font = 'bold 12px "Space Mono", monospace';
+                    ctx.fillText(`LINE ${commsParagraphIndex + 1} OF ${dialogueLines.length}`, panelX + 102, panelY + 228);
 
-                    // Mission Order & Objective Card inside briefing
-                    ctx.fillStyle = '#081a28';
-                    ctx.fillRect(boxX + 144, boxY + 230, boxWidth - 168, 120);
-                    ctx.strokeStyle = '#2f7f90';
-                    ctx.strokeRect(boxX + 144, boxY + 230, boxWidth - 168, 120);
-                    ctx.fillStyle = '#00FF88';
-                    ctx.font = 'bold 13px monospace';
-                    ctx.fillText(`MISSION ORDER: ${stageBriefing.objective}`, boxX + 160, boxY + 256);
-                    ctx.fillStyle = '#75d8e7';
-                    ctx.font = '13px monospace';
-                    ctx.fillText(`LOCATION: ${stageBriefing.location} • TARGET: ${stageBriefing.missionTargetName}`, boxX + 160, boxY + 284);
+                    ctx.textAlign = isRightToLeft ? 'right' : 'left';
+                    const alignedContentX = isRightToLeft ? contentRight : contentX;
+                    ctx.fillStyle = accentColor;
+                    ctx.font = `bold 28px ${dialogueFont}`;
+                    ctx.fillText(activeLine.name, alignedContentX, panelY + 66);
+                    ctx.fillStyle = '#f4c66a';
+                    ctx.font = 'bold 15px "Space Mono", monospace';
+                    ctx.fillText(isRightToLeft ? 'ערוץ מוצפן // תקשורת מאובטחת' : 'ENCRYPTED CHANNEL // SECURE COMMS', alignedContentX, panelY + 94);
+                    ctx.strokeStyle = 'rgba(114, 255, 225, 0.28)';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(contentX, panelY + 118);
+                    ctx.lineTo(contentRight, panelY + 118);
+                    ctx.stroke();
+
+                    ctx.fillStyle = '#f2f8fb';
+                    ctx.font = `22px ${dialogueFont}`;
+                    drawWrappedText(ctx, activeLine.message, alignedContentX, panelY + 158, contentWidth, 31, 6);
+
+                    const objectiveY = panelY + 372;
+                    const objectiveHeight = 142;
+                    ctx.fillStyle = 'rgba(7, 36, 50, 0.92)';
+                    ctx.fillRect(contentX, objectiveY, contentWidth, objectiveHeight);
+                    ctx.strokeStyle = 'rgba(82, 217, 255, 0.55)';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(contentX, objectiveY, contentWidth, objectiveHeight);
+                    ctx.fillStyle = '#00ff88';
+                    ctx.fillRect(contentX, objectiveY, 5, objectiveHeight);
+                    ctx.textAlign = isRightToLeft ? 'right' : 'left';
+                    ctx.fillStyle = '#00ff88';
+                    ctx.font = 'bold 15px "Space Mono", monospace';
+                    ctx.fillText(isRightToLeft ? 'יעד המשימה' : 'MISSION OBJECTIVE', alignedContentX, objectiveY + 30);
+                    ctx.fillStyle = '#f5ffff';
+                    ctx.font = `bold 18px ${dialogueFont}`;
+                    drawWrappedText(ctx, stageBriefing.objective, alignedContentX, objectiveY + 59, contentWidth - 26, 25, 2);
                     const commsHazard = getStageHazardBrief(gameState.level, stageBriefing.missionType);
-                    ctx.fillStyle = '#f0b84e';
-                    ctx.fillText(`EXPECTED EVENT: ${getExpectedEventInfo(gameState.level, stageBriefing.missionType, resolveStageCombatEvent(gameState.level, stageBriefing.missionType)).name}`, boxX + 160, boxY + 312);
-                    ctx.fillText(`HAZARD: ${commsHazard.name}`, boxX + 160, boxY + 340);
+                    ctx.fillStyle = '#9bc7d8';
+                    ctx.font = `15px ${dialogueFont}`;
+                    const intelLine = isRightToLeft
+                        ? `מטרה: ${stageBriefing.missionTargetName}  •  סיכון: ${commsHazard.name}`
+                        : `TARGET: ${stageBriefing.missionTargetName}  •  HAZARD: ${commsHazard.name}`;
+                    ctx.fillText(intelLine, alignedContentX, objectiveY + 119);
 
-                    const nextLabel = commsParagraphIndex < dialogueLines.length - 1 ? 'NEXT BRIEFING LINE  >>' : 'CONFIRM & LAUNCH MISSION  [ENTER]';
-                    drawButton('comms-next', nextLabel, boxX + 28, boxY + 416, 320, 48, '#00FF88', advanceBriefing);
-
-                    drawButton('comms-skip', 'SKIP BRIEFING  [ESC]', boxX + boxWidth - 220, boxY + 416, 192, 48, '#75d8e7', () => {
+                    const buttonY = 732;
+                    const nextLabel = commsParagraphIndex < dialogueLines.length - 1
+                        ? 'ENTER // NEXT TRANSMISSION'
+                        : 'ENTER // CONFIRM & LAUNCH';
+                    drawButton('comms-next', nextLabel, panelX, buttonY, panelWidth - 274, 66, '#00ff88', advanceBriefing);
+                    drawButton('comms-skip', 'ESC // SKIP BRIEFING', panelX + panelWidth - 250, buttonY, 250, 66, '#75d8e7', () => {
                         startStagePlay();
                     });
+                    ctx.textAlign = 'center';
+                    ctx.fillStyle = '#8da9b8';
+                    ctx.font = 'bold 13px "Space Mono", monospace';
+                    ctx.fillText('ENTER ADVANCES MESSAGE  •  ESC LAUNCHES MISSION  •  CLICK ANY LARGE COMMAND', canvasWidth / 2, 838);
                     return;
                 }
 

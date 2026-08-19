@@ -10,6 +10,7 @@
 | [`testing-tools-2026-08.md`](testing-tools-2026-08.md) | כלי קפיצת שלבים ונקודות לבדיקות ללא שינוי שמירות | פעיל לפיתוח |
 | [`menu-ux-proposal-2026-08.md`](menu-ux-proposal-2026-08.md) | תכנון חוויית משתמש לתפריטים גדולים ומבוססי מקלדת | הוחל חלקית |
 | [`command-center-redesign-2026-08.md`](command-center-redesign-2026-08.md) | מרכז פיקוד חדש, קיצורי מקלדת ושמירות מדופדפות | מיושם |
+| [`dialogue-ui-redesign-2026-08.md`](dialogue-ui-redesign-2026-08.md) | חלון תקשורת גדול, קריא ורב־לשוני לתדריכי המשימה | מיושם |
 | [`weapon-redesign-2026-08.md`](weapon-redesign-2026-08.md) | שישה כלי נשק, 25 דרגות ותיאורי שדרוג | החלטה מיושמת |
 | [`reactor-recovery-balance-2026-08.md`](reactor-recovery-balance-2026-08.md) | ריאקטור, פרץ אנרגיה ונעילת התאוששות | החלטה מיושמת |
 | [`endgame-overhaul-2026-08.md`](endgame-overhaul-2026-08.md) | בוסים, סרה, Archon, Meltdown ואפילוג | החלטה מיושמת |
