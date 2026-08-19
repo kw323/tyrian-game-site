@@ -1,6 +1,6 @@
 {
   "name": "tyrian-game-site",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "type": "module",
   "description": "Protect The Starship — full 101-stage campaign build with story briefings, voice-over, upgrades, bosses, and offline Windows support.",
   "license": "MIT",
@@ -138,8 +138,12 @@
       "target": "nsis"
     },
     "nsis": {
+      "guid": "aa18a7b4-6217-5c54-aac9-6fc879e99086",
+      "include": "build/installer.nsh",
+      "artifactName": "Protect-The-Starship-Setup-${version}.${ext}",
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
+      "removeDefaultUninstallWelcomePage": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "Protect The Starship",
