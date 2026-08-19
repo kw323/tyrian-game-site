@@ -1,6 +1,6 @@
 {
   "name": "tyrian-game-site",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "type": "module",
   "description": "Protect The Starship — full 101-stage campaign build with story briefings, voice-over, upgrades, bosses, and offline Windows support.",
   "license": "MIT",
@@ -13,7 +13,7 @@
     "format": "prettier --write .",
     "electron:build": "ELECTRON_BUILD=true vite build && tsc -p electron/tsconfig.json && electron-builder --win --dir",
     "electron:pack": "ELECTRON_BUILD=true vite build && tsc -p electron/tsconfig.json && electron-builder --win portable",
-    "electron:installer": "ELECTRON_BUILD=true vite build && tsc -p electron/tsconfig.json && electron-builder --win nsis",
+    "electron:installer": "ELECTRON_BUILD=true vite build && tsc -p electron/tsconfig.json && electron-builder --win nsis --publish never",
     "voice:verify": "python3 scripts/verify_voice_assets.py",
     "voice:generate-missing": "python3 scripts/generate_missing_voice_assets.py",
     "android:sync": "ELECTRON_BUILD=true vite build && cap sync android",
@@ -53,6 +53,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
+    "electron-updater": "^6.8.9",
     "embla-carousel-react": "^8.6.0",
     "express": "^4.21.2",
     "framer-motion": "^12.23.22",
@@ -110,6 +111,10 @@
       "tailwindcss>nanoid": "3.3.7"
     }
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kw323/tyrian-game-site.git"
+  },
   "main": "dist-electron/main.cjs",
   "build": {
     "appId": "com.protectthestarship.game",
@@ -117,6 +122,14 @@
     "directories": {
       "output": "dist"
     },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "kw323",
+        "repo": "tyrian-game-site",
+        "releaseType": "release"
+      }
+    ],
     "files": [
       "dist/public/**/*",
       "dist-electron/main.cjs"

@@ -1,16 +1,19 @@
 const { app, BrowserWindow, dialog } = require('electron');
+const { autoUpdater } = require('electron-updater');
 const fs = require('fs');
 const http = require('http');
 const path = require('path');
 
 let localServer: any = null;
+let mainWindow: any = null;
+let updateCheckStarted = false;
 
 const MIME_TYPES: Record<string, string> = {
   '.css': 'text/css; charset=utf-8',
   '.html': 'text/html; charset=utf-8',
   '.ico': 'image/x-icon',
   '.js': 'text/javascript; charset=utf-8',
-  '.json': 'application/json; charset=utf-8',
+  '.json': 'application/json',
   '.svg': 'image/svg+xml',
   '.txt': 'text/plain; charset=utf-8',
   '.woff': 'font/woff',
@@ -20,6 +23,71 @@ const MIME_TYPES: Record<string, string> = {
 function showStartupError(title: string, details: string): void {
   console.error(details);
   dialog.showErrorBox(`Protect The Starship — ${title}`, details);
+}
+
+function configureAutoUpdate(): void {
+  // Updates exist only for the installed Windows game. Development sessions stay offline.
+  if (!app.isPackaged || updateCheckStarted) return;
+  updateCheckStarted = true;
+
+  autoUpdater.autoDownload = false;
+  autoUpdater.autoInstallOnAppQuit = false;
+  autoUpdater.logger = console;
+
+  autoUpdater.on('error', (error: Error) => {
+    // A missing connection must never prevent the offline game from starting.
+    console.warn('[update] Update check failed:', error.message);
+    mainWindow?.setProgressBar(-1);
+  });
+
+  autoUpdater.on('update-available', async (info: { version: string }) => {
+    const response = await dialog.showMessageBox(mainWindow, {
+      type: 'info',
+      title: 'Protect The Starship — Update available',
+      message: `Version ${info.version} is ready to download.`,
+      detail: 'The game will download only the changed update data. Your save files will remain untouched.',
+      buttons: ['Download update', 'Later'],
+      defaultId: 0,
+      cancelId: 1,
+      noLink: true,
+    });
+    if (response.response !== 0) return;
+    mainWindow?.setProgressBar(0);
+    try {
+      await autoUpdater.downloadUpdate();
+    } catch (error) {
+      console.warn('[update] Download could not start:', error instanceof Error ? error.message : String(error));
+      mainWindow?.setProgressBar(-1);
+    }
+  });
+
+  autoUpdater.on('download-progress', (progress: { percent: number }) => {
+    mainWindow?.setProgressBar(Math.max(0, Math.min(1, progress.percent / 100)));
+  });
+
+  autoUpdater.on('update-downloaded', async (info: { version: string }) => {
+    mainWindow?.setProgressBar(-1);
+    const response = await dialog.showMessageBox(mainWindow, {
+      type: 'info',
+      title: 'Protect The Starship — Update ready',
+      message: `Version ${info.version} has been downloaded.`,
+      detail: 'Restart now to install the update. Your save files will remain untouched.',
+      buttons: ['Restart and install', 'Install after closing'],
+      defaultId: 0,
+      cancelId: 1,
+      noLink: true,
+    });
+    if (response.response === 0) {
+      setImmediate(() => autoUpdater.quitAndInstall(false, true));
+    }
+  });
+
+  // Delay the network request so the game window always appears immediately.
+  setTimeout(() => {
+    autoUpdater.checkForUpdates().catch((error: Error) => {
+      console.warn('[update] Unable to check for a release:', error.message);
+    });
+  }, 6000);
 }
 
 function startLocalGameServer(publicDir: string): Promise<string> {
@@ -55,7 +123,6 @@ function startLocalGameServer(publicDir: string): Promise<string> {
         response.end();
         return;
       }
-
       fs.createReadStream(filePath)
         .on('error', () => {
           if (!response.headersSent) response.writeHead(500);
@@ -94,7 +161,7 @@ async function createWindow(): Promise<void> {
     return;
   }
 
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1280,
     height: 800,
     minWidth: 960,
@@ -112,10 +179,12 @@ async function createWindow(): Promise<void> {
     if (!isMainFrame) return;
     showStartupError('Startup error', `The game interface could not be loaded.\n\n${errorDescription} (${errorCode})\n${validatedURL}`);
   });
+  mainWindow.on('closed', () => { mainWindow = null; });
 
   mainWindow.loadURL(gameUrl).catch((error: Error) => {
     showStartupError('Startup error', `The game interface could not be opened.\n\n${error.message}`);
   });
+  configureAutoUpdate();
 }
 
 app.whenReady().then(createWindow);
