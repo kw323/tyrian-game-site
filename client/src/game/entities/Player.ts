@@ -18,8 +18,6 @@ export class Player extends Entity {
     public maxShield: number = 65;
     public shieldRegenRate: number = 4;
     public baseShieldRegenRate: number = 4;
-    /** Recovery pause after a hit prevents the shield from acting as permanent armor. */
-    public shieldRegenDelay: number = 0;
     public health: number = 220;
     public maxHealth: number = 220;
     public weaponMasteryUnlocked: boolean = false;
@@ -48,11 +46,9 @@ export class Player extends Entity {
         this.x = Math.max(0, Math.min(gameWidth - this.width, this.x + (moveX / normalizer) * step));
         this.y = Math.max(0, Math.min(gameHeight - this.height, this.y + (moveY / normalizer) * step));
 
-        // The shield recovers only after the craft has been clear of damage for a moment.
-        if (this.shieldRegenDelay > 0) {
-            const remainingDelay = Math.max(0, this.shieldRegenDelay - deltaTime);
-            this.shieldRegenDelay = remainingDelay < 0.0001 ? 0 : remainingDelay;
-        } else if (this.shield < this.maxShield) {
+        // Shield recovery is continuous: it begins again in the very next frame
+        // after any impact, while the modest regen rate keeps hull integrity vital.
+        if (this.shield < this.maxShield) {
             this.shield = Math.min(this.shield + this.shieldRegenRate * deltaTime, this.maxShield);
         }
     }
@@ -67,7 +63,6 @@ export class Player extends Entity {
         this.y = spawnY;
         this.health = this.maxHealth;
         this.shield = this.maxShield;
-        this.shieldRegenDelay = 0;
         this.lastShotTime = 0;
         this.isActive = true;
     }
@@ -166,7 +161,6 @@ export class Player extends Entity {
         let remainingDamage = Math.max(0, damage);
         if (remainingDamage <= 0) return this.health <= 0;
 
-        this.shieldRegenDelay = 2.5;
         if (this.shield > 0) {
             const absorbed = Math.min(this.shield, remainingDamage);
             this.shield -= absorbed;

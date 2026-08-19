@@ -40,10 +40,34 @@ function stopLocalGameServer(): void {
 function requestSafeUpdateRestart(): void {
   if (updateInstallRequested) return;
   updateInstallRequested = true;
-  // With autoInstallOnAppQuit enabled, electron-updater starts NSIS only after
-  // Electron has completed its shutdown. This avoids the installer racing a live EXE.
-  if (mainWindow && !mainWindow.isDestroyed()) mainWindow.close();
-  app.quit();
+
+  // The local HTTP server holds Node's event loop open even after the renderer
+  // closes. Stop it before asking Electron to quit so Windows cannot see a stale
+  // Protect The Starship process while NSIS begins its in-place update.
+  stopLocalGameServer();
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.destroy();
+    mainWindow = null;
+  }
+
+  // Explicit installation makes the order deterministic: electron-updater marks
+  // the NSIS run as an update, launches it, then quits Electron. The installer
+  // can consequently close any final child process rather than prompting the
+  // player to uninstall or terminate it by hand.
+  setTimeout(() => {
+    try {
+      autoUpdater.quitAndInstall(false, true);
+    } catch (error) {
+      console.warn('[update] Could not start the installer:', error instanceof Error ? error.message : String(error));
+      updateInstallRequested = false;
+    }
+  }, 100);
+
+  // A final guard handles any Electron/Node handle that would otherwise keep the
+  // desktop process in Task Manager after the update installer has been started.
+  setTimeout(() => {
+    if (updateInstallRequested) app.exit(0);
+  }, 1500);
 }
 
 function configureAutoUpdate(): void {
@@ -52,9 +76,9 @@ function configureAutoUpdate(): void {
   updateCheckStarted = true;
 
   autoUpdater.autoDownload = false;
-  // NSIS must start after the app exits; spawning it while this process still owns
-  // the executable causes the familiar Windows "cannot close the application" loop.
-  autoUpdater.autoInstallOnAppQuit = true;
+  // Installation is triggered only by requestSafeUpdateRestart(), after the local
+  // server and window are closed. Passive app quit must never race an NSIS launch.
+  autoUpdater.autoInstallOnAppQuit = false;
   autoUpdater.autoRunAppAfterInstall = true;
   autoUpdater.logger = console;
 
@@ -95,8 +119,8 @@ function configureAutoUpdate(): void {
       type: 'info',
       title: 'Protect The Starship — Update ready',
       message: `Version ${info.version} has been downloaded.`,
-      detail: 'Restart now closes the game first. The installer starts only after it has fully exited, and your save files remain untouched.',
-      buttons: ['Restart and install', 'Install after closing'],
+      detail: 'Restart now closes the game and starts the managed update. Any remaining game process is closed by the installer, and your save files remain untouched.',
+      buttons: ['Restart and install', 'Later'],
       defaultId: 0,
       cancelId: 1,
       noLink: true,
@@ -218,6 +242,10 @@ app.on('activate', () => {
 });
 
 app.on('before-quit', () => {
+  stopLocalGameServer();
+});
+
+app.on('will-quit', () => {
   stopLocalGameServer();
 });
 

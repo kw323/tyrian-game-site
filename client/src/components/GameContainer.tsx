@@ -2205,9 +2205,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 ctx.strokeRect(barX, barY, barWidth, barHeight);
                 ctx.fillStyle = '#00CCDD';
                 ctx.font = '12px Arial';
-                const shieldReadout = player.shieldRegenDelay > 0
-                    ? `Shield: ${Math.floor(player.shield)}/${player.maxShield}  •  RECHARGE ${player.shieldRegenDelay.toFixed(1)}s`
-                    : `Shield: ${Math.floor(player.shield)}/${player.maxShield}  •  +${player.shieldRegenRate.toFixed(1)}/s`;
+                const shieldReadout = `Shield: ${Math.floor(player.shield)}/${player.maxShield}  •  +${player.shieldRegenRate.toFixed(1)}/s`;
                 ctx.fillText(shieldReadout, barX + 160, barY + 10);
 
                 // Draw power bar

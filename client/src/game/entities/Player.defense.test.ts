@@ -26,19 +26,13 @@ describe('Player defensive model', () => {
         expect(player.health).toBe(startingHull - 25);
     });
 
-    it('does not regenerate shield during the two-and-a-half-second recovery pause', () => {
+    it('regenerates shield in the first update after taking damage', () => {
         const player = createPlayer();
         player.takeDamage(20);
         const depletedShield = player.shield;
 
-        player.updateWithInput(2.4, {}, 1200, 900);
-        expect(player.shield).toBe(depletedShield);
-        expect(player.shieldRegenDelay).toBeCloseTo(0.1, 5);
-
-        player.updateWithInput(0.1, {}, 1200, 900);
-        expect(player.shield).toBe(depletedShield);
-        player.updateWithInput(1, {}, 1200, 900);
-        expect(player.shield).toBeCloseTo(depletedShield + player.shieldRegenRate, 5);
+        player.updateWithInput(0.5, {}, 1200, 900);
+        expect(player.shield).toBeCloseTo(depletedShield + player.shieldRegenRate * 0.5, 5);
     });
 
     it('scales hull meaningfully between the first and sixth ship class', () => {
