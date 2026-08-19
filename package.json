@@ -13,6 +13,7 @@
     "format": "prettier --write .",
     "electron:build": "ELECTRON_BUILD=true vite build && tsc -p electron/tsconfig.json && electron-builder --win --dir",
     "electron:pack": "ELECTRON_BUILD=true vite build && tsc -p electron/tsconfig.json && electron-builder --win portable",
+    "electron:installer": "ELECTRON_BUILD=true vite build && tsc -p electron/tsconfig.json && electron-builder --win nsis",
     "voice:verify": "python3 scripts/verify_voice_assets.py",
     "voice:generate-missing": "python3 scripts/generate_missing_voice_assets.py",
     "android:sync": "ELECTRON_BUILD=true vite build && cap sync android",
@@ -121,7 +122,14 @@
       "dist-electron/main.cjs"
     ],
     "win": {
-      "target": "portable"
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Protect The Starship"
     }
   }
 }
