@@ -84,10 +84,11 @@ interface GameContainerProps {
     touchControlsEnabled?: boolean;
     mouseControlsEnabled?: boolean;
     launchMode?: 'new' | 'continue';
+    initialStage?: number;
     onReturnToTitle?: () => void;
 }
 
-export function GameContainer({ touchControlsEnabled = true, mouseControlsEnabled = true, launchMode = 'continue', onReturnToTitle }: GameContainerProps) {
+export function GameContainer({ touchControlsEnabled = true, mouseControlsEnabled = true, launchMode = 'continue', initialStage, onReturnToTitle }: GameContainerProps) {
     const isMobile = useIsMobile();
     const isNativeAndroid = Capacitor.isNativePlatform();
     // Android runs in landscape, where viewport width is usually larger than the mobile CSS breakpoint.
@@ -1184,6 +1185,9 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 }
             };
             window.addEventListener('tyrian:jump-to-stage', handleStageJumpEvent as EventListener);
+            const initialStageTimer = initialStage
+                ? window.setTimeout(() => jumpToStage(initialStage), 0)
+                : null;
 
             const registerEnemyDefeat = (enemy: Enemy | EnemyAdvanced): void => {
                 if (!enemy.isActive && !enemy.rewardGranted) {
@@ -3900,12 +3904,13 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 canvas.removeEventListener('pointercancel', releaseCanvasTouch);
                 canvas.removeEventListener('click', handleCanvasClick);
                 canvas.style.cursor = 'default';
+                if (initialStageTimer !== null) window.clearTimeout(initialStageTimer);
+                window.removeEventListener('tyrian:jump-to-stage', handleStageJumpEvent as EventListener);
             };
-            window.removeEventListener('tyrian:jump-to-stage', handleStageJumpEvent as EventListener);
         } catch (error) {
             console.error('Failed to initialize game:', error);
         }
-    }, [gameStarted, startFromResume]);
+    }, [gameStarted, initialStage, startFromResume]);
 
     const updateTouchJoystick = (event: ReactPointerEvent<HTMLDivElement>): void => {
         event.preventDefault();

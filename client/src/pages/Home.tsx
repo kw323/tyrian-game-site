@@ -1,12 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Github } from 'lucide-react';
 import { GameContainer } from '@/components/GameContainer';
+import { CommandCenter, GameplayLanguage } from '@/components/CommandCenter';
 import { EnemyDatabaseModal } from '@/components/EnemyDatabaseModal';
 import { PlayerSystemsModal } from '@/components/PlayerSystemsModal';
 import { MissionArchiveModal } from '@/components/MissionArchiveModal';
 import { SaveLoadModal } from '@/components/SaveLoadModal';
 import { ControlsSettingsModal } from '@/components/ControlsSettingsModal';
+import { StageSelectModal } from '@/components/StageSelectModal';
 import { SaveData, SaveSystem } from '@/game/core/SaveSystem';
+import { DifficultyId, DifficultySystem } from '@/game/core/DifficultySystem';
 import { SoundSystem } from '@/game/core/SoundSystem';
 import { VoicePlaybackManager } from '@/game/core/VoicePlaybackManager';
 import { Capacitor } from '@capacitor/core';
@@ -32,18 +35,25 @@ function readResumePreview(): ResumePreview | null {
     }
 }
 
-// The title screen is deliberately the first thing players see: save selection is a game action,
-// not a secondary utility hidden below an already-running canvas.
+function readGameplayLanguage(): GameplayLanguage {
+    const stored = window.localStorage.getItem('tyrian_gameplay_lang');
+    return stored === 'he' || stored === 'en' || stored === 'ja' || stored === 'zh' ? stored : 'he';
+}
+
 export default function Home() {
     const isNativeAndroid = Capacitor.isNativePlatform();
     const [launchMode, setLaunchMode] = useState<LaunchMode>(null);
+    const [initialStage, setInitialStage] = useState<number | null>(null);
     const [showDatabase, setShowDatabase] = useState(false);
     const [showSystemsDatabase, setShowSystemsDatabase] = useState(false);
     const [showMissionArchive, setShowMissionArchive] = useState(false);
     const [showLoadModal, setShowLoadModal] = useState(false);
     const [showControlsModal, setShowControlsModal] = useState(false);
+    const [showStageMapModal, setShowStageMapModal] = useState(false);
     const [saveRevision, setSaveRevision] = useState(0);
     const [musicEnabled, setMusicEnabled] = useState(() => SoundSystem.isMusicEnabled());
+    const [gameplayLanguage, setGameplayLanguage] = useState<GameplayLanguage>(readGameplayLanguage);
+    const [difficultyId, setDifficultyId] = useState<DifficultyId>(() => DifficultySystem.load());
     const [touchControlsEnabled, setTouchControlsEnabled] = useState(() => {
         if (typeof window === 'undefined') return true;
         const stored = window.localStorage.getItem('tyrian_touch_controls_enabled');
@@ -57,7 +67,7 @@ export default function Home() {
     });
 
     const resumePreview = useMemo(() => readResumePreview(), [saveRevision]);
-    const manualSaveCount = useMemo(() => SaveSystem.getSlots().filter(Boolean).length, [saveRevision]);
+    const manualSaveCount = useMemo(() => SaveSystem.getManualSaveCount(), [saveRevision]);
     const autoSave = useMemo(() => SaveSystem.loadAutoSave(), [saveRevision]);
 
     useEffect(() => {
@@ -72,9 +82,18 @@ export default function Home() {
         window.localStorage.setItem('tyrian_mouse_controls_enabled', String(mouseControlsEnabled));
     }, [mouseControlsEnabled]);
 
+    useEffect(() => {
+        window.localStorage.setItem('tyrian_gameplay_lang', gameplayLanguage);
+    }, [gameplayLanguage]);
+
+    useEffect(() => {
+        DifficultySystem.save(difficultyId);
+    }, [difficultyId]);
+
     const startNewMission = () => {
         VoicePlaybackManager.primeFromGesture();
         window.localStorage.removeItem(RESUME_CHECKPOINT_KEY);
+        setInitialStage(null);
         setSaveRevision((revision) => revision + 1);
         setLaunchMode('new');
     };
@@ -85,13 +104,15 @@ export default function Home() {
             setShowLoadModal(true);
             return;
         }
+        setInitialStage(null);
         setLaunchMode('continue');
     };
 
-    const clearCheckpoint = () => {
-        if (!window.confirm('Delete the current checkpoint? This cannot be undone.')) return;
-        window.localStorage.removeItem(RESUME_CHECKPOINT_KEY);
-        setSaveRevision((revision) => revision + 1);
+    const launchTestStage = (stage: number): void => {
+        VoicePlaybackManager.primeFromGesture();
+        setShowStageMapModal(false);
+        setInitialStage(stage);
+        setLaunchMode('new');
     };
 
     const loadSelectedSave = (data: SaveData) => {
@@ -109,116 +130,44 @@ export default function Home() {
                 currentWeapon: data.currentWeapon,
             },
         }));
+        setInitialStage(null);
         setSaveRevision((revision) => revision + 1);
         setLaunchMode('continue');
     };
 
-    const titleScreen = (
-        <main className="command-main">
-            <section className="launch-console hud-frame" aria-labelledby="game-title">
-                <div className="launch-console__signal-row">
-                    <span>ARK-9 DEFENSE NETWORK // READY</span>
-                    <span>{resumePreview ? `CHECKPOINT // STAGE ${resumePreview.level}` : 'NO ACTIVE CHECKPOINT'}</span>
-                </div>
-                <div className="launch-console__core">
-                    <p className="launch-console__eyebrow">PROGRAM ZERO // STARSHIP DEFENSE COMMAND</p>
-                    <h2 id="game-title">PROTECT <span>THE STARSHIP</span></h2>
-                    <p className="launch-console__briefing">
-                        Break the pursuit, hold the line, and protect Ark-9 from raiders, military hunters, and the alien fleet.
-                    </p>
-                    <div className="launch-console__telemetry" aria-label="Save telemetry">
-                        <span><b>{resumePreview ? `STAGE ${resumePreview.level}` : 'NEW'}</b>MISSION STATUS</span>
-                        <span><b>{manualSaveCount}</b>MANUAL SAVES</span>
-                        <span><b>{autoSave ? 'READY' : 'EMPTY'}</b>AUTOSAVE</span>
-                    </div>
-                    <div className="flex flex-col items-center gap-3">
-                        <button type="button" onClick={startNewMission} className="launch-command">NEW MISSION</button>
-                        <button type="button" onClick={continueMission} className="launch-command">
-                            {resumePreview ? `CONTINUE // STAGE ${resumePreview.level}` : 'LOAD SAVED MISSION'}
-                        </button>
-                        <button type="button" onClick={() => setShowLoadModal(true)} className="console-button console-button--cyan">
-                            MANAGE SAVES // LOAD OR DELETE
-                        </button>
-                        {resumePreview && (
-                            <button type="button" onClick={clearCheckpoint} className="console-button console-button--muted">
-                                CLEAR CURRENT CHECKPOINT
-                            </button>
-                        )}
-                    </div>
-                    <p className="launch-console__hint">SAVES AVAILABLE BEFORE LAUNCH // MOUSE {mouseControlsEnabled ? 'ARMED' : 'HIDDEN'} // TOUCH {touchControlsEnabled ? 'ARMED' : 'HIDDEN'}</p>
-                </div>
-                <div className="launch-console__footer">
-                    <span>FULL CAMPAIGN BUILD 1.1.0 // OFFLINE READY</span>
-                    <span>{resumePreview ? `LAST CHECKPOINT ${new Date(resumePreview.savedAt).toLocaleString()}` : 'SELECT NEW MISSION OR LOAD A SAVE'}</span>
-                </div>
-            </section>
-
-            <section className="telemetry-grid" aria-label="Title screen utilities">
-                <article className="telemetry-module hud-frame">
-                    <span className="module-index">01 // ARCHIVE</span>
-                    <h3>Know the threat.</h3>
-                    <button type="button" onClick={() => setShowDatabase(true)} className="console-button console-button--muted">Enemy database</button>
-                </article>
-                <article className="telemetry-module hud-frame">
-                    <span className="module-index">02 // LOADOUT</span>
-                    <h3>Review systems.</h3>
-                    <button type="button" onClick={() => setShowSystemsDatabase(true)} className="console-button console-button--cyan">Player systems codex</button>
-                </article>
-                <article className="telemetry-module hud-frame">
-                    <span className="module-index">03 // SETTINGS</span>
-                    <h3>Prepare controls.</h3>
-                    <div className="flex flex-wrap gap-2">
-                        <button
-                            type="button"
-                            onClick={() => setMusicEnabled(SoundSystem.toggleMusic())}
-                            className={`console-button ${musicEnabled ? 'console-button--green' : 'console-button--muted'}`}
-                        >
-                            Music: {musicEnabled ? 'ON' : 'OFF'}
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setMouseControlsEnabled((enabled) => !enabled)}
-                            className={`console-button ${mouseControlsEnabled ? 'console-button--cyan' : 'console-button--muted'}`}
-                        >
-                            Mouse flight: {mouseControlsEnabled ? 'ON' : 'OFF'}
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => !isNativeAndroid && setTouchControlsEnabled((enabled) => !enabled)}
-                            aria-disabled={isNativeAndroid}
-                            className={`console-button ${touchControlsEnabled ? 'console-button--magenta' : 'console-button--muted'}`}
-                        >
-                            Touch: {isNativeAndroid ? 'ANDROID READY' : (touchControlsEnabled ? 'ON' : 'OFF')}
-                        </button>
-                        <button type="button" onClick={() => setShowControlsModal(true)} className="console-button console-button--green">
-                            Keyboard map
-                        </button>
-                    </div>
-                </article>
-            </section>
-        </main>
+    const commandCenter = (
+        <CommandCenter
+            resumePreview={resumePreview}
+            manualSaveCount={manualSaveCount}
+            autoSave={autoSave}
+            musicEnabled={musicEnabled}
+            gameplayLanguage={gameplayLanguage}
+            difficultyId={difficultyId}
+            onStartNewMission={startNewMission}
+            onContinueMission={continueMission}
+            onOpenStageMap={() => setShowStageMapModal(true)}
+            onOpenSaves={() => setShowLoadModal(true)}
+            onOpenSystems={() => setShowSystemsDatabase(true)}
+            onOpenControls={() => setShowControlsModal(true)}
+            onOpenDatabase={() => setShowDatabase(true)}
+            onOpenArchive={() => setShowMissionArchive(true)}
+            onToggleMusic={() => setMusicEnabled(SoundSystem.toggleMusic())}
+            onChangeLanguage={setGameplayLanguage}
+            onChangeDifficulty={setDifficultyId}
+        />
     );
 
     const androidTitleScreen = (
         <main className="android-title-deck" aria-labelledby="android-game-title">
-            <header className="android-title-deck__header">
-                <span>ARK-9 // FLIGHT DECK</span>
-                <span className="signal-dot" />
-                <span>OFFLINE READY</span>
-            </header>
+            <header className="android-title-deck__header"><span>ARK-9 // FLIGHT DECK</span><span className="signal-dot" /><span>OFFLINE READY</span></header>
             <section className="android-title-deck__hero">
                 <p>PROGRAM ZERO // STARSHIP DEFENSE COMMAND</p>
                 <h2 id="android-game-title">PROTECT <span>THE STARSHIP</span></h2>
-                <div className="android-title-deck__save-status">
-                    <span>{resumePreview ? `CHECKPOINT: STAGE ${resumePreview.level}` : 'NO ACTIVE CHECKPOINT'}</span>
-                    <span>{autoSave ? 'AUTOSAVE: READY' : 'AUTOSAVE: EMPTY'}</span>
-                </div>
+                <div className="android-title-deck__save-status"><span>{resumePreview ? `CHECKPOINT: STAGE ${resumePreview.level}` : 'NO ACTIVE CHECKPOINT'}</span><span>{autoSave ? 'AUTOSAVE: READY' : 'AUTOSAVE: EMPTY'}</span></div>
             </section>
             <section className="android-launch-actions" aria-label="Android mission commands">
                 <button type="button" className="android-launch-actions__primary" onClick={startNewMission}>NEW MISSION</button>
-                <button type="button" className="android-launch-actions__continue" onClick={continueMission}>
-                    {resumePreview ? `CONTINUE STAGE ${resumePreview.level}` : 'LOAD SAVED MISSION'}
-                </button>
+                <button type="button" className="android-launch-actions__continue" onClick={continueMission}>{resumePreview ? `CONTINUE STAGE ${resumePreview.level}` : 'LOAD SAVED MISSION'}</button>
                 <button type="button" className="android-launch-actions__utility" onClick={() => setShowLoadModal(true)}>SAVES</button>
             </section>
             <section className="android-title-utilities" aria-label="Android game settings">
@@ -227,70 +176,31 @@ export default function Home() {
                 <button type="button" onClick={() => setMusicEnabled(SoundSystem.toggleMusic())}>MUSIC: {musicEnabled ? 'ON' : 'OFF'}</button>
                 <button type="button" onClick={() => setShowControlsModal(true)}>CONTROL GUIDE</button>
             </section>
-            <p className="android-title-deck__footer">LANDSCAPE FLIGHT // DIRECT TOUCH STEERING // FULLSCREEN BATTLE</p>
         </main>
     );
 
     return (
         <div className={`tyrian-shell ${isNativeAndroid ? 'tyrian-shell--android' : ''}`}>
-            {!isNativeAndroid && <header className="command-header">
-                <div className="command-header__inner">
-                    <div className="brand-lockup">
-                        <div className="brand-emblem" aria-hidden="true"><span /><i /></div>
-                        <div>
-                            <p className="brand-eyebrow">PROGRAM ZERO // FLIGHT NETWORK</p>
-                            <h1 className="brand-wordmark">PROTECT <span>THE STARSHIP</span></h1>
-                        </div>
-                    </div>
-                    <div className="header-readout">
-                        <span className="signal-dot" />
-                        <span>ARK-9 LINK // ONLINE</span>
-                        <a href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="Open project source on GitHub"><Github size={19} /></a>
-                    </div>
-                </div>
-            </header>}
+            {!isNativeAndroid && <header className="command-header"><div className="command-header__inner"><div className="brand-lockup"><div className="brand-emblem" aria-hidden="true"><span /><i /></div><div><p className="brand-eyebrow">PROGRAM ZERO // FLIGHT NETWORK</p><h1 className="brand-wordmark">PROTECT <span>THE STARSHIP</span></h1></div></div><div className="header-readout"><span className="signal-dot" /><span>ARK-9 LINK // ONLINE</span><a href="https://github.com/kw323/tyrian-game-site" target="_blank" rel="noopener noreferrer" aria-label="Open project source on GitHub"><Github size={19} /></a></div></div></header>}
 
             {launchMode ? (
                 <main className={isNativeAndroid ? 'android-mission-shell' : 'command-main'}>
-                    {!isNativeAndroid && (
-                        <div className="flex justify-between items-center gap-3 mb-3">
-                            <span className="status-tag">{launchMode === 'new' ? 'NEW MISSION // STAGE 1' : `CONTINUE MISSION // STAGE ${resumePreview?.level ?? 1}`}</span>
-                            <button type="button" onClick={() => setLaunchMode(null)} className="console-button console-button--muted">RETURN TO TITLE</button>
-                        </div>
-                    )}
+                    {!isNativeAndroid && <div className="flex justify-between items-center gap-3 mb-3"><span className="status-tag">{initialStage ? `TEST STAGE // ${initialStage}` : launchMode === 'new' ? 'NEW MISSION // STAGE 1' : `CONTINUE MISSION // STAGE ${resumePreview?.level ?? 1}`}</span><button type="button" onClick={() => { setInitialStage(null); setLaunchMode(null); }} className="console-button console-button--muted">RETURN TO COMMAND CENTER</button></div>}
                     <section className={`launch-frame hud-frame ${isNativeAndroid ? 'launch-frame--android' : ''}`}>
                         {!isNativeAndroid && <div className="launch-frame__topline"><span>FLIGHT DECK // PILOT LINKED</span><span>INPUT: KEYBOARD // MOUSE {mouseControlsEnabled ? 'ARMED' : 'HIDDEN'} // TOUCH {touchControlsEnabled ? 'ARMED' : 'HIDDEN'}</span></div>}
-                        <div className="game-window">
-                            <GameContainer
-                                key={launchMode}
-                                touchControlsEnabled={touchControlsEnabled}
-                                mouseControlsEnabled={mouseControlsEnabled}
-                                launchMode={launchMode}
-                                onReturnToTitle={() => setLaunchMode(null)}
-                            />
-                        </div>
+                        <div className="game-window"><GameContainer key={`${launchMode}-${initialStage ?? 'standard'}`} touchControlsEnabled={touchControlsEnabled} mouseControlsEnabled={mouseControlsEnabled} launchMode={launchMode} initialStage={initialStage ?? undefined} onReturnToTitle={() => { setInitialStage(null); setLaunchMode(null); }} /></div>
                     </section>
                 </main>
-            ) : (isNativeAndroid ? androidTitleScreen : titleScreen)}
+            ) : (isNativeAndroid ? androidTitleScreen : commandCenter)}
 
             {showControlsModal && <ControlsSettingsModal isOpen={showControlsModal} onClose={() => setShowControlsModal(false)} />}
             {showDatabase && <EnemyDatabaseModal onClose={() => setShowDatabase(false)} />}
             {showSystemsDatabase && <PlayerSystemsModal onClose={() => setShowSystemsDatabase(false)} />}
             {showMissionArchive && <MissionArchiveModal onClose={() => setShowMissionArchive(false)} />}
-            {showLoadModal && (
-                <SaveLoadModal
-                    isOpen={showLoadModal}
-                    mode="load"
-                    onClose={() => setShowLoadModal(false)}
-                    onLoadGame={loadSelectedSave}
-                    onDeleteSave={() => setSaveRevision((revision) => revision + 1)}
-                />
-            )}
+            {showStageMapModal && <StageSelectModal maxUnlockedLevel={1} allowAllStages onSelectStage={launchTestStage} onClose={() => setShowStageMapModal(false)} />}
+            {showLoadModal && <SaveLoadModal isOpen={showLoadModal} mode="load" onClose={() => setShowLoadModal(false)} onLoadGame={loadSelectedSave} onDeleteSave={() => setSaveRevision((revision) => revision + 1)} />}
 
-            {!isNativeAndroid && <footer className="command-footer">
-                <span>PROTECT THE STARSHIP // PROGRAM ZERO</span>
-                <span>ARK-9 FLIGHT NETWORK © 2026</span>
-            </footer>}
+            {!isNativeAndroid && <footer className="command-footer"><span>PROTECT THE STARSHIP // PROGRAM ZERO</span><span>ARK-9 FLIGHT NETWORK © 2026</span></footer>}
         </div>
     );
 }
