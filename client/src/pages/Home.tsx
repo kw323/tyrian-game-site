@@ -8,6 +8,7 @@ import { SaveLoadModal } from '@/components/SaveLoadModal';
 import { ControlsSettingsModal } from '@/components/ControlsSettingsModal';
 import { SaveData, SaveSystem } from '@/game/core/SaveSystem';
 import { SoundSystem } from '@/game/core/SoundSystem';
+import { Capacitor } from '@capacitor/core';
 
 const RESUME_CHECKPOINT_KEY = 'tyrian_resume_checkpoint';
 type LaunchMode = 'new' | 'continue' | null;
@@ -33,6 +34,7 @@ function readResumePreview(): ResumePreview | null {
 // The title screen is deliberately the first thing players see: save selection is a game action,
 // not a secondary utility hidden below an already-running canvas.
 export default function Home() {
+    const isNativeAndroid = Capacitor.isNativePlatform();
     const [launchMode, setLaunchMode] = useState<LaunchMode>(null);
     const [showDatabase, setShowDatabase] = useState(false);
     const [showSystemsDatabase, setShowSystemsDatabase] = useState(false);
@@ -45,7 +47,7 @@ export default function Home() {
         if (typeof window === 'undefined') return true;
         const stored = window.localStorage.getItem('tyrian_touch_controls_enabled');
         if (stored !== null) return stored === 'true';
-        return window.matchMedia('(max-width: 767px)').matches;
+        return Capacitor.isNativePlatform() || window.matchMedia('(max-width: 767px)').matches;
     });
     const [mouseControlsEnabled, setMouseControlsEnabled] = useState(() => {
         if (typeof window === 'undefined') return true;
@@ -58,8 +60,12 @@ export default function Home() {
     const autoSave = useMemo(() => SaveSystem.loadAutoSave(), [saveRevision]);
 
     useEffect(() => {
+        if (isNativeAndroid && !touchControlsEnabled) {
+            setTouchControlsEnabled(true);
+            return;
+        }
         window.localStorage.setItem('tyrian_touch_controls_enabled', String(touchControlsEnabled));
-    }, [touchControlsEnabled]);
+    }, [isNativeAndroid, touchControlsEnabled]);
 
     useEffect(() => {
         window.localStorage.setItem('tyrian_mouse_controls_enabled', String(mouseControlsEnabled));
@@ -174,10 +180,11 @@ export default function Home() {
                         </button>
                         <button
                             type="button"
-                            onClick={() => setTouchControlsEnabled((enabled) => !enabled)}
+                            onClick={() => !isNativeAndroid && setTouchControlsEnabled((enabled) => !enabled)}
+                            aria-disabled={isNativeAndroid}
                             className={`console-button ${touchControlsEnabled ? 'console-button--magenta' : 'console-button--muted'}`}
                         >
-                            Touch: {touchControlsEnabled ? 'ON' : 'OFF'}
+                            Touch: {isNativeAndroid ? 'ANDROID READY' : (touchControlsEnabled ? 'ON' : 'OFF')}
                         </button>
                         <button type="button" onClick={() => setShowControlsModal(true)} className="console-button console-button--green">
                             Keyboard map
@@ -189,7 +196,7 @@ export default function Home() {
     );
 
     return (
-        <div className="tyrian-shell">
+        <div className={`tyrian-shell ${isNativeAndroid ? 'tyrian-shell--android' : ''}`}>
             <header className="command-header">
                 <div className="command-header__inner">
                     <div className="brand-lockup">

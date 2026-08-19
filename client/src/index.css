@@ -659,3 +659,146 @@ a,
 @media (prefers-reduced-motion: reduce) {
   .mobile-action-zone button { transition: none; }
 }
+
+/* Android landscape command deck: preserve the combat field and reserve two safe thumb zones. */
+.tyrian-shell--android {
+  min-height: 100dvh;
+  overflow: auto;
+  -webkit-tap-highlight-color: transparent;
+}
+.tyrian-shell--android .command-main {
+  width: min(100% - 1.25rem, 1180px);
+  padding-block: max(0.8rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-bottom));
+}
+.tyrian-shell--android .console-button,
+.tyrian-shell--android .launch-command {
+  min-height: 44px;
+}
+.tyrian-shell--android .telemetry-module {
+  min-height: 150px;
+}
+.tyrian-shell--android .telemetry-module h3 {
+  margin-top: 1rem;
+}
+.tyrian-shell--android .game-window {
+  min-height: 0;
+  padding: 0.35rem;
+}
+
+.game-stage-shell--touch {
+  touch-action: none;
+  overscroll-behavior: contain;
+}
+.game-stage-shell--touch .mobile-touch-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: max(0.75rem, env(safe-area-inset-top)) max(0.85rem, env(safe-area-inset-right)) max(0.75rem, env(safe-area-inset-bottom)) max(0.85rem, env(safe-area-inset-left));
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  z-index: 4;
+}
+.game-stage-shell--touch .mobile-joystick-zone,
+.game-stage-shell--touch .mobile-action-zone {
+  pointer-events: auto;
+  touch-action: none;
+}
+.game-stage-shell--touch .mobile-joystick-zone {
+  display: grid;
+  justify-items: center;
+  gap: 0.3rem;
+}
+.game-stage-shell--touch .mobile-control-label {
+  color: rgba(120, 255, 224, 0.8);
+  font: 0.47rem 'Space Mono', ui-monospace, monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(53, 242, 139, 0.42);
+}
+.game-stage-shell--touch .mobile-joystick {
+  position: relative;
+  width: clamp(112px, 18vw, 148px);
+  height: clamp(112px, 18vw, 148px);
+  border: 1px solid rgba(82, 217, 255, 0.66);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(53, 242, 139, 0.12), rgba(5, 18, 31, 0.78) 62%, rgba(82, 217, 255, 0.08));
+  box-shadow: inset 0 0 20px rgba(82, 217, 255, 0.1), 0 0 18px rgba(82, 217, 255, 0.14);
+  touch-action: none;
+}
+.game-stage-shell--touch .mobile-joystick::before,
+.game-stage-shell--touch .mobile-joystick::after {
+  content: '';
+  position: absolute;
+  background: rgba(82, 217, 255, 0.2);
+}
+.game-stage-shell--touch .mobile-joystick::before { left: 15%; right: 15%; top: 50%; height: 1px; }
+.game-stage-shell--touch .mobile-joystick::after { top: 15%; bottom: 15%; left: 50%; width: 1px; }
+.game-stage-shell--touch .mobile-joystick-ring { position: absolute; inset: 19%; border: 1px dashed rgba(53, 242, 139, 0.35); border-radius: 50%; }
+.game-stage-shell--touch .mobile-joystick-knob {
+  position: absolute;
+  width: 35%;
+  height: 35%;
+  left: 32.5%;
+  top: 32.5%;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #eaffff, #35f28b 30%, #087f9b 72%, #031824);
+  box-shadow: 0 0 14px rgba(53, 242, 139, 0.55);
+  pointer-events: none;
+}
+.game-stage-shell--touch .mobile-action-zone { display: flex; flex-direction: column; align-items: flex-end; gap: 0.55rem; }
+.game-stage-shell--touch .mobile-action-zone button {
+  width: clamp(78px, 14vw, 108px);
+  min-height: 54px;
+  aspect-ratio: 1.2;
+  border: 1px solid;
+  border-radius: 0.25rem;
+  color: #effff8;
+  background: rgba(5, 18, 31, 0.84);
+  font: 700 0.64rem 'Space Mono', ui-monospace, monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow: inset 0 0 18px rgba(255,255,255,0.03), 0 0 18px rgba(0,0,0,0.28);
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 120ms ease-out, box-shadow 120ms ease-out, filter 120ms ease-out;
+}
+.game-stage-shell--touch .mobile-action-zone button:active,
+.game-stage-shell--touch .mobile-action-zone button.is-pressed { transform: scale(0.95); filter: brightness(1.25); }
+.game-stage-shell--touch .mobile-action-zone button.is-firing {
+  transform: scale(0.95);
+  filter: brightness(1.35);
+  box-shadow: inset 0 0 24px rgba(255, 107, 155, 0.4), 0 0 24px rgba(255, 107, 155, 0.45);
+}
+.game-stage-shell--touch .mobile-action-zone small { display: block; margin-top: 0.2rem; color: rgba(239, 255, 248, 0.58); font-size: 0.43rem; letter-spacing: 0.04em; }
+.game-stage-shell--touch .mobile-fire-button { border-color: rgba(255, 107, 155, 0.8) !important; color: #ff9fbe !important; background: rgba(82, 12, 45, 0.62) !important; }
+.game-stage-shell--touch .mobile-ability-button { border-color: rgba(197, 156, 255, 0.82) !important; color: #d6b7ff !important; background: rgba(52, 22, 86, 0.68) !important; }
+
+@media (orientation: landscape) and (max-height: 760px) {
+  .tyrian-shell--android .command-header { position: relative; }
+  .tyrian-shell--android .command-header__inner { min-height: 48px; }
+  .tyrian-shell--android .brand-emblem { width: 30px; height: 30px; }
+  .tyrian-shell--android .brand-wordmark { font-size: 1rem; }
+  .tyrian-shell--android .brand-eyebrow,
+  .tyrian-shell--android .header-readout span:not(.signal-dot),
+  .tyrian-shell--android .command-footer { display: none; }
+  .tyrian-shell--android .launch-console { min-height: 0; }
+  .tyrian-shell--android .launch-console__core { width: min(680px, calc(100% - 1rem)); padding: 1rem 0.75rem; }
+  .tyrian-shell--android .launch-console__core h2 { font-size: clamp(2.1rem, 6vw, 3.4rem); }
+  .tyrian-shell--android .launch-console__briefing { margin: 0.65rem auto; font-size: 0.76rem; }
+  .tyrian-shell--android .launch-console__telemetry { margin-bottom: 0.75rem; }
+  .tyrian-shell--android .launch-console__hint { margin-top: 0.65rem; }
+  .tyrian-shell--android .telemetry-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom: 1rem; }
+  .tyrian-shell--android .telemetry-module { padding: 0.75rem; min-height: 122px; }
+  .tyrian-shell--android .telemetry-module h3 { font-size: 1.1rem; }
+  .tyrian-shell--android .game-stage-shell--touch { max-height: calc(100dvh - 4.5rem) !important; display: grid; place-items: center; overflow: hidden; }
+  .tyrian-shell--android .game-stage-shell--touch canvas { width: auto !important; height: min(calc(100dvh - 5.1rem), 900px) !important; max-width: 100%; object-fit: contain; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-stage-shell--touch .mobile-action-zone button { transition: none; }
+}

@@ -42,6 +42,8 @@ import { DifficultySystem, DifficultyId, DifficultyProfile } from '@/game/core/D
 import { FinalBossAssembly, FinalBossPart } from '@/game/entities/FinalBossPart';
 import { VoicePlaybackManager } from '@/game/core/VoicePlaybackManager';
 import { StageSelectModal } from '@/components/StageSelectModal';
+import { SaveSystem } from '@/game/core/SaveSystem';
+import { Capacitor } from '@capacitor/core';
 
 interface ResumeCheckpoint {
     level: number;
@@ -76,7 +78,12 @@ interface GameContainerProps {
 
 export function GameContainer({ touchControlsEnabled = true, mouseControlsEnabled = true, launchMode = 'continue', onReturnToTitle }: GameContainerProps) {
     const isMobile = useIsMobile();
-    const showTouchControls = isMobile && touchControlsEnabled;
+    const isNativeAndroid = Capacitor.isNativePlatform();
+    // Android runs in landscape, where viewport width is usually larger than the mobile CSS breakpoint.
+    // Native detection keeps the dedicated thumb controls active in that orientation.
+    const showTouchControls = touchControlsEnabled && (isMobile || isNativeAndroid);
+    const [touchFireActive, setTouchFireActive] = useState(false);
+    const [touchAbilityPulse, setTouchAbilityPulse] = useState(false);
     const [gameplayLang, setGameplayLang] = useState<'he' | 'en' | 'ja' | 'zh' | 'es'>(() => {
         return (localStorage.getItem('tyrian_gameplay_lang') as any) || 'he';
     });
@@ -698,21 +705,41 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 return isDead;
             };
 
-            const saveResumeCheckpoint = (reason: string): void => {
-                const checkpoint: ResumeCheckpoint = {
-                    level: gameState.level,
-                    score: Math.max(0, Math.floor(gameState.score)),
-                    reason,
-                    savedAt: Date.now(),
-                    shipId: shipSystem.getCurrentShipId(),
-                    generatorLevel: powerSystem.generatorLevel,
-                    shieldLevel,
-                    weaponState: weaponSystem.getSaveState(),
-                    pilotSkillsState: pilotSkillSystem.getSaveState(),
-                    equipmentState: equipmentSystem.getState()
-                };
+            const buildResumeCheckpoint = (reason: string): ResumeCheckpoint => ({
+                level: gameState.level,
+                score: Math.max(0, Math.floor(gameState.score)),
+                reason,
+                savedAt: Date.now(),
+                shipId: shipSystem.getCurrentShipId(),
+                generatorLevel: powerSystem.generatorLevel,
+                shieldLevel,
+                weaponState: weaponSystem.getSaveState(),
+                pilotSkillsState: pilotSkillSystem.getSaveState(),
+                equipmentState: equipmentSystem.getState()
+            });
+
+            const persistAutosave = (reason: string): ResumeCheckpoint => {
+                const checkpoint = buildResumeCheckpoint(reason);
                 localStorage.setItem(RESUME_CHECKPOINT_KEY, JSON.stringify(checkpoint));
                 setResumeCheckpoint(checkpoint);
+
+                const weaponState = checkpoint.weaponState ?? {};
+                SaveSystem.autoSave({
+                    score: checkpoint.score,
+                    level: checkpoint.level,
+                    shipId: checkpoint.shipId ?? 0,
+                    generatorLevel: checkpoint.generatorLevel ?? 1,
+                    shieldLevel: checkpoint.shieldLevel ?? 1,
+                    weaponLevels: weaponState.weaponLevels ?? {},
+                    currentWeapon: weaponState.currentWeapon ?? 'straight',
+                    maxUnlockedLevel: Math.max(maxUnlockedLevel, checkpoint.level)
+                });
+
+                return checkpoint;
+            };
+
+            const saveResumeCheckpoint = (reason: string): void => {
+                persistAutosave(reason);
                 stageFailureReason = reason;
                 shopScreen = 'hub';
                 gameState.gameOver = false;
@@ -1028,6 +1055,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 SoundSystem.toggleSound(true);
                 SoundSystem.toggleMusic(true);
                 SoundSystem.startMusic();
+                persistAutosave('AUTOSAVE // MISSION ENGAGED');
                 setTimeout(() => {
                     SoundSystem.startMusic();
                 }, 100);
@@ -1051,6 +1079,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     return;
                 }
                 gameState.nextLevel();
+                persistAutosave('AUTOSAVE // NEXT STAGE READY');
                 shopScreen = 'hub';
                 stageFailureReason = null;
                 stageBriefing = CampaignSystem.getStageBriefing(gameState.level, gameplayLangRef.current);
@@ -2280,6 +2309,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                             currentBranchRoute = route;
                             showBranchModal = false;
                             gameState.nextLevel();
+                            persistAutosave('AUTOSAVE // ROUTE CONFIRMED');
                             stageBriefing = CampaignSystem.getStageBriefing(gameState.level, gameplayLangRef.current);
                             inMissionCommsTriggered = false;
                             activeContactLine = stageBriefing.contact;
@@ -3669,6 +3699,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             };
             const handleWindowBlur = (): void => {
                 touchInputRef.current.moveX = 0;
+                setTouchFireActive(false);
                 touchInputRef.current.moveY = 0;
                 touchInputRef.current.fire = false;
                 mouseInputRef.current.targetX = null;
@@ -3764,6 +3795,18 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             console.log('Starting game...');
             game.start();
 
+            const autosaveInterval = window.setInterval(() => {
+                if (!gameState.showLevelScreen && !showCommsModal && !gameState.gameOver) {
+                    persistAutosave('AUTOSAVE // IN FLIGHT');
+                }
+            }, 15000);
+            const handleAppBackground = (): void => {
+                if (document.visibilityState === 'hidden') {
+                    persistAutosave('AUTOSAVE // APP BACKGROUNDED');
+                }
+            };
+            document.addEventListener('visibilitychange', handleAppBackground);
+
             // Cleanup
             const langUnsubCheck = setInterval(() => {
                 if (gameplayLangRef.current !== currentLangForBriefing) {
@@ -3779,6 +3822,9 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
             return () => {
                 clearInterval(langUnsubCheck);
+                clearInterval(autosaveInterval);
+                document.removeEventListener('visibilitychange', handleAppBackground);
+                persistAutosave('AUTOSAVE // SESSION PAUSED');
                 game.stop();
                 window.removeEventListener('keydown', handleKeyDown);
                 window.removeEventListener('keyup', handleKeyUp);
@@ -3830,12 +3876,15 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
     const setTouchFire = (active: boolean, event: ReactPointerEvent<HTMLButtonElement>): void => {
         event.preventDefault();
         touchInputRef.current.fire = active;
+        setTouchFireActive(active);
         if (active) event.currentTarget.setPointerCapture(event.pointerId);
         else if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
     };
 
     const activateTouchAbility = (event: ReactPointerEvent<HTMLButtonElement>): void => {
         event.preventDefault();
+        setTouchAbilityPulse(true);
+        window.setTimeout(() => setTouchAbilityPulse(false), 180);
         touchActionsRef.current.toggleAbility?.();
     };
 
@@ -3931,7 +3980,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 />
             )}
             <div
-                className="game-stage-shell w-full max-w-[1200px] max-h-[calc(100vh-5rem)] overflow-y-auto overflow-x-hidden overscroll-contain rounded-lg border border-green-500/20 bg-black/30"
+                className={`game-stage-shell ${showTouchControls ? 'game-stage-shell--touch' : ''} w-full max-w-[1200px] max-h-[calc(100vh-5rem)] overflow-y-auto overflow-x-hidden overscroll-contain rounded-lg border border-green-500/20 bg-black/30`}
                 aria-label="Scrollable game viewport"
             >
                 <canvas
@@ -3966,7 +4015,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         <div className="mobile-action-zone">
                             <button
                                 type="button"
-                                className="mobile-ability-button"
+                                className={`mobile-ability-button ${touchAbilityPulse ? 'is-pressed' : ''}`}
                                 aria-label="Tap to activate or stop the tactical ability"
                                 onPointerDown={activateTouchAbility}
                                 onContextMenu={(event) => event.preventDefault()}
@@ -3976,11 +4025,12 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                             </button>
                             <button
                                 type="button"
-                                className="mobile-fire-button"
+                                className={`mobile-fire-button ${touchFireActive ? 'is-firing' : ''}`}
                                 aria-label="Hold to fire"
                                 onPointerDown={(event) => setTouchFire(true, event)}
                                 onPointerUp={(event) => setTouchFire(false, event)}
                                 onPointerCancel={(event) => setTouchFire(false, event)}
+                                onPointerLeave={(event) => setTouchFire(false, event)}
                                 onContextMenu={(event) => event.preventDefault()}
                             >
                                 <span>FIRE</span>
