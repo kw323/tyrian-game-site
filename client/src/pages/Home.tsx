@@ -129,6 +129,7 @@ export default function Home() {
                 weaponLevels: data.weaponLevels,
                 currentWeapon: data.currentWeapon,
             },
+            tacticalAbilityState: data.tacticalAbilityState,
         }));
         setInitialStage(null);
         setSaveRevision((revision) => revision + 1);

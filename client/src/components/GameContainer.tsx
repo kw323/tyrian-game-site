@@ -24,7 +24,7 @@ import { Boss } from '@/game/entities/Boss';
 import { SeraDuelEntity, SeraMirrorLoadout, SeraShot } from '@/game/entities/SeraDuelEntity';
 import { SeraAllyShipEntity, SeraAllyLoadout } from '@/game/entities/SeraAllyShipEntity';
 import { ShipUpgradeSystem } from '@/game/core/ShipUpgradeSystem';
-import { TacticalAbilitySystem, TacticalAbilityType } from '@/game/core/TacticalAbilitySystem';
+import { TacticalAbilitySystem, TacticalAbilityType, TacticalAbilitySaveState } from '@/game/core/TacticalAbilitySystem';
 import { PilotSkillSystem } from '@/game/core/PilotSkillSystem';
 import { EquipmentSystem, EquipmentPartType } from '@/game/core/EquipmentSystem';
 import { CampaignSystem, CharacterId, GameplayLanguage, UpgradeBriefing } from '@/game/story/CampaignSystem';
@@ -59,6 +59,7 @@ interface ResumeCheckpoint {
         secretWeaponUnlocked?: boolean;
     };
     pilotSkillsState?: any;
+    tacticalAbilityState?: TacticalAbilitySaveState;
     equipmentState?: any;
 }
 
@@ -194,6 +195,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             if (typeof resumeData?.shipId === 'number') shipSystem.loadSaveState(resumeData.shipId);
             if (typeof resumeData?.shieldLevel === 'number') shieldLevel = Math.max(1, Math.min(10, Math.floor(resumeData.shieldLevel)));
             const tacticalAbilitySystem = new TacticalAbilitySystem();
+            if (resumeData?.tacticalAbilityState) tacticalAbilitySystem.loadSaveState(resumeData.tacticalAbilityState);
             const pilotSkillSystem = new PilotSkillSystem();
             if (resumeData?.pilotSkillsState) pilotSkillSystem.loadSaveState(resumeData.pilotSkillsState);
             const equipmentSystem = new EquipmentSystem(resumeData?.equipmentState);
@@ -537,6 +539,14 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 SoundSystem.playUpgrade();
             };
 
+            const purchaseTacticalMagazine = (): void => {
+                const result = tacticalAbilitySystem.purchaseMagazine(gameState.score, shipSystem.getCurrentShipId());
+                if (!result) return;
+                gameState.score -= result.cost;
+                upgradeBriefing = CampaignSystem.getUpgradeBriefing('generator', `TACTICAL MAGAZINE // ${result.capacity} CARTRIDGES`, result.capacity);
+                SoundSystem.playUpgrade();
+            };
+
             const toggleTacticalAbility = (): void => {
                 const ability = tacticalAbilitySystem.getCurrentAbility();
                 if (gameState.gameOver || gameState.showLevelScreen || showCommsModal || showAfterActionModal || showBranchModal) return;
@@ -742,6 +752,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 generatorLevel: powerSystem.generatorLevel,
                 shieldLevel,
                 weaponState: weaponSystem.getSaveState(),
+                tacticalAbilityState: tacticalAbilitySystem.getSaveState(),
                 pilotSkillsState: pilotSkillSystem.getSaveState(),
                 equipmentState: equipmentSystem.getState()
             });
@@ -761,6 +772,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     shieldLevel: checkpoint.shieldLevel ?? 1,
                     weaponLevels: weaponState.weaponLevels ?? {},
                     currentWeapon: weaponState.currentWeapon ?? 'straight',
+                    tacticalAbilityState: checkpoint.tacticalAbilityState,
                     maxUnlockedLevel: Math.max(maxUnlockedLevel, checkpoint.level)
                 });
 
@@ -1479,9 +1491,9 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 const seraDuel = game['entities'].find((entity: any) =>
                     entity instanceof SeraDuelEntity && !(entity instanceof SeraAllyShipEntity) && entity.isActive
                 ) as SeraDuelEntity | undefined;
-                if (seraDuel) {
-                    tacticalAbilitySystem.addTimeCharge(deltaTime, shipSystem.getCurrentShipId());
-                }
+                // Tactical charge is always generated passively: one full cartridge every 20 seconds.
+                // Enemy defeats add a small bonus on top, while an active ability pauses charging.
+                tacticalAbilitySystem.addTimeCharge(deltaTime, shipSystem.getCurrentShipId());
                 const seraTimeLock = Boolean(seraDuel?.isTimeLockingPlayer());
                 const canHostileFire = !isTimeLocked && !seraTimeLock;
                 // Sera's allied fire is independent of the pilot's TIME LOCK. Only hostile
@@ -2176,14 +2188,15 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         ? 'VOID ARMOR'
                         : 'OVER POWER';
                 const abilityPercent = tacticalAbilitySystem.getChargePercent();
+                const abilityMeterHeight = 24;
                 ctx.fillStyle = '#182432';
-                ctx.fillRect(barX, abilityBarY, barWidth, barHeight);
+                ctx.fillRect(barX, abilityBarY, barWidth, abilityMeterHeight);
                 ctx.fillStyle = tacticalAbilitySystem.isActive() ? '#ff6bff' : abilityUnlocked ? '#a66bff' : '#52606a';
-                ctx.fillRect(barX, abilityBarY, barWidth * abilityPercent, barHeight);
+                ctx.fillRect(barX, abilityBarY, barWidth * abilityPercent, abilityMeterHeight);
                 ctx.strokeStyle = tacticalAbilitySystem.isActive() ? '#ffffff' : '#a66bff';
-                ctx.strokeRect(barX, abilityBarY, barWidth, barHeight);
+                ctx.strokeRect(barX, abilityBarY, barWidth, abilityMeterHeight);
                 ctx.fillStyle = tacticalAbilitySystem.isActive() ? '#ffffff' : '#c59cff';
-                ctx.font = '14px Arial';
+                ctx.font = 'bold 13px Arial';
                 const abilityState = tacticalAbilitySystem.isActive()
                     ? `ACTIVE ${tacticalAbilitySystem.getActiveTimeRemaining().toFixed(1)}s`
                     : !abilityUnlocked
@@ -2193,11 +2206,16 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                             : tacticalAbilitySystem.isChargeFull()
                                 ? 'READY [E]'
                                 : 'CHARGING';
-                ctx.fillText(`${abilityName}  ${Math.floor(tacticalAbilitySystem.getCharge())}%  •  ${abilityState}`, barX + 160, abilityBarY + 10);
+                const storedUses = tacticalAbilitySystem.getStoredUses();
+                const cartridgeCapacity = tacticalAbilitySystem.getMagazineCapacity();
+                ctx.fillText(`${abilityName}  •  ${abilityState}`, barX + 8, abilityBarY + 16);
+                ctx.fillStyle = '#f0d5ff';
+                ctx.font = 'bold 12px monospace';
+                ctx.fillText(`CHARGE ${Math.floor(tacticalAbilitySystem.getCharge())}/${tacticalAbilitySystem.getMaxCharge()}  •  CARTRIDGES ${storedUses}/${cartridgeCapacity}`, barX + 8, abilityBarY + 42);
                 if (performance.now() < testNoticeUntil) {
                     ctx.fillStyle = '#ffcf5a';
                     ctx.font = 'bold 14px monospace';
-                    ctx.fillText(testNoticeText, barX + 160, abilityBarY + 30);
+                    ctx.fillText(testNoticeText, barX + 160, abilityBarY + 56);
                 }
                 drawContactPanel(ctx);
 
@@ -3385,7 +3403,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         return;
                     }
 
-                    drawCard(28, 156, 944, 730, 'TACTICAL OPS // SPECIAL ABILITIES', '#c59cff');
+                    drawCard(28, 156, 944, 978, 'TACTICAL OPS // SPECIAL ABILITIES', '#c59cff');
                     const abilityUnlocked = tacticalAbilitySystem.isSystemUnlocked(shipSystem.getCurrentShipId());
                     ctx.textAlign = 'left';
                     ctx.fillStyle = abilityUnlocked ? '#c59cff' : '#ff8f8f';
@@ -3393,7 +3411,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     ctx.fillText(abilityUnlocked ? 'SYSTEM ONLINE  •  SELECT ONE ACTIVE MODULE' : 'SYSTEM LOCKED  •  REQUIRES DESTROYER HULL', 52, 342);
                     ctx.fillStyle = '#8ea4b2';
                     ctx.font = '14px Arial';
-                    ctx.fillText('High-cost tactical systems charge from enemy defeats and are designed for decisive moments.', 52, 366);
+                    ctx.fillText('Passive charge fills one cartridge in 20 seconds. Each enemy defeat adds +0.1% tactical charge.', 52, 366);
                     tacticalAbilitySystem.getAllTypes().forEach((type, index) => {
                         const abilityY = 392 + index * 164;
                         const status = tacticalAbilitySystem.getStatus(type, shipSystem.getCurrentShipId());
@@ -3418,6 +3436,27 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                             ctx.fillText('MAXIMUM', 790, abilityY + 110);
                         }
                     });
+
+                    const magazineY = 1048;
+                    const nextMagazineCost = tacticalAbilitySystem.getNextMagazineCost();
+                    const magazineCapacity = tacticalAbilitySystem.getMagazineCapacity();
+                    const storedUses = tacticalAbilitySystem.getStoredUses();
+                    const canAffordMagazine = Boolean(nextMagazineCost && abilityUnlocked && gameState.score >= nextMagazineCost);
+                    drawCard(48, magazineY, 904, 74, 'TACTICAL MAGAZINE // CONSECUTIVE USE RESERVE', '#fbbf24');
+                    ctx.textAlign = 'left';
+                    ctx.fillStyle = '#f6d78c';
+                    ctx.font = 'bold 15px Arial';
+                    ctx.fillText(`CAPACITY ${magazineCapacity}/3  •  STORED USES ${storedUses}/${magazineCapacity}  •  EACH CARTRIDGE FILLS IN 20s`, 72, magazineY + 42);
+                    ctx.fillStyle = '#8ea4b2';
+                    ctx.font = '12px Arial';
+                    ctx.fillText('Reserve cartridges store full tactical activations. Expensive upgrades: capacity 2 costs 2,000,000; capacity 3 costs 4,000,000.', 72, magazineY + 62);
+                    if (nextMagazineCost) {
+                        drawButton('ability-magazine-buy', `BUY RESERVE  ${nextMagazineCost} PTS`, 704, magazineY + 25, 216, 38, canAffordMagazine ? '#fbbf24' : '#ff6666', purchaseTacticalMagazine);
+                    } else {
+                        ctx.fillStyle = '#00ff88';
+                        ctx.font = 'bold 14px Arial';
+                        ctx.fillText('MAXIMUM 3-CARTRIDGE RESERVE', 704, magazineY + 50);
+                    }
                     // drawShopFooter removed per user request to eliminate bottom buttons area
                     return;
 

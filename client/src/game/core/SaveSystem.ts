@@ -11,6 +11,11 @@ export interface SaveData {
     currentWeapon: string;
     tacticalAbilityLevels?: Record<string, number>;
     selectedTacticalAbility?: string;
+    tacticalAbilityState?: {
+        levels: Record<string, number>;
+        selectedAbility: string;
+        magazineCapacity?: number;
+    };
     maxUnlockedLevel?: number;
 }
 
