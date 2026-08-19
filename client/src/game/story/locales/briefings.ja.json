@@ -1,0 +1,2543 @@
+[
+  {
+    "stage": 1,
+    "title": "ステージ1",
+    "location": "セクター1",
+    "objective": "セクター1の任務を完了し、生き残れ。",
+    "missionTargetName": "セクター1の目標",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "パイロット、これは実験機だ。指示は私からのみだ。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "見て。完璧よ、この機体。汚れた手で触ったら指を折るわよ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "パイロット、これは実験機だ。指示は私からのみだ。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "見て、完璧ね。この機体に触るなら覚悟しなさい、汚い手なら指を折るわ。"
+    }
+  },
+  {
+    "stage": 2,
+    "title": "ステージ 2",
+    "location": "セクター2",
+    "objective": "セクター2の任務を完了し、生還せよ。",
+    "missionTargetName": "セクター2の標的",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "海賊船。命令通り、撃破せよ。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "私の武器は銀河随一の精度よ。存分に使いなさい。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "海賊船。命令通り、撃破せよ。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "武器は準備完了。大事に使って。彼女は余計な騒ぎを嫌うのよ。"
+    }
+  },
+  {
+    "stage": 3,
+    "title": "ステージ 3",
+    "location": "セクター3",
+    "objective": "セクター3の任務を完了し、生還せよ。",
+    "missionTargetName": "セクター3の標的",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "速やかに撃破せよ。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "シールドがもう破損寸前よ！何やってるの、バカ？こっち来なさい！"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "速やかに撃破せよ。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "彼女のシールドはもう崩壊寸前だったわ！"
+    }
+  },
+  {
+    "stage": 4,
+    "title": "ステージ 4",
+    "location": "セクター4",
+    "objective": "セクター4の任務を完了し、生還せよ。",
+    "missionTargetName": "セクター4の標的",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "帰還。状況報告を。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "キズは直しておいたわ。これで完璧。柔らかい布を持ってきて。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "帰還。状況報告を。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "直しておいたわ。柔らかい布も持ってきた。"
+    }
+  },
+  {
+    "stage": 5,
+    "title": "ステージ 5",
+    "location": "セクター5",
+    "objective": "セクター5の任務を完了し、生還せよ。",
+    "missionTargetName": "セクター5の標的",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "護衛任務。護送隊を守れ。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "見て、この滑り。これはただの宇宙船じゃない、芸術品よ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "護衛任務。護送隊を守れ。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "彼女は小惑星の狭間を縫うように滑る。まるで生まれついての技よ。"
+    }
+  },
+  {
+    "stage": 6,
+    "title": "ステージ 6",
+    "location": "セクター6",
+    "objective": "セクター6の任務を完了し、生還せよ。",
+    "missionTargetName": "セクター6の標的",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "攻撃だ。応戦しろ。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "エンジンが震えた！すぐに温かいオイルを持ってくるわ。二度と同じことがあれば、あんたが痛い目を見るからね！"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "攻撃だ。応戦しろ。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "彼女のエンジンが震えた。彼女は揺さぶられるのを嫌うのよ。"
+    }
+  },
+  {
+    "stage": 7,
+    "title": "ステージ 7",
+    "location": "セクター7",
+    "objective": "セクター7の任務を完了し、生還せよ。",
+    "missionTargetName": "セクター7の標的",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "任務完了。帰還せよ。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "冷却系を強化しておいたわ。これでさらに完璧。私に感謝しなさい。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "任務完了。帰還せよ。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "冷却を強化した。今はより安定しているわ。"
+    }
+  },
+  {
+    "stage": 8,
+    "title": "ステージ 8",
+    "location": "セクター8",
+    "objective": "セクター8の任務を完了し、生還せよ。",
+    "missionTargetName": "セクター8の標的",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "境界パトロール。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "埃まみれで戻ってきたら、スウェーデン製レンチでぶん殴るわよ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "境界パトロール。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "もし彼女に埃をつけて戻ってきたら、スウェーデン製レンチでぶん殴るからね。"
+    }
+  },
+  {
+    "stage": 9,
+    "title": "ステージ 9",
+    "location": "セクター9",
+    "objective": "セクター9の任務を完了し、生還せよ。",
+    "missionTargetName": "セクター9の標的",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "動きなし。帰還せよ。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "さっきの機動は完璧だったわ。彼女が誇らしくて、泣きそうよ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "動きなし。帰還せよ。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "今回の機動は正確だった。彼女も喜んでたわ。"
+    }
+  },
+  {
+    "stage": 10,
+    "title": "ステージ10",
+    "location": "セクター10",
+    "objective": "セクター10の任務を完了し、生き残れ。",
+    "missionTargetName": "セクター10の標的",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "明日は指名手配者の討伐だ。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "あれを命より大切にして。君の命なんて二の次よ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "明日は指名手配者の討伐だ。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "あれを守りなさい。君の命なんて比べ物にならないわ。"
+    }
+  },
+  {
+    "stage": 11,
+    "title": "ステージ11",
+    "location": "セクター11",
+    "objective": "セクター11の任務を完了し、生き残れ。",
+    "missionTargetName": "セクター11の標的",
+    "contact": {
+      "name": "ゴースト",
+      "message": "パイロット、回線を割り込んだ。賞金首、報酬あり。"
+    },
+    "inMissionComms": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "誰だ？"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "パイロット、回線を割り込んだ。賞金首、報酬あり。"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "誰だ？"
+    }
+  },
+  {
+    "stage": 12,
+    "title": "ステージ12",
+    "location": "セクター12",
+    "objective": "セクター12の任務を完了し、生き残れ。",
+    "missionTargetName": "セクター12の標的",
+    "contact": {
+      "name": "ゴースト",
+      "message": "レイザー大尉。賞金50万。"
+    },
+    "inMissionComms": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "公式任務。殲滅せよ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "レイザー大尉。賞金50万。"
+      }
+    ],
+    "afterAction": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "公式任務。殲滅せよ。"
+    }
+  },
+  {
+    "stage": 13,
+    "title": "ステージ13",
+    "location": "セクター13",
+    "objective": "セクター13の任務を完了し、生き残れ。",
+    "missionTargetName": "セクター13の標的",
+    "contact": {
+      "name": "ナオミ・レン博士",
+      "message": "この汚れが落ちないの。溶剤を三種類試したけど。あの子は気に入らないみたい。"
+    },
+    "inMissionComms": {
+      "name": "ゴースト",
+      "message": "オリオン付近にいる。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ナオミ・レン博士",
+        "message": "この汚れが落ちないの。溶剤を三種類試したけど。あの子は気に入らないみたい。"
+      }
+    ],
+    "afterAction": {
+      "name": "ゴースト",
+      "message": "オリオン付近にいる。"
+    }
+  },
+  {
+    "stage": 14,
+    "title": "ステージ14",
+    "location": "セクター14",
+    "objective": "セクター14の任務を完了し、生き残れ。",
+    "missionTargetName": "セクター14の標的",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "殲滅せよ。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "シールドがもう崩れかけてる！わざとなの？！こっち来なさい、一発お見舞いしてあげる！"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "殲滅せよ。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "あの子のシールドがもう限界よ！"
+    }
+  },
+  {
+    "stage": 15,
+    "title": "ステージ15",
+    "location": "セクター15",
+    "objective": "セクター15の任務を完了し、生き残れ。",
+    "missionTargetName": "セクター15の標的",
+    "contact": {
+      "name": "ゴースト",
+      "message": "いいぞ。報酬、送る。"
+    },
+    "inMissionComms": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "帰還。報告を。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "いいぞ。報酬、送る。"
+      }
+    ],
+    "afterAction": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "帰還。報告を。"
+    }
+  },
+  {
+    "stage": 16,
+    "title": "ステージ16",
+    "location": "セクター16",
+    "objective": "セクター16の任務を完了し、生き残れ。",
+    "missionTargetName": "セクター16の標的",
+    "contact": {
+      "name": "ゴースト",
+      "message": "レディ・ヴォックス。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "私の武器が彼女を欲しがってる。思い切り使いなさい。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "レディ・ヴォックス。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "彼女の武器が待機しているわ。"
+    }
+  },
+  {
+    "stage": 17,
+    "title": "ステージ17",
+    "location": "セクター17",
+    "objective": "セクター17の任務を完了し、生き残れ。",
+    "missionTargetName": "セクター17の標的",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "逃がすな。"
+    },
+    "inMissionComms": {
+      "name": "ゴースト",
+      "message": "ネビュラセルの塵雲。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "逃がすな。"
+      }
+    ],
+    "afterAction": {
+      "name": "ゴースト",
+      "message": "ネビュラセルの塵雲。"
+    }
+  },
+  {
+    "stage": 18,
+    "title": "ステージ18",
+    "location": "セクター18",
+    "objective": "セクター18の任務を完了し、生還せよ。",
+    "missionTargetName": "セクター18目標",
+    "contact": {
+      "name": "ナオミ・レン博士",
+      "message": "傷がついてるわ！"
+    },
+    "inMissionComms": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "星の反射だ、本当だ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ナオミ・レン博士",
+        "message": "傷がついてるわ！"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "おい、なんでそんなことをした？"
+    }
+  },
+  {
+    "stage": 19,
+    "title": "ステージ19",
+    "location": "セクター19",
+    "objective": "セクター19の任務を完了し、生還せよ。",
+    "missionTargetName": "セクター19目標",
+    "contact": {
+      "name": "ゴースト",
+      "message": "もう一つ、待っている。"
+    },
+    "inMissionComms": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "報告し、その後休め。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "もう一つ、待っている。"
+      }
+    ],
+    "afterAction": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "報告し、その後休め。"
+    }
+  },
+  {
+    "stage": 20,
+    "title": "ステージ20",
+    "location": "セクター20",
+    "objective": "セクター20の任務を完了し、生還せよ。",
+    "missionTargetName": "セクター20目標",
+    "contact": {
+      "name": "ゴースト",
+      "message": "お前の軍に、何か臭う。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "感じるのは新しいオイルの匂いだけ。君の汗も少しね。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "お前の軍に、何か臭う。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "彼女が嗅ぐのは新しいオイルの匂いとビッグマック。"
+    }
+  },
+  {
+    "stage": 21,
+    "title": "ステージ21",
+    "location": "セクター21",
+    "objective": "セクター21の任務を完了し、生還せよ。",
+    "missionTargetName": "セクター21目標",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "密輸船だ。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "見て、この操縦。飛行じゃない、踊りよ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "密輸船だ。"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "離脱する。"
+    }
+  },
+  {
+    "stage": 22,
+    "title": "ステージ22",
+    "location": "セクター22",
+    "objective": "セクター22の任務を完了し、生還せよ。",
+    "missionTargetName": "セクター22目標",
+    "contact": {
+      "name": "ゴースト",
+      "message": "軍が欲しがる物を運んでいる。"
+    },
+    "inMissionComms": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "実行せよ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "軍が欲しがる物を運んでいる。"
+      }
+    ],
+    "afterAction": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "実行せよ。"
+    }
+  },
+  {
+    "stage": 23,
+    "title": "ステージ23",
+    "location": "セクター23",
+    "objective": "セクター23の任務を完了し、生還せよ。",
+    "missionTargetName": "セクター23目標",
+    "contact": {
+      "name": "ナオミ・レン博士",
+      "message": "古い跡のそばにまた小さな染みよ！"
+    },
+    "inMissionComms": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "後方の窓の光だ…"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ナオミ・レン博士",
+        "message": "古い跡のそばにまた小さな染みよ！"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "光だ…"
+    }
+  },
+  {
+    "stage": 24,
+    "title": "ステージ24",
+    "location": "セクター24",
+    "objective": "セクター24の任務を完了し、生還せよ。",
+    "missionTargetName": "セクター24目標",
+    "contact": {
+      "name": "ゴースト",
+      "message": "軍は侵攻について沈黙している。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "圧力センサー直したわ。今は私の好む通りに精密よ。ほとんど私みたい。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "軍は侵攻について沈黙している。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "センサーは直した。染みには別の溶剤を試したけど、効果なし。"
+    }
+  },
+  {
+    "stage": 25,
+    "title": "ステージ25",
+    "location": "セクター25",
+    "objective": "セクター25の任務を完了し、生還せよ。",
+    "missionTargetName": "セクター25目標",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "国境パトロールだ。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "もし宇宙塵を連れて帰ったら、この美しいスウェーデン製レンチでぶん殴るわよ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "国境パトロールだ。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "塵が付いてたら—スウェーデン製レンチよ。"
+    }
+  },
+  {
+    "stage": 26,
+    "title": "ステージ26",
+    "location": "セクター26",
+    "objective": "セクター26の任務を完了して、生還せよ。",
+    "missionTargetName": "セクター26の目標",
+    "contact": {
+      "name": "ゴースト",
+      "message": "異星の動き。艦隊が注視している。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "最後の機動は完璧だった。自分より彼女を誇りに思っている。それは相当なことよ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "異星の動き。艦隊が注視している。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "彼女の機動は正確だったわ。"
+    }
+  },
+  {
+    "stage": 27,
+    "title": "ステージ27",
+    "location": "セクター27",
+    "objective": "セクター27の任務を完了して、生還せよ。",
+    "missionTargetName": "セクター27の目標",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "直ちに撤退せよ。介入は許されない。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "ようやく彼女を守る命令が出たわ。考えた奴に敬意を表する。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "直ちに撤退せよ。介入は許されない。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "やっと彼女を守る命令が出たわ。"
+    }
+  },
+  {
+    "stage": 28,
+    "title": "ステージ28",
+    "location": "セクター28",
+    "objective": "セクター28の任務を完了して、生還せよ。",
+    "missionTargetName": "セクター28の目標",
+    "contact": {
+      "name": "ゴースト",
+      "message": "侵攻は技術と繋がっている。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "重要なのは私の技術だけよ。誰かが私をコピーした。必ず見つけ出すわ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "侵攻は技術と繋がっている。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "誰かが彼女をコピーした。私は父の仕業だと強く疑っている。"
+    }
+  },
+  {
+    "stage": 29,
+    "title": "ステージ29",
+    "location": "セクター29",
+    "objective": "セクター29の任務を完了して、生還せよ。",
+    "missionTargetName": "セクター29の目標",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "明日、セラと会う。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "あの人も似た艦を持っているの？！誰が私の創作を盗んだのよ？！きっとあの愚かなラハブ教授よ！"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "明日、セラと会う。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "彼女は似た艦を持っている。間違いなくラハブよ。他に理解できる者はいない。"
+    }
+  },
+  {
+    "stage": 30,
+    "title": "ステージ30",
+    "location": "セクター30",
+    "objective": "セクター30の任務を完了して、生還せよ。",
+    "missionTargetName": "セクター30の目標",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "一騎討ち。上層部の命令だ。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "もしあの女が私の艦に触れたら、私はそれを解体してもっと良く組み直す。ラハブは始末するわ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "一騎討ち。上層部の命令だ。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "触れられたら解体するわ。ラハブのことは後でだ。"
+    }
+  },
+  {
+    "stage": 31,
+    "title": "ステージ31",
+    "location": "セクター31",
+    "objective": "セクター31の任務を完了して、生還せよ。",
+    "missionTargetName": "セクター31の目標",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "1時間後だ。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "私の武器は準備済みよ。最高に精密だ。ラハブはきっとその発想まで盗んだのね。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "1時間後だ。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "彼女の武器は準備できているわ。"
+    }
+  },
+  {
+    "stage": 32,
+    "title": "ステージ32",
+    "location": "セクター32",
+    "objective": "セクター32の任務を完了して、生還せよ。",
+    "missionTargetName": "セクター32の目標",
+    "contact": {
+      "name": "セラ・ケイン",
+      "message": "さっさと片をつけようぜ。"
+    },
+    "inMissionComms": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "準備完了。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "セラ・ケイン",
+        "message": "さっさと片をつけようぜ。"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "準備完了。"
+    }
+  },
+  {
+    "stage": 33,
+    "title": "ステージ33",
+    "location": "セクター33",
+    "objective": "セクター33の任務を完了して、生還せよ。",
+    "missionTargetName": "セクター33の目標",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "引き分けだ。二人とも帰還せよ。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "傷がついているわ！あの愚かなラハブが娘の技術を盗んだのよ！あいつを許さない、始末するわ！"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "引き分けだ。二人とも帰還せよ。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "傷があるわ。ラハブが彼女から部品を盗んだのだろう。他にあの構造を理解できる者はいない。"
+    }
+  },
+  {
+    "stage": 34,
+    "title": "ステージ34",
+    "location": "セクター34",
+    "objective": "セクター34の任務を完遂し、生き延びよ。",
+    "missionTargetName": "セクター34の目標",
+    "contact": {
+      "name": "ゴースト",
+      "message": "艦隊が侵攻を仕組んだ。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "静寂を頼んだのに、盗みと擦り傷だけが届いたわ。ラハブ教授、あなたでしょ！"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "艦隊が侵攻を仕組んだ。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "盗みと汚点が届いたわ…ラハブ教授。"
+    }
+  },
+  {
+    "stage": 35,
+    "title": "ステージ35",
+    "location": "セクター35",
+    "objective": "セクター35の任務を完遂し、生き延びよ。",
+    "missionTargetName": "セクター35の目標",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "上層部の命令だ。従い続ける。"
+    },
+    "inMissionComms": {
+      "name": "ゴースト",
+      "message": "エレナ、腐敗している。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "上層部の命令だ。従い続ける。"
+      }
+    ],
+    "afterAction": {
+      "name": "ゴースト",
+      "message": "エレナ、腐敗している。"
+    }
+  },
+  {
+    "stage": 36,
+    "title": "ステージ36",
+    "location": "セクター36",
+    "objective": "セクター36の任務を完遂し、生き延びよ。",
+    "missionTargetName": "セクター36の目標",
+    "contact": {
+      "name": "ゴースト",
+      "message": "セラはまだ自分が一番だ。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "彼女に傷が付かなければいいけど。そうでなければ私は残って、遠隔から皆を――ラハブ教授も含めて――始末するわ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "セラはまだ自分が一番だ。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "始めないで。"
+    }
+  },
+  {
+    "stage": 37,
+    "title": "ステージ37",
+    "location": "セクター37",
+    "objective": "セクター37の任務を完遂し、生き延びよ。",
+    "missionTargetName": "セクター37の目標",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "任務が追加された。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "脱出シーケンス、起動。エンジンが歌ってる…聞いて、この美しさ。あなたのせいじゃない、彼らのせいよ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "任務が追加された。"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "エレナ、ずっと前からここ、何かがおかしいと感じてなかったか？"
+    }
+  },
+  {
+    "stage": 38,
+    "title": "ステージ38",
+    "location": "セクター38",
+    "objective": "セクター38の任務を完遂し、生き延びよ。",
+    "missionTargetName": "セクター38の目標",
+    "contact": {
+      "name": "ゴースト",
+      "message": "また指名手配だ。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "追跡で私の船に触れる奴がいれば、私が見つけ出す。ラハブ教授も同様よ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "また指名手配だ。"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "時々、俺たちは本当に誰のために働いているんだろうって思う。"
+    }
+  },
+  {
+    "stage": 39,
+    "title": "ステージ39",
+    "location": "セクター39",
+    "objective": "セクター39の任務を完遂し、生き延びよ。",
+    "missionTargetName": "セクター39の目標",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "帰還せよ。報告を送れ。"
+    },
+    "inMissionComms": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "撤退中だ、涼む暇はない。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "帰還せよ。報告を送れ。"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "目標、排除完了。これでまた一つだ。"
+    }
+  },
+  {
+    "stage": 40,
+    "title": "ステージ40",
+    "location": "セクター40",
+    "objective": "セクター40の任務を完遂し、生き延びよ。",
+    "missionTargetName": "セクター40の目標",
+    "contact": {
+      "name": "ゴースト",
+      "message": "艦隊が沈黙しすぎている。"
+    },
+    "inMissionComms": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "止まったら直すさ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "艦隊が沈黙しすぎている。"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "この沈黙、だんだん危険に感じてきた。"
+    }
+  },
+  {
+    "stage": 41,
+    "title": "ステージ41",
+    "location": "セクター41",
+    "objective": "セクター41の任務を完遂し、生き延びよ。",
+    "missionTargetName": "セクター41の目標",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "境界の巡回任務だ。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "武器がうずいてるわ。それに暑いの、エアコン壊れてるからお腹も減った。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "境界の巡回任務だ。"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "もし見てはいけないものを見てしまったら、どうする？"
+    }
+  },
+  {
+    "stage": 42,
+    "title": "ステージ42",
+    "location": "セクター42",
+    "objective": "セクター42の任務を完了して生還せよ。",
+    "missionTargetName": "セクター42の目標",
+    "contact": {
+      "name": "ゴースト",
+      "message": "異星体、大規模な動き。艦隊は見て見ぬふりだ。"
+    },
+    "inMissionComms": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "少なくとも、あいつは死んだ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "異星体、大規模な動き。艦隊は見て見ぬふりだ。"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "あと何回、見て見ぬふりを続けるつもりだ？"
+    }
+  },
+  {
+    "stage": 43,
+    "title": "ステージ43",
+    "location": "セクター43",
+    "objective": "セクター43の任務を完了して生還せよ。",
+    "missionTargetName": "セクター43の目標",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "介入は許されない、帰還せよ。"
+    },
+    "inMissionComms": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "帰ったらエアコン直す。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "介入は許されない、帰還せよ。"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "それをまだ単なる命令だと信じているのか？"
+    }
+  },
+  {
+    "stage": 44,
+    "title": "ステージ44",
+    "location": "セクター44",
+    "objective": "セクター44の任務を完了して生還せよ。",
+    "missionTargetName": "セクター44の目標",
+    "contact": {
+      "name": "ゴースト",
+      "message": "侵攻と技術に明確な相関がある。"
+    },
+    "inMissionComms": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "俺はただボタンを押しただけだ…"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "侵攻と技術に明確な相関がある。"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "誰かが俺たちより大きなゲームを仕掛けている。"
+    }
+  },
+  {
+    "stage": 45,
+    "title": "ステージ45",
+    "location": "セクター45",
+    "objective": "セクター45の任務を完了して生還せよ。",
+    "missionTargetName": "セクター45の目標",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "明日、またセラとの面会がある。"
+    },
+    "inMissionComms": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "狙いを付けたのは俺だ…"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "明日、またセラとの面会がある。"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "今度は引き分けで終わらなかったらどうする？"
+    }
+  },
+  {
+    "stage": 46,
+    "title": "ステージ46",
+    "location": "セクター46",
+    "objective": "セクター46の任務を完了して生還せよ。",
+    "missionTargetName": "セクター46の目標",
+    "contact": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "反乱だ、脱出する。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "今はエアコンの方が重要よ！暑さで死にそうだわ！"
+    },
+    "dialogueSequence": [
+      {
+        "name": "プロジェクト・ゼロのパイロット",
+        "message": "反乱だ、脱出する。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "彼女が無事なら私も脱出する。傷つくなら私は残る。"
+    }
+  },
+  {
+    "stage": 47,
+    "title": "ステージ47",
+    "location": "セクター47",
+    "objective": "セクター47の任務を完了して生還せよ。",
+    "missionTargetName": "セクター47の目標",
+    "contact": {
+      "name": "ゴースト",
+      "message": "ルート開け。逃げろ。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "私の武器がやつを倒した。完璧よ。だが相変わらず暑いわ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "ルート開け。逃げろ。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "脱出モード起動。彼女のエンジンは安定している。"
+    }
+  },
+  {
+    "stage": 48,
+    "title": "ステージ48",
+    "location": "セクター48",
+    "objective": "セクター48の任務を完了して生還せよ。",
+    "missionTargetName": "セクター48の目標",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "艦隊が総追跡中だ！"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "エアコン直したわ！やっとよ！彼女はまた完璧、私も汗をかかない。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "艦隊が総追跡中だ！"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "誰かが彼女に触れたら、私が必ず見つけ出す。"
+    }
+  },
+  {
+    "stage": 49,
+    "title": "ステージ49",
+    "location": "セクター49",
+    "objective": "セクター49の任務を完了して生還せよ。",
+    "missionTargetName": "セクター49の目標",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "パイロット、軍法会議だ。ナオミ、お前は全てを失う。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "彼女に手を出せば、並行次元のエネルギーで彼らを粉塵にしてしまう。見ていなさい。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "パイロット、軍法会議だ。ナオミ、お前は全てを失う。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "彼女のエンジンが震えた。疲弊している。"
+    }
+  },
+  {
+    "stage": 50,
+    "title": "ステージ50",
+    "location": "セクター50",
+    "objective": "セクター50の任務を完遂し、生還せよ。",
+    "missionTargetName": "セクター50の標的",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "捕縛される。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "近寄らないで！ラハブ教授が私の技術を盗んだに違いないわ！"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "捕縛される。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "小惑星帯に入るわ。あの子は混雑が嫌いよ。"
+    }
+  },
+  {
+    "stage": 51,
+    "title": "ステージ51",
+    "location": "セクター51",
+    "objective": "セクター51の任務を完遂し、生還せよ。",
+    "missionTargetName": "セクター51の標的",
+    "contact": {
+      "name": "ナオミ・レン博士",
+      "message": "あの子の窓が砂だらけよ！"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "今、時間を止めてるわ。見て、この完璧な能力。操縦士の手柄じゃない、私のものよ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ナオミ・レン博士",
+        "message": "あの子の窓が砂だらけよ！"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "センサー通りに飛行する。"
+    }
+  },
+  {
+    "stage": 52,
+    "title": "ステージ52",
+    "location": "セクター52",
+    "objective": "セクター52の任務を完遂し、生還せよ。",
+    "missionTargetName": "セクター52の標的",
+    "contact": {
+      "name": "ナオミ・レン博士",
+      "message": "翼に擦り傷がついてる！あのシミがまだ消えないの。宇宙の物質はほとんど試したけど、パテだけは未使用よ！"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "波でシールドがもう割れるところだった！パイロット、あんたのせいよ！しかもラハブ教授がシールドのアイデアを盗んだの！"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ナオミ・レン博士",
+        "message": "翼に擦り傷がついてる！あのシミがまだ消えないの。宇宙の物質はほとんど試したけど、パテだけは未使用よ！"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "たぶん…"
+    }
+  },
+  {
+    "stage": 53,
+    "title": "ステージ53",
+    "location": "セクター53",
+    "objective": "セクター53の任務を完遂し、生還せよ。",
+    "missionTargetName": "セクター53の標的",
+    "contact": {
+      "name": "ナオミ・レン博士",
+      "message": "ステルス装置が点滅している！"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "並行次元からエネルギーを吸い取った。武器の威力が二倍に。これぞ私の力よ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ナオミ・レン博士",
+        "message": "ステルス装置が点滅している！"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "振動だ。"
+    }
+  },
+  {
+    "stage": 54,
+    "title": "ステージ54",
+    "location": "セクター54",
+    "objective": "セクター54の任務を完遂し、生還せよ。",
+    "missionTargetName": "セクター54の標的",
+    "contact": {
+      "name": "ナオミ・レン博士",
+      "message": "ジェネレーターが不調よ！"
+    },
+    "inMissionComms": {
+      "name": "セラ・ケイン",
+      "message": "まだ後ろにいるぞ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ナオミ・レン博士",
+        "message": "ジェネレーターが不調よ！"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "安定させている。"
+    }
+  },
+  {
+    "stage": 55,
+    "title": "ステージ55",
+    "location": "セクター55",
+    "objective": "セクター55の任務を完遂し、生還せよ。",
+    "missionTargetName": "セクター55の標的",
+    "contact": {
+      "name": "ナオミ・レン博士",
+      "message": "床に破片が散らばっている！"
+    },
+    "inMissionComms": {
+      "name": "セラ・ケイン",
+      "message": "このデータ、何だ？"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ナオミ・レン博士",
+        "message": "床に破片が散らばっている！"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "後で！"
+    }
+  },
+  {
+    "stage": 56,
+    "title": "ステージ56",
+    "location": "セクター56",
+    "objective": "セクター56の任務を完遂し、生還せよ。",
+    "missionTargetName": "セクター56の標的",
+    "contact": {
+      "name": "ナオミ・レン博士",
+      "message": "航法が三つの航路を示してる！"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "また時間を止めるわ。見て、完璧でしょ。操縦士はただボタンを押してるだけよ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ナオミ・レン博士",
+        "message": "航法が三つの航路を示してる！"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "一つ選ぶ。"
+    }
+  },
+  {
+    "stage": 57,
+    "title": "ステージ57",
+    "location": "セクター57",
+    "objective": "セクター57の任務を完遂し、生還せよ。",
+    "missionTargetName": "セクター57の標的",
+    "contact": {
+      "name": "ナオミ・レン博士",
+      "message": "窓にひびが入り始めてる！"
+    },
+    "inMissionComms": {
+      "name": "セラ・ケイン",
+      "message": "追跡してる最中に寄り道か？図々しいな。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ナオミ・レン博士",
+        "message": "窓にひびが入り始めてる！"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "もう少しだ。"
+    }
+  },
+  {
+    "stage": 58,
+    "title": "ステージ58",
+    "location": "ゾーン58",
+    "objective": "ゾーン58の任務を完了して生き残れ。",
+    "missionTargetName": "ゾーン58の標的",
+    "contact": {
+      "name": "ナオミ・レン博士",
+      "message": "全部、あの機体の上で振動してるわ！"
+    },
+    "inMissionComms": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "(極秘) 窓は短い。増援を遅らせている。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ナオミ・レン博士",
+        "message": "全部、あの機体の上で振動してるわ！"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "危なかった。今のは当たるところだった。"
+    }
+  },
+  {
+    "stage": 59,
+    "title": "ステージ59",
+    "location": "ゾーン59",
+    "objective": "ゾーン59の任務を完了して生き残れ。",
+    "missionTargetName": "ゾーン59の標的",
+    "contact": {
+      "name": "ナオミ・レン博士",
+      "message": "あの子のステルスが吹き飛んだわ！"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "そうよ。そして私の技術まで盗まれた。ラハブの愚か者め。ぶっ潰してやる。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ナオミ・レン博士",
+        "message": "あの子のステルスが吹き飛んだわ！"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "脱出した！"
+    }
+  },
+  {
+    "stage": 60,
+    "title": "ステージ60",
+    "location": "ゾーン60",
+    "objective": "ゾーン60の任務を完了して生き残れ。",
+    "missionTargetName": "ゾーン60の標的",
+    "contact": {
+      "name": "セラ・ケイン",
+      "message": "見つけた。追ってる。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "やっと落ち着いたわ。これでまた空調を直せる。咳き込んでるけど。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "セラ・ケイン",
+        "message": "見つけた。追ってる。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "壊れてる。ラハブはあの飛行ガラクタを誇らしく思ってるだろうけど。"
+    }
+  },
+  {
+    "stage": 61,
+    "title": "ステージ61",
+    "location": "ゾーン61",
+    "objective": "ゾーン61の任務を完了して生き残れ。",
+    "missionTargetName": "ゾーン61の標的",
+    "contact": {
+      "name": "セラ・ケイン",
+      "message": "後ろにいるぞ。"
+    },
+    "inMissionComms": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "やっとだ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "セラ・ケイン",
+        "message": "後ろにいるぞ。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "時間停止。使いなさい。彼女は少し間が必要よ。ラハブは待つことを教えてないんだろうけど。"
+    }
+  },
+  {
+    "stage": 62,
+    "title": "ステージ62",
+    "location": "ゾーン62",
+    "objective": "ゾーン62の任務を完了して生き残れ。",
+    "missionTargetName": "ゾーン62の標的",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "(極秘) セラに破壊命令が出ている。私が遅らせている。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "時間停止システムを改良したわ。今は3秒。見て、この完璧さ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "(極秘) セラに破壊命令が出ている。私が遅らせている。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "彼女のシールド、もう少しで割れるところだったわ！"
+    }
+  },
+  {
+    "stage": 63,
+    "title": "ステージ63",
+    "location": "ゾーン63",
+    "objective": "ゾーン63の任務を完了して生き残れ。",
+    "missionTargetName": "ゾーン63の標的",
+    "contact": {
+      "name": "セラ・ケイン",
+      "message": "まだ追ってる。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "私の武器は飢えてる。誇らしくてラハブのことなんて忘れそうよ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "セラ・ケイン",
+        "message": "まだ追ってる。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "彼女からエネルギーを吸い取ったわ。武器は安定した。父の派手な武器とは違って、ただ火を引き寄せるだけじゃない。"
+    }
+  },
+  {
+    "stage": 64,
+    "title": "ステージ64",
+    "location": "ゾーン64",
+    "objective": "ゾーン64の任務を完了して生き残れ。",
+    "missionTargetName": "ゾーン64の標的",
+    "contact": {
+      "name": "ゴースト",
+      "message": "小規模の異星体の波だ。"
+    },
+    "inMissionComms": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "今回はボタンを強く押した。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "小規模の異星体の波だ。"
+      }
+    ],
+    "afterAction": {
+      "name": "セラ・ケイン",
+      "message": "見えてる。"
+    }
+  },
+  {
+    "stage": 65,
+    "title": "ステージ65",
+    "location": "ゾーン65",
+    "objective": "ゾーン65の任務を完了して生き残れ。",
+    "missionTargetName": "ゾーン65の標的",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "(極秘) セラ、データを確認しろ。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "大量のエネルギーを吸い上げたわ。今、彼女は輝いている。完璧よ。ラハブが嫉妬するほどだ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "(極秘) セラ、データを確認しろ。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "あの子のジェネレーターはまだ弱い。ラハブのガラクタみたいに騒がしくて迷惑ってわけじゃないけどね。"
+    }
+  },
+  {
+    "stage": 66,
+    "title": "ステージ66",
+    "location": "セクター66",
+    "objective": "セクター66の任務を完遂し、生還せよ。",
+    "missionTargetName": "セクター66の目標",
+    "contact": {
+      "name": "セラ・ケイン",
+      "message": "進めている…でも、データが…"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "武器は私に任せて。最高よ。だって私が作ったんだから。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "セラ・ケイン",
+        "message": "進めている…でも、データが…"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "また時間を止めたわ。静けさが必要なの。父のうるさい船とは違うのよ、サウンドスケープをぶち壊すような。"
+    }
+  },
+  {
+    "stage": 67,
+    "title": "ステージ67",
+    "location": "セクター67",
+    "objective": "セクター67の任務を完遂し、生還せよ。",
+    "missionTargetName": "セクター67の目標",
+    "contact": {
+      "name": "ゴースト",
+      "message": "小さな賞金だ。"
+    },
+    "inMissionComms": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "攻撃の後だ、今だ、撃て！"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "小さな賞金だ。"
+      }
+    ],
+    "afterAction": {
+      "name": "セラ・ケイン",
+      "message": "止まって狩るつもりか？！"
+    }
+  },
+  {
+    "stage": 68,
+    "title": "ステージ68",
+    "location": "セクター68",
+    "objective": "セクター68の任務を完遂し、生還せよ。",
+    "missionTargetName": "セクター68の目標",
+    "contact": {
+      "name": "セラ・ケイン",
+      "message": "接近中。"
+    },
+    "inMissionComms": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "いい仕事だ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "セラ・ケイン",
+        "message": "接近中。"
+      }
+    ],
+    "afterAction": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "(機密) 窓がある。増援を遅らせる。"
+    }
+  },
+  {
+    "stage": 69,
+    "title": "ステージ69",
+    "location": "セクター69",
+    "objective": "セクター69の任務を完遂し、生還せよ。",
+    "missionTargetName": "セクター69の目標",
+    "contact": {
+      "name": "セラ・ケイン",
+      "message": "データ…そしてベルトからの命令…"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "時間を3秒、完全に止めるわ。見て、完璧でしょ。パイロットはただ眺めてるだけよ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "セラ・ケイン",
+        "message": "データ…そしてベルトからの命令…"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "そうよ。ラハブ教授がその部品を盗んだの。今や彼のガラクタがこのセクターの構成を台無しにしてる。"
+    }
+  },
+  {
+    "stage": 70,
+    "title": "ステージ70",
+    "location": "セクター70",
+    "objective": "セクター70の任務を完遂し、生還せよ。",
+    "missionTargetName": "セクター70の目標",
+    "contact": {
+      "name": "セラ・ケイン",
+      "message": "止まる。考える。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "武器は撃つと歌うのよ。聞いて。全部私の改造の成果よ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "セラ・ケイン",
+        "message": "止まる。考える。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "やっと。これでその地点をもう一度試せるわ。"
+    }
+  },
+  {
+    "stage": 71,
+    "title": "ステージ71",
+    "location": "セクター71",
+    "objective": "セクター71の任務を完遂し、生還せよ。",
+    "missionTargetName": "セクター71の目標",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "(機密) セラ、追加データ。"
+    },
+    "inMissionComms": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "誰も触るな。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "(機密) セラ、追加データ。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "ジェネレーターは私が直してあげたの。"
+    }
+  },
+  {
+    "stage": 72,
+    "title": "ステージ72",
+    "location": "セクター72",
+    "objective": "セクター72の任務を完遂し、生還せよ。",
+    "missionTargetName": "セクター72の目標",
+    "contact": {
+      "name": "ゴースト",
+      "message": "比較的静かだ。ラハブ教授が傲慢なメッセージを送ってきた。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "エアコンは完璧。エンジンは唸り、武器は待機。全てが私の誇りよ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "比較的静かだ。ラハブ教授が傲慢なメッセージを送ってきた。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "時間停止をアップグレードしてやったの。ラハブ教授のあの重厚な設計とは違うのよ。"
+    }
+  },
+  {
+    "stage": 73,
+    "title": "ステージ73",
+    "location": "セクター73",
+    "objective": "セクター73の任務を完遂し、生還せよ。",
+    "missionTargetName": "セクター73の目標",
+    "contact": {
+      "name": "ゴースト",
+      "message": "賞金。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "来なさい。並行次元のエネルギーと時間停止がある。相手は何に手を出しているか分かっていないわ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "賞金。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "彼女の武器は準備完了よ。"
+    }
+  },
+  {
+    "stage": 74,
+    "title": "ステージ74",
+    "location": "セクター74",
+    "objective": "セクター74の任務を完遂し、生存せよ。",
+    "missionTargetName": "目標：セクター74",
+    "contact": {
+      "name": "ナオミ・レン博士",
+      "message": "時間を止める。凍らせるわ。"
+    },
+    "inMissionComms": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "後で！"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ナオミ・レン博士",
+        "message": "時間を止める。凍らせるわ。"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "撃つ。"
+    }
+  },
+  {
+    "stage": 75,
+    "title": "ステージ75",
+    "location": "セクター75",
+    "objective": "セクター75の任務を完遂し、生存せよ。",
+    "missionTargetName": "目標：セクター75",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "(機密) 事態がはっきりしてきた。"
+    },
+    "inMissionComms": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "よくやった。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "(機密) 事態がはっきりしてきた。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "さらにエネルギーを吸い取ったわ。"
+    }
+  },
+  {
+    "stage": 76,
+    "title": "ステージ76",
+    "location": "セクター76",
+    "objective": "セクター76の任務を完遂し、生存せよ。",
+    "missionTargetName": "目標：セクター76",
+    "contact": {
+      "name": "ゴースト",
+      "message": "中規模の波。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "私が時間を止めて、エネルギーを吸い取り、撃つ。完璧よ。パイロットは座っているだけ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "中規模の波。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "私の武器で片付ける。ラハブ教授の派手な武器みたいに余計な注目を集めるだけじゃない。"
+    }
+  },
+  {
+    "stage": 77,
+    "title": "ステージ77",
+    "location": "セクター77",
+    "objective": "セクター77の任務を完遂し、生存せよ。",
+    "missionTargetName": "目標：セクター77",
+    "contact": {
+      "name": "ナオミ・レン博士",
+      "message": "あいつのシールドが揺らいだ！"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "私の武器が奴らを殲滅した、奴らが何が起きたか分かる前に。純粋な誇りよ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ナオミ・レン博士",
+        "message": "あいつのシールドが揺らいだ！"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "おい、何でそんなことをしたんだ？！"
+    }
+  },
+  {
+    "stage": 78,
+    "title": "ステージ78",
+    "location": "セクター78",
+    "objective": "セクター78の任務を完遂し、生存せよ。",
+    "missionTargetName": "目標：セクター78",
+    "contact": {
+      "name": "ナオミ・レン博士",
+      "message": "直しておいたわ。"
+    },
+    "inMissionComms": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "ボタン一つの魔法だ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ナオミ・レン博士",
+        "message": "直しておいたわ。"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "ありがとう。"
+    }
+  },
+  {
+    "stage": 79,
+    "title": "ステージ79",
+    "location": "セクター79",
+    "objective": "セクター79の任務を完遂し、生存せよ。",
+    "missionTargetName": "目標：セクター79",
+    "contact": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "(機密) セラ、窓が開いている。行くなら私が援護する。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "エンジンは唸り、冷却は完璧、武器は準備完了。誇らしいわ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "(機密) セラ、窓が開いている。行くなら私が援護する。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "少し時間を止めたわ。"
+    }
+  },
+  {
+    "stage": 80,
+    "title": "ステージ80",
+    "location": "セクター80",
+    "objective": "セクター80の任務を完遂し、生存せよ。",
+    "missionTargetName": "目標：セクター80",
+    "contact": {
+      "name": "セラ・ケイン",
+      "message": "寝返る。正式に。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "ようこそ。ただし私の機体に触らないで。ラハブ教授はまだブラックリストに入ってるわ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "セラ・ケイン",
+        "message": "寝返る。正式に。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "歓迎するわ。ただし私の船に触らないで。それと父の飛ぶガラクタは構図から離しておいてね。"
+    }
+  },
+  {
+    "stage": 81,
+    "title": "ステージ81",
+    "location": "セクター81",
+    "objective": "セクター81の任務を完遂し、生存せよ。",
+    "missionTargetName": "目標：セクター81",
+    "contact": {
+      "name": "ゴースト",
+      "message": "異星の指導者が射程圏内だ。"
+    },
+    "inMissionComms": {
+      "name": "セラ・ケイン",
+      "message": "私が先に仕掛ける。だって私が一番だから。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "異星の指導者が射程圏内だ。"
+      }
+    ],
+    "afterAction": {
+      "name": "セラ・ケイン",
+      "message": "先に仕掛ける！私の方が速い！"
+    }
+  },
+  {
+    "stage": 82,
+    "title": "ステージ82",
+    "location": "ゾーン82",
+    "objective": "ゾーン82の任務を完了し、生き残れ。",
+    "missionTargetName": "ゾーン82の目標",
+    "contact": {
+      "name": "セラ・ケイン",
+      "message": "強い相手ね。だけど、私のほうが上よ！"
+    },
+    "inMissionComms": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "退かない。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "セラ・ケイン",
+        "message": "強い相手ね。だけど、私のほうが上よ！"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "もちろん。君はいつも一番だ。"
+    }
+  },
+  {
+    "stage": 83,
+    "title": "ステージ83",
+    "location": "ゾーン83",
+    "objective": "ゾーン83の任務を完了し、生き残れ。",
+    "missionTargetName": "ゾーン83の目標",
+    "contact": {
+      "name": "ゴースト",
+      "message": "艦隊が見張っている。"
+    },
+    "inMissionComms": {
+      "name": "セラ・ケイン",
+      "message": "あいつら、必要ないわ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "艦隊が見張っている。"
+      }
+    ],
+    "afterAction": {
+      "name": "セラ・ケイン",
+      "message": "必要ない！私に任せて！"
+    }
+  },
+  {
+    "stage": 84,
+    "title": "ステージ84",
+    "location": "ゾーン84",
+    "objective": "ゾーン84の任務を完了し、生き残れ。",
+    "missionTargetName": "ゾーン84の目標",
+    "contact": {
+      "name": "ナオミ・レン博士",
+      "message": "シールドが弱くなっている。"
+    },
+    "inMissionComms": {
+      "name": "セラ・ケイン",
+      "message": "もう一発。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ナオミ・レン博士",
+        "message": "シールドが弱くなっている。"
+      }
+    ],
+    "afterAction": {
+      "name": "セラ・ケイン",
+      "message": "もう一発！見たでしょ、私の正確さ！"
+    }
+  },
+  {
+    "stage": 85,
+    "title": "ステージ85",
+    "location": "ゾーン85",
+    "objective": "ゾーン85の任務を完了し、生き残れ。",
+    "missionTargetName": "ゾーン85の目標",
+    "contact": {
+      "name": "ゴースト",
+      "message": "逃げようとしている。"
+    },
+    "inMissionComms": {
+      "name": "セラ・ケイン",
+      "message": "誰も私からは逃げられない。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "逃げようとしている。"
+      }
+    ],
+    "afterAction": {
+      "name": "セラ・ケイン",
+      "message": "私からは逃げられない！"
+    }
+  },
+  {
+    "stage": 86,
+    "title": "ステージ86",
+    "location": "ゾーン86",
+    "objective": "ゾーン86の任務を完了し、生き残れ。",
+    "missionTargetName": "ゾーン86の目標",
+    "contact": {
+      "name": "ナオミ・レン博士",
+      "message": "最後のエネルギーだ。全力を出している。"
+    },
+    "inMissionComms": {
+      "name": "セラ・ケイン",
+      "message": "終わりだ。私の勝ちだ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ナオミ・レン博士",
+        "message": "最後のエネルギーだ。全力を出している。"
+      }
+    ],
+    "afterAction": {
+      "name": "セラ・ケイン",
+      "message": "終わり！私の勝ち！"
+    }
+  },
+  {
+    "stage": 87,
+    "title": "ステージ87",
+    "location": "ゾーン87",
+    "objective": "ゾーン87の任務を完了し、生き残れ。",
+    "missionTargetName": "ゾーン87の目標",
+    "contact": {
+      "name": "ゴースト",
+      "message": "指揮官、処理済み。"
+    },
+    "inMissionComms": {
+      "name": "セラ・ケイン",
+      "message": "だって、私がいるからよ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "指揮官、処理済み。"
+      }
+    ],
+    "afterAction": {
+      "name": "セラ・ケイン",
+      "message": "言ったでしょ、私が一番って！"
+    }
+  },
+  {
+    "stage": 88,
+    "title": "ステージ88",
+    "location": "ゾーン88",
+    "objective": "ゾーン88の任務を完了し、生き残れ。",
+    "missionTargetName": "ゾーン88の目標",
+    "contact": {
+      "name": "ナオミ・レン博士",
+      "message": "まだ欠陥がある。修理を手伝って。"
+    },
+    "inMissionComms": {
+      "name": "セラ・ケイン",
+      "message": "手伝うわ。修理だって私が一番だからね。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ナオミ・レン博士",
+        "message": "まだ欠陥がある。修理を手伝って。"
+      }
+    ],
+    "afterAction": {
+      "name": "セラ・ケイン",
+      "message": "手伝ったわ！修理だって得意なのよ！"
+    }
+  },
+  {
+    "stage": 89,
+    "title": "ステージ89",
+    "location": "ゾーン89",
+    "objective": "ゾーン89の任務を完了し、生き残れ。",
+    "missionTargetName": "ゾーン89の目標",
+    "contact": {
+      "name": "ゴースト",
+      "message": "艦隊は技術を狙っている。"
+    },
+    "inMissionComms": {
+      "name": "セラ・ケイン",
+      "message": "何も渡さないわ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "艦隊は技術を狙っている。"
+      }
+    ],
+    "afterAction": {
+      "name": "セラ・ケイン",
+      "message": "絶対渡さない！私が許さない！"
+    }
+  },
+  {
+    "stage": 90,
+    "title": "ステージ90",
+    "location": "セクター90",
+    "objective": "セクター90の任務を完了し、生還せよ。",
+    "missionTargetName": "セクター90の標的",
+    "contact": {
+      "name": "ナオミ・レン博士",
+      "message": "艦は二隻。あの子の方がまだ精度は高いわ。ちなみに、あなたのスコアは彼女より0.25点上だったのよ。"
+    },
+    "inMissionComms": {
+      "name": "セラ・ケイン",
+      "message": "私の方が優れてるわ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ナオミ・レン博士",
+        "message": "艦は二隻。あの子の方がまだ精度は高いわ。ちなみに、あなたのスコアは彼女より0.25点上だったのよ。"
+      }
+    ],
+    "afterAction": {
+      "name": "セラ・ケイン",
+      "message": "私のほうが速いし、見た目もいいの！"
+    }
+  },
+  {
+    "stage": 91,
+    "title": "ステージ91",
+    "location": "セクター91",
+    "objective": "セクター91の任務を完了し、生還せよ。",
+    "missionTargetName": "セクター91の標的",
+    "contact": {
+      "name": "セラ・ケイン",
+      "message": "行くわ。艦隊を整える人が必要よ。誰より上手くやってやる。"
+    },
+    "inMissionComms": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "本当に？"
+    },
+    "dialogueSequence": [
+      {
+        "name": "セラ・ケイン",
+        "message": "行くわ。艦隊を整える人が必要よ。誰より上手くやってやる。"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "本気か？もう少し残って口喧嘩でもしないか？"
+    }
+  },
+  {
+    "stage": 92,
+    "title": "ステージ92",
+    "location": "セクター92",
+    "objective": "セクター92の任務を完了し、生還せよ。",
+    "missionTargetName": "セクター92の標的",
+    "contact": {
+      "name": "ナオミ・レン博士",
+      "message": "私が残る。誰かがあの子を守らなきゃ。あの0.25点の差が、他の誰もあの機体を操縦しない理由なの。セラ、あなたも無理よ。特に父のポンコツ機は論外。"
+    },
+    "inMissionComms": {
+      "name": "セラ・ケイン",
+      "message": "あの子を守れ。余裕があれば自分たちもだ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ナオミ・レン博士",
+        "message": "私が残る。誰かがあの子を守らなきゃ。あの0.25点の差が、他の誰もあの機体を操縦しない理由なの。セラ、あなたも無理よ。特に父のポンコツ機は論外。"
+      }
+    ],
+    "afterAction": {
+      "name": "セラ・ケイン",
+      "message": "気をつけて！それと、私が一番よ！"
+    }
+  },
+  {
+    "stage": 93,
+    "title": "ステージ93",
+    "location": "セクター93",
+    "objective": "セクター93の任務を完了し、生還せよ。",
+    "missionTargetName": "セクター93の標的",
+    "contact": {
+      "name": "ゴースト",
+      "message": "遠隔で支援する。スコアは把握している。"
+    },
+    "inMissionComms": {
+      "name": "セラ・ケイン",
+      "message": "ありがとう。部隊は私がまとめる。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "遠隔で支援する。スコアは把握している。"
+      }
+    ],
+    "afterAction": {
+      "name": "セラ・ケイン",
+      "message": "ありがと。任せて！"
+    }
+  },
+  {
+    "stage": 94,
+    "title": "ステージ94",
+    "location": "セクター94",
+    "objective": "セクター94の任務を完了し、生還せよ。",
+    "missionTargetName": "セクター94の標的",
+    "contact": {
+      "name": "セラ・ケイン",
+      "message": "艦隊に喧嘩売ってくる！"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "遠隔で私の艦に触るんじゃない。私はすべて感じ取る。特にラハブ教授の盗みには敏感よ。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "セラ・ケイン",
+        "message": "艦隊に喧嘩売ってくる！"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "遠隔で触らないで。それと父のガラクタは視界から外しておいて。"
+    }
+  },
+  {
+    "stage": 95,
+    "title": "ステージ95",
+    "location": "セクター95",
+    "objective": "セクター95の任務を完了し、生還せよ。",
+    "missionTargetName": "セクター95の標的",
+    "contact": {
+      "name": "ゴースト",
+      "message": "異星人はまだいる。"
+    },
+    "inMissionComms": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "継続する。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "異星人はまだいる。"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "継続する。"
+    }
+  },
+  {
+    "stage": 96,
+    "title": "ステージ96",
+    "location": "セクター96",
+    "objective": "セクター96の任務を完了し、生還せよ。",
+    "missionTargetName": "セクター96の標的",
+    "contact": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "セラは軍隊と当たる。こちらは異星人担当だ。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "まずは艦が最優先よ。時間停止を使って、いつでもね。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "プロジェクト・ゼロのパイロット",
+        "message": "セラは軍隊と当たる。こちらは異星人担当だ。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "そして艦が最優先。いつもそうよ。"
+    }
+  },
+  {
+    "stage": 97,
+    "title": "ステージ97",
+    "location": "セクター97",
+    "objective": "セクター97の任務を完了し、生還せよ。",
+    "missionTargetName": "セクター97の標的",
+    "contact": {
+      "name": "ナオミ・レン博士",
+      "message": "新たな集中。艦の武装、準備完了よ。"
+    },
+    "inMissionComms": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "出撃する。俺が本当の仕事をやる。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ナオミ・レン博士",
+        "message": "新たな集中。艦の武装、準備完了よ。"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "出撃。"
+    }
+  },
+  {
+    "stage": 98,
+    "title": "ステージ98",
+    "location": "区画98",
+    "objective": "区画98の任務を完了し、生き延びよ。",
+    "missionTargetName": "区画98の目標",
+    "contact": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "待って…シミを落とす、ヘラで。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "うちの子は今でも一番美しくて性能も最高よ。傷をつけたらぶっ飛ばす。ラハブ教授にもね。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "プロジェクト・ゼロのパイロット",
+        "message": "待って…シミを落とす、ヘラで。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "何ですって？！"
+    }
+  },
+  {
+    "stage": 99,
+    "title": "ステージ99",
+    "location": "区画99",
+    "objective": "区画99の任務を完了し、生き延びよ。",
+    "missionTargetName": "区画99の目標",
+    "contact": {
+      "name": "ナオミ・レン博士",
+      "message": "また戦いね。油は熱々にしてある。うちの子はいつでも万全よ。ラハブのガラクタとは違うんだから。"
+    },
+    "inMissionComms": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "まだ続くだろう。俺が操る。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ナオミ・レン博士",
+        "message": "また戦いね。油は熱々にしてある。うちの子はいつでも万全よ。ラハブのガラクタとは違うんだから。"
+      }
+    ],
+    "afterAction": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "まだ続くだろう。"
+    }
+  },
+  {
+    "stage": 100,
+    "title": "ステージ100",
+    "location": "区画100",
+    "objective": "区画100の任務を完了し、生き延びよ。",
+    "missionTargetName": "区画100の目標",
+    "contact": {
+      "name": "プロジェクト・ゼロのパイロット",
+      "message": "異星人と向き合う。"
+    },
+    "inMissionComms": {
+      "name": "ナオミ・レン博士",
+      "message": "彼女に手を出す奴は私が潰す。熱油に時停止、並行次元のエネルギー付きよ。ラハブ教授も標的に入ってる。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "プロジェクト・ゼロのパイロット",
+        "message": "異星人と向き合う。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "私が彼女に手を出す者すべてに立ち向かう。これで分かっただろう。ラハブはまだ景観を壊すガラクタを作っている。"
+    }
+  },
+  {
+    "stage": 101,
+    "title": "プロジェクト・ゼロ計画 // 最終エピローグと決着",
+    "location": "絶対空域 // アーク9ゲート",
+    "objective": "アルコンの母艦を撃破し、物語の決着をつけて完全なエピローグを開始せよ。",
+    "missionTargetName": "アルコンの旗艦",
+    "contact": {
+      "name": "ゴースト",
+      "message": "大ボスが目前だ、パイロット。アルコン母艦は暗黒エネルギーを帯びている。清算の時だ。"
+    },
+    "inMissionComms": {
+      "name": "エレナ・ヴェール司令官",
+      "message": "これがアーク9での最後の戦いだ。プロジェクト・ゼロのパイロットの力を見せてこい。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "ゴースト",
+        "message": "大ボスが前にいる、パイロット。アルコン母艦が暗黒エネルギーを放っている。"
+      },
+      {
+        "name": "エレナ・ヴェール司令官",
+        "message": "これがアーク9での最後の戦いだ。プロジェクト・ゼロのパイロットの力を見せてこい！"
+      },
+      {
+        "name": "ナオミ・レン博士",
+        "message": "私の船に気をつけて！父に逆らって一人で作ったの。宇宙人にリサイクルされたりしないでよ！"
+      },
+      {
+        "name": "セラ・ケイン",
+        "message": "左翼をカバーする。安心しろ、ヒーローに見せ場は残してやるよ。"
+      },
+      {
+        "name": "プロジェクト・ゼロのパイロット",
+        "message": "最後だ。全システム起動。"
+      }
+    ],
+    "afterAction": {
+      "name": "ナオミ・レン博士",
+      "message": "エピローグ：母艦のコアは、パイロットがシステムを破壊した瞬間に爆発した。セラは瓦礫の中から彼を引き上げ、二人はアーク9境界を自主巡回することになり、微かなロマンチックな気配があった。ナオミ博士は父、ラハブ教授へのデジタルな復讐を完遂し、その腐敗を銀河中に暴露してから研究所を閉鎖した。エレナ司令官は軍を浄化し、パイロットとセラに独立指揮権を与えた。異星人は遠方のゲートへ撤退し、ゴーストはすでにダーク・ウェブで新たな信号を見つけていた。"
+    }
+  }
+]

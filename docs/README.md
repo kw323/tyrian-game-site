@@ -6,6 +6,7 @@
 |---|---|---|
 | [`desktop-release-status-2026-08.md`](desktop-release-status-2026-08.md) | מצב גרסת המחשב, דרך בדיקה והפצה | פעיל |
 | [`voice-assets-status-2026-08.md`](voice-assets-status-2026-08.md) | מיפוי דיבוב, קבצים תקינים וקבצי placeholder | פעיל |
+| [`localization-2026-08.md`](localization-2026-08.md) | בורר שפה ותדריכי קמפיין בעברית, אנגלית, יפנית וסינית | מיושם |
 | [`weapon-redesign-2026-08.md`](weapon-redesign-2026-08.md) | שישה כלי נשק, 25 דרגות ותיאורי שדרוג | החלטה מיושמת |
 | [`reactor-recovery-balance-2026-08.md`](reactor-recovery-balance-2026-08.md) | ריאקטור, פרץ אנרגיה ונעילת התאוששות | החלטה מיושמת |
 | [`endgame-overhaul-2026-08.md`](endgame-overhaul-2026-08.md) | בוסים, סרה, Archon, Meltdown ואפילוג | החלטה מיושמת |

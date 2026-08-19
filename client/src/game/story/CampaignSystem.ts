@@ -1,6 +1,8 @@
 export type CharacterId = 'naomi' | 'protagonist' | 'elena' | 'sera' | 'ghost' | 'rahav';
+import { getLocalizedBriefing, LocalizedContactLine } from './CampaignBriefingLocalizations';
+
 export type UpgradeBriefingKind = 'weapon' | 'generator' | 'ship';
-export type GameplayLanguage = 'he' | 'en' | 'ja' | 'zh' | 'es';
+export type GameplayLanguage = 'he' | 'en' | 'ja' | 'zh';
 
 export interface ContactLine {
     speaker: CharacterId;
@@ -56,12 +58,12 @@ export class CampaignSystem {
     };
 
     private static CHARACTER_NAMES: Record<CharacterId, Record<GameplayLanguage, string>> = {
-        naomi: { he: 'ד״ר נעמי רן', en: 'Dr. Naomi Ren', ja: 'ナオミ・レン博士', zh: '娜奥米·雷恩 博士', es: 'Dra. Naomi Ren' },
-        protagonist: { he: 'טייס פרויקט Zero', en: 'Program Zero Pilot', ja: 'プロジェクト・ゼロ パイロット', zh: '零号计划 飞行员', es: 'Piloto Proyecto Zero' },
-        elena: { he: 'המפקדת אלנה וייל', en: 'Commander Elena Vail', ja: 'エレナ・ヴェール司令官', zh: '埃ל娜·维尔 指挥官', es: 'Comandante Elena Vail' },
-        sera: { he: 'סרה קיין', en: 'Sera Kane', ja: 'セラ・ケイン', zh: '塞拉·凯恩', es: 'Sera Kane' },
-        ghost: { he: 'גוסט', en: 'GHOST', ja: 'ゴースト', zh: '幽灵', es: 'FANTASMA' },
-        rahav: { he: 'פרופ׳ רהב', en: 'Prof. Rahav', ja: 'ラハブ教授', zh: '雷哈夫 教授', es: 'Prof. Rahav' }
+        naomi: { he: 'ד״ר נעמי רן', en: 'Dr. Naomi Ren', ja: 'ナオミ・レン博士', zh: '娜奥米·雷恩博士' },
+        protagonist: { he: 'טייס פרויקט Zero', en: 'Program Zero Pilot', ja: 'プロジェクト・ゼロのパイロット', zh: '零号计划飞行员' },
+        elena: { he: 'המפקדת אלנה וייל', en: 'Commander Elena Vail', ja: 'エレナ・ヴェール司令官', zh: '埃琳娜·维尔指挥官' },
+        sera: { he: 'סרה קיין', en: 'Sera Kane', ja: 'セラ・ケイン', zh: '塞拉·凯恩' },
+        ghost: { he: 'גוסט', en: 'GHOST', ja: 'ゴースト', zh: '幽灵' },
+        rahav: { he: 'פרופ׳ רהב', en: 'Prof. Rahav', ja: 'ラハブ教授', zh: '拉哈夫教授' }
     };
 
     private static ENGLISH_CHAPTERS: ChapterDefinition[] = [
@@ -5805,53 +5807,32 @@ export class CampaignSystem {
         const stageNum = Math.max(1, Math.min(this.TOTAL_STAGES, Math.floor(stage)));
         const chapter = this.getChapterNumber(stageNum);
         const chapterDef = this.ENGLISH_CHAPTERS[chapter - 1] || this.ENGLISH_CHAPTERS[0];
-        
-        // Multi-language briefing dictionaries mapping: he, ja, zh, es -> localized or english fallback
         const custom = lang === 'he' ? this.HEBREW_BRIEFINGS[stageNum] : this.englishBriefings[stageNum];
-        
-        // Helper for localized fallbacks across JA, ZH, ES
-        const localizeText = (enText: string, heText: string): string => {
-            if (lang === 'he') return heText;
-            if (lang === 'ja') {
-                // Japanese localized adaptation
-                if (enText.includes('Stage 1') || enText.includes('שלב 1')) return 'ステージ 1 // プロトタイプ発進';
-                if (enText.includes('Stage 2') || enText.includes('שלב 2')) return 'ステージ 2 // 辺境の迎撃';
-                if (enText.includes('Stage 101') || enText.includes('Finale')) return 'ステージ 101 // アーコン・マザーシップ決戦';
-                return `[日] ${enText}`;
-            }
-            if (lang === 'zh') {
-                // Chinese localized adaptation
-                if (enText.includes('Stage 1') || enText.includes('שלב 1')) return '第 1 关 // 原型机出击';
-                if (enText.includes('Stage 2') || enText.includes('שלב 2')) return '第 2 关 // 边境拦截';
-                if (enText.includes('Stage 101') || enText.includes('Finale')) return '第 101 关 // 执政官母舰决战';
-                return `[中] ${enText}`;
-            }
-            if (lang === 'es') {
-                // Spanish localized adaptation
-                if (enText.includes('Stage 1') || enText.includes('שלב 1')) return 'Fase 1 // Lanzamiento del Prototipo';
-                if (enText.includes('Stage 2') || enText.includes('שלב 2')) return 'Fase 2 // Patrulla de Frontera';
-                if (enText.includes('Stage 101') || enText.includes('Finale')) return 'Fase 101 // Batalla Final Archon';
-                return `[ES] ${enText}`;
-            }
-            return enText;
-        };
+        const localized = lang === 'he' ? undefined : getLocalizedBriefing(lang, stageNum);
+        const mergeLocalizedLine = (baseLine: ContactLine, localizedLine?: LocalizedContactLine): ContactLine => localizedLine
+            ? { ...baseLine, name: localizedLine.name, message: localizedLine.message }
+            : baseLine;
 
         if (custom) {
             return {
                 stage: stageNum,
                 chapter,
                 chapterTitle: chapterDef.title,
-                title: custom.title,
-                location: custom.location,
-                objective: custom.objective,
+                title: localized?.title ?? custom.title,
+                location: localized?.location ?? custom.location,
+                objective: localized?.objective ?? custom.objective,
                 operationCode: custom.operationCode,
                 missionType: custom.missionType as any,
-                missionTargetName: custom.missionTargetName,
+                missionTargetName: localized?.missionTargetName ?? custom.missionTargetName,
                 bountyReward: custom.bountyReward,
-                contact: custom.contact,
-                inMissionComms: custom.inMissionComms,
-                dialogueSequence: custom.dialogueSequence,
-                afterAction: custom.afterAction
+                contact: mergeLocalizedLine(custom.contact, localized?.contact),
+                inMissionComms: custom.inMissionComms ? mergeLocalizedLine(custom.inMissionComms, localized?.inMissionComms) : undefined,
+                dialogueSequence: custom.dialogueSequence?.map((line: ContactLine, index: number) => mergeLocalizedLine(line, localized?.dialogueSequence[index])),
+                afterAction: custom.afterAction ? {
+                    ...custom.afterAction,
+                    name: localized?.afterAction.name ?? custom.afterAction.name,
+                    message: localized?.afterAction.message ?? custom.afterAction.message
+                } : undefined
             };
         }
 

@@ -27,7 +27,7 @@ import { ShipUpgradeSystem } from '@/game/core/ShipUpgradeSystem';
 import { TacticalAbilitySystem, TacticalAbilityType } from '@/game/core/TacticalAbilitySystem';
 import { PilotSkillSystem } from '@/game/core/PilotSkillSystem';
 import { EquipmentSystem, EquipmentPartType } from '@/game/core/EquipmentSystem';
-import { CampaignSystem, CharacterId, UpgradeBriefing } from '@/game/story/CampaignSystem';
+import { CampaignSystem, CharacterId, GameplayLanguage, UpgradeBriefing } from '@/game/story/CampaignSystem';
 import { SoundSystem } from '@/game/core/SoundSystem';
 import { BranchSystem, BranchRoute } from '@/game/story/BranchSystem';
 import { BackgroundRenderer } from '@/game/story/BackgroundRenderer';
@@ -68,6 +68,17 @@ const SHOP_CANVAS_HEIGHT = 1150;
 const COMBAT_REWARD_MULTIPLIER = 0.75;
 type ShopScreen = 'hub' | 'weapons' | 'systems' | 'abilities' | 'pilot_skills' | 'equipment' | 'finale_victory';
 
+const LANGUAGE_OPTIONS: Array<{ id: GameplayLanguage; label: string; menuLabel: string }> = [
+    { id: 'he', label: 'עברית', menuLabel: 'עברית / Hebrew' },
+    { id: 'en', label: 'English', menuLabel: 'English / אנגלית' },
+    { id: 'ja', label: '日本語', menuLabel: '日本語 / Japanese' },
+    { id: 'zh', label: '简体中文', menuLabel: '简体中文 / Chinese' }
+];
+
+function isGameplayLanguage(value: string | null): value is GameplayLanguage {
+    return LANGUAGE_OPTIONS.some((option) => option.id === value);
+}
+
 // Style: the game viewport is an armed retro-futurist flight console, with operational copy, signal strips, and no generic demo language.
 interface GameContainerProps {
     touchControlsEnabled?: boolean;
@@ -85,23 +96,26 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
     const showDirectTouchFlight = isNativeAndroid && touchControlsEnabled;
     const [touchFireActive, setTouchFireActive] = useState(false);
     const [touchAbilityPulse, setTouchAbilityPulse] = useState(false);
-    const [gameplayLang, setGameplayLang] = useState<'he' | 'en' | 'ja' | 'zh' | 'es'>(() => {
-        return (localStorage.getItem('tyrian_gameplay_lang') as any) || 'he';
+    const [gameplayLang, setGameplayLang] = useState<GameplayLanguage>(() => {
+        const stored = localStorage.getItem('tyrian_gameplay_lang');
+        return isGameplayLanguage(stored) ? stored : 'he';
     });
-    const gameplayLangRef = useRef(gameplayLang);
+    const gameplayLangRef = useRef<GameplayLanguage>(gameplayLang);
+    const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
+    const languageRefreshActionRef = useRef<((language: GameplayLanguage) => void) | null>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const touchInputRef = useRef({ moveX: 0, moveY: 0, targetX: null as number | null, targetY: null as number | null, fire: false });
     const mouseInputRef = useRef<{ targetX: number | null; targetY: number | null; fire: boolean }>({ targetX: null, targetY: null, fire: false });
     const touchActionsRef = useRef<{ toggleAbility?: () => void; advanceMission?: () => void }>({});
     const gameRef = useRef<Game | null>(null);
 
-    const toggleLanguage = () => {
-        const languages: Array<'he' | 'en' | 'ja' | 'zh' | 'es'> = ['he', 'en', 'ja', 'zh', 'es'];
-        const currentIndex = languages.indexOf(gameplayLangRef.current);
-        const next = languages[(currentIndex + 1) % languages.length];
-        setGameplayLang(next);
-        gameplayLangRef.current = next;
-        localStorage.setItem('tyrian_gameplay_lang', next);
+    const selectGameplayLanguage = (language: GameplayLanguage): void => {
+        setIsLanguageMenuOpen(false);
+        if (gameplayLangRef.current === language) return;
+        gameplayLangRef.current = language;
+        localStorage.setItem('tyrian_gameplay_lang', language);
+        setGameplayLang(language);
+        languageRefreshActionRef.current?.(language);
         SoundSystem.startMusic();
     };
 
@@ -213,6 +227,13 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             let commVisibleUntil = performance.now() + 9000;
             let inMissionCommsTriggered = false;
             let activeContactLine = stageBriefing.contact;
+            const refreshBriefingLanguage = (language: GameplayLanguage): void => {
+                currentLangForBriefing = language;
+                stageBriefing = CampaignSystem.getStageBriefing(gameState.level, language);
+                activeContactLine = stageBriefing.contact;
+                commVisibleUntil = performance.now() + 9000;
+            };
+            languageRefreshActionRef.current = refreshBriefingLanguage;
 
             const resolveStageCombatEvent = (stage: number, missionType: string): StageCombatEvent => {
                 if (stage % 3 === 0) return 'standard';
@@ -310,15 +331,17 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             };
 
             const drawWrappedText = (ctx: CanvasRenderingContext2D, text: string, x: number, y: number, maxWidth: number, lineHeight: number, maxLines: number): void => {
-                const words = text.split(' ');
+                const usesCjkScript = /[\u3040-\u30FF\u3400-\u9FFF]/.test(text);
+                const segments = usesCjkScript ? Array.from(text) : text.split(/\s+/);
+                const separator = usesCjkScript ? '' : ' ';
                 let line = '';
                 let lineNumber = 0;
-                for (const word of words) {
-                    const candidate = line ? `${line} ${word}` : word;
+                for (const segment of segments) {
+                    const candidate = line ? `${line}${separator}${segment}` : segment;
                     if (ctx.measureText(candidate).width > maxWidth && line) {
                         ctx.fillText(line, x, y + lineNumber * lineHeight);
                         lineNumber++;
-                        line = word;
+                        line = segment;
                         if (lineNumber >= maxLines - 1) break;
                     } else {
                         line = candidate;
@@ -2375,15 +2398,11 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         ctx.fillText(label, x + width / 2, y + height / 2 + 4);
                         addButton(id, x, y, width, height, action);
                     };
-
                     ctx.textAlign = 'center';
                     ctx.fillStyle = '#00CCDD';
                     ctx.font = 'bold 36px Arial';
                     ctx.fillText(`STAGE ${gameState.level} // MISSION COMMS`, canvasWidth / 2, 64);
 
-                    // Multi-language picker button (HE, EN, JA, ZH, ES)
-                    const langLabels: Record<string, string> = { he: 'HEBREW (עב)', en: 'ENGLISH (EN)', ja: 'JAPANESE (日)', zh: 'CHINESE (中)', es: 'SPANISH (ES)' };
-                    drawButton('toggle-lang', `LANG: ${langLabels[gameplayLang] || 'HE'} 🌐`, canvasWidth / 2 - 120, 16, 240, 36, '#00d9b5', toggleLanguage);
                     ctx.fillStyle = '#FFD166';
                     ctx.font = 'bold 20px Arial';
                     ctx.fillText(stageBriefing.title, canvasWidth / 2, 102);
@@ -2641,9 +2660,6 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     ctx.fillStyle = '#FFD700';
                     ctx.font = 'bold 16px Arial';
                     ctx.fillText(`Available Credits: ${gameState.score}`, 28, 72);
-
-                    const langLabelsShop: Record<string, string> = { he: 'HEBREW (עב)', en: 'ENGLISH (EN)', ja: 'JAPANESE (日)', zh: 'CHINESE (中)', es: 'SPANISH (ES)' };
-                    drawButton('toggle-lang', `LANG: ${langLabelsShop[gameplayLang] || 'HE'} 🌐`, canvasWidth - 268, 30, 240, 42, '#00d9b5', toggleLanguage);
 
                     const secretWeaponUnlocked = weaponSystem.isSecretWeaponUnlocked();
                     const drawShopNav = (active: ShopScreen): void => {
@@ -3863,6 +3879,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             }, 100);
 
             return () => {
+                languageRefreshActionRef.current = null;
                 clearInterval(langUnsubCheck);
                 clearInterval(autosaveInterval);
                 document.removeEventListener('visibilitychange', handleAppBackground);
@@ -4001,6 +4018,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
         formatControlCode(activeControlBindings.moveRight),
     ].join(' ');
 
+    const activeLanguageOption = LANGUAGE_OPTIONS.find((option) => option.id === gameplayLang) ?? LANGUAGE_OPTIONS[0];
+
     const triggerStageJump = (requestedStage: number): void => {
         const targetStage = Math.max(1, Math.min(CampaignSystem.TOTAL_STAGES, Math.floor(requestedStage)));
         setMaxUnlockedLevel((prev) => {
@@ -4027,7 +4046,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 />
             )}
             <div
-                className={`game-stage-shell ${showTouchControls ? 'game-stage-shell--touch' : ''} w-full max-w-[1200px] max-h-[calc(100vh-5rem)] overflow-y-auto overflow-x-hidden overscroll-contain rounded-lg border border-green-500/20 bg-black/30`}
+                className={`game-stage-shell ${showTouchControls ? 'game-stage-shell--touch' : ''} relative w-full max-w-[1200px] max-h-[calc(100vh-5rem)] overflow-y-auto overflow-x-hidden overscroll-contain rounded-lg border border-green-500/20 bg-black/30`}
                 aria-label="Scrollable game viewport"
             >
                 <canvas
@@ -4035,6 +4054,39 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     id="gameCanvas"
                     className="block w-full h-auto border-2 border-green-500 bg-black shadow-lg shadow-green-500/50"
                 />
+                <div className="absolute right-3 top-3 z-50 min-w-48 font-sans text-left">
+                    <button
+                        type="button"
+                        className="flex w-full items-center justify-between gap-3 border border-cyan-300/80 bg-slate-950/95 px-3 py-2 text-sm font-bold tracking-wide text-cyan-100 shadow-lg shadow-cyan-500/20 transition hover:bg-cyan-950/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200"
+                        aria-haspopup="menu"
+                        aria-expanded={isLanguageMenuOpen}
+                        aria-controls="game-language-menu"
+                        onClick={() => setIsLanguageMenuOpen((open) => !open)}
+                    >
+                        <span>LANGUAGE</span>
+                        <span className="text-amber-200">{activeLanguageOption.label} ▾</span>
+                    </button>
+                    {isLanguageMenuOpen && (
+                        <div id="game-language-menu" role="menu" className="mt-1 overflow-hidden border border-cyan-300/80 bg-slate-950/98 shadow-xl shadow-cyan-950/60">
+                            {LANGUAGE_OPTIONS.map((option) => {
+                                const selected = option.id === gameplayLang;
+                                return (
+                                    <button
+                                        key={option.id}
+                                        type="button"
+                                        role="menuitemradio"
+                                        aria-checked={selected}
+                                        className={`flex w-full items-center justify-between px-3 py-2 text-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-cyan-200 ${selected ? 'bg-cyan-900/70 text-amber-200' : 'text-cyan-50 hover:bg-cyan-950/80'}`}
+                                        onClick={() => selectGameplayLanguage(option.id)}
+                                    >
+                                        <span>{option.menuLabel}</span>
+                                        <span aria-hidden="true">{selected ? '✓' : ''}</span>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    )}
+                </div>
                 {showTouchControls && (
                     <div className={`mobile-touch-layer ${showDirectTouchFlight ? 'mobile-touch-layer--direct' : ''}`} aria-label="Touch flight controls">
                         {showDirectTouchFlight ? (

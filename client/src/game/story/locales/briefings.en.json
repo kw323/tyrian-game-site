@@ -1,0 +1,2543 @@
+[
+  {
+    "stage": 1,
+    "title": "Stage 1",
+    "location": "Sector 1",
+    "objective": "Complete the Sector 1 mission and survive.",
+    "missionTargetName": "Sector 1 Target",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "Pilot, this is the prototype. You take orders from me only."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "Look at her—perfect. Touch her with dirty hands and I'll break your finger."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "Pilot, this is the prototype. You take orders from me only."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "See? She's perfect. Touch her with dirty hands and I'll snap your finger."
+    }
+  },
+  {
+    "stage": 2,
+    "title": "Stage 2",
+    "location": "Sector 2",
+    "objective": "Complete the Sector 2 mission and survive.",
+    "missionTargetName": "Sector 2 Target",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "Pirate vessel. Orders: destroy it."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "My weapons are the most precise in the galaxy. Use them properly."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "Pirate vessel. Orders: destroy it."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "Weapons are ready. Use them well—she doesn't like unnecessary noise."
+    }
+  },
+  {
+    "stage": 3,
+    "title": "Stage 3",
+    "location": "Sector 3",
+    "objective": "Complete the Sector 3 mission and survive.",
+    "missionTargetName": "Sector 3 Target",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "Destroy it. Do it fast."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "The shield's about to crack! Are you completely reckless?! Get back here!"
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "Destroy it. Do it fast."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "Her shield nearly cracked!"
+    }
+  },
+  {
+    "stage": 4,
+    "title": "Stage 4",
+    "location": "Sector 4",
+    "objective": "Complete the Sector 4 mission and survive.",
+    "missionTargetName": "Sector 4 Target",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "Return. Report in."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "I fixed the scratch. She's perfect again. Bring a cloth."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "Return. Report in."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "I repaired her. I brought a soft cloth."
+    }
+  },
+  {
+    "stage": 5,
+    "title": "Stage 5",
+    "location": "Sector 5",
+    "objective": "Complete the Sector 5 mission and survive.",
+    "missionTargetName": "Sector 5 Target",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "Escort the convoy."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "Watch her glide. This isn't a ship—it's a work of art."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "Escort the convoy."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "She slips through the asteroids like she was born for it."
+    }
+  },
+  {
+    "stage": 6,
+    "title": "Stage 6",
+    "location": "Sector 6",
+    "objective": "Complete the Sector 6 mission and survive.",
+    "missionTargetName": "Sector 6 Target",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "Under attack. Respond."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "The engine shuddered! I'm bringing it hot oil right away. And you'll get hit if that happens again!"
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "Under attack. Respond."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "Her engine shuddered. She doesn't like being rattled."
+    }
+  },
+  {
+    "stage": 7,
+    "title": "Stage 7",
+    "location": "Sector 7",
+    "objective": "Complete the Sector 7 mission and survive.",
+    "missionTargetName": "Sector 7 Target",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "Mission complete. Return."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "I upgraded the cooling. She's even more perfect now. Thank me later."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "Mission complete. Return."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "I upgraded her cooling. She's more stable now."
+    }
+  },
+  {
+    "stage": 8,
+    "title": "Stage 8",
+    "location": "Sector 8",
+    "objective": "Complete the Sector 8 mission and survive.",
+    "missionTargetName": "Sector 8 Target",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "Border patrol. Keep tight formation."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "If you come back with dust on her, I'll smash you over the head with a Swedish wrench."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "Border patrol. Keep tight formation."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "If you return with dust on her, I'll crack you over the head."
+    }
+  },
+  {
+    "stage": 9,
+    "title": "Stage 9",
+    "location": "Sector 9",
+    "objective": "Complete the Sector 9 mission and survive.",
+    "missionTargetName": "Sector 9 Target",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "No movement. Fall back."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "That last maneuver was flawless. I'm so proud of her I could cry."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "No movement. Fall back."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "The last maneuver was precise. She loved it."
+    }
+  },
+  {
+    "stage": 10,
+    "title": "Stage 10",
+    "location": "Sector 10",
+    "objective": "Complete the Sector 10 mission and survive.",
+    "missionTargetName": "Sector 10 Target",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "Tomorrow: bounty run."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "Protect her like your life depends on it. Your life is less important than hers."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "Tomorrow: bounty run."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "Protect her. Your life is less important than hers."
+    }
+  },
+  {
+    "stage": 11,
+    "title": "Stage 11",
+    "location": "Sector 11",
+    "objective": "Complete the Sector 11 mission and survive.",
+    "missionTargetName": "Sector 11 Target",
+    "contact": {
+      "name": "GHOST",
+      "message": "Pilot—I've breached the channel. Paid targets."
+    },
+    "inMissionComms": {
+      "name": "Program Zero Pilot",
+      "message": "Who is this?"
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "Pilot—I've breached the channel. Paid targets."
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "Who is this?"
+    }
+  },
+  {
+    "stage": 12,
+    "title": "Stage 12",
+    "location": "Sector 12",
+    "objective": "Complete the Sector 12 mission and survive.",
+    "missionTargetName": "Sector 12 Target",
+    "contact": {
+      "name": "GHOST",
+      "message": "Captain Razer. Half a million."
+    },
+    "inMissionComms": {
+      "name": "Commander Elena Vail",
+      "message": "Official order: eliminate."
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "Captain Razer. Half a million."
+      }
+    ],
+    "afterAction": {
+      "name": "Commander Elena Vail",
+      "message": "Official order: eliminate."
+    }
+  },
+  {
+    "stage": 13,
+    "title": "Stage 13",
+    "location": "Sector 13",
+    "objective": "Complete the Sector 13 mission and survive.",
+    "missionTargetName": "Sector 13 Target",
+    "contact": {
+      "name": "Dr. Naomi Ren",
+      "message": "This stain won't come out. I tried three solvents—she hates it."
+    },
+    "inMissionComms": {
+      "name": "GHOST",
+      "message": "He's near Orion."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Dr. Naomi Ren",
+        "message": "This stain won't come out. I tried three solvents—she hates it."
+      }
+    ],
+    "afterAction": {
+      "name": "GHOST",
+      "message": "He's near Orion."
+    }
+  },
+  {
+    "stage": 14,
+    "title": "Stage 14",
+    "location": "Sector 14",
+    "objective": "Complete the Sector 14 mission and survive.",
+    "missionTargetName": "Sector 14 Target",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "Destroy."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "Her shield's nearly gone! Are you doing that on purpose?! Come here—I'll give you one!"
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "Destroy."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "Her shield almost broke!"
+    }
+  },
+  {
+    "stage": 15,
+    "title": "Stage 15",
+    "location": "Sector 15",
+    "objective": "Complete the Sector 15 mission and survive.",
+    "missionTargetName": "Sector 15 Target",
+    "contact": {
+      "name": "GHOST",
+      "message": "Nice. Payment en route."
+    },
+    "inMissionComms": {
+      "name": "Commander Elena Vail",
+      "message": "Return. Report."
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "Nice. Payment en route."
+      }
+    ],
+    "afterAction": {
+      "name": "Commander Elena Vail",
+      "message": "Return. Report."
+    }
+  },
+  {
+    "stage": 16,
+    "title": "Stage 16",
+    "location": "Sector 16",
+    "objective": "Complete the Sector 16 mission and survive.",
+    "missionTargetName": "Sector 16 Target",
+    "contact": {
+      "name": "GHOST",
+      "message": "Lady Voss."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "My weapons are aching for her. Let them do their work."
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "Lady Voss."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "Her weapons are waiting."
+    }
+  },
+  {
+    "stage": 17,
+    "title": "Stage 17",
+    "location": "Sector 17",
+    "objective": "Complete the Sector 17 mission and survive.",
+    "missionTargetName": "Sector 17 Target",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "Do not let it escape."
+    },
+    "inMissionComms": {
+      "name": "GHOST",
+      "message": "Nebula Sel dust clouds."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "Do not let it escape."
+      }
+    ],
+    "afterAction": {
+      "name": "GHOST",
+      "message": "Nebula Sel dust clouds."
+    }
+  },
+  {
+    "stage": 18,
+    "title": "Stage 18",
+    "location": "Sector 18",
+    "objective": "Complete the Sector 18 mission and survive.",
+    "missionTargetName": "Sector 18 Target",
+    "contact": {
+      "name": "Dr. Naomi Ren",
+      "message": "She's got a scratch!"
+    },
+    "inMissionComms": {
+      "name": "Program Zero Pilot",
+      "message": "It's just a reflection from the stars, I swear!"
+    },
+    "dialogueSequence": [
+      {
+        "name": "Dr. Naomi Ren",
+        "message": "She's got a scratch!"
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "Hey, why did you do that?!"
+    }
+  },
+  {
+    "stage": 19,
+    "title": "Stage 19",
+    "location": "Sector 19",
+    "objective": "Complete the Sector 19 mission and survive.",
+    "missionTargetName": "Sector 19 Target",
+    "contact": {
+      "name": "GHOST",
+      "message": "Another waits."
+    },
+    "inMissionComms": {
+      "name": "Commander Elena Vail",
+      "message": "Report, then rest."
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "Another waits."
+      }
+    ],
+    "afterAction": {
+      "name": "Commander Elena Vail",
+      "message": "Report, then rest."
+    }
+  },
+  {
+    "stage": 20,
+    "title": "Stage 20",
+    "location": "Sector 20",
+    "objective": "Complete the Sector 20 mission and survive.",
+    "missionTargetName": "Sector 20 Target",
+    "contact": {
+      "name": "GHOST",
+      "message": "Something about your fleet stinks."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "All I smell is fresh oil. And a little of your sweat."
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "Something about your fleet stinks."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "She only smells fresh oil. And a Big Mac."
+    }
+  },
+  {
+    "stage": 21,
+    "title": "Stage 21",
+    "location": "Sector 21",
+    "objective": "Complete the Sector 21 mission and survive.",
+    "missionTargetName": "Sector 21 Target",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "Smuggler vessel."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "Watch her maneuver. This isn't flying—it's dancing."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "Smuggler vessel."
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "Leaving."
+    }
+  },
+  {
+    "stage": 22,
+    "title": "Stage 22",
+    "location": "Sector 22",
+    "objective": "Complete the Sector 22 mission and survive.",
+    "missionTargetName": "Sector 22 Target",
+    "contact": {
+      "name": "GHOST",
+      "message": "They're carrying something the military wants."
+    },
+    "inMissionComms": {
+      "name": "Commander Elena Vail",
+      "message": "Proceed."
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "They're carrying something the military wants."
+      }
+    ],
+    "afterAction": {
+      "name": "Commander Elena Vail",
+      "message": "Proceed."
+    }
+  },
+  {
+    "stage": 23,
+    "title": "Stage 23",
+    "location": "Sector 23",
+    "objective": "Complete the Sector 23 mission and survive.",
+    "missionTargetName": "Sector 23 Target",
+    "contact": {
+      "name": "Dr. Naomi Ren",
+      "message": "Another little blot next to the old one!"
+    },
+    "inMissionComms": {
+      "name": "Program Zero Pilot",
+      "message": "It's light from the rear window..."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Dr. Naomi Ren",
+        "message": "Another little blot next to the old one!"
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "It's a light..."
+    }
+  },
+  {
+    "stage": 24,
+    "title": "Stage 24",
+    "location": "Sector 24",
+    "objective": "Complete the Sector 24 mission and survive.",
+    "missionTargetName": "Sector 24 Target",
+    "contact": {
+      "name": "GHOST",
+      "message": "The military is silent about the incursions."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "I fixed the pressure sensor. Now it's as precise as I like. Almost as precise as me."
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "The military is silent about the incursions."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "I fixed her pressure sensor. I tried another solvent on the stain. Nothing."
+    }
+  },
+  {
+    "stage": 25,
+    "title": "Stage 25",
+    "location": "Sector 25",
+    "objective": "Complete the Sector 25 mission and survive.",
+    "missionTargetName": "Sector 25 Objective",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "Border sweep. Hold your position."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "Bring back cosmic dust and I'll wallop you with my beautiful Swedish wrench."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "Border sweep."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "Dust on my ship and you'll meet my Swedish wrench."
+    }
+  },
+  {
+    "stage": 26,
+    "title": "Stage 26",
+    "location": "Sector 26",
+    "objective": "Complete the Sector 26 mission and survive.",
+    "missionTargetName": "Sector 26 Objective",
+    "contact": {
+      "name": "GHOST",
+      "message": "Alien movements. Fleet is watching."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "The last maneuver was perfect. I'm prouder of her than of myself — and that's saying something."
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "Alien movements. Fleet is watching."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "Her maneuver was precise."
+    }
+  },
+  {
+    "stage": 27,
+    "title": "Stage 27",
+    "location": "Sector 27",
+    "objective": "Complete the Sector 27 mission and survive.",
+    "missionTargetName": "Sector 27 Objective",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "Return immediately. No engagement authorized."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "Finally—an order that keeps her safe. Credit to whoever wrote it."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "Return immediately. No engagement authorized."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "Finally—an order that keeps her safe."
+    }
+  },
+  {
+    "stage": 28,
+    "title": "Stage 28",
+    "location": "Sector 28",
+    "objective": "Complete the Sector 28 mission and survive.",
+    "missionTargetName": "Sector 28 Objective",
+    "contact": {
+      "name": "GHOST",
+      "message": "Invasions are linked to technology."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "The only tech that matters is mine. Someone copied me — and I'll find them."
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "Invasions are linked to technology."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "Someone copied it. I strongly suspect it's my father."
+    }
+  },
+  {
+    "stage": 29,
+    "title": "Stage 29",
+    "location": "Sector 29",
+    "objective": "Complete the Sector 29 mission and survive.",
+    "missionTargetName": "Sector 29 Objective",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "You'll meet Sera tomorrow."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "She has a similar ship?! Who copied my design?! Probably that idiot, Professor Rahav!"
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "You'll meet Sera tomorrow."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "She has a similar ship. Definitely Rahav — no one else could pull that off."
+    }
+  },
+  {
+    "stage": 30,
+    "title": "Stage 30",
+    "location": "Sector 30",
+    "objective": "Complete the Sector 30 mission and survive.",
+    "missionTargetName": "Sector 30 Objective",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "Duel. Ordered from command."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "If she touches my ship I'll strip it down and rebuild it better. And I'll kill Rahav."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "Duel. Ordered from command."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "If she touches it I'll dismantle it. Rahav will be dealt with afterward."
+    }
+  },
+  {
+    "stage": 31,
+    "title": "Stage 31",
+    "location": "Sector 31",
+    "objective": "Complete the Sector 31 mission and survive.",
+    "missionTargetName": "Sector 31 Objective",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "One hour."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "My weapons are ready. They're the most precise. Rahav probably stole the idea for them too."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "One hour."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "Her weapons are ready."
+    }
+  },
+  {
+    "stage": 32,
+    "title": "Stage 32",
+    "location": "Sector 32",
+    "objective": "Complete the Sector 32 mission and survive.",
+    "missionTargetName": "Sector 32 Objective",
+    "contact": {
+      "name": "Sera Kane",
+      "message": "Let's finish this fast."
+    },
+    "inMissionComms": {
+      "name": "Program Zero Pilot",
+      "message": "Ready."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Sera Kane",
+        "message": "Let's finish this fast."
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "Ready."
+    }
+  },
+  {
+    "stage": 33,
+    "title": "Stage 33",
+    "location": "Sector 33",
+    "objective": "Complete the Sector 33 assignment and survive.",
+    "missionTargetName": "Sector 33 Target",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "Copy. Both of you, return."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "There's a scratch! That fool Rahav stole parts of her tech — I'll kill him!"
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "Copy. Both of you, return."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "She's got a scratch. Rahav probably stole parts from her. No one else knows how she's built."
+    }
+  },
+  {
+    "stage": 34,
+    "title": "Stage 34",
+    "location": "Sector 34",
+    "objective": "Complete the Sector 34 assignment and survive.",
+    "missionTargetName": "Sector 34 Target",
+    "contact": {
+      "name": "GHOST",
+      "message": "The fleet ordered the incursions."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "I asked for quiet and got thieves and scratches. Rahav — I know it was you!"
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "The fleet ordered the incursions."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "I've been left with thieves and scratches. Rahav..."
+    }
+  },
+  {
+    "stage": 35,
+    "title": "Stage 35",
+    "location": "Sector 35",
+    "objective": "Complete the Sector 35 assignment and survive.",
+    "missionTargetName": "Sector 35 Target",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "Orders from above. We obey."
+    },
+    "inMissionComms": {
+      "name": "GHOST",
+      "message": "Elena — this is rotten."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "Orders from above. We obey."
+      }
+    ],
+    "afterAction": {
+      "name": "GHOST",
+      "message": "Elena — this is rotten."
+    }
+  },
+  {
+    "stage": 36,
+    "title": "Stage 36",
+    "location": "Sector 36",
+    "objective": "Complete the Sector 36 assignment and survive.",
+    "missionTargetName": "Sector 36 Target",
+    "contact": {
+      "name": "GHOST",
+      "message": "Sera still thinks she's the best."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "Only if she isn't harmed. Otherwise I'm staying — I'll kill them all, Rahav included, from a distance."
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "Sera still thinks she's the best."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "Don't start."
+    }
+  },
+  {
+    "stage": 37,
+    "title": "Stage 37",
+    "location": "Sector 37",
+    "objective": "Complete the Sector 37 assignment and survive.",
+    "missionTargetName": "Sector 37 Target",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "Another mission."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "Initiating escape. My engines sing—listen how beautiful they are. It's not you, it's them."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "Another mission."
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "Elena, haven't you felt something's been off here for a long time?"
+    }
+  },
+  {
+    "stage": 38,
+    "title": "Stage 38",
+    "location": "Sector 38",
+    "objective": "Complete the Sector 38 assignment and survive.",
+    "missionTargetName": "Sector 38 Target",
+    "contact": {
+      "name": "GHOST",
+      "message": "Another wanted."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "If anyone touches her during the chase I'll find them. And Rahav too."
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "Another wanted."
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "Sometimes I ask who we're really working for."
+    }
+  },
+  {
+    "stage": 39,
+    "title": "Stage 39",
+    "location": "Sector 39",
+    "objective": "Complete the Sector 39 assignment and survive.",
+    "missionTargetName": "Sector 39 Target",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "Return. Report."
+    },
+    "inMissionComms": {
+      "name": "Program Zero Pilot",
+      "message": "We're fleeing. No time for AC."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "Return. Report."
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "Target neutralized. Again."
+    }
+  },
+  {
+    "stage": 40,
+    "title": "Stage 40",
+    "location": "Sector 40",
+    "objective": "Complete the Sector 40 assignment and survive.",
+    "missionTargetName": "Sector 40 Target",
+    "contact": {
+      "name": "GHOST",
+      "message": "The fleet is too quiet."
+    },
+    "inMissionComms": {
+      "name": "Program Zero Pilot",
+      "message": "Maybe we'll fix it when we stop."
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "The fleet is too quiet."
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "This silence is starting to feel dangerous."
+    }
+  },
+  {
+    "stage": 41,
+    "title": "Stage 41",
+    "location": "Sector 41",
+    "objective": "Complete the Sector 41 mission and survive.",
+    "missionTargetName": "Sector 41 Objective",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "Boundary patrol."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "My weapons are hungry. So am I—the A/C's out and it's boiling in here."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "Boundary patrol."
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "What if we see something we're not supposed to?"
+    }
+  },
+  {
+    "stage": 42,
+    "title": "Stage 42",
+    "location": "Sector 42",
+    "objective": "Complete the Sector 42 mission and survive.",
+    "missionTargetName": "Sector 42 Objective",
+    "contact": {
+      "name": "GHOST",
+      "message": "Large alien movements. The fleet is looking the other way."
+    },
+    "inMissionComms": {
+      "name": "Program Zero Pilot",
+      "message": "At least he's dead."
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "Large alien movements. The fleet is looking the other way."
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "How many more times can we look the other way?"
+    }
+  },
+  {
+    "stage": 43,
+    "title": "Stage 43",
+    "location": "Sector 43",
+    "objective": "Complete the Sector 43 mission and survive.",
+    "missionTargetName": "Sector 43 Objective",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "No authorization to intervene. Withdraw."
+    },
+    "inMissionComms": {
+      "name": "Program Zero Pilot",
+      "message": "We'll fix the A/C later."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "No authorization to intervene. Withdraw."
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "Do you really still believe it's just orders?"
+    }
+  },
+  {
+    "stage": 44,
+    "title": "Stage 44",
+    "location": "Sector 44",
+    "objective": "Complete the Sector 44 mission and survive.",
+    "missionTargetName": "Sector 44 Objective",
+    "contact": {
+      "name": "GHOST",
+      "message": "There's a clear link between the incursions and the technology."
+    },
+    "inMissionComms": {
+      "name": "Program Zero Pilot",
+      "message": "I did press the button..."
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "There's a clear link between the incursions and the technology."
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "Someone's playing a game far bigger than us."
+    }
+  },
+  {
+    "stage": 45,
+    "title": "Stage 45",
+    "location": "Sector 45",
+    "objective": "Complete the Sector 45 mission and survive.",
+    "missionTargetName": "Sector 45 Objective",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "Another meeting with Sera tomorrow."
+    },
+    "inMissionComms": {
+      "name": "Program Zero Pilot",
+      "message": "I was the one who aimed it..."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "Another meeting with Sera tomorrow."
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "What if this time it doesn't end in a tie?"
+    }
+  },
+  {
+    "stage": 46,
+    "title": "Stage 46",
+    "location": "Sector 46",
+    "objective": "Complete the Sector 46 mission and survive.",
+    "missionTargetName": "Sector 46 Objective",
+    "contact": {
+      "name": "Program Zero Pilot",
+      "message": "I'm mutinying. We're pulling out."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "Less important than the broken A/C—I'm dying of heat!"
+    },
+    "dialogueSequence": [
+      {
+        "name": "Program Zero Pilot",
+        "message": "I'm mutinying. We're pulling out."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "Only if she isn't harmed. Otherwise I'm staying."
+    }
+  },
+  {
+    "stage": 47,
+    "title": "Stage 47",
+    "location": "Sector 47",
+    "objective": "Complete the Sector 47 mission and survive.",
+    "missionTargetName": "Sector 47 Objective",
+    "contact": {
+      "name": "GHOST",
+      "message": "Clear escape route. Get out."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "My weapons tore it apart. Flawless. And I'm still as hot as an oven."
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "Clear escape route. Get out."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "Initiating escape. Her engines are stable."
+    }
+  },
+  {
+    "stage": 48,
+    "title": "Stage 48",
+    "location": "Sector 48",
+    "objective": "Complete the Sector 48 mission and survive.",
+    "missionTargetName": "Sector 48 Objective",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "The whole fleet is pursuing you!"
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "I fixed the A/C! Finally. She's perfect again and I'm not sweating."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "The whole fleet is pursuing you!"
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "If anyone lays a hand on her—I will find them."
+    }
+  },
+  {
+    "stage": 49,
+    "title": "Stage 49",
+    "location": "Sector 49",
+    "objective": "Complete the Sector 49 mission and survive.",
+    "missionTargetName": "Sector 49 Target",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "Pilot, stand by. Naomi—this could cost you everything."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "If they touch her, I'll reduce them to dust with cross-dimensional energy. Watch."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "Pilot, stand by. Naomi—this could cost you everything."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "Her engine shuddered. She's tired."
+    }
+  },
+  {
+    "stage": 50,
+    "title": "Stage 50",
+    "location": "Sector 50",
+    "objective": "Complete the Sector 50 mission and survive.",
+    "missionTargetName": "Sector 50 Target",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "You'll be captured!"
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "Don't get close! That fool Rahav stole my tech—I know it!"
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "You'll be captured!"
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "We're entering an asteroid belt. She hates tight spaces."
+    }
+  },
+  {
+    "stage": 51,
+    "title": "Stage 51",
+    "location": "Sector 51",
+    "objective": "Complete the Sector 51 mission and survive.",
+    "missionTargetName": "Sector 51 Target",
+    "contact": {
+      "name": "Dr. Naomi Ren",
+      "message": "Her viewports are clogged with dust!"
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "I'm freezing time for a moment. Look—what a capability. It's not the pilot; it's me."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Dr. Naomi Ren",
+        "message": "Her viewports are clogged with dust!"
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "Flying by sensors."
+    }
+  },
+  {
+    "stage": 52,
+    "title": "Stage 52",
+    "location": "Sector 52",
+    "objective": "Complete the Sector 52 mission and survive.",
+    "missionTargetName": "Sector 52 Target",
+    "contact": {
+      "name": "Dr. Naomi Ren",
+      "message": "Her wing's scratched! The stain is still there! I've tried every compound in the universe except a spatula!"
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "The shield nearly cracked from that surge! Pilot—this is on you! And Rahav stole my shield concept!"
+    },
+    "dialogueSequence": [
+      {
+        "name": "Dr. Naomi Ren",
+        "message": "Her wing's scratched! The stain is still there! I've tried every compound in the universe except a spatula!"
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "Maybe…"
+    }
+  },
+  {
+    "stage": 53,
+    "title": "Stage 53",
+    "location": "Sector 53",
+    "objective": "Complete the Sector 53 mission and survive.",
+    "missionTargetName": "Sector 53 Target",
+    "contact": {
+      "name": "Dr. Naomi Ren",
+      "message": "Her cloak is flickering!"
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "I siphoned energy from a parallel dimension. Weapons are twice as strong now. Pure pride."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Dr. Naomi Ren",
+        "message": "Her cloak is flickering!"
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "That's the vibration."
+    }
+  },
+  {
+    "stage": 54,
+    "title": "Stage 54",
+    "location": "Sector 54",
+    "objective": "Complete the Sector 54 mission and survive.",
+    "missionTargetName": "Sector 54 Target",
+    "contact": {
+      "name": "Dr. Naomi Ren",
+      "message": "Her generator's sputtering!"
+    },
+    "inMissionComms": {
+      "name": "Sera Kane",
+      "message": "I'm still on your tail."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Dr. Naomi Ren",
+        "message": "Her generator's sputtering!"
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "Holding her steady."
+    }
+  },
+  {
+    "stage": 55,
+    "title": "Stage 55",
+    "location": "Sector 55",
+    "objective": "Complete the Sector 55 mission and survive.",
+    "missionTargetName": "Sector 55 Target",
+    "contact": {
+      "name": "Dr. Naomi Ren",
+      "message": "There are chips scattered on her deck!"
+    },
+    "inMissionComms": {
+      "name": "Sera Kane",
+      "message": "What are these readings?"
+    },
+    "dialogueSequence": [
+      {
+        "name": "Dr. Naomi Ren",
+        "message": "There are chips scattered on her deck!"
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "Later!"
+    }
+  },
+  {
+    "stage": 56,
+    "title": "Stage 56",
+    "location": "Sector 56",
+    "objective": "Complete the Sector 56 mission and survive.",
+    "missionTargetName": "Sector 56 Target",
+    "contact": {
+      "name": "Dr. Naomi Ren",
+      "message": "Her nav is showing three trajectories!"
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "I'm freezing time again. Watch—perfect. The pilot just presses buttons."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Dr. Naomi Ren",
+        "message": "Her nav is showing three trajectories!"
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "Choosing one."
+    }
+  },
+  {
+    "stage": 57,
+    "title": "Stage 57",
+    "location": "Sector 57",
+    "objective": "Complete the Sector 57 mission. Survive.",
+    "missionTargetName": "Sector 57 Target",
+    "contact": {
+      "name": "Dr. Naomi Ren",
+      "message": "Her armor's starting to crack!"
+    },
+    "inMissionComms": {
+      "name": "Sera Kane",
+      "message": "You stop while I'm on your tail? Have some nerve."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Dr. Naomi Ren",
+        "message": "Her armor's starting to crack!"
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "Almost there."
+    }
+  },
+  {
+    "stage": 58,
+    "title": "Stage 58",
+    "location": "Sector 58",
+    "objective": "Complete the Sector 58 mission. Survive.",
+    "missionTargetName": "Sector 58 Target",
+    "contact": {
+      "name": "Dr. Naomi Ren",
+      "message": "Everything's rattling her."
+    },
+    "inMissionComms": {
+      "name": "Commander Elena Vail",
+      "message": "(Secure) You have a small window. I'm holding reinforcements."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Dr. Naomi Ren",
+        "message": "Everything's rattling her."
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "That almost hit me!"
+    }
+  },
+  {
+    "stage": 59,
+    "title": "Stage 59",
+    "location": "Sector 59",
+    "objective": "Complete the Sector 59 mission. Survive.",
+    "missionTargetName": "Sector 59 Target",
+    "contact": {
+      "name": "Dr. Naomi Ren",
+      "message": "Her cloak burned away!"
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "Yes. And they stole my tech. Rahav—idiot. I'll kill him."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Dr. Naomi Ren",
+        "message": "Her cloak burned away!"
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "We're clear!"
+    }
+  },
+  {
+    "stage": 60,
+    "title": "Stage 60",
+    "location": "Sector 60",
+    "objective": "Complete the Sector 60 mission. Survive.",
+    "missionTargetName": "Sector 60 Target",
+    "contact": {
+      "name": "Sera Kane",
+      "message": "Found you. I'm on your tail."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "Finally she's settling. Now I can fix the AC again—it's wheezing."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Sera Kane",
+        "message": "Found you. I'm on your tail."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "She's broken. Rahav's probably proud of the flying heap he built her."
+    }
+  },
+  {
+    "stage": 61,
+    "title": "Stage 61",
+    "location": "Sector 61",
+    "objective": "Complete the Sector 61 mission. Survive.",
+    "missionTargetName": "Sector 61 Target",
+    "contact": {
+      "name": "Sera Kane",
+      "message": "I'm right behind you."
+    },
+    "inMissionComms": {
+      "name": "Program Zero Pilot",
+      "message": "Finally."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Sera Kane",
+        "message": "I'm right behind you."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "Time stop—use it. She needs a moment. Rahav never taught her patience."
+    }
+  },
+  {
+    "stage": 62,
+    "title": "Stage 62",
+    "location": "Sector 62",
+    "objective": "Complete the Sector 62 mission. Survive.",
+    "missionTargetName": "Sector 62 Target",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "(Secure) Sera has orders to destroy. I'm stalling."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "I've upgraded the time-stop. Three seconds now. Isn't that beautiful?"
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "(Secure) Sera has orders to destroy. I'm stalling."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "Her shield nearly fractured!"
+    }
+  },
+  {
+    "stage": 63,
+    "title": "Stage 63",
+    "location": "Sector 63",
+    "objective": "Complete the Sector 63 mission. Survive.",
+    "missionTargetName": "Sector 63 Target",
+    "contact": {
+      "name": "Sera Kane",
+      "message": "Still chasing."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "My weapons are hungry. I'm so proud of them I almost forget Rahav."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Sera Kane",
+        "message": "Still chasing."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "I siphoned energy from her. Her weapons are stable—unlike my father's shiny toys that only draw fire."
+    }
+  },
+  {
+    "stage": 64,
+    "title": "Stage 64",
+    "location": "Sector 64",
+    "objective": "Complete the Sector 64 mission. Survive.",
+    "missionTargetName": "Sector 64 Target",
+    "contact": {
+      "name": "GHOST",
+      "message": "Minor alien wave."
+    },
+    "inMissionComms": {
+      "name": "Program Zero Pilot",
+      "message": "I pressed the button hard this time."
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "Minor alien wave."
+      }
+    ],
+    "afterAction": {
+      "name": "Sera Kane",
+      "message": "I see."
+    }
+  },
+  {
+    "stage": 65,
+    "title": "Stage 65",
+    "location": "Sector 65",
+    "objective": "Complete the Sector 65 mission and survive.",
+    "missionTargetName": "Sector 65 Objective",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "(SECURE) Sera, review the readings."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "I've siphoned a massive charge. Now she's singing—perfect. Rahav would be jealous."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "(SECURE) Sera, review the readings."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "Her generator's still weak. Unlike Rahav's scrapheap that only rattles and irritates."
+    }
+  },
+  {
+    "stage": 66,
+    "title": "Stage 66",
+    "location": "Sector 66",
+    "objective": "Complete the Sector 66 mission and survive.",
+    "missionTargetName": "Sector 66 Objective",
+    "contact": {
+      "name": "Sera Kane",
+      "message": "I'm pushing on... but the readings—"
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "My weapons will handle it. They're the best. And I am the one who built them."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Sera Kane",
+        "message": "I'm pushing on... but the readings—"
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "Stopping time again. She needs silence—unlike my father's noisy ship that wrecks every soundscape."
+    }
+  },
+  {
+    "stage": 67,
+    "title": "Stage 67",
+    "location": "Sector 67",
+    "objective": "Complete the Sector 67 mission and survive.",
+    "missionTargetName": "Sector 67 Objective",
+    "contact": {
+      "name": "GHOST",
+      "message": "Small bounty."
+    },
+    "inMissionComms": {
+      "name": "Program Zero Pilot",
+      "message": "They hit us—now they're firing!"
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "Small bounty."
+      }
+    ],
+    "afterAction": {
+      "name": "Sera Kane",
+      "message": "You're pausing to hunt?!"
+    }
+  },
+  {
+    "stage": 68,
+    "title": "Stage 68",
+    "location": "Sector 68",
+    "objective": "Complete the Sector 68 mission and survive.",
+    "missionTargetName": "Sector 68 Objective",
+    "contact": {
+      "name": "Sera Kane",
+      "message": "Closing in."
+    },
+    "inMissionComms": {
+      "name": "Program Zero Pilot",
+      "message": "Well done."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Sera Kane",
+        "message": "Closing in."
+      }
+    ],
+    "afterAction": {
+      "name": "Commander Elena Vail",
+      "message": "(SECURE) There's a window. I'm holding reinforcements."
+    }
+  },
+  {
+    "stage": 69,
+    "title": "Stage 69",
+    "location": "Sector 69",
+    "objective": "Complete the Sector 69 mission and survive.",
+    "missionTargetName": "Sector 69 Objective",
+    "contact": {
+      "name": "Sera Kane",
+      "message": "The readings... and an order from the Belt..."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "I stop time for a full three seconds. Watch. Perfect. The pilot just watches."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Sera Kane",
+        "message": "The readings... and an order from the Belt..."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "Yes. Rahav stole parts from her. Now his scrap is wrecking the composition of the whole sector."
+    }
+  },
+  {
+    "stage": 70,
+    "title": "Stage 70",
+    "location": "Sector 70",
+    "objective": "Complete the Sector 70 mission and survive.",
+    "missionTargetName": "Sector 70 Objective",
+    "contact": {
+      "name": "Sera Kane",
+      "message": "I'm holding. Need to think."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "The weapons sing when they fire. Hear that? It's my upgrade."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Sera Kane",
+        "message": "I'm holding. Need to think."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "Finally. Now we can try the effect again."
+    }
+  },
+  {
+    "stage": 71,
+    "title": "Stage 71",
+    "location": "Sector 71",
+    "objective": "Complete the Sector 71 mission and survive.",
+    "missionTargetName": "Sector 71 Objective",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "(SECURE) Sera, more readings."
+    },
+    "inMissionComms": {
+      "name": "Program Zero Pilot",
+      "message": "No one touches it."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "(SECURE) Sera, more readings."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "I repaired her generator."
+    }
+  },
+  {
+    "stage": 72,
+    "title": "Stage 72",
+    "location": "Sector 72",
+    "objective": "Complete the Sector 72 mission and survive.",
+    "missionTargetName": "Sector 72 Objective",
+    "contact": {
+      "name": "GHOST",
+      "message": "Relative silence. Rahav sent an arrogant message."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "AC's perfect. Engines sing. Weapons hot. I'm proud of every centimeter."
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "Relative silence. Rahav sent an arrogant message."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "I upgraded her time-stop. Not like Rahav's clunky engineering."
+    }
+  },
+  {
+    "stage": 73,
+    "title": "Stage 73",
+    "location": "Sector 73",
+    "objective": "Complete Sector 73 mission and survive.",
+    "missionTargetName": "Sector 73 Objective",
+    "contact": {
+      "name": "GHOST",
+      "message": "Bounty."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "Let them come. I've tapped extra‑dimensional energy and a time‑freeze. They don't know what they're up against."
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "Bounty."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "Her weapons are ready."
+    }
+  },
+  {
+    "stage": 74,
+    "title": "Stage 74",
+    "location": "Sector 74",
+    "objective": "Complete Sector 74 mission and survive.",
+    "missionTargetName": "Sector 74 Objective",
+    "contact": {
+      "name": "Dr. Naomi Ren",
+      "message": "She freezes time."
+    },
+    "inMissionComms": {
+      "name": "Program Zero Pilot",
+      "message": "Later!"
+    },
+    "dialogueSequence": [
+      {
+        "name": "Dr. Naomi Ren",
+        "message": "She freezes time."
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "Firing."
+    }
+  },
+  {
+    "stage": 75,
+    "title": "Stage 75",
+    "location": "Sector 75",
+    "objective": "Complete Sector 75 mission and survive.",
+    "missionTargetName": "Sector 75 Objective",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "(Private) The picture's coming into focus."
+    },
+    "inMissionComms": {
+      "name": "Program Zero Pilot",
+      "message": "Well done."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "(Private) The picture's coming into focus."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "I fed her extra energy."
+    }
+  },
+  {
+    "stage": 76,
+    "title": "Stage 76",
+    "location": "Sector 76",
+    "objective": "Complete Sector 76 mission and survive.",
+    "missionTargetName": "Sector 76 Objective",
+    "contact": {
+      "name": "GHOST",
+      "message": "Medium wave."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "I freeze time, siphon power, fire—perfection. And the pilot just sits there."
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "Medium wave."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "Her weapons will handle it. Not like Professor Rahav's flashy guns that only draw needless attention."
+    }
+  },
+  {
+    "stage": 77,
+    "title": "Stage 77",
+    "location": "Sector 77",
+    "objective": "Complete Sector 77 mission and survive.",
+    "missionTargetName": "Sector 77 Objective",
+    "contact": {
+      "name": "Dr. Naomi Ren",
+      "message": "Her shield shuddered!"
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "My weapons tore them apart before they knew what hit them. Pure pride."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Dr. Naomi Ren",
+        "message": "Her shield shuddered!"
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "Hey—why did you do that?!"
+    }
+  },
+  {
+    "stage": 78,
+    "title": "Stage 78",
+    "location": "Sector 78",
+    "objective": "Complete Sector 78 mission and survive.",
+    "missionTargetName": "Sector 78 Objective",
+    "contact": {
+      "name": "Dr. Naomi Ren",
+      "message": "I fixed her."
+    },
+    "inMissionComms": {
+      "name": "Program Zero Pilot",
+      "message": "Magic — I press a button."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Dr. Naomi Ren",
+        "message": "I fixed her."
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "Thanks."
+    }
+  },
+  {
+    "stage": 79,
+    "title": "Stage 79",
+    "location": "Sector 79",
+    "objective": "Complete Sector 79 mission and survive.",
+    "missionTargetName": "Sector 79 Objective",
+    "contact": {
+      "name": "Commander Elena Vail",
+      "message": "(Private) Sera, the window's open. If you go through, I'll cover you."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "Engines singing, AC perfect, weapons ready. I'm proud."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Commander Elena Vail",
+        "message": "(Private) Sera, the window's open. If you go through, I'll cover you."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "A brief time‑freeze."
+    }
+  },
+  {
+    "stage": 80,
+    "title": "Stage 80",
+    "location": "Sector 80",
+    "objective": "Complete Sector 80 mission and survive.",
+    "missionTargetName": "Sector 80 Objective",
+    "contact": {
+      "name": "Sera Kane",
+      "message": "I'm switching sides. Officially."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "Welcome. Just don't touch my ship. And Professor Rahav stays on the blacklist."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Sera Kane",
+        "message": "I'm switching sides. Officially."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "Welcome. Don't touch her. And tell my father's flying heap to stay out of formation."
+    }
+  },
+  {
+    "stage": 81,
+    "title": "Stage 81",
+    "location": "Sector 81",
+    "objective": "Complete Sector 81 objectives and survive.",
+    "missionTargetName": "Sector 81 Target",
+    "contact": {
+      "name": "GHOST",
+      "message": "Alien leader in range."
+    },
+    "inMissionComms": {
+      "name": "Sera Kane",
+      "message": "I'm going first. I'm the best."
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "Alien leader in range."
+      }
+    ],
+    "afterAction": {
+      "name": "Sera Kane",
+      "message": "I went first—I'm faster!"
+    }
+  },
+  {
+    "stage": 82,
+    "title": "Stage 82",
+    "location": "Sector 82",
+    "objective": "Complete Sector 82 objectives and survive.",
+    "missionTargetName": "Sector 82 Target",
+    "contact": {
+      "name": "Sera Kane",
+      "message": "He's strong, but I'm better."
+    },
+    "inMissionComms": {
+      "name": "Program Zero Pilot",
+      "message": "No retreat."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Sera Kane",
+        "message": "He's strong, but I'm better."
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "Of course. You're always the best."
+    }
+  },
+  {
+    "stage": 83,
+    "title": "Stage 83",
+    "location": "Sector 83",
+    "objective": "Complete Sector 83 objectives and survive.",
+    "missionTargetName": "Sector 83 Target",
+    "contact": {
+      "name": "GHOST",
+      "message": "Fleet is watching."
+    },
+    "inMissionComms": {
+      "name": "Sera Kane",
+      "message": "We don't need them."
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "Fleet is watching."
+      }
+    ],
+    "afterAction": {
+      "name": "Sera Kane",
+      "message": "We don't need them! I can handle it!"
+    }
+  },
+  {
+    "stage": 84,
+    "title": "Stage 84",
+    "location": "Sector 84",
+    "objective": "Complete Sector 84 objectives and survive.",
+    "missionTargetName": "Sector 84 Target",
+    "contact": {
+      "name": "Dr. Naomi Ren",
+      "message": "His shields are weakening."
+    },
+    "inMissionComms": {
+      "name": "Sera Kane",
+      "message": "Another hit."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Dr. Naomi Ren",
+        "message": "His shields are weakening."
+      }
+    ],
+    "afterAction": {
+      "name": "Sera Kane",
+      "message": "Another hit! See how precise I am?"
+    }
+  },
+  {
+    "stage": 85,
+    "title": "Stage 85",
+    "location": "Sector 85",
+    "objective": "Complete Sector 85 objectives and survive.",
+    "missionTargetName": "Sector 85 Target",
+    "contact": {
+      "name": "GHOST",
+      "message": "He's trying to flee."
+    },
+    "inMissionComms": {
+      "name": "Sera Kane",
+      "message": "Nobody escapes me."
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "He's trying to flee."
+      }
+    ],
+    "afterAction": {
+      "name": "Sera Kane",
+      "message": "He won't escape me!"
+    }
+  },
+  {
+    "stage": 86,
+    "title": "Stage 86",
+    "location": "Sector 86",
+    "objective": "Complete Sector 86 objectives and survive.",
+    "missionTargetName": "Sector 86 Target",
+    "contact": {
+      "name": "Dr. Naomi Ren",
+      "message": "Last surge of energy—she's giving everything."
+    },
+    "inMissionComms": {
+      "name": "Sera Kane",
+      "message": "That's it. I won."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Dr. Naomi Ren",
+        "message": "Last surge of energy—she's giving everything."
+      }
+    ],
+    "afterAction": {
+      "name": "Sera Kane",
+      "message": "That's it! I won!"
+    }
+  },
+  {
+    "stage": 87,
+    "title": "Stage 87",
+    "location": "Sector 87",
+    "objective": "Complete Sector 87 objectives and survive.",
+    "missionTargetName": "Sector 87 Target",
+    "contact": {
+      "name": "GHOST",
+      "message": "Leader neutralized."
+    },
+    "inMissionComms": {
+      "name": "Sera Kane",
+      "message": "Because I'm here."
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "Leader neutralized."
+      }
+    ],
+    "afterAction": {
+      "name": "Sera Kane",
+      "message": "Told you I'm the best!"
+    }
+  },
+  {
+    "stage": 88,
+    "title": "Stage 88",
+    "location": "Sector 88",
+    "objective": "Complete Sector 88 objectives and survive.",
+    "missionTargetName": "Sector 88 Target",
+    "contact": {
+      "name": "Dr. Naomi Ren",
+      "message": "A few more faults. Help me fix them."
+    },
+    "inMissionComms": {
+      "name": "Sera Kane",
+      "message": "I'll help. I'm the best at repairs."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Dr. Naomi Ren",
+        "message": "A few more faults. Help me fix them."
+      }
+    ],
+    "afterAction": {
+      "name": "Sera Kane",
+      "message": "I helped! I'm good at this too!"
+    }
+  },
+  {
+    "stage": 89,
+    "title": "Stage 89",
+    "location": "Sector 89",
+    "objective": "Complete the Sector 89 objective and survive.",
+    "missionTargetName": "Sector 89 Target",
+    "contact": {
+      "name": "GHOST",
+      "message": "The Fleet wants the tech."
+    },
+    "inMissionComms": {
+      "name": "Sera Kane",
+      "message": "They'll get nothing."
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "The Fleet wants the tech."
+      }
+    ],
+    "afterAction": {
+      "name": "Sera Kane",
+      "message": "They won't get it. I won't let them."
+    }
+  },
+  {
+    "stage": 90,
+    "title": "Stage 90",
+    "location": "Sector 90",
+    "objective": "Complete the Sector 90 objective and survive.",
+    "missionTargetName": "Sector 90 Target",
+    "contact": {
+      "name": "Dr. Naomi Ren",
+      "message": "Two ships. She's still more precise. By the way, your score was a quarter-point above hers."
+    },
+    "inMissionComms": {
+      "name": "Sera Kane",
+      "message": "Mine's better."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Dr. Naomi Ren",
+        "message": "Two ships. She's still more precise. By the way, your score was a quarter-point above hers."
+      }
+    ],
+    "afterAction": {
+      "name": "Sera Kane",
+      "message": "Mine's faster — and prettier!"
+    }
+  },
+  {
+    "stage": 91,
+    "title": "Stage 91",
+    "location": "Sector 91",
+    "objective": "Complete the Sector 91 objective and survive.",
+    "missionTargetName": "Sector 91 Target",
+    "contact": {
+      "name": "Sera Kane",
+      "message": "I'm leaving. Someone has to set the Fleet straight, and I'll do it better than anyone."
+    },
+    "inMissionComms": {
+      "name": "Program Zero Pilot",
+      "message": "You sure?"
+    },
+    "dialogueSequence": [
+      {
+        "name": "Sera Kane",
+        "message": "I'm leaving. Someone has to set the Fleet straight, and I'll do it better than anyone."
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "You sure? Want to stay and argue a bit longer?"
+    }
+  },
+  {
+    "stage": 92,
+    "title": "Stage 92",
+    "location": "Sector 92",
+    "objective": "Complete the Sector 92 objective and survive.",
+    "missionTargetName": "Sector 92 Target",
+    "contact": {
+      "name": "Dr. Naomi Ren",
+      "message": "I'm staying. Someone has to watch her. That quarter point is exactly why no one else will fly her — not you, Sera. Especially not that wreck of my father's."
+    },
+    "inMissionComms": {
+      "name": "Sera Kane",
+      "message": "Keep her safe. And yourselves, if you can."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Dr. Naomi Ren",
+        "message": "I'm staying. Someone has to watch her. That quarter point is exactly why no one else will fly her — not you, Sera. Especially not that wreck of my father's."
+      }
+    ],
+    "afterAction": {
+      "name": "Sera Kane",
+      "message": "Take care out there! And remember — I'm better than everyone!"
+    }
+  },
+  {
+    "stage": 93,
+    "title": "Stage 93",
+    "location": "Sector 93",
+    "objective": "Complete the Sector 93 objective and survive.",
+    "missionTargetName": "Sector 93 Target",
+    "contact": {
+      "name": "GHOST",
+      "message": "I'll help remotely. I knew about the score."
+    },
+    "inMissionComms": {
+      "name": "Sera Kane",
+      "message": "Thanks. I'll organize the forces."
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "I'll help remotely. I knew about the score."
+      }
+    ],
+    "afterAction": {
+      "name": "Sera Kane",
+      "message": "Thanks — I've got this!"
+    }
+  },
+  {
+    "stage": 94,
+    "title": "Stage 94",
+    "location": "Sector 94",
+    "objective": "Complete the Sector 94 objective and survive.",
+    "missionTargetName": "Sector 94 Target",
+    "contact": {
+      "name": "Sera Kane",
+      "message": "I'm going up against the Fleet!"
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "Don't touch my ship remotely. I feel everything — especially anything Professor Rahav steals."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Sera Kane",
+        "message": "I'm going up against the Fleet!"
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "Don't touch her from range. And keep my father's scrap out of the frame."
+    }
+  },
+  {
+    "stage": 95,
+    "title": "Stage 95",
+    "location": "Sector 95",
+    "objective": "Complete the Sector 95 objective and survive.",
+    "missionTargetName": "Sector 95 Target",
+    "contact": {
+      "name": "GHOST",
+      "message": "There are still aliens."
+    },
+    "inMissionComms": {
+      "name": "Program Zero Pilot",
+      "message": "Continuing."
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "There are still aliens."
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "Continuing."
+    }
+  },
+  {
+    "stage": 96,
+    "title": "Stage 96",
+    "location": "Sector 96",
+    "objective": "Complete the Sector 96 objective and survive.",
+    "missionTargetName": "Sector 96 Target",
+    "contact": {
+      "name": "Program Zero Pilot",
+      "message": "Sera versus the Fleet. We're against the aliens."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "And the ship comes first. With time-stop. Always."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Program Zero Pilot",
+        "message": "Sera versus the Fleet. We're against the aliens."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "And she comes first. Always."
+    }
+  },
+  {
+    "stage": 97,
+    "title": "Stage 97",
+    "location": "Sector 97",
+    "objective": "Complete the Sector 97 mission and survive.",
+    "missionTargetName": "Sector 97 Target",
+    "contact": {
+      "name": "Dr. Naomi Ren",
+      "message": "New lock. She's armed and ready."
+    },
+    "inMissionComms": {
+      "name": "Program Zero Pilot",
+      "message": "Moving out. I'll handle the real work."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Dr. Naomi Ren",
+        "message": "New lock. She's armed and ready."
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "We're moving."
+    }
+  },
+  {
+    "stage": 98,
+    "title": "Stage 98",
+    "location": "Sector 98",
+    "objective": "Complete the Sector 98 mission and survive.",
+    "missionTargetName": "Sector 98 Target",
+    "contact": {
+      "name": "Program Zero Pilot",
+      "message": "Hold up... I'm cleaning the smear. With a scraper."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "She's still the fairest and the top of the line. Put a scratch on her and you'll get a bruising—Professor Rahav included."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Program Zero Pilot",
+        "message": "Hold up... I'm cleaning the smear. With a scraper."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "What?!"
+    }
+  },
+  {
+    "stage": 99,
+    "title": "Stage 99",
+    "location": "Sector 99",
+    "objective": "Complete the Sector 99 mission and survive.",
+    "missionTargetName": "Sector 99 Target",
+    "contact": {
+      "name": "Dr. Naomi Ren",
+      "message": "Another fight. Hot lube's primed. She's always ready—unlike Professor Rahav's rustbucket."
+    },
+    "inMissionComms": {
+      "name": "Program Zero Pilot",
+      "message": "There will always be more. I'll keep flying."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Dr. Naomi Ren",
+        "message": "Another fight. Hot lube's primed. She's always ready—unlike Professor Rahav's rustbucket."
+      }
+    ],
+    "afterAction": {
+      "name": "Program Zero Pilot",
+      "message": "There will always be more."
+    }
+  },
+  {
+    "stage": 100,
+    "title": "Stage 100",
+    "location": "Sector 100",
+    "objective": "Complete the Sector 100 mission and survive.",
+    "missionTargetName": "Sector 100 Target",
+    "contact": {
+      "name": "Program Zero Pilot",
+      "message": "Holding position against the aliens."
+    },
+    "inMissionComms": {
+      "name": "Dr. Naomi Ren",
+      "message": "And I'll take on anyone who touches her—hot oil, time-stop and parallel-dimension energy if I must. Professor Rahav's already on the list."
+    },
+    "dialogueSequence": [
+      {
+        "name": "Program Zero Pilot",
+        "message": "Holding position against the aliens."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "And I'll stand over anyone who dares touch her. Now you know why. Professor Rahav still built that tin heap that ruins the view."
+    }
+  },
+  {
+    "stage": 101,
+    "title": "Project Zero // Fateful Epilogue and Final Closure",
+    "location": "The Absolute Expanse // Ark-9 Gate",
+    "objective": "Defeat the Archon's Prime Mothership, close the story arcs, and begin the full epilogue.",
+    "missionTargetName": "Archon's Prime Mothership",
+    "contact": {
+      "name": "GHOST",
+      "message": "Big boss ahead, Pilot. The Archon mothership radiates dark energy. Time to settle the score."
+    },
+    "inMissionComms": {
+      "name": "Commander Elena Vail",
+      "message": "This is Ark-9's final battle. Show them what Program Zero Pilot is made of."
+    },
+    "dialogueSequence": [
+      {
+        "name": "GHOST",
+        "message": "Big boss ahead, Pilot. The Archon mothership radiates dark energy."
+      },
+      {
+        "name": "Commander Elena Vail",
+        "message": "This is Ark-9's final battle. Show them what Program Zero Pilot is made of."
+      },
+      {
+        "name": "Dr. Naomi Ren",
+        "message": "And watch my ship! I built her against my father's wishes—not for some alien to recycle her into scrap!"
+      },
+      {
+        "name": "Sera Kane",
+        "message": "I'll cover your left flank, Pilot. Don't worry—I'll leave you enough room to look heroic."
+      },
+      {
+        "name": "Program Zero Pilot",
+        "message": "Final run. Powering all systems."
+      }
+    ],
+    "afterAction": {
+      "name": "Dr. Naomi Ren",
+      "message": "Full epilogue: The mothership's core detonated the moment the Pilot destroyed its system. Sera dragged him from the wreckage and the two slipped into an independent patrol along Ark‑9's border, with a quiet, suggestive hint of something more. I executed flawless digital revenge on my father, Professor Rahav—broadcasting his corruption across the galaxy and locking down his lab. Commander Elena purged the command and offered the Pilot and Sera independent authority. The aliens withdrew through distant gates, and GHOST has already picked up a new signal on the Dark Web."
+    }
+  }
+]

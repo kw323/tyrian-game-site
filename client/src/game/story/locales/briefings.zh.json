@@ -1,0 +1,2543 @@
+[
+  {
+    "stage": 1,
+    "title": "第1阶段",
+    "location": "扇区1",
+    "objective": "完成扇区1任务并生存下来。",
+    "missionTargetName": "扇区1目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "飞行员，这是试验舰。只听我的指挥。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "看着它。完美无瑕。别用脏手碰，要是敢我会掰断你一根手指。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "飞行员，这是试验舰。只听我的指挥。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "看着它。它完美无瑕。要是你用脏手碰，我就折断你一根手指。"
+    }
+  },
+  {
+    "stage": 2,
+    "title": "第2阶段",
+    "location": "扇区 2",
+    "objective": "完成扇区2任务并生存。",
+    "missionTargetName": "扇区2目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "海盗舰：接到命令，歼灭。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我的武器是银河最精准的，好好用它们。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "海盗舰：接到命令，歼灭。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "武器已就绪，好好用。她不喜欢多余的噪音。"
+    }
+  },
+  {
+    "stage": 3,
+    "title": "第3阶段",
+    "location": "扇区 3",
+    "objective": "完成扇区3任务并生存。",
+    "missionTargetName": "扇区3目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "迅速歼灭。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "护盾快裂开了！你脑子进水了吗？！给我回来！"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "迅速歼灭。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "她的护盾差点崩了！"
+    }
+  },
+  {
+    "stage": 4,
+    "title": "第4阶段",
+    "location": "扇区 4",
+    "objective": "完成扇区4任务并生存。",
+    "missionTargetName": "扇区4目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "返回，汇报情况。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "划痕我修好了。现在又完美如初。去拿块抹布。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "返回，汇报情况。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我修好了，还带来了柔软的抹布。"
+    }
+  },
+  {
+    "stage": 5,
+    "title": "第5阶段",
+    "location": "扇区 5",
+    "objective": "完成扇区5任务并生存。",
+    "missionTargetName": "扇区5目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "护送车队。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "你看她滑行的姿态，不是一艘飞船，而是艺术品。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "护送车队。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "她在小行星间穿行，仿佛天生如此。"
+    }
+  },
+  {
+    "stage": 6,
+    "title": "第6阶段",
+    "location": "扇区 6",
+    "objective": "完成扇区6任务并生存。",
+    "missionTargetName": "扇区6目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "攻击，立即应对。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "引擎在抖！我马上给它加杯热机油。你要是再让它抖我可不会客气！"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "攻击，立即应对。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "她的引擎抖了一下。她不喜欢被震动。"
+    }
+  },
+  {
+    "stage": 7,
+    "title": "第7阶段",
+    "location": "扇区 7",
+    "objective": "完成扇区7任务并生存。",
+    "missionTargetName": "扇区7目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "任务完成，返回。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我升级了冷却系统。她现在更稳定，感激我吧。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "任务完成，返回。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我给她升级了冷却，现在更稳定了。"
+    }
+  },
+  {
+    "stage": 8,
+    "title": "第8阶段",
+    "location": "扇区 8",
+    "objective": "完成扇区8任务并生存。",
+    "missionTargetName": "扇区8目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "边境巡逻。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "要是你把灰尘带回来，我就拿扳手敲你脑袋。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "边境巡逻。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "要是你把灰尘弄到她身上，我就敲你脑袋。"
+    }
+  },
+  {
+    "stage": 9,
+    "title": "第9阶段",
+    "location": "扇区 9",
+    "objective": "完成扇区9任务并生存。",
+    "missionTargetName": "扇区9目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "未发现动静。返回。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "刚才的机动完美无缺。我为她骄傲得快要哭了。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "未发现动静。返回。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "刚才的机动很精准，她很喜欢。"
+    }
+  },
+  {
+    "stage": 10,
+    "title": "第10阶段",
+    "location": "第10扇区",
+    "objective": "完成第10扇区任务并生还。",
+    "missionTargetName": "第10扇区目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "明日开始通缉行动。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "把她当你的命守着。你的命没她重要。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "明日开始通缉行动。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "保护她。你的生命不如她重要。"
+    }
+  },
+  {
+    "stage": 11,
+    "title": "第11阶段",
+    "location": "第11扇区",
+    "objective": "完成第11扇区任务并生还。",
+    "missionTargetName": "第11扇区目标",
+    "contact": {
+      "name": "幽灵",
+      "message": "飞行员，频道我已入侵。有赏金目标。"
+    },
+    "inMissionComms": {
+      "name": "零号计划飞行员",
+      "message": "谁？"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "飞行员，频道我已入侵。有赏金目标。"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "谁？"
+    }
+  },
+  {
+    "stage": 12,
+    "title": "第12阶段",
+    "location": "第12扇区",
+    "objective": "完成第12扇区任务并生还。",
+    "missionTargetName": "第12扇区目标",
+    "contact": {
+      "name": "幽灵",
+      "message": "剃刀船长。五十万赏金。"
+    },
+    "inMissionComms": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "这是正式任务，必须歼灭目标。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "剃刀船长。五十万赏金。"
+      }
+    ],
+    "afterAction": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "正式任务。歼灭目标。"
+    }
+  },
+  {
+    "stage": 13,
+    "title": "第13阶段",
+    "location": "第13扇区",
+    "objective": "完成第13扇区任务并生还。",
+    "missionTargetName": "第13扇区目标",
+    "contact": {
+      "name": "娜奥米·雷恩博士",
+      "message": "这污渍怎么也去不掉。我试了三种溶剂——她就是不接受它。"
+    },
+    "inMissionComms": {
+      "name": "幽灵",
+      "message": "他在猎户座附近。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "娜奥米·雷恩博士",
+        "message": "这污渍怎么也去不掉。我试了三种溶剂——她就是不接受它。"
+      }
+    ],
+    "afterAction": {
+      "name": "幽灵",
+      "message": "他在猎户座附近。"
+    }
+  },
+  {
+    "stage": 14,
+    "title": "第14阶段",
+    "location": "第14扇区",
+    "objective": "完成第14扇区任务并生还。",
+    "missionTargetName": "第14扇区目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "歼灭。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "护盾快要碎了！你这是故意的吧？！过来，尝尝这个！"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "歼灭。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "她的护盾快要破了！"
+    }
+  },
+  {
+    "stage": 15,
+    "title": "第15阶段",
+    "location": "第15扇区",
+    "objective": "完成第15扇区任务并生还。",
+    "missionTargetName": "第15扇区目标",
+    "contact": {
+      "name": "幽灵",
+      "message": "不错。赏金在路上。"
+    },
+    "inMissionComms": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "返回并汇报。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "不错。赏金在路上。"
+      }
+    ],
+    "afterAction": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "返回并汇报。"
+    }
+  },
+  {
+    "stage": 16,
+    "title": "第16阶段",
+    "location": "第16扇区",
+    "objective": "完成第16扇区任务并生还。",
+    "missionTargetName": "第16扇区目标",
+    "contact": {
+      "name": "幽灵",
+      "message": "沃克斯女士。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我的武器已经摩拳擦掌，放它们去干活。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "沃克斯女士。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "她的武器已待命。"
+    }
+  },
+  {
+    "stage": 17,
+    "title": "第17阶段",
+    "location": "第17扇区",
+    "objective": "完成第17扇区任务并生还。",
+    "missionTargetName": "第17扇区目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "不要让她逃走。"
+    },
+    "inMissionComms": {
+      "name": "幽灵",
+      "message": "塞尔星云的尘云。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "不要让她逃走。"
+      }
+    ],
+    "afterAction": {
+      "name": "幽灵",
+      "message": "塞尔星云的尘云。"
+    }
+  },
+  {
+    "stage": 18,
+    "title": "第18关",
+    "location": "18区",
+    "objective": "完成第18区任务并生存。",
+    "missionTargetName": "第18区目标",
+    "contact": {
+      "name": "娜奥米·雷恩博士",
+      "message": "有划痕！"
+    },
+    "inMissionComms": {
+      "name": "零号计划飞行员",
+      "message": "我发誓那只是星光反射。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "娜奥米·雷恩博士",
+        "message": "有划痕！"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "喂，你为什么这么做？"
+    }
+  },
+  {
+    "stage": 19,
+    "title": "第19关",
+    "location": "19区",
+    "objective": "完成第19区任务并生存。",
+    "missionTargetName": "第19区目标",
+    "contact": {
+      "name": "幽灵",
+      "message": "又一个在等着。"
+    },
+    "inMissionComms": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "汇报，随后休整。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "又一个在等着。"
+      }
+    ],
+    "afterAction": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "汇报，随后休整。"
+    }
+  },
+  {
+    "stage": 20,
+    "title": "第20关",
+    "location": "20区",
+    "objective": "完成第20区任务并生存。",
+    "missionTargetName": "第20区目标",
+    "contact": {
+      "name": "幽灵",
+      "message": "你们军队里有古怪。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我只闻到新机油的味道，还有你身上的一点汗味。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "你们军队里有古怪。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "她只闻到新机油的味道，还有一份巨无霸。"
+    }
+  },
+  {
+    "stage": 21,
+    "title": "第21关",
+    "location": "21区",
+    "objective": "完成第21区任务并生存。",
+    "missionTargetName": "第21区目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "走私船。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "看它那机动——不是飞行，是在跳舞。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "走私船。"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "撤离。"
+    }
+  },
+  {
+    "stage": 22,
+    "title": "第22关",
+    "location": "22区",
+    "objective": "完成第22区任务并生存。",
+    "missionTargetName": "第22区目标",
+    "contact": {
+      "name": "幽灵",
+      "message": "他们带着军方想要的东西。"
+    },
+    "inMissionComms": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "执行。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "他们带着军方想要的东西。"
+      }
+    ],
+    "afterAction": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "执行。"
+    }
+  },
+  {
+    "stage": 23,
+    "title": "第23关",
+    "location": "23区",
+    "objective": "完成第23区任务并生存。",
+    "missionTargetName": "第23区目标",
+    "contact": {
+      "name": "娜奥米·雷恩博士",
+      "message": "旧斑旁又出现了新的小点！"
+    },
+    "inMissionComms": {
+      "name": "零号计划飞行员",
+      "message": "那是后窗的光..."
+    },
+    "dialogueSequence": [
+      {
+        "name": "娜奥米·雷恩博士",
+        "message": "旧斑旁又出现了新的小点！"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "那光..."
+    }
+  },
+  {
+    "stage": 24,
+    "title": "第24关",
+    "location": "24区",
+    "objective": "完成第24区任务并生存。",
+    "missionTargetName": "第24区目标",
+    "contact": {
+      "name": "幽灵",
+      "message": "军方对入侵沉默不语。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我修好了压强传感器。现在它精确得像我喜欢的样子——几乎和我一样。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "军方对入侵沉默不语。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我给它修了压强传感器，又用溶剂处理了斑点，没用。"
+    }
+  },
+  {
+    "stage": 25,
+    "title": "第25关",
+    "location": "25区",
+    "objective": "完成第25区任务并生存。",
+    "missionTargetName": "第25区目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "边境巡逻。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "你要是带回太空尘，我就用我漂亮的瑞典扳手教训你。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "边境巡逻。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "要是你带回尘土——瑞典扳手见。"
+    }
+  },
+  {
+    "stage": 26,
+    "title": "第26阶段",
+    "location": "第26战区",
+    "objective": "完成第26战区任务并生还。",
+    "missionTargetName": "第26战区目标",
+    "contact": {
+      "name": "幽灵",
+      "message": "外星活动。舰队无视。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "刚才的机动近乎完美。我为她感到的骄傲，甚至超过对自己的那点自豪。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "外星活动。舰队无视。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "她的机动很精准。"
+    }
+  },
+  {
+    "stage": 27,
+    "title": "第27阶段",
+    "location": "第27战区",
+    "objective": "完成第27战区任务并生还。",
+    "missionTargetName": "第27战区目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "立即撤回。禁止干预。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "终于有条能保护她的命令了。向想出这点的人致敬。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "立即撤回。禁止干预。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "终于有条能保护她的命令。"
+    }
+  },
+  {
+    "stage": 28,
+    "title": "第28阶段",
+    "location": "第28战区",
+    "objective": "完成第28战区任务并生还。",
+    "missionTargetName": "第28战区目标",
+    "contact": {
+      "name": "幽灵",
+      "message": "入侵与那项技术有关。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "唯一重要的技术就是我的。有人复制了我的成果，我会找到背后之人。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "入侵与那项技术有关。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "有人复制了她。我强烈怀疑是我父亲。"
+    }
+  },
+  {
+    "stage": 29,
+    "title": "第29阶段",
+    "location": "第29战区",
+    "objective": "完成第29战区任务并生还。",
+    "missionTargetName": "第29战区目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "明天你会见到塞拉。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "她也有一艘类似的飞船？！谁抄了我的设计？！肯定是那个笨蛋拉哈夫教授！"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "明天你会见到塞拉。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "她确实有相似的飞船。肯定是拉哈夫，其他人弄不懂它。"
+    }
+  },
+  {
+    "stage": 30,
+    "title": "第30阶段",
+    "location": "第30战区",
+    "objective": "完成第30战区任务并生还。",
+    "missionTargetName": "第30战区目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "决斗。上级命令。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "如果她敢碰我的飞船，我就拆了重造得更好。拉哈夫，我会让他付出代价。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "决斗。上级命令。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "如果她动了它，我会把它拆了。拉哈夫的事以后再说。"
+    }
+  },
+  {
+    "stage": 31,
+    "title": "第31阶段",
+    "location": "第31战区",
+    "objective": "完成第31战区任务并生还。",
+    "missionTargetName": "第31战区目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "一小时后。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我的武器已就绪，精准无比。拉哈夫肯定也偷了那些点子。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "一小时后。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "她的武器已准备就绪。"
+    }
+  },
+  {
+    "stage": 32,
+    "title": "第32阶段",
+    "location": "第32战区",
+    "objective": "完成第32战区任务并生还。",
+    "missionTargetName": "第32战区目标",
+    "contact": {
+      "name": "塞拉·凯恩",
+      "message": "快点结束这事。"
+    },
+    "inMissionComms": {
+      "name": "零号计划飞行员",
+      "message": "准备就绪。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "塞拉·凯恩",
+        "message": "快点结束这事。"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "准备就绪。"
+    }
+  },
+  {
+    "stage": 33,
+    "title": "第33阶段",
+    "location": "第33战区",
+    "objective": "完成第33战区任务并生还。",
+    "missionTargetName": "第33战区目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "平手。你们两人返回。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "出现了划痕！那个蠢货拉哈夫窃走了她的技术！我要弄死他！"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "平手。你们两人返回。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "她有一道划痕。拉哈夫很可能偷了她的零件，没人比他更懂她的构造。"
+    }
+  },
+  {
+    "stage": 34,
+    "title": "第34阶段",
+    "location": "分区34",
+    "objective": "完成第34分区任务并生存。",
+    "missionTargetName": "分区34目标",
+    "contact": {
+      "name": "幽灵",
+      "message": "舰队故意发动入侵。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我只想要安静，结果换来一群窃贼和划痕。拉哈夫，我知道是你！"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "舰队故意发动入侵。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我只捡到窃贼和污渍。拉哈夫…"
+    }
+  },
+  {
+    "stage": 35,
+    "title": "第35阶段",
+    "location": "分区35",
+    "objective": "完成第35分区任务并生存。",
+    "missionTargetName": "分区35目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "上级命令，继续执行。"
+    },
+    "inMissionComms": {
+      "name": "幽灵",
+      "message": "埃琳娜，不对劲。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "上级命令，继续执行。"
+      }
+    ],
+    "afterAction": {
+      "name": "幽灵",
+      "message": "埃琳娜，不对劲。"
+    }
+  },
+  {
+    "stage": 36,
+    "title": "第36阶段",
+    "location": "分区36",
+    "objective": "完成第36分区任务并生存。",
+    "missionTargetName": "分区36目标",
+    "contact": {
+      "name": "幽灵",
+      "message": "塞拉还以为自己最强。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "只要她没事我就离开。要是有人动她，我会留下来远程干掉所有人，包括拉哈夫。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "塞拉还以为自己最强。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "别开始。"
+    }
+  },
+  {
+    "stage": 37,
+    "title": "第37阶段",
+    "location": "分区37",
+    "objective": "完成第37分区任务并生存。",
+    "missionTargetName": "分区37目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "又一项任务。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "启动逃生程序。我的引擎在歌唱，听，多美——不是你，是它们。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "又一项任务。"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "埃琳娜，你不觉得这里已经很久不对劲了吗？"
+    }
+  },
+  {
+    "stage": 38,
+    "title": "第38阶段",
+    "location": "分区38",
+    "objective": "完成第38分区任务并生存。",
+    "missionTargetName": "分区38目标",
+    "contact": {
+      "name": "幽灵",
+      "message": "又一名通缉对象。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "谁敢在追捕中碰她，我就会找到他，包括拉哈夫。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "又一名通缉对象。"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "有时候我会想，我们到底为谁在工作。"
+    }
+  },
+  {
+    "stage": 39,
+    "title": "第39阶段",
+    "location": "分区39",
+    "objective": "完成第39分区任务并生存。",
+    "missionTargetName": "分区39目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "返回，汇报。"
+    },
+    "inMissionComms": {
+      "name": "零号计划飞行员",
+      "message": "我们在撤退，没时间顾空调。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "返回，汇报。"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "目标已被消灭。又一次。"
+    }
+  },
+  {
+    "stage": 40,
+    "title": "第40阶段",
+    "location": "分区40",
+    "objective": "完成第40分区任务并生存。",
+    "missionTargetName": "分区40目标",
+    "contact": {
+      "name": "幽灵",
+      "message": "舰队太安静了。"
+    },
+    "inMissionComms": {
+      "name": "零号计划飞行员",
+      "message": "或许等我们停下再修。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "舰队太安静了。"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "这份沉默开始显得危险。"
+    }
+  },
+  {
+    "stage": 41,
+    "title": "第41阶段",
+    "location": "分区41",
+    "objective": "完成第41分区任务并生存。",
+    "missionTargetName": "分区41目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "边境巡逻。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我的武器渴望战斗。我也饿，空调坏了，我热得受不了。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "边境巡逻。"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "如果我们看到不该看的东西怎么办？"
+    }
+  },
+  {
+    "stage": 42,
+    "title": "第42阶段",
+    "location": "第42区",
+    "objective": "完成第42区任务并生还。",
+    "missionTargetName": "第42区目标",
+    "contact": {
+      "name": "幽灵",
+      "message": "外星编队大举推进。舰队视而不见。"
+    },
+    "inMissionComms": {
+      "name": "零号计划飞行员",
+      "message": "至少它死了。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "外星编队大举推进。舰队视而不见。"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "我们还能再睁多少次眼？"
+    }
+  },
+  {
+    "stage": 43,
+    "title": "第43阶段",
+    "location": "第43区",
+    "objective": "完成第43区任务并生还。",
+    "missionTargetName": "第43区目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "禁止擅自介入，立即返航。"
+    },
+    "inMissionComms": {
+      "name": "零号计划飞行员",
+      "message": "之后再修空调。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "禁止擅自介入，立即返航。"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "你还真以为这只是命令吗？"
+    }
+  },
+  {
+    "stage": 44,
+    "title": "第44阶段",
+    "location": "第44区",
+    "objective": "完成第44区任务并生还。",
+    "missionTargetName": "第44区目标",
+    "contact": {
+      "name": "幽灵",
+      "message": "入侵与技术间有明显关联。"
+    },
+    "inMissionComms": {
+      "name": "零号计划飞行员",
+      "message": "我确实按了那个按钮……"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "入侵与技术间有明显关联。"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "有人在玩比我们更大的棋局。"
+    }
+  },
+  {
+    "stage": 45,
+    "title": "第45阶段",
+    "location": "第45区",
+    "objective": "完成第45区任务并生还。",
+    "missionTargetName": "第45区目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "明天又要与塞拉会面。"
+    },
+    "inMissionComms": {
+      "name": "零号计划飞行员",
+      "message": "是我瞄准的……"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "明天又要与塞拉会面。"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "如果这次不会以平局收场呢？"
+    }
+  },
+  {
+    "stage": 46,
+    "title": "第46阶段",
+    "location": "第46区",
+    "objective": "完成第46区任务并生还。",
+    "missionTargetName": "第46区目标",
+    "contact": {
+      "name": "零号计划飞行员",
+      "message": "我反水了，撤退。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "这事比坏掉的空调还不重要。我快被热死了！"
+    },
+    "dialogueSequence": [
+      {
+        "name": "零号计划飞行员",
+        "message": "我反水了，撤退。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "只要她没事我就撤。要是她受伤，我留下。"
+    }
+  },
+  {
+    "stage": 47,
+    "title": "第47阶段",
+    "location": "第47区",
+    "objective": "完成第47区任务并生还。",
+    "missionTargetName": "第47区目标",
+    "contact": {
+      "name": "幽灵",
+      "message": "航道已开，快撤。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我的武器把它干翻了。完美，但我还是热得像个炉子。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "航道已开，快撤。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "启动撤离程序。引擎稳定。"
+    }
+  },
+  {
+    "stage": 48,
+    "title": "第48阶段",
+    "location": "第48区",
+    "objective": "完成第48区任务并生还。",
+    "missionTargetName": "第48区目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "整支舰队正在追击你们！"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我修好了空调！终于！它又完美了，我不再出汗。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "整支舰队正在追击你们！"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "谁敢碰她——我会找到他。"
+    }
+  },
+  {
+    "stage": 49,
+    "title": "第49阶段",
+    "location": "第49区",
+    "objective": "完成第49区任务并生还。",
+    "missionTargetName": "第49区目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "飞行员，受审。娜奥米，你将失去一切！"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "要是他们敢碰她，我会用跨维能量把他们化为尘埃。看着吧。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "飞行员，受审。娜奥米，你将失去一切！"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "她的引擎在颤抖。她累了。"
+    }
+  },
+  {
+    "stage": 50,
+    "title": "第50关",
+    "location": "第50区",
+    "objective": "完成第50区任务并生存。",
+    "missionTargetName": "第50区目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "你们将被缉拿。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "别靠近！拉哈夫教授那个笨蛋偷走了我的技术，我敢肯定！"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "你们将被缉拿。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "进入小行星带——她讨厌拥挤。"
+    }
+  },
+  {
+    "stage": 51,
+    "title": "第51关",
+    "location": "第51区",
+    "objective": "完成第51区任务并生存。",
+    "missionTargetName": "第51区目标",
+    "contact": {
+      "name": "娜奥米·雷恩博士",
+      "message": "她的视窗全是灰尘！"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我暂停时间一下。看，多漂亮的能力。这不是飞行员，是我。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "娜奥米·雷恩博士",
+        "message": "她的视窗全是灰尘！"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "按照传感器飞行。"
+    }
+  },
+  {
+    "stage": 52,
+    "title": "第52关",
+    "location": "第52区",
+    "objective": "完成第52区任务并生存。",
+    "missionTargetName": "第52区目标",
+    "contact": {
+      "name": "娜奥米·雷恩博士",
+      "message": "它的机翼被划伤！污渍还在！我已经试过了宇宙里所有的清洁剂，除了刮刀！"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "护盾差点被那波打裂！飞行员，你得负责！而且拉哈夫教授还偷了我的护盾创意！"
+    },
+    "dialogueSequence": [
+      {
+        "name": "娜奥米·雷恩博士",
+        "message": "它的机翼被划伤！污渍还在！我已经试过了宇宙里所有的清洁剂，除了刮刀！"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "也许就……"
+    }
+  },
+  {
+    "stage": 53,
+    "title": "第53关",
+    "location": "第53区",
+    "objective": "完成第53区任务并生存。",
+    "missionTargetName": "第53区目标",
+    "contact": {
+      "name": "娜奥米·雷恩博士",
+      "message": "她的隐形系统在闪烁！"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我从平行维度汲取了能量，武器威力现在翻倍。纯粹的自豪。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "娜奥米·雷恩博士",
+        "message": "她的隐形系统在闪烁！"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "那是振动。"
+    }
+  },
+  {
+    "stage": 54,
+    "title": "第54关",
+    "location": "第54区",
+    "objective": "完成第54区任务并生存。",
+    "missionTargetName": "第54区目标",
+    "contact": {
+      "name": "娜奥米·雷恩博士",
+      "message": "她的发电机开始故障！"
+    },
+    "inMissionComms": {
+      "name": "塞拉·凯恩",
+      "message": "我还在后面。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "娜奥米·雷恩博士",
+        "message": "她的发电机开始故障！"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "稳住它。"
+    }
+  },
+  {
+    "stage": 55,
+    "title": "第55关",
+    "location": "第55区",
+    "objective": "完成第55区任务并生存。",
+    "missionTargetName": "第55区目标",
+    "contact": {
+      "name": "娜奥米·雷恩博士",
+      "message": "她的甲板上有芯片碎片！"
+    },
+    "inMissionComms": {
+      "name": "塞拉·凯恩",
+      "message": "这是什么数据？"
+    },
+    "dialogueSequence": [
+      {
+        "name": "娜奥米·雷恩博士",
+        "message": "她的甲板上有芯片碎片！"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "等会儿！"
+    }
+  },
+  {
+    "stage": 56,
+    "title": "第56关",
+    "location": "第56区",
+    "objective": "完成第56区任务并生存。",
+    "missionTargetName": "第56区目标",
+    "contact": {
+      "name": "娜奥米·雷恩博士",
+      "message": "她的导航显示三条航道！"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我又暂停时间了。看，完美。那个飞行员只会按按钮。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "娜奥米·雷恩博士",
+        "message": "她的导航显示三条航道！"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "选一条。"
+    }
+  },
+  {
+    "stage": 57,
+    "title": "第57关",
+    "location": "第57区",
+    "objective": "完成第57区任务并生存。",
+    "missionTargetName": "第57区目标",
+    "contact": {
+      "name": "娜奥米·雷恩博士",
+      "message": "她的舷窗开始出现裂纹！"
+    },
+    "inMissionComms": {
+      "name": "塞拉·凯恩",
+      "message": "我追着你们，你们还停下来打劫？厚颜无耻。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "娜奥米·雷恩博士",
+        "message": "她的舷窗开始出现裂纹！"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "再一点。"
+    }
+  },
+  {
+    "stage": 58,
+    "title": "第58阶段",
+    "location": "区域58",
+    "objective": "完成区域58任务并生存下来。",
+    "missionTargetName": "区域58目标",
+    "contact": {
+      "name": "娜奥米·雷恩博士",
+      "message": "整艘都在颤抖！"
+    },
+    "inMissionComms": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "（机密）你们只有很短的时间窗口。我正在拖延增援。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "娜奥米·雷恩博士",
+        "message": "整艘都在颤抖！"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "差点就撞到我。"
+    }
+  },
+  {
+    "stage": 59,
+    "title": "第59阶段",
+    "location": "区域59",
+    "objective": "完成区域59任务并生存下来。",
+    "missionTargetName": "区域59目标",
+    "contact": {
+      "name": "娜奥米·雷恩博士",
+      "message": "她的隐身装置烧坏了！"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "是的。他们还偷了我的技术。拉哈夫教授这个蠢货。我要弄死他。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "娜奥米·雷恩博士",
+        "message": "她的隐身装置烧坏了！"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "我们撤离了。"
+    }
+  },
+  {
+    "stage": 60,
+    "title": "第60阶段",
+    "location": "区域60",
+    "objective": "完成区域60任务并生存下来。",
+    "missionTargetName": "区域60目标",
+    "contact": {
+      "name": "塞拉·凯恩",
+      "message": "我发现你们了。我正在追击。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "她总算冷静下来。现在能修空调了——还在咳嗽呢。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "塞拉·凯恩",
+        "message": "我发现你们了。我正在追击。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "她坏掉了。拉哈夫教授肯定为他给她造的那台破飞船感到骄傲。"
+    }
+  },
+  {
+    "stage": 61,
+    "title": "第61阶段",
+    "location": "区域61",
+    "objective": "完成区域61任务并生存下来。",
+    "missionTargetName": "区域61目标",
+    "contact": {
+      "name": "塞拉·凯恩",
+      "message": "我在你们后面。"
+    },
+    "inMissionComms": {
+      "name": "零号计划飞行员",
+      "message": "终于。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "塞拉·凯恩",
+        "message": "我在你们后面。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "停下时间。利用好机会。她需要片刻。拉哈夫教授估计没教她学会等待。"
+    }
+  },
+  {
+    "stage": 62,
+    "title": "第62阶段",
+    "location": "区域62",
+    "objective": "完成区域62任务并生存下来。",
+    "missionTargetName": "区域62目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "（机密）塞拉接到销毁命令。我正在拖延。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我把停时系统升级了。现在能停三秒。看，多漂亮。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "（机密）塞拉接到销毁命令。我正在拖延。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "她的护盾差点破裂！"
+    }
+  },
+  {
+    "stage": 63,
+    "title": "第63阶段",
+    "location": "区域63",
+    "objective": "完成区域63任务并生存下来。",
+    "missionTargetName": "区域63目标",
+    "contact": {
+      "name": "塞拉·凯恩",
+      "message": "还在追击。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我的武器饿了。我为它们骄傲得几乎都忘了拉哈夫教授。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "塞拉·凯恩",
+        "message": "还在追击。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我从她身上抽走了能量。她的武器现在稳定。不像我爸那些光鲜亮丽的武器，只会招来炮火。"
+    }
+  },
+  {
+    "stage": 64,
+    "title": "第64阶段",
+    "location": "区域64",
+    "objective": "完成区域64任务并生存下来。",
+    "missionTargetName": "区域64目标",
+    "contact": {
+      "name": "幽灵",
+      "message": "小股外星生物。"
+    },
+    "inMissionComms": {
+      "name": "零号计划飞行员",
+      "message": "这次我用力按下了按钮。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "小股外星生物。"
+      }
+    ],
+    "afterAction": {
+      "name": "塞拉·凯恩",
+      "message": "看到了。"
+    }
+  },
+  {
+    "stage": 65,
+    "title": "第65阶段",
+    "location": "区域65",
+    "objective": "完成区域65任务并生存下来。",
+    "missionTargetName": "区域65目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "（机密）塞拉，查看数据。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我抽走了大量能量。现在它在发光。完美。拉哈夫教授会嫉妒的。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "（机密）塞拉，查看数据。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "她的发电机仍然很弱。不像拉哈夫教授那堆破玩意，只会吵闹惹人烦。"
+    }
+  },
+  {
+    "stage": 66,
+    "title": "第66阶段",
+    "location": "第66区",
+    "objective": "完成66区任务并生存。",
+    "missionTargetName": "66区目标",
+    "contact": {
+      "name": "塞拉·凯恩",
+      "message": "我继续推进……但数据不稳……"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我的武器会处理。一流的武器，而我是造它们的那个人。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "塞拉·凯恩",
+        "message": "我继续推进……但数据不稳……"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "又在停时间。她需要安静。可不像我爸那艘吵闹的飞船，把整个声景都毁了。"
+    }
+  },
+  {
+    "stage": 67,
+    "title": "第67阶段",
+    "location": "第67区",
+    "objective": "完成67区任务并生存。",
+    "missionTargetName": "67区目标",
+    "contact": {
+      "name": "幽灵",
+      "message": "小型赏金目标。"
+    },
+    "inMissionComms": {
+      "name": "零号计划飞行员",
+      "message": "先开火，别拖延。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "小型赏金目标。"
+      }
+    ],
+    "afterAction": {
+      "name": "塞拉·凯恩",
+      "message": "你们要停下来打劫？!"
+    }
+  },
+  {
+    "stage": 68,
+    "title": "第68阶段",
+    "location": "第68区",
+    "objective": "完成68区任务并生存。",
+    "missionTargetName": "68区目标",
+    "contact": {
+      "name": "塞拉·凯恩",
+      "message": "接近了。"
+    },
+    "inMissionComms": {
+      "name": "零号计划飞行员",
+      "message": "不错，做得好。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "塞拉·凯恩",
+        "message": "接近了。"
+      }
+    ],
+    "afterAction": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "(机密) 有时间窗。我在拖延增援。"
+    }
+  },
+  {
+    "stage": 69,
+    "title": "第69阶段",
+    "location": "第69区",
+    "objective": "完成69区任务并生存。",
+    "missionTargetName": "69区目标",
+    "contact": {
+      "name": "塞拉·凯恩",
+      "message": "数据……还有腰带那边的指令……"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我把时间停了整整三秒。看到了吗？完美。飞行员只能旁观。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "塞拉·凯恩",
+        "message": "数据……还有腰带那边的指令……"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "是的。拉哈夫偷了她的部件。现在他那破铁皮正在毁掉整个区的编排。"
+    }
+  },
+  {
+    "stage": 70,
+    "title": "第70阶段",
+    "location": "第70区",
+    "objective": "完成70区任务并生存。",
+    "missionTargetName": "70区目标",
+    "contact": {
+      "name": "塞拉·凯恩",
+      "message": "我停下了，需要想清楚。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我的武器开火会发声，听着，这是我升级的成果。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "塞拉·凯恩",
+        "message": "我停下了，需要想清楚。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "终于。现在可以再试那个点了。"
+    }
+  },
+  {
+    "stage": 71,
+    "title": "第71阶段",
+    "location": "第71区",
+    "objective": "完成71区任务并生存。",
+    "missionTargetName": "71区目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "(机密) 塞拉，更多数据。"
+    },
+    "inMissionComms": {
+      "name": "零号计划飞行员",
+      "message": "谁也别动。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "(机密) 塞拉，更多数据。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我给她修好了发电机。"
+    }
+  },
+  {
+    "stage": 72,
+    "title": "第72阶段",
+    "location": "第72区",
+    "objective": "完成72区任务并生存。",
+    "missionTargetName": "72区目标",
+    "contact": {
+      "name": "幽灵",
+      "message": "相对安静。拉哈夫发了傲慢的讯息。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "空调完美，发动机低鸣，武器就绪。我为每一寸都自豪。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "相对安静。拉哈夫发了傲慢的讯息。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我给她升级了时间停止，跟拉哈夫那笨重的设计完全不同。"
+    }
+  },
+  {
+    "stage": 73,
+    "title": "第73阶段",
+    "location": "第73区",
+    "objective": "完成73区任务并生存。",
+    "missionTargetName": "73区目标",
+    "contact": {
+      "name": "幽灵",
+      "message": "赏金目标。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "让他们来。我有平行维度的能量和时间停止。他们不知道碰到的是什么。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "赏金目标。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "她的武器已经准备好了。"
+    }
+  },
+  {
+    "stage": 74,
+    "title": "第74阶段",
+    "location": "74区",
+    "objective": "完成第74区任务并生存。",
+    "missionTargetName": "第74区目标",
+    "contact": {
+      "name": "娜奥米·雷恩博士",
+      "message": "能暂停时间，她把时间冻住了。"
+    },
+    "inMissionComms": {
+      "name": "零号计划飞行员",
+      "message": "待会儿！"
+    },
+    "dialogueSequence": [
+      {
+        "name": "娜奥米·雷恩博士",
+        "message": "能暂停时间，她把时间冻住了。"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "开火。"
+    }
+  },
+  {
+    "stage": 75,
+    "title": "第75阶段",
+    "location": "75区",
+    "objective": "完成第75区任务并生存。",
+    "missionTargetName": "第75区目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "(机密) 形势正在明朗化。"
+    },
+    "inMissionComms": {
+      "name": "零号计划飞行员",
+      "message": "干得好。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "(机密) 形势正在明朗化。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我又吸走了些她的能量。"
+    }
+  },
+  {
+    "stage": 76,
+    "title": "第76阶段",
+    "location": "76区",
+    "objective": "完成第76区任务并生存。",
+    "missionTargetName": "第76区目标",
+    "contact": {
+      "name": "幽灵",
+      "message": "中等波。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我暂停时间，吸取能量，开火，一切完美——飞行员你只管坐着。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "中等波。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "她的武器会搞定。可不像拉哈夫那种耀眼的武器，只会招来不必要的关注。"
+    }
+  },
+  {
+    "stage": 77,
+    "title": "第77阶段",
+    "location": "77区",
+    "objective": "完成第77区任务并生存。",
+    "missionTargetName": "第77区目标",
+    "contact": {
+      "name": "娜奥米·雷恩博士",
+      "message": "她的护盾在颤抖！"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我的武器在他们还没反应过来就干掉了他们。真让人自豪。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "娜奥米·雷恩博士",
+        "message": "她的护盾在颤抖！"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "哎，你为什么那样做？！"
+    }
+  },
+  {
+    "stage": 78,
+    "title": "第78阶段",
+    "location": "78区",
+    "objective": "完成第78区任务并生存。",
+    "missionTargetName": "第78区目标",
+    "contact": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我修好了它。"
+    },
+    "inMissionComms": {
+      "name": "零号计划飞行员",
+      "message": "我只是按了个按钮。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "娜奥米·雷恩博士",
+        "message": "我修好了它。"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "谢谢。"
+    }
+  },
+  {
+    "stage": 79,
+    "title": "第79阶段",
+    "location": "79区",
+    "objective": "完成第79区任务并生存。",
+    "missionTargetName": "第79区目标",
+    "contact": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "(机密) 塞拉，窗口打开。如果你突进——我掩护。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "引擎轰鸣，空调正常，武器已就绪。我很骄傲。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "(机密) 塞拉，窗口打开。如果你突进——我掩护。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "短暂停了时间。"
+    }
+  },
+  {
+    "stage": 80,
+    "title": "第80阶段",
+    "location": "80区",
+    "objective": "完成第80区任务并生存。",
+    "missionTargetName": "第80区目标",
+    "contact": {
+      "name": "塞拉·凯恩",
+      "message": "我转边了。正式加入。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "欢迎。别碰我的飞船。拉哈夫仍在黑名单上。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "塞拉·凯恩",
+        "message": "我转边了。正式加入。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "欢迎。别碰它。我爸那破飞船最好别凑近队形。"
+    }
+  },
+  {
+    "stage": 81,
+    "title": "第81阶段",
+    "location": "81区",
+    "objective": "完成第81区任务并生存。",
+    "missionTargetName": "第81区目标",
+    "contact": {
+      "name": "幽灵",
+      "message": "外星首领已入射程。"
+    },
+    "inMissionComms": {
+      "name": "塞拉·凯恩",
+      "message": "我先攻——我是最强的。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "外星首领已入射程。"
+      }
+    ],
+    "afterAction": {
+      "name": "塞拉·凯恩",
+      "message": "我先攻！我更快！"
+    }
+  },
+  {
+    "stage": 82,
+    "title": "第82阶段",
+    "location": "第82战区",
+    "objective": "完成第82战区任务并生存。",
+    "missionTargetName": "第82战区目标",
+    "contact": {
+      "name": "塞拉·凯恩",
+      "message": "他很强，但我更强！"
+    },
+    "inMissionComms": {
+      "name": "零号计划飞行员",
+      "message": "不会撤退。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "塞拉·凯恩",
+        "message": "他很强，但我更强！"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "当然。你一直是最棒的。"
+    }
+  },
+  {
+    "stage": 83,
+    "title": "第83阶段",
+    "location": "第83战区",
+    "objective": "完成第83战区任务并生存。",
+    "missionTargetName": "第83战区目标",
+    "contact": {
+      "name": "幽灵",
+      "message": "舰队在观察。"
+    },
+    "inMissionComms": {
+      "name": "塞拉·凯恩",
+      "message": "我们用不着他们。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "舰队在观察。"
+      }
+    ],
+    "afterAction": {
+      "name": "塞拉·凯恩",
+      "message": "我们用不着他们！我能应付！"
+    }
+  },
+  {
+    "stage": 84,
+    "title": "第84阶段",
+    "location": "第84战区",
+    "objective": "完成第84战区任务并生存。",
+    "missionTargetName": "第84战区目标",
+    "contact": {
+      "name": "娜奥米·雷恩博士",
+      "message": "目标护盾正在削弱。"
+    },
+    "inMissionComms": {
+      "name": "塞拉·凯恩",
+      "message": "再来一击。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "娜奥米·雷恩博士",
+        "message": "目标护盾正在削弱。"
+      }
+    ],
+    "afterAction": {
+      "name": "塞拉·凯恩",
+      "message": "又是一击！看我多准？"
+    }
+  },
+  {
+    "stage": 85,
+    "title": "第85阶段",
+    "location": "第85战区",
+    "objective": "完成第85战区任务并生存。",
+    "missionTargetName": "第85战区目标",
+    "contact": {
+      "name": "幽灵",
+      "message": "目标试图逃离。"
+    },
+    "inMissionComms": {
+      "name": "塞拉·凯恩",
+      "message": "没人能从我手下逃走。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "目标试图逃离。"
+      }
+    ],
+    "afterAction": {
+      "name": "塞拉·凯恩",
+      "message": "他逃不掉！"
+    }
+  },
+  {
+    "stage": 86,
+    "title": "第86阶段",
+    "location": "第86战区",
+    "objective": "完成第86战区任务并生存。",
+    "missionTargetName": "第86战区目标",
+    "contact": {
+      "name": "娜奥米·雷恩博士",
+      "message": "最后一波能量，正在全力输出。"
+    },
+    "inMissionComms": {
+      "name": "塞拉·凯恩",
+      "message": "结束了。我赢了。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "娜奥米·雷恩博士",
+        "message": "最后一波能量，正在全力输出。"
+      }
+    ],
+    "afterAction": {
+      "name": "塞拉·凯恩",
+      "message": "结束！我赢了！"
+    }
+  },
+  {
+    "stage": 87,
+    "title": "第87阶段",
+    "location": "第87战区",
+    "objective": "完成第87战区任务并生存。",
+    "missionTargetName": "第87战区目标",
+    "contact": {
+      "name": "幽灵",
+      "message": "首领已被消灭。"
+    },
+    "inMissionComms": {
+      "name": "塞拉·凯恩",
+      "message": "因为我在这里。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "首领已被消灭。"
+      }
+    ],
+    "afterAction": {
+      "name": "塞拉·凯恩",
+      "message": "我就说过我是最强的！"
+    }
+  },
+  {
+    "stage": 88,
+    "title": "第88阶段",
+    "location": "第88战区",
+    "objective": "完成第88战区任务并生存。",
+    "missionTargetName": "第88战区目标",
+    "contact": {
+      "name": "娜奥米·雷恩博士",
+      "message": "还有些故障，帮忙修复。"
+    },
+    "inMissionComms": {
+      "name": "塞拉·凯恩",
+      "message": "我来修。我修得最好。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "娜奥米·雷恩博士",
+        "message": "还有些故障，帮忙修复。"
+      }
+    ],
+    "afterAction": {
+      "name": "塞拉·凯恩",
+      "message": "我会帮忙！我这方面也很厉害！"
+    }
+  },
+  {
+    "stage": 89,
+    "title": "第89阶段",
+    "location": "第89战区",
+    "objective": "完成第89战区任务并生存。",
+    "missionTargetName": "第89战区目标",
+    "contact": {
+      "name": "幽灵",
+      "message": "舰队想要那项技术。"
+    },
+    "inMissionComms": {
+      "name": "塞拉·凯恩",
+      "message": "他们什么都得不到。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "舰队想要那项技术。"
+      }
+    ],
+    "afterAction": {
+      "name": "塞拉·凯恩",
+      "message": "他们别想得到！我绝不允许！"
+    }
+  },
+  {
+    "stage": 90,
+    "title": "第90阶段",
+    "location": "90区",
+    "objective": "完成90区任务并生存下来。",
+    "missionTargetName": "90区目标",
+    "contact": {
+      "name": "娜奥米·雷恩博士",
+      "message": "两艘舰。她瞄得更准。不过，顺便说一句，你的分比她高0.25分。"
+    },
+    "inMissionComms": {
+      "name": "塞拉·凯恩",
+      "message": "我的更强。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "娜奥米·雷恩博士",
+        "message": "两艘舰。她瞄得更准。不过，顺便说一句，你的分比她高0.25分。"
+      }
+    ],
+    "afterAction": {
+      "name": "塞拉·凯恩",
+      "message": "我的更快！也更漂亮！"
+    }
+  },
+  {
+    "stage": 91,
+    "title": "第91阶段",
+    "location": "91区",
+    "objective": "完成91区任务并生存下来。",
+    "missionTargetName": "91区目标",
+    "contact": {
+      "name": "塞拉·凯恩",
+      "message": "我出发了。有人得收拾舰队，我会把它做到最好！"
+    },
+    "inMissionComms": {
+      "name": "零号计划飞行员",
+      "message": "确定吗？"
+    },
+    "dialogueSequence": [
+      {
+        "name": "塞拉·凯恩",
+        "message": "我出发了。有人得收拾舰队，我会把它做到最好！"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "确定？不想留下来再吵一会儿？"
+    }
+  },
+  {
+    "stage": 92,
+    "title": "第92阶段",
+    "location": "92区",
+    "objective": "完成92区任务并生存下来。",
+    "missionTargetName": "92区目标",
+    "contact": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我留下。有人得看着她。那0.25分就是没人敢再上手的原因。包括你，塞拉。尤其不是我爸那架旧铁。"
+    },
+    "inMissionComms": {
+      "name": "塞拉·凯恩",
+      "message": "守好她。有空也照顾好你们自己。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "娜奥米·雷恩博士",
+        "message": "我留下。有人得看着她。那0.25分就是没人敢再上手的原因。包括你，塞拉。尤其不是我爸那架旧铁。"
+      }
+    ],
+    "afterAction": {
+      "name": "塞拉·凯恩",
+      "message": "保重！而且我比所有人都强！"
+    }
+  },
+  {
+    "stage": 93,
+    "title": "第93阶段",
+    "location": "93区",
+    "objective": "完成93区任务并生存下来。",
+    "missionTargetName": "93区目标",
+    "contact": {
+      "name": "幽灵",
+      "message": "远程支援已就位。我早就知道那个分数。"
+    },
+    "inMissionComms": {
+      "name": "塞拉·凯恩",
+      "message": "谢谢。我来清理战场。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "远程支援已就位。我早就知道那个分数。"
+      }
+    ],
+    "afterAction": {
+      "name": "塞拉·凯恩",
+      "message": "谢谢！我会搞定的！"
+    }
+  },
+  {
+    "stage": 94,
+    "title": "第94阶段",
+    "location": "94区",
+    "objective": "完成94区任务并生存下来。",
+    "missionTargetName": "94区目标",
+    "contact": {
+      "name": "塞拉·凯恩",
+      "message": "我要去对付舰队！"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "别在远处动我的舰。我什么都能感觉到，尤其是拉哈夫教授那些偷摸的把戏。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "塞拉·凯恩",
+        "message": "我要去对付舰队！"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "别远程碰它。我爸那破铁别靠近战区边界。"
+    }
+  },
+  {
+    "stage": 95,
+    "title": "第95阶段",
+    "location": "95区",
+    "objective": "完成95区任务并生存下来。",
+    "missionTargetName": "95区目标",
+    "contact": {
+      "name": "幽灵",
+      "message": "仍有外星生物存在。"
+    },
+    "inMissionComms": {
+      "name": "零号计划飞行员",
+      "message": "继续。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "仍有外星生物存在。"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "继续。"
+    }
+  },
+  {
+    "stage": 96,
+    "title": "第96阶段",
+    "location": "96区",
+    "objective": "完成96区任务并生存下来。",
+    "missionTargetName": "96区目标",
+    "contact": {
+      "name": "零号计划飞行员",
+      "message": "塞拉对抗军队，我们对抗外星人。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "先保住飞船。时停装置优先，永远如此。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "零号计划飞行员",
+        "message": "塞拉对抗军队，我们对抗外星人。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "飞船优先。永远如此。"
+    }
+  },
+  {
+    "stage": 97,
+    "title": "第97阶段",
+    "location": "97区",
+    "objective": "完成97区任务并生存下来。",
+    "missionTargetName": "97区目标",
+    "contact": {
+      "name": "娜奥米·雷恩博士",
+      "message": "重新汇聚。她的武器已就绪。"
+    },
+    "inMissionComms": {
+      "name": "零号计划飞行员",
+      "message": "出发。我来完成真正的任务。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "娜奥米·雷恩博士",
+        "message": "重新汇聚。她的武器已就绪。"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "出发。"
+    }
+  },
+  {
+    "stage": 98,
+    "title": "第98关",
+    "location": "第98战区",
+    "objective": "完成第98战区的任务并生存下来。",
+    "missionTargetName": "第98战区目标",
+    "contact": {
+      "name": "零号计划飞行员",
+      "message": "等一下……我用刮刀把污渍清掉。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "她依然最美、最强。谁要是把她擦伤就得挨揍——拉哈夫教授也不例外。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "零号计划飞行员",
+        "message": "等一下……我用刮刀把污渍清掉。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "什么？！"
+    }
+  },
+  {
+    "stage": 99,
+    "title": "第99关",
+    "location": "第99战区",
+    "objective": "完成第99战区的任务并生存下来。",
+    "missionTargetName": "第99战区目标",
+    "contact": {
+      "name": "娜奥米·雷恩博士",
+      "message": "又一场战斗。热油已备。她随时待命。拉哈夫教授那破船就别提了。"
+    },
+    "inMissionComms": {
+      "name": "零号计划飞行员",
+      "message": "总会有下一场。我来飞。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "娜奥米·雷恩博士",
+        "message": "又一场战斗。热油已备。她随时待命。拉哈夫教授那破船就别提了。"
+      }
+    ],
+    "afterAction": {
+      "name": "零号计划飞行员",
+      "message": "总会有下一场。"
+    }
+  },
+  {
+    "stage": 100,
+    "title": "第100关",
+    "location": "第100战区",
+    "objective": "完成第100战区的任务并生存下来。",
+    "missionTargetName": "第100战区目标",
+    "contact": {
+      "name": "零号计划飞行员",
+      "message": "继续抵抗外星人。"
+    },
+    "inMissionComms": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我会对任何敢碰她的人出手，用热油、时间停止和次元能量。拉哈夫教授在名单上。"
+    },
+    "dialogueSequence": [
+      {
+        "name": "零号计划飞行员",
+        "message": "继续抵抗外星人。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "我会对任何敢碰她的人出手。现在你知道为什么了。拉哈夫教授还是造了那破船，毁了风景。"
+    }
+  },
+  {
+    "stage": 101,
+    "title": "Zero计划 // 宿命终章与终极结局",
+    "location": "绝对太空 // 方舟‑9之门",
+    "objective": "击败统御者的母舰，闭合所有剧情弧线并启动完整尾声。",
+    "missionTargetName": "统御者旗舰",
+    "contact": {
+      "name": "幽灵",
+      "message": "最终Boss就在眼前，飞行员。统御者母舰散发着黑暗能量。现在该了结一切。"
+    },
+    "inMissionComms": {
+      "name": "埃琳娜·维尔指挥官",
+      "message": "这是捍卫方舟‑9的最后一战。让他们见识零号计划飞行员的真正实力！"
+    },
+    "dialogueSequence": [
+      {
+        "name": "幽灵",
+        "message": "最终Boss就在眼前，飞行员。统御者母舰散发着黑暗能量。现在该了结一切。"
+      },
+      {
+        "name": "埃琳娜·维尔指挥官",
+        "message": "这是捍卫方舟‑9的最后一战。让他们见识零号计划飞行员的真正实力！"
+      },
+      {
+        "name": "娜奥米·雷恩博士",
+        "message": "照顾好我的舰！我一个人改造它，可不是让外星人把它拆成废铁！"
+      },
+      {
+        "name": "塞拉·凯恩",
+        "message": "我在左翼掩护你，飞行员。别担心，我会留给你足够的露脸机会。"
+      },
+      {
+        "name": "零号计划飞行员",
+        "message": "收官。启动全部系统。"
+      }
+    ],
+    "afterAction": {
+      "name": "娜奥米·雷恩博士",
+      "message": "完整尾声：当飞行员摧毁核心系统时，母舰核心随即爆炸。塞拉从废墟中将他救出，两人在方舟‑9边境展开了独立巡航，关系带着微妙的浪漫暗示。娜奥米·雷恩博士对她的父亲——拉哈夫教授，实施了完美的数位复仇，把他的腐败公诸银河并封锁了他的研究所。埃琳娜·维尔指挥官肃清了军中腐败，并授予飞行员与塞拉独立指挥权。异族通过远端传送门撤退，幽灵在暗网已找到新的目标信号。"
+    }
+  }
+]
