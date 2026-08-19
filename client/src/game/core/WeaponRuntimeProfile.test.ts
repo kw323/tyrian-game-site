@@ -3,6 +3,7 @@ import { Player } from '../entities/Player';
 import { BlackHoleBullet } from '../entities/BlackHoleBullet';
 import { HomingBullet } from '../entities/HomingBullet';
 import { LaserBullet } from '../entities/LaserBullet';
+import { EnemyBullet } from '../entities/EnemyBullet';
 import { WeaponType, WeaponUpgradeSystem } from './WeaponUpgradeSystem';
 import {
     getHeavyFragmentAngles,
@@ -54,16 +55,19 @@ describe('Weapon runtime profile', () => {
         }
     });
 
-    it('splits every Split Bomb payload into a forward diagonal fan', () => {
+    it('splits every Split Bomb payload into four diagonal directions', () => {
         for (const level of [0, 14, 20, 24]) {
             const fragmentCount = getWeaponRuntimeProfile('heavy', level).heavyFragmentCount ?? 0;
             const angles = getHeavyFragmentAngles(fragmentCount);
+            const quadrants = new Set(angles.map((angle) => `${Math.sign(Math.sin(angle))}:${Math.sign(-Math.cos(angle))}`));
 
             expect(angles).toHaveLength(fragmentCount);
-            expect(angles.every((angle) => Math.abs(angle) > 0.001)).toBe(true);
-            expect(angles.every((angle) => Math.cos(angle) > 0)).toBe(true);
-            expect(angles.some((angle) => angle < 0)).toBe(true);
-            expect(angles.some((angle) => angle > 0)).toBe(true);
+            expect(angles.every((angle) => Math.abs(Math.sin(angle)) > 0.001)).toBe(true);
+            expect(angles.every((angle) => Math.abs(Math.cos(angle)) > 0.001)).toBe(true);
+            expect(quadrants).toContain('1:-1');
+            expect(quadrants).toContain('-1:-1');
+            expect(quadrants).toContain('1:1');
+            expect(quadrants).toContain('-1:1');
         }
     });
 
@@ -76,8 +80,23 @@ describe('Weapon runtime profile', () => {
 
             const voidProfile = getWeaponRuntimeProfile('void_lance', level);
             const singularity = new BlackHoleBullet(500, 700, 10, level);
+            expect(singularity.speed).toBe(voidProfile.voidProjectileSpeed);
             expect(singularity.getFieldRadius()).toBe(voidProfile.voidFieldRadius);
             expect(singularity.getSuctionStrength()).toBe(voidProfile.voidSuctionStrength);
+            expect(singularity.getProjectileCaptureRadius()).toBe(voidProfile.voidProjectileCaptureRadius);
+
+            const hostileShot = new EnemyBullet(510, 650, 6, 6, 5, 4);
+            expect(singularity.canSuctionTarget(hostileShot)).toBe(true);
         }
+    });
+
+    it('keeps rank-25 advanced weapons in a campaign-scale credit range', () => {
+        const system = new WeaponUpgradeSystem();
+        const heavy = system.getWeaponLevels(WeaponType.HEAVY);
+        const voidLance = system.getWeaponLevels(WeaponType.VOID_LANCE);
+
+        expect(heavy[24].cost).toBeLessThan(250_000);
+        expect(voidLance[24].cost).toBeLessThan(1_000_000);
+        expect(system.getWeaponInvestment(WeaponType.VOID_LANCE, 24)).toBeLessThan(4_000_000);
     });
 });

@@ -1758,17 +1758,49 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 };
                 const applyBlackHoleField = (bullet: BlackHoleBullet): void => {
                     game['entities'].forEach((target: any) => {
-                        if (!(target instanceof Enemy || target instanceof EnemyAdvanced) || !target.isActive) return;
+                        const isEnemy = target instanceof Enemy || target instanceof EnemyAdvanced;
+                        const isHostileShot = target instanceof EnemyBullet && !target.isFriendly;
+                        if ((!isEnemy && !isHostileShot) || !target.isActive) return;
                         if (!bullet.isWithinField(target) || !bullet.canSuctionTarget(target)) return;
-                        bullet.registerSuction(target);
+
                         const center = bullet.getFieldCenter();
                         const targetCenterX = target.x + target.width / 2;
                         const targetCenterY = target.y + target.height / 2;
                         const deltaX = center.x - targetCenterX;
                         const deltaY = center.y - targetCenterY;
                         const distance = Math.max(1, Math.hypot(deltaX, deltaY));
-                        const suction = bullet.getSuctionStrength();
-                        target.applyKnockback((deltaX / distance) * suction, (deltaY / distance) * suction, 1);
+                        const fieldRadius = bullet.getFieldRadius();
+                        const falloff = Math.max(0.35, 1 - distance / fieldRadius);
+                        const suction = bullet.getSuctionStrength() * (0.65 + falloff * 0.75);
+                        bullet.registerSuction(target, isHostileShot ? 0.035 : 0.12);
+
+                        if (target instanceof EnemyBullet && !target.isFriendly) {
+                            // Bend hostile fire toward the event horizon. Repeated pulls make
+                            // the shot visibly curve, and the core consumes it instead of letting
+                            // it pass through the singularity toward the player.
+                            const pullX = deltaX / distance;
+                            const pullY = deltaY / distance;
+                            const nextX = target.dirX + pullX * suction * deltaTime * 2.8;
+                            const nextY = target.dirY + pullY * suction * deltaTime * 2.8;
+                            const magnitude = Math.max(0.001, Math.hypot(nextX, nextY));
+                            target.dirX = nextX / magnitude;
+                            target.dirY = nextY / magnitude;
+                            target.x += pullX * suction * deltaTime * 22;
+                            target.y += pullY * suction * deltaTime * 22;
+                            if (distance <= bullet.getProjectileCaptureRadius()) target.isActive = false;
+                            return;
+                        }
+
+                        if (!(target instanceof Enemy || target instanceof EnemyAdvanced)) return;
+
+                        // Ordinary enemies are dragged through the lane as well as damaged.
+                        // Bosses remain outside canSuctionTarget's size limit and keep only the
+                        // direct-impact interaction, preserving encounter readability.
+                        const pullX = deltaX / distance;
+                        const pullY = deltaY / distance;
+                        target.applyKnockback(pullX * suction, pullY * suction, 1);
+                        target.x += pullX * suction * deltaTime * 14;
+                        target.y += pullY * suction * deltaTime * 14;
                         target.takeDamage(bullet.getSuctionDamage());
                         registerEnemyDefeat(target);
                     });

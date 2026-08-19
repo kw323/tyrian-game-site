@@ -210,6 +210,7 @@ export class WeaponUpgradeSystem {
             { level: 24, cost: 29360128000, damage: 195, fireRate: 6.5, description: 'Absolute event-horizon core', requiredShip: 3 }
         ]);
 
+        this.applyCampaignWeaponCosts();
         this.weaponLevels.forEach((levels, type) => {
             levels.forEach((entry) => {
                 entry.description = getWeaponUpgradeDescription(
@@ -218,6 +219,36 @@ export class WeaponUpgradeSystem {
                     entry.damage,
                     entry.fireRate
                 );
+            });
+        });
+    }
+
+    /**
+     * Weapon ranks must remain a campaign decision rather than an impossible
+     * multi-billion-credit grind. Costs now grow by 26% per paid rank, giving the
+     * final tiers a premium while keeping one advanced build attainable by the finale.
+     */
+    private applyCampaignWeaponCosts(): void {
+        const baseCosts: Record<WeaponType, number> = {
+            [WeaponType.STRAIGHT]: 300,
+            [WeaponType.SPREAD]: 500,
+            [WeaponType.HOMING]: 1000,
+            [WeaponType.HEAVY]: 750,
+            [WeaponType.LASER]: 1500,
+            [WeaponType.VOID_LANCE]: 3500
+        };
+
+        this.weaponLevels.forEach((levels, type) => {
+            levels.forEach((entry) => {
+                if ((type === WeaponType.STRAIGHT || type === WeaponType.VOID_LANCE) && entry.level === 0) {
+                    entry.cost = 0;
+                    return;
+                }
+                // The first paid rank starts at its listed base price; subsequent
+                // ranks rise gradually from there rather than compounding immediately.
+                const paidRank = entry.level - 1;
+                const rawCost = baseCosts[type] * Math.pow(1.26, Math.max(0, paidRank));
+                entry.cost = Math.max(50, Math.round(rawCost / 50) * 50);
             });
         });
     }

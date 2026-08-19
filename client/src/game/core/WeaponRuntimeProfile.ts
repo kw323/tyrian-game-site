@@ -18,29 +18,22 @@ export interface WeaponRuntimeProfile {
     voidFieldRadius?: number;
     voidFieldDuration?: number;
     voidSuctionStrength?: number;
+    voidProjectileSpeed?: number;
+    voidProjectileCaptureRadius?: number;
 }
 
 /**
- * Split Bomb fragments always travel ahead of the player in a visible diagonal fan.
- * The old radial pattern put fragments on vertical and backward trajectories, which
- * made the weapon look like it split straight rather than opening into an attack cone.
+ * Every Split Bomb opens as a four-corner burst: forward-left, forward-right,
+ * back-left and back-right. Extra high-rank fragments fill shallow diagonal lanes,
+ * but no fragment travels straight on the parent shell's axis.
  */
 export function getHeavyFragmentAngles(fragmentCount: number, parentAngle = 0): number[] {
     const count = Math.max(1, Math.floor(fragmentCount));
-    const fanWidth = 1.3; // ±37° at the outer edges: wide enough to read, never backward.
+    const fourCorners = [-0.68, 0.68, Math.PI - 0.68, Math.PI + 0.68];
+    const extraDiagonals = [-0.28, 0.28, Math.PI - 0.28, Math.PI + 0.28];
+    const offsets = [...fourCorners, ...extraDiagonals];
 
-    if (count === 1) return [parentAngle + 0.32];
-
-    return Array.from({ length: count }, (_, index) => {
-        const centered = index - (count - 1) / 2;
-        const directPath = Math.abs(centered) < 0.0001;
-        // Odd fragment counts would otherwise retain one straight fragment; nudge it
-        // to a shallow diagonal while keeping the full pattern nearly symmetric.
-        const offset = directPath
-            ? (index % 2 === 0 ? -1 : 1) * fanWidth / (2 * (count - 1))
-            : (centered / ((count - 1) / 2)) * fanWidth / 2;
-        return parentAngle + offset;
-    });
+    return Array.from({ length: count }, (_, index) => parentAngle + offsets[index % offsets.length]);
 }
 
 const clampLevel = (level: number): number => Math.max(0, Math.min(24, Math.floor(level)));
@@ -92,9 +85,13 @@ export function getWeaponRuntimeProfile(type: RuntimeWeaponType, requestedLevel:
         case 'void_lance':
             return {
                 projectileCount: rank >= 22 ? 4 : rank >= 14 ? 3 : rank >= 7 ? 2 : 1,
-                voidFieldRadius: 26 + level * 4,
-                voidFieldDuration: 1.25 + level * 0.03,
-                voidSuctionStrength: 0.2 + level * 0.025
+                // A slow-moving singularity stays in the combat space long enough to
+                // control lanes. Higher ranks widen and intensify its event horizon.
+                voidProjectileSpeed: 7.4 - level * 0.05,
+                voidFieldRadius: 44 + level * 5,
+                voidFieldDuration: 1.65 + level * 0.05,
+                voidSuctionStrength: 1.2 + level * 0.14,
+                voidProjectileCaptureRadius: 11 + level * 0.7
             };
     }
 }
@@ -122,6 +119,6 @@ export function getWeaponUpgradeDescription(
         case 'laser':
             return `Rank ${rank}: ${profile.projectileCount} beam${profile.projectileCount === 1 ? '' : 's'} • width ${profile.laserPrimaryWidth?.toFixed(1)} • pierces ${profile.laserPrimaryTargets} • ${baseStats}`;
         case 'void_lance':
-            return `Rank ${rank}: ${profile.projectileCount} gravity trace${profile.projectileCount === 1 ? '' : 's'} • radius ${profile.voidFieldRadius} • ${profile.voidFieldDuration?.toFixed(2)}s • pull ${profile.voidSuctionStrength?.toFixed(2)} • ${baseStats}`;
+            return `Rank ${rank}: ${profile.projectileCount} slow singularit${profile.projectileCount === 1 ? 'y' : 'ies'} • radius ${profile.voidFieldRadius} • ${profile.voidFieldDuration?.toFixed(2)}s • pull ${profile.voidSuctionStrength?.toFixed(2)} • ${baseStats}`;
     }
 }

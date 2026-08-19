@@ -14,9 +14,11 @@ export class BlackHoleBullet extends Bullet {
     private impactPoint: { x: number; y: number } | null = null;
 
     constructor(x: number, y: number, damage: number, level: number, angle = 0) {
-        super(x, y, 14, 20, 15, damage, '#8b5cf6', angle);
+        super(x, y, 14, 20, 7.4, damage, '#8b5cf6', angle);
         this.level = level;
-        this.lifetime = getWeaponRuntimeProfile('void_lance', level).voidFieldDuration ?? 1.25;
+        const profile = getWeaponRuntimeProfile('void_lance', level);
+        this.speed = profile.voidProjectileSpeed ?? 7.4;
+        this.lifetime = profile.voidFieldDuration ?? 1.65;
     }
 
     public update(deltaTime: number): void {
@@ -58,10 +60,10 @@ export class BlackHoleBullet extends Bullet {
     }
 
     public canSuctionTarget(target: Entity): boolean {
-        // Never suction the player or friendly entities
+        // Never suction the player or friendly entities. Bosses remain immune to
+        // movement pull, while normal enemies and hostile projectiles are affected.
         if (target.constructor.name === 'Player' || (target as any).isFriendly) return false;
-        // Large enemies and bosses can take direct damage but ignore the gravity pull.
-        return target.width <= 36 && target.height <= 32 && !this.affectCooldowns.has(target);
+        return target.width <= 62 && target.height <= 54 && !this.affectCooldowns.has(target);
     }
 
     public isWithinField(target: Entity): boolean {
@@ -71,17 +73,21 @@ export class BlackHoleBullet extends Bullet {
         return Math.hypot(targetCenterX - center.x, targetCenterY - center.y) <= this.getFieldRadius();
     }
 
-    public registerSuction(target: Entity): void {
+    public registerSuction(target: Entity, cooldown = 0.12): void {
         this.affectedTargets.add(target);
-        this.affectCooldowns.set(target, 0.2);
+        this.affectCooldowns.set(target, cooldown);
     }
 
     public getSuctionStrength(): number {
-        return getWeaponRuntimeProfile('void_lance', this.level).voidSuctionStrength ?? 0.2;
+        return getWeaponRuntimeProfile('void_lance', this.level).voidSuctionStrength ?? 1.2;
+    }
+
+    public getProjectileCaptureRadius(): number {
+        return getWeaponRuntimeProfile('void_lance', this.level).voidProjectileCaptureRadius ?? 11;
     }
 
     public getSuctionDamage(): number {
-        return Math.max(2, this.damage * (0.12 + this.level * 0.012));
+        return Math.max(3, this.damage * (0.1 + this.level * 0.01));
     }
 
     public render(ctx: CanvasRenderingContext2D): void {
