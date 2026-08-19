@@ -35,10 +35,13 @@ export interface PilotSkillSaveState {
  * single point, so choices remain meaningful instead of becoming a checklist.
  */
 export class PilotSkillSystem {
-    public static readonly MAX_RANK = 30;
-    public static readonly XP_FOR_RANK_ONE = 140;
-    public static readonly XP_GROWTH = 1.19;
-    public static readonly XP_REQUIREMENT_CAP = 6000;
+    // Nine skills × twenty levels: rank 181 is the only point where every skill can be complete.
+    public static readonly MAX_RANK = 181;
+    public static readonly XP_FOR_RANK_ONE = 80;
+    public static readonly XP_GROWTH = 1.055;
+    public static readonly XP_REQUIREMENT_CAP = 750;
+    public static readonly SKILL_MAX_LEVEL = 20;
+    public static readonly COMPLETION_BONUS = 0.02;
 
     private xp = 0;
     private rank = 1;
@@ -48,39 +51,39 @@ export class PilotSkillSystem {
     private nodes: Map<PilotSkillId, PilotSkillNode> = new Map([
         ['hull_integrity', {
             id: 'hull_integrity', branch: 'survival', name: 'Hull Integrity',
-            description: '+4% maximum hull strength per rank.', level: 0, maxLevel: 5, bonusPerPoint: 0.04
+            description: '+1% maximum hull strength per rank. Full calibration grants +2% more.', level: 0, maxLevel: PilotSkillSystem.SKILL_MAX_LEVEL, bonusPerPoint: 0.01
         }],
         ['collision_resist', {
             id: 'collision_resist', branch: 'survival', name: 'Impact Dampeners',
-            description: '-4% collision damage per rank.', level: 0, maxLevel: 5, bonusPerPoint: 0.04
+            description: '-1% collision damage per rank. Full calibration grants -2% more.', level: 0, maxLevel: PilotSkillSystem.SKILL_MAX_LEVEL, bonusPerPoint: 0.01
         }],
         ['aegis_protocol', {
             id: 'aegis_protocol', branch: 'survival', name: 'Aegis Protocol',
-            description: '+4% shield capacity and recharge rate per rank.', level: 0, maxLevel: 5, bonusPerPoint: 0.04
+            description: '+0.85% shield capacity and recharge per rank. Full calibration grants +2% more.', level: 0, maxLevel: PilotSkillSystem.SKILL_MAX_LEVEL, bonusPerPoint: 0.0085
         }],
         ['generator_output', {
             id: 'generator_output', branch: 'reactor', name: 'Reactor Flux',
-            description: '+4% reactor output per rank.', level: 0, maxLevel: 5, bonusPerPoint: 0.04
+            description: '+1% reactor output per rank. Full calibration grants +2% more.', level: 0, maxLevel: PilotSkillSystem.SKILL_MAX_LEVEL, bonusPerPoint: 0.01
         }],
         ['capacitor_reserve', {
             id: 'capacitor_reserve', branch: 'reactor', name: 'Capacitor Reserve',
-            description: '+6% maximum reactor energy per rank.', level: 0, maxLevel: 5, bonusPerPoint: 0.06
+            description: '+1.5% maximum reactor energy per rank. Full calibration grants +2% more.', level: 0, maxLevel: PilotSkillSystem.SKILL_MAX_LEVEL, bonusPerPoint: 0.015
         }],
         ['weapon_efficiency', {
             id: 'weapon_efficiency', branch: 'reactor', name: 'Thermal Cycling',
-            description: '+4% weapon-energy efficiency per rank.', level: 0, maxLevel: 5, bonusPerPoint: 0.04
+            description: '+1% weapon-energy efficiency per rank. Full calibration grants +2% more.', level: 0, maxLevel: PilotSkillSystem.SKILL_MAX_LEVEL, bonusPerPoint: 0.01
         }],
         ['weapon_damage', {
             id: 'weapon_damage', branch: 'combat', name: 'Weapons Calibration',
-            description: '+3% weapon damage per rank.', level: 0, maxLevel: 5, bonusPerPoint: 0.03
+            description: '+0.75% weapon damage per rank. Full calibration grants +2% more.', level: 0, maxLevel: PilotSkillSystem.SKILL_MAX_LEVEL, bonusPerPoint: 0.0075
         }],
         ['fire_rate', {
             id: 'fire_rate', branch: 'combat', name: 'Fire Relays',
-            description: '+2% firing rate per rank.', level: 0, maxLevel: 5, bonusPerPoint: 0.02
+            description: '+0.5% firing rate per rank. Full calibration grants +2% more.', level: 0, maxLevel: PilotSkillSystem.SKILL_MAX_LEVEL, bonusPerPoint: 0.005
         }],
         ['critical_targeting', {
             id: 'critical_targeting', branch: 'combat', name: 'Critical Targeting',
-            description: '+3% critical-salvo chance per rank. Critical salvos deal 1.75× damage.', level: 0, maxLevel: 5, bonusPerPoint: 0.03
+            description: '+0.75% critical-salvo chance per rank. Full calibration grants +1% critical chance; critical salvos deal 1.75× damage.', level: 0, maxLevel: PilotSkillSystem.SKILL_MAX_LEVEL, bonusPerPoint: 0.0075
         }]
     ]);
 
@@ -134,17 +137,17 @@ export class PilotSkillSystem {
 
     public getBonusMultiplier(id: PilotSkillId): number {
         const node = this.nodes.get(id);
-        return node ? 1 + node.level * node.bonusPerPoint : 1;
+        return node ? 1 + node.level * node.bonusPerPoint + this.getCompletionBonus(node) : 1;
     }
 
     public getDamageReduction(id: 'collision_resist'): number {
         const node = this.nodes.get(id);
-        return node ? node.level * node.bonusPerPoint : 0;
+        return node ? node.level * node.bonusPerPoint + this.getCompletionBonus(node) : 0;
     }
 
     public getCriticalChance(): number {
         const node = this.nodes.get('critical_targeting');
-        return node ? node.level * node.bonusPerPoint : 0;
+        return node ? node.level * node.bonusPerPoint + (node.level >= node.maxLevel ? 0.01 : 0) : 0;
     }
 
     public getCriticalDamageMultiplier(): number {
@@ -197,6 +200,10 @@ export class PilotSkillSystem {
         this.totalXpForNextRank = this.isMaxRank() ? 0 : this.getRequirementForRank(this.rank);
         this.skillPoints = Math.max(0, Math.floor(Number(state.skillPoints) || 0)) + refundedLegacyPoints;
         this.nodes.forEach((node) => { node.level = 0; });
+    }
+
+    private getCompletionBonus(node: PilotSkillNode): number {
+        return node.level >= node.maxLevel ? PilotSkillSystem.COMPLETION_BONUS : 0;
     }
 
     private clampRank(value: unknown): number {

@@ -26,14 +26,14 @@ describe('Pilot progression', () => {
         expect(system.getSkillPoints()).toBe(1);
     });
 
-    it('uses three branches of five-rank skills and refunds every point on respec', () => {
+    it('uses three branches of long-form skills and refunds every point on respec', () => {
         const system = new PilotSkillSystem();
         system.addXP(4000);
         const node = system.getNode('aegis_protocol');
-        expect(node?.maxLevel).toBe(5);
+        expect(node?.maxLevel).toBe(PilotSkillSystem.SKILL_MAX_LEVEL);
 
         expect(system.investPoint('aegis_protocol')).toBe(true);
-        expect(system.getBonusMultiplier('aegis_protocol')).toBeCloseTo(1.04, 5);
+        expect(system.getBonusMultiplier('aegis_protocol')).toBeCloseTo(1.0085, 5);
         const beforeReset = system.getSkillPoints();
         system.resetSkills();
         expect(system.getNode('aegis_protocol')?.level).toBe(0);
@@ -102,5 +102,26 @@ describe('Pilot combat modifiers', () => {
         expect(player.rollCriticalSalvo()).toBe(true);
         player.setCriticalProfile(0, 1.75);
         expect(player.rollCriticalSalvo()).toBe(false);
+    });
+});
+
+
+describe('Long-form skill progression', () => {
+    it('reserves exactly 180 earned points for the nine twenty-rank skills', () => {
+        expect(PilotSkillSystem.MAX_RANK - 1).toBe(PilotSkillSystem.SKILL_MAX_LEVEL * 9);
+    });
+
+    it('adds the small completion bonus only after a skill is fully calibrated', () => {
+        const system = new PilotSkillSystem();
+        system.loadSaveState({
+            version: 2,
+            rank: 1,
+            xp: 0,
+            skillPoints: 0,
+            nodes: { hull_integrity: { level: PilotSkillSystem.SKILL_MAX_LEVEL } }
+        });
+
+        expect(system.getBonusMultiplier('hull_integrity')).toBeCloseTo(1.22, 5);
+        expect(system.getDamageReduction('collision_resist')).toBe(0);
     });
 });
