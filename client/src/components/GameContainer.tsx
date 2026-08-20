@@ -23,6 +23,7 @@ import { formatControlCode, loadControlBindings } from '@/game/systems/ControlSe
 import { CollisionSystem } from '@/game/systems/CollisionSystem';
 import { EnemySpawner, StageCombatEvent } from '@/game/systems/EnemySpawner';
 import { PowerSystem } from '@/game/core/PowerSystem';
+import { EngineUpgradeSystem } from '@/game/core/EngineUpgradeSystem';
 import { Boss } from '@/game/entities/Boss';
 import { SeraDuelEntity, SeraMirrorLoadout, SeraShot } from '@/game/entities/SeraDuelEntity';
 import { SeraAllyShipEntity, SeraAllyLoadout } from '@/game/entities/SeraAllyShipEntity';
@@ -58,6 +59,7 @@ interface ResumeCheckpoint {
     shipId?: number;
     generatorLevel?: number;
     shieldLevel?: number;
+    engineUpgradeLevel?: number;
     weaponState?: {
         weaponLevels?: Record<string, number>;
         currentWeapon?: string;
@@ -197,10 +199,12 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             const weaponSystem = new WeaponUpgradeSystem();
             const elementalCoreSystem = new ElementalCoreSystem();
             const powerSystem = new PowerSystem();
+            const engineUpgradeSystem = new EngineUpgradeSystem();
             const shipSystem = new ShipUpgradeSystem();
             if (resumeData?.weaponState) weaponSystem.loadSaveState(resumeData.weaponState);
             if (resumeData?.elementalCoreState) elementalCoreSystem.loadSaveState(resumeData.elementalCoreState);
             if (typeof resumeData?.generatorLevel === 'number') powerSystem.loadSaveState(resumeData.generatorLevel);
+            engineUpgradeSystem.loadSaveState(resumeData?.engineUpgradeLevel);
             if (typeof resumeData?.shipId === 'number') shipSystem.loadSaveState(resumeData.shipId);
             if (typeof resumeData?.shieldLevel === 'number') shieldLevel = Math.max(1, Math.min(10, Math.floor(resumeData.shieldLevel)));
             const tacticalAbilitySystem = new TacticalAbilitySystem();
@@ -523,6 +527,16 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 upgradeBriefing = CampaignSystem.getUpgradeBriefing('generator', 'Generator', powerSystem.generatorLevel + 1);
             };
 
+            const upgradeEngine = (): void => {
+                const cost = engineUpgradeSystem.upgrade(gameState.score);
+                if (cost === null) return;
+                gameState.score -= cost;
+                upgradeBriefing = CampaignSystem.getUpgradeBriefing('generator', 'Engine Thrusters', engineUpgradeSystem.getRank());
+                testNoticeText = `ENGINE THRUSTERS // RANK ${engineUpgradeSystem.getRank()} // +${engineUpgradeSystem.getBonusPercent()}% PROPULSION`;
+                testNoticeUntil = performance.now() + 3000;
+                SoundSystem.playUpgrade();
+            };
+
             const upgradeShield = (): void => {
                 const shieldCost = (shieldLevel + 1) * 2500;
                 if (shieldLevel >= 10 || gameState.score < shieldCost) return;
@@ -667,7 +681,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     + powerSystem.getGeneratorInvestment()
                     + weaponSystem.getTotalInvestment()
                     + tacticalAbilitySystem.getTotalInvestment()
-                    + shieldInvestment;
+                    + shieldInvestment
+                    + engineUpgradeSystem.getTotalInvestment();
                 // The escort has a late-campaign Battleship frame. The pilot's total
                 // investment determines how close her laser is to the absolute cap,
                 // without copying the weapon currently selected by the pilot.
@@ -795,6 +810,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 shipId: shipSystem.getCurrentShipId(),
                 generatorLevel: powerSystem.generatorLevel,
                 shieldLevel,
+                engineUpgradeLevel: engineUpgradeSystem.getRank(),
                 weaponState: weaponSystem.getSaveState(),
                 elementalCoreState: elementalCoreSystem.getSaveState(),
                 tacticalAbilityState: tacticalAbilitySystem.getSaveState(),
@@ -815,6 +831,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     shipId: checkpoint.shipId ?? 0,
                     generatorLevel: checkpoint.generatorLevel ?? 1,
                     shieldLevel: checkpoint.shieldLevel ?? 1,
+                    engineUpgradeLevel: checkpoint.engineUpgradeLevel ?? 0,
                     weaponLevels: weaponState.weaponLevels ?? {},
                     currentWeapon: weaponState.currentWeapon ?? 'straight',
                     elementalCoreState: checkpoint.elementalCoreState,
@@ -1513,12 +1530,14 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 if (hasUnlimitedPower) powerSystem.forceReactorOnline();
 
                 // A depleted reactor keeps movement available, but with a small recovery penalty.
+                const engineEquipmentMultiplier = 1 + (equipmentSystem.getActiveBonuses().moveSpeed / 100);
+                const propulsionSpeed = 7.5 * engineUpgradeSystem.getSpeedMultiplier() * engineEquipmentMultiplier;
                 if (powerSystem.isReactorRecovering()) {
-                    player.speed = 7.5 * 0.8;
+                    player.speed = propulsionSpeed * 0.8;
                 } else if (powerSystem.currentPower < 20) {
-                    player.speed = 7.5 * 0.7;
+                    player.speed = propulsionSpeed * 0.7;
                 } else {
-                    player.speed = 7.5;
+                    player.speed = propulsionSpeed;
                 }
 
                 // Flight mode also controls firing: Space for keyboard mode, left click for mouse mode.
@@ -3664,7 +3683,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     }
 
                     if (shopScreen === 'systems') {
-                        drawCard(28, 156, 944, 730, 'HULL SYSTEMS // SHIP, SHIELD & GENERATOR', '#FFD166');
+                        drawCard(28, 156, 944, 950, 'HULL SYSTEMS // SHIP, SHIELD, REACTOR & ENGINES', '#FFD166');
                         const systemsX = 48;
                         const systemsWidth = 904;
                         const actionX = 774;
@@ -3672,6 +3691,10 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         const generatorCanBuy = powerSystem.canUpgradeGenerator() && shipSystem.canUpgradeGenerator(powerSystem.generatorLevel + 1) && gameState.score >= nextGeneratorCost;
                         const shieldCost = (shieldLevel + 1) * 2500;
                         const canBuyShield = shieldLevel < 10 && gameState.score >= shieldCost;
+                        const nextEngineCost = engineUpgradeSystem.getNextCost();
+                        const engineCanBuy = engineUpgradeSystem.canUpgrade() && gameState.score >= nextEngineCost;
+                        const equipmentEngineBonus = equipmentSystem.getActiveBonuses().moveSpeed;
+                        const displayedCruiseSpeed = 7.5 * engineUpgradeSystem.getSpeedMultiplier() * (1 + equipmentEngineBonus / 100);
 
                         drawCard(systemsX, 328, systemsWidth, 116, 'POWER CORE // GENERATOR', '#FFD166');
                         ctx.textAlign = 'left';
@@ -3691,14 +3714,25 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         ctx.fillText(`LEVEL ${shieldLevel}/10`, 72, 500);
                         ctx.fillStyle = '#dbe9ee';
                         ctx.font = '14px Arial';
-                        ctx.fillText(`Max ${player.maxShield}  •  Recharge ${player.shieldRegenRate.toFixed(1)}/s after 2.5s`, 72, 526);
+                        ctx.fillText(`Max ${player.maxShield}  •  Recharge ${player.shieldRegenRate.toFixed(1)}/s continuously`, 72, 526);
                         ctx.fillStyle = '#8ea6b2';
                         ctx.fillText(`Temporary layer: overflow reaches the hull. Next calibration: ${shieldCost} pts`, 72, 552);
                         drawButton('systems-shield-upgrade', shieldLevel < 10 ? `UPGRADE  ${shieldCost} PTS` : 'MAX SHIELD', actionX, 493, 138, 42, canBuyShield ? '#00FFCC' : '#ff6666', upgradeShield);
 
-                        drawCard(systemsX, 584, systemsWidth, 396, `HULL FLEET // ACTIVE: ${shipSystem.getCurrentShip().name}`, '#f4fbff');
+                        drawCard(systemsX, 584, systemsWidth, 116, 'PROPULSION // ENGINE THRUSTERS', '#82E9FF');
+                        ctx.fillStyle = '#82E9FF';
+                        ctx.font = 'bold 18px Arial';
+                        ctx.fillText(`RANK ${engineUpgradeSystem.getRank()}/${engineUpgradeSystem.getMaxRank()}  •  +${engineUpgradeSystem.getBonusPercent()}% THRUST`, 72, 628);
+                        ctx.fillStyle = '#dbe9ee';
+                        ctx.font = '14px Arial';
+                        ctx.fillText(`Cruise speed ${displayedCruiseSpeed.toFixed(2)}  •  Equipment bonus +${equipmentEngineBonus.toFixed(1)}%`, 72, 654);
+                        ctx.fillStyle = '#8ea6b2';
+                        ctx.fillText('Each rank adds a controlled 2% speed. Turning precision and bullet patterns stay unchanged.', 72, 680);
+                        drawButton('systems-engine-upgrade', engineUpgradeSystem.canUpgrade() ? `UPGRADE  ${nextEngineCost} PTS` : 'MAX ENGINE', actionX, 621, 138, 42, engineCanBuy ? '#82E9FF' : '#ff6666', upgradeEngine);
+
+                        drawCard(systemsX, 712, systemsWidth, 396, `HULL FLEET // ACTIVE: ${shipSystem.getCurrentShip().name}`, '#f4fbff');
                         shipSystem.getAllShips().forEach((ship: any, index: number) => {
-                            const shipY = 630 + index * 60;
+                            const shipY = 758 + index * 60;
                             const isCurrent = shipSystem.getCurrentShipId() === ship.id;
                             const isNext = ship.id === shipSystem.getCurrentShipId() + 1;
                             const canBuy = isNext && gameState.score >= ship.cost;

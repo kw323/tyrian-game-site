@@ -9,6 +9,7 @@ export interface SaveData {
     shipId: number;
     generatorLevel: number;
     shieldLevel: number;
+    engineUpgradeLevel?: number;
     weaponLevels: Record<string, number>;
     currentWeapon: string;
     tacticalAbilityLevels?: Record<string, number>;
