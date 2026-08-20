@@ -107,9 +107,9 @@ export class SeraDuelEntity extends Boss {
         }
 
         const movementMode = Math.floor(this.duelTime / 5) % 3;
-        const lateralAmplitude = movementMode === 0 ? 286 : movementMode === 1 ? 238 : 310;
-        const baseX = 400 + Math.sin(this.duelTime * (0.82 + movementMode * 0.11)) * lateralAmplitude
-            + Math.sin(this.duelTime * 2.24) * 66;
+        const lateralAmplitude = movementMode === 0 ? 410 : movementMode === 1 ? 350 : 445;
+        const baseX = 600 + Math.sin(this.duelTime * (0.82 + movementMode * 0.11)) * lateralAmplitude
+            + Math.sin(this.duelTime * 2.24) * 94;
         const baseY = 132 + Math.cos(this.duelTime * (0.68 + movementMode * 0.08)) * 58;
         let dodgeX = 0;
         for (const threat of this.threatSnapshot) {
@@ -119,7 +119,7 @@ export class SeraDuelEntity extends Boss {
             }
         }
         const pilotBias = Math.max(-1, Math.min(1, (this.pilotTarget.x - this.x) / 155));
-        const targetX = Math.max(52, Math.min(748, baseX + dodgeX * 158 + pilotBias * 34));
+        const targetX = Math.max(52, Math.min(1100, baseX + dodgeX * 210 + pilotBias * 48));
         const targetY = Math.max(64, Math.min(286, baseY + Math.sin(this.duelTime * 1.9) * 16));
         const steering = Math.min(1, deltaTime * 6.2);
         this.x += (targetX - this.x) * steering;

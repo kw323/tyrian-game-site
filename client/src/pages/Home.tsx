@@ -209,7 +209,7 @@ export default function Home() {
             {showDatabase && <EnemyDatabaseModal onClose={() => setShowDatabase(false)} />}
             {showSystemsDatabase && <PlayerSystemsModal onClose={() => setShowSystemsDatabase(false)} />}
             {showMissionArchive && <MissionArchiveModal onClose={() => setShowMissionArchive(false)} />}
-            {showStageMapModal && <StageSelectModal maxUnlockedLevel={1} allowAllStages onSelectStage={launchTestStage} onClose={() => setShowStageMapModal(false)} />}
+            {showStageMapModal && <StageSelectModal maxUnlockedLevel={autoSave?.maxUnlockedLevel ?? 1} onSelectStage={launchTestStage} onClose={() => setShowStageMapModal(false)} />}
             {showLoadModal && <SaveLoadModal isOpen={showLoadModal} mode="load" onClose={() => setShowLoadModal(false)} onLoadGame={loadSelectedSave} onDeleteSave={() => setSaveRevision((revision) => revision + 1)} />}
 
             {!isNativeAndroid && <footer className="command-footer"><span>PROTECT THE STARSHIP // PROGRAM ZERO</span><span>ARK-9 FLIGHT NETWORK © 2026</span></footer>}

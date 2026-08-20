@@ -81,18 +81,20 @@ export class Boss extends Entity {
             this.x += this.vx * deltaTime;
         } else {
             const phaseBoost = this.combatPhase * 0.14;
-            let targetX = 400;
+            // Combat arenas are 1200px wide. The old 800px coordinates trapped every
+            // standard boss in the left portion of the field despite a centred spawn.
+            let targetX = 600;
             let targetY = 118;
             if (this.combatProfile === 'duelist') {
-                targetX = 400 + Math.sin(this.movementTime * (1.12 + phaseBoost)) * (215 + this.combatPhase * 20)
-                    + Math.sin(this.movementTime * 2.6) * 42;
+                targetX = 600 + Math.sin(this.movementTime * (1.12 + phaseBoost)) * (365 + this.combatPhase * 30)
+                    + Math.sin(this.movementTime * 2.6) * 68;
                 targetY = 112 + Math.cos(this.movementTime * 1.4) * (24 + this.combatPhase * 6);
             } else if (this.combatProfile === 'siege') {
-                targetX = 400 + Math.sin(this.movementTime * (0.38 + phaseBoost * 0.4)) * 260;
+                targetX = 600 + Math.sin(this.movementTime * (0.38 + phaseBoost * 0.4)) * 440;
                 targetY = 106 + Math.cos(this.movementTime * 0.52) * 18;
             } else {
-                targetX = 400 + Math.sin(this.movementTime * (0.78 + phaseBoost)) * 205
-                    + Math.sin(this.movementTime * 1.68) * 92;
+                targetX = 600 + Math.sin(this.movementTime * (0.78 + phaseBoost)) * 350
+                    + Math.sin(this.movementTime * 1.68) * 142;
                 targetY = 126 + Math.cos(this.movementTime * 0.66) * (46 + this.combatPhase * 9);
             }
             const steering = Math.min(1, deltaTime * (this.combatProfile === 'duelist' ? 4.8 : 2.8));
@@ -105,7 +107,7 @@ export class Boss extends Entity {
         const knockbackDecay = Math.pow(0.12, deltaTime);
         this.knockbackX *= knockbackDecay;
         this.knockbackY *= knockbackDecay;
-        this.x = Math.max(50, Math.min(750, this.x));
+        this.x = Math.max(50, Math.min(1100, this.x));
         this.y = Math.max(64, Math.min(290, this.y));
     }
 

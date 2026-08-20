@@ -18,6 +18,10 @@ import { DifficultyProfile, DifficultySystem } from '../core/DifficultySystem';
 import { getFactionWaveProfile } from '../core/EnemyCombatProfile';
 
 export class EnemySpawner {
+    /** Three fragments are needed; later signals provide recovery opportunities if one escapes. */
+    public static readonly RESEARCH_COURIER_STAGES = [17, 37, 47, 67, 77, 97] as const;
+    public static readonly RESEARCH_COURIER_APPEAR_AT = 28;
+    public static readonly RESEARCH_COURIER_ESCAPE_AFTER = 5;
     private spawnRate: number = 1.5;
     private lastSpawnTime: number = 0;
     private waveCount: number = 0;
@@ -62,8 +66,8 @@ export class EnemySpawner {
         // The singularity weapon is recovered from three rare alien research ships. They
         // appear only midway through selected non-boss missions and stay exposed for a short
         // five-second capture window, instead of being granted by every ninth-stage elite.
-        const isResearchOpportunity = level >= 17 && level % 10 === 7 && level % 3 !== 0;
-        if (isResearchOpportunity && stageElapsed >= 28 && !this.specialSpawnedForLevel) {
+        const isResearchOpportunity = EnemySpawner.RESEARCH_COURIER_STAGES.includes(level as typeof EnemySpawner.RESEARCH_COURIER_STAGES[number]);
+        if (isResearchOpportunity && stageElapsed >= EnemySpawner.RESEARCH_COURIER_APPEAR_AT && !this.specialSpawnedForLevel) {
             this.specialSpawnedForLevel = true;
             const blueprint = this.getBlueprint(EnemyType.EVASIVE_HUNTER, level, 'aliens');
             const difficultyTier = Math.floor(Math.max(0, level - 1) / 10);

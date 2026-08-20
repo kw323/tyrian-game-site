@@ -692,8 +692,11 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     shipTier: shipSystem.getCurrentShipId(),
                     weaponType: selectedWeapon,
                     weaponLevel: Math.max(0, weaponSystem.getCurrentLevel(selectedWeapon)),
-                    weaponFireRate: weaponStats?.fireRate ?? 6,
-                    weaponDamage: weaponStats?.damage ?? 10,
+                    // Sera mirrors the pilot's arsenal pattern, but not its full endgame
+                    // damage-per-second. She must survive a high-rank duel without deleting
+                    // the player in one short salvo.
+                    weaponFireRate: Math.max(2.8, (weaponStats?.fireRate ?? 6) * 0.52),
+                    weaponDamage: Math.max(6, Math.round((weaponStats?.damage ?? 10) * 0.42)),
                     weaponCost: powerSystem.getWeaponCost(selectedWeapon, Math.max(0, weaponSystem.getCurrentLevel(selectedWeapon))),
                     maxShield: player.maxShield,
                     shieldRegenRate: player.baseShieldRegenRate,
@@ -703,7 +706,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     ability: abilityLevel > 0 ? selectedAbility : null,
                     abilityLevel,
                     abilityDuration: abilityData?.duration ?? 0,
-                    abilityFireMultiplier: abilityData?.fireMultiplier ?? 1,
+                    abilityFireMultiplier: Math.min(1.22, abilityData?.fireMultiplier ?? 1),
                     abilityShieldRegenMultiplier: abilityData?.shieldRegenMultiplier ?? 1
                 };
             };
@@ -3258,6 +3261,9 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                                 hoveredShopItem = null;
                             });
                         });
+                        // Manual saves are a Ready Room action only, but must be visible
+                        // regardless of which upgrade bay the pilot is currently inspecting.
+                        drawButton('shop-save-progress', 'SAVE PROGRESS', 786, 24, 184, 42, '#c59cff', openBetweenStageSave);
                     };
 
                     const drawShopFooter = (backLabel = 'BACK TO CONTROL DECK'): void => {
@@ -3271,9 +3277,6 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                                 ? `${resumeData ? `CONTINUE FROM STAGE ${gameState.level}` : 'INITIATE NEW LAUNCH'}  [ENTER]`
                                 : 'CONTINUE TO NEXT LEVEL  [ENTER]';
                         drawButton('shop-continue', launchLabel, 310, 820, 462, 52, stageFailureReason ? '#ff9b9b' : '#00FF88', advanceFromShop);
-                        if (shopScreen === 'hub') {
-                            drawButton('shop-save-progress', 'SAVE PROGRESS', 790, 820, 180, 52, '#c59cff', openBetweenStageSave);
-                        }
                         ctx.textAlign = 'left';
                         ctx.fillStyle = '#7996a4';
                         ctx.font = '13px monospace';
@@ -3281,18 +3284,6 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     };
 
                 if (showAfterActionModal) {
-                    const genericDebriefMessage = gameplayLangRef.current === 'he'
-                        ? 'נתוני המשימה נשמרו. בדוק את ביצועי הטיסה, הכן את מערכות הספינה והמשך כאשר אתה מוכן.'
-                        : gameplayLangRef.current === 'ja'
-                            ? '任務データを記録しました。飛行成績を確認し、艦のシステムを整えてから次の任務へ進んでください。'
-                            : gameplayLangRef.current === 'zh'
-                                ? '任务数据已记录。请查看飞行表现，准备舰船系统，然后继续执行下一项任务。'
-                                : 'Mission data has been archived. Review your flight performance, prepare your systems, and continue when ready.';
-                    const aa = stageBriefing.afterAction ?? {
-                        speaker: stageBriefing.contact.speaker,
-                        name: stageBriefing.contact.name,
-                        message: genericDebriefMessage
-                    };
                     ctx.fillStyle = 'rgba(2, 6, 20, 0.95)';
                     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
@@ -3312,30 +3303,27 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     ctx.font = 'bold 30px Arial';
                     ctx.fillText(stageBriefing.stage === 31 ? 'STAGE 31 // PILOT TRIAL OUTCOME' : `STAGE ${gameState.level} // FLIGHT REPORT`, canvasWidth / 2, boxY - 40);
 
-                    drawPortrait(ctx, aa.speaker, boxX + 28, boxY + 28, 96);
                     ctx.textAlign = 'left';
-                    ctx.fillStyle = '#f0b84e';
-                    ctx.font = 'bold 20px Arial';
-                    ctx.fillText(`${aa.name}  •  MISSION DEBRIEF`, boxX + 144, boxY + 54);
                     ctx.fillStyle = '#00FF88';
-                    ctx.font = 'bold 14px monospace';
+                    ctx.font = 'bold 18px monospace';
                     ctx.fillText(stageBriefing.stage === 31
                         ? (seraDuelOutcome === 'win' ? 'SERA DUEL // VICTORY CONFIRMED' : 'SERA DUEL // TRIAL COMPLETE // CONTINUATION AUTHORIZED')
-                        : `STAGE ${gameState.level} COMPLETED SUCCESSFULLY`, boxX + 144, boxY + 80);
+                        : `STAGE ${gameState.level} COMPLETE // PERFORMANCE ANALYSIS`, boxX + 48, boxY + 62);
 
                     const performance = lastStagePerformanceXp;
                     const telemetry = lastStageMasteryResult?.telemetry;
                     if (performance && telemetry) {
                         ctx.fillStyle = '#75d8e7';
                         ctx.font = 'bold 14px monospace';
-                        ctx.fillText(`XP +${performance.totalXp}  //  ELIMINATION ${telemetry.eliminationPercent.toFixed(0)}%  //  DAMAGE ${telemetry.totalDamageTaken.toFixed(1)}`, boxX + 144, boxY + 108);
+                        ctx.fillText(`XP +${performance.totalXp}  //  KILLS ${telemetry.enemiesDefeated}/${telemetry.enemiesSpawned}  //  ELIMINATION ${telemetry.eliminationPercent.toFixed(0)}%`, boxX + 48, boxY + 108);
+                        ctx.fillText(`SHIELD HITS ${telemetry.shieldHits}  //  SHIELD DMG ${telemetry.shieldDamageAbsorbed.toFixed(1)}  //  HULL DMG ${telemetry.hullDamageTaken.toFixed(1)}`, boxX + 48, boxY + 136);
                         ctx.fillStyle = performance.superBonusPercent > 0 ? '#ff77e8' : performance.noHit ? '#00ff88' : '#ffd166';
-                        ctx.fillText(performance.superBonusPercent > 0 ? 'SUPER BONUS +50%  //  NO HIT +30%  //  CLEAN SWEEP +30%' : performance.noHit ? 'NO HIT BONUS +30%' : performance.fullClear ? 'CLEAN SWEEP BONUS +30%' : 'PERFORMANCE DATA RECORDED', boxX + 144, boxY + 134);
+                        ctx.fillText(performance.superBonusPercent > 0 ? 'SUPER BONUS +50%  //  NO HIT +30%  //  CLEAN SWEEP +30%' : performance.noHit ? 'NO HIT BONUS +30%' : performance.fullClear ? 'CLEAN SWEEP BONUS +30%' : 'PERFORMANCE DATA RECORDED', boxX + 48, boxY + 164);
                     }
 
-                    ctx.fillStyle = '#dbe9ee';
-                    ctx.font = '16px Arial';
-                    drawWrappedText(ctx, aa.message, boxX + 144, boxY + 168, boxWidth - 168, 24, 4);
+                    ctx.fillStyle = '#8ea6b2';
+                    ctx.font = '15px monospace';
+                    ctx.fillText('FLIGHT DATA ARCHIVED // READY ROOM SYSTEMS AVAILABLE', boxX + 48, boxY + 210);
 
                     drawButton('after-action-continue', 'PROCEED TO CONTROL DECK  [ENTER]', boxX + 28, boxY + 310, boxWidth - 56, 52, '#00FF88', () => {
                         showAfterActionModal = false;
@@ -3851,7 +3839,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                             ctx.fillStyle = '#8ea6b2';
                             ctx.font = '14px Arial';
                             ctx.fillText(isLocked ? `CLASSIFIED • RESEARCH FRAGMENTS ${secretWeaponFragments}/3` : (currentLevel < 0 ? 'NOT OWNED' : `LEVEL ${currentLevel + 1}/25`), 48, rowY + 43);
-                            ctx.fillText(isLocked ? 'SIGNAL SEALED • RECOVER 3 RESEARCH FRAGMENTS' : (nextLevel ? (hullSupportsNext ? `${nextLevel.description} • ${nextLevel.cost} pts` : `HULL CAP LEVEL ${hullWeaponCap} • UPGRADE SHIP REQUIRED`) : 'MAXIMUM LEVEL'), 48, rowY + 64);
+                            ctx.fillText(isLocked ? 'RESEARCH COURIERS: STAGES 17 / 37 / 47+ • APPEAR AT 28s • ESCAPE IN 5s' : (nextLevel ? (hullSupportsNext ? `${nextLevel.description} • ${nextLevel.cost} pts` : `HULL CAP LEVEL ${hullWeaponCap} • UPGRADE SHIP REQUIRED`) : 'MAXIMUM LEVEL'), 48, rowY + 64);
                             if (!isLocked && nextLevel) {
                                 ctx.fillStyle = '#ffd166';
                                 ctx.font = '12px Arial';
@@ -4709,7 +4697,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             {showStageMapModal && (
                 <StageSelectModal
                     maxUnlockedLevel={maxUnlockedLevel}
-                    allowAllStages
+                    allowAllStages={false}
                     onSelectStage={(stageNum) => {
                         setShowStageMapModal(false);
                         triggerStageJump(stageNum);

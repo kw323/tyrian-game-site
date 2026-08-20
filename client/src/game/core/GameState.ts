@@ -10,6 +10,7 @@ export class GameState {
     public levelStartTime: number = 0;
     public levelDuration: number = 60; // seconds per level (60 + 10 per level)
     public levelTimeElapsed: number = 0;
+    private pauseStartedAt: number | null = null;
 
     public addScore(points: number): void {
         this.score += points;
@@ -37,6 +38,7 @@ export class GameState {
     }
 
     public updateLevelTime(currentTime: number): void {
+        if (this.isPaused) return;
         if (this.levelStartTime === 0) {
             this.levelStartTime = currentTime;
         }
@@ -64,8 +66,17 @@ export class GameState {
         this.levelDuration = 60;
     }
 
-    public togglePause(): void {
-        this.isPaused = !this.isPaused;
+    public togglePause(currentTime: number = performance.now() / 1000): void {
+        if (!this.isPaused) {
+            this.isPaused = true;
+            this.pauseStartedAt = currentTime;
+            return;
+        }
+        if (this.pauseStartedAt !== null && this.levelStartTime > 0) {
+            this.levelStartTime += Math.max(0, currentTime - this.pauseStartedAt);
+        }
+        this.pauseStartedAt = null;
+        this.isPaused = false;
     }
 
     public reset(): void {
@@ -80,5 +91,6 @@ export class GameState {
         this.levelStartTime = 0;
         this.levelTimeElapsed = 0;
         this.levelDuration = 60;
+        this.pauseStartedAt = null;
     }
 }
