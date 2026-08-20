@@ -33,6 +33,7 @@ import { Entity } from '../core/Entity';
 import { AsteroidBeltEntity } from './AsteroidBeltEntity';
 import { DifficultyProfile } from '../core/DifficultySystem';
 import { EnemyCombatProfile, getEnemyCombatProfile } from '../core/EnemyCombatProfile';
+import { createEnemyVisualProfile, drawEnemyShip, EnemyVisualProfile } from '../core/EnemyVisualSystem';
 
 export class EnemyAdvanced extends Entity {
     public speed: number;
@@ -65,6 +66,7 @@ export class EnemyAdvanced extends Entity {
     private difficultyProfile: DifficultyProfile | null = null;
     private baseShootCooldown = 1.5;
     private combatProfile: EnemyCombatProfile;
+    private visualProfile!: EnemyVisualProfile;
 
     constructor(
         x: number,
@@ -103,6 +105,8 @@ export class EnemyAdvanced extends Entity {
         this.bulletColor = '#8FFFF4';
         this.bulletStyle = 'needle';
         this.configureType();
+        this.visualProfile = createEnemyVisualProfile(this.faction, this.enemyType);
+        this.color = this.visualProfile.hull;
         this.combatProfile = getEnemyCombatProfile(this.faction, this.enemyType);
         this.speed = this.baseSpeed * this.combatProfile.moveMultiplier;
         this.shootCooldown = this.combatProfile.shootCooldown;
@@ -440,41 +444,7 @@ export class EnemyAdvanced extends Entity {
     public render(ctx: CanvasRenderingContext2D): void {
         ctx.save();
         ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
-
-        ctx.fillStyle = this.color;
-        ctx.strokeStyle = '#FFFFFF';
-        ctx.lineWidth = 1.5;
-
-        if (this.faction === 'raiders') {
-            ctx.beginPath();
-            ctx.moveTo(0, -this.height / 2);
-            ctx.lineTo(this.width / 2, this.height / 2);
-            ctx.lineTo(0, this.height / 3);
-            ctx.lineTo(-this.width / 2, this.height / 2);
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
-        } else if (this.faction === 'military') {
-            ctx.beginPath();
-            ctx.moveTo(0, -this.height / 2);
-            ctx.lineTo(this.width / 2, this.height / 3);
-            ctx.lineTo(this.width / 3, this.height / 2);
-            ctx.lineTo(-this.width / 3, this.height / 2);
-            ctx.lineTo(-this.width / 2, this.height / 3);
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
-        } else {
-            ctx.beginPath();
-            ctx.ellipse(0, 0, this.width / 2, this.height / 2, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
-            ctx.fillStyle = '#8FFFF4';
-            ctx.beginPath();
-            ctx.arc(0, -2, 4, 0, Math.PI * 2);
-            ctx.fill();
-        }
-
+        drawEnemyShip(ctx, this.width, this.height, this.visualProfile, this.timeAlive, this.isSpecial);
         ctx.restore();
     }
 }

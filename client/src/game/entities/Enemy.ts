@@ -1,4 +1,5 @@
 import { Entity } from '../core/Entity';
+import { createEnemyVisualProfile, drawEnemyShip, EnemyVisualProfile } from '../core/EnemyVisualSystem';
 
 export class Enemy extends Entity {
     public speed: number;
@@ -16,6 +17,7 @@ export class Enemy extends Entity {
     private slowMultiplier: number = 1;
     private knockbackX: number = 0;
     private knockbackY: number = 0;
+    private visualProfile: EnemyVisualProfile;
 
     constructor(x: number, y: number, width: number, height: number, speed: number, health: number) {
         super(x, y, width, height);
@@ -24,6 +26,8 @@ export class Enemy extends Entity {
         this.health = health;
         this.maxHealth = health;
         this.spawnX = x;
+        this.visualProfile = createEnemyVisualProfile('raiders', 'scout');
+        this.color = this.visualProfile.hull;
     }
 
     public update(deltaTime: number): void {
@@ -47,55 +51,11 @@ export class Enemy extends Entity {
         }
     }
 
-    // Style: compact interceptor silhouette with layered armor and a bright cockpit beacon.
     public render(ctx: CanvasRenderingContext2D): void {
         const { x, y, width: w, height: h } = this;
-        const centerX = x + w / 2;
-        const centerY = y + h / 2;
-        const radius = Math.min(w, h) / 2;
-        const hull = ctx.createLinearGradient(x, y, x + w, y + h);
-        hull.addColorStop(0, '#ffffff');
-        hull.addColorStop(0.18, this.color);
-        hull.addColorStop(0.7, this.color);
-        hull.addColorStop(1, '#11162d');
-
         ctx.save();
-        ctx.shadowColor = this.color;
-        ctx.shadowBlur = 15;
-        ctx.fillStyle = hull;
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.86)';
-        ctx.lineWidth = 1;
-
-        ctx.beginPath();
-        ctx.moveTo(centerX, y - 3);
-        ctx.lineTo(x + w * 0.82, y + h * 0.38);
-        ctx.lineTo(x + w + 2, y + h * 0.72);
-        ctx.lineTo(x + w * 0.62, y + h * 0.67);
-        ctx.lineTo(centerX, y + h + 3);
-        ctx.lineTo(x + w * 0.38, y + h * 0.67);
-        ctx.lineTo(x - 2, y + h * 0.72);
-        ctx.lineTo(x + w * 0.18, y + h * 0.38);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = 'rgba(17, 28, 56, 0.88)';
-        ctx.beginPath();
-        ctx.ellipse(centerX, centerY - 1, radius * 0.36, radius * 0.56, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = '#d8ffff';
-        ctx.stroke();
-        ctx.fillStyle = '#f6ffff';
-        ctx.beginPath();
-        ctx.arc(centerX, centerY - 2, radius * 0.14, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.48)';
-        ctx.beginPath();
-        ctx.moveTo(x + w * 0.18, y + h * 0.48);
-        ctx.lineTo(x + w * 0.82, y + h * 0.48);
-        ctx.stroke();
+        ctx.translate(x + w / 2, y + h / 2);
+        drawEnemyShip(ctx, w, h, this.visualProfile, this.timeAlive);
         ctx.restore();
 
         const healthPercent = Math.max(0, this.health / this.maxHealth);
