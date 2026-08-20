@@ -3821,6 +3821,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         return;
                     }
 
+                    if (shopScreen === 'abilities') {
                     drawCard(28, 156, 944, 978, 'TACTICAL OPS // SPECIAL ABILITIES', '#c59cff');
                     const abilityUnlocked = tacticalAbilitySystem.isSystemUnlocked(shipSystem.getCurrentShipId());
                     ctx.textAlign = 'left';
@@ -3877,6 +3878,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     }
                     // drawShopFooter removed per user request to eliminate bottom buttons area
                     return;
+                    }
 
                     if (false) {
                         const leftX = 28;
