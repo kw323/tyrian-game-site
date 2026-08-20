@@ -1,3 +1,5 @@
+import { getGraphicsQualityProfile, type GraphicsQuality } from '../core/GraphicsSettings';
+
 type SectorVisualProfile = {
     top: string;
     bottom: string;
@@ -23,7 +25,8 @@ const SECTOR_PROFILES: readonly SectorVisualProfile[] = [
 ];
 
 export class BackgroundRenderer {
-    public static renderBackground(ctx: CanvasRenderingContext2D, width: number, height: number, level: number, timeElapsed: number, isBossStage: boolean): void {
+    public static renderBackground(ctx: CanvasRenderingContext2D, width: number, height: number, level: number, timeElapsed: number, isBossStage: boolean, graphicsQuality: GraphicsQuality = 'standard'): void {
+        const quality = getGraphicsQualityProfile(graphicsQuality);
         const chapter = Math.max(1, Math.min(SECTOR_PROFILES.length, Math.floor((level - 1) / 10) + 1));
         const profile = SECTOR_PROFILES[chapter - 1];
         const base = ctx.createLinearGradient(0, 0, 0, height);
@@ -33,18 +36,18 @@ export class BackgroundRenderer {
         ctx.fillStyle = base;
         ctx.fillRect(0, 0, width, height);
 
-        this.renderFarStars(ctx, width, height, timeElapsed, profile);
-        this.renderNebula(ctx, width, height, timeElapsed, profile);
+        this.renderFarStars(ctx, width, height, timeElapsed, profile, quality.farStarCount);
+        if (quality.nebulaCount > 0) this.renderNebula(ctx, width, height, timeElapsed, profile, quality.nebulaCount);
         this.renderLandmark(ctx, width, height, timeElapsed, profile, isBossStage);
-        this.renderMidStars(ctx, width, height, timeElapsed, profile, isBossStage);
-        this.renderForegroundDust(ctx, width, height, timeElapsed, profile);
+        this.renderMidStars(ctx, width, height, timeElapsed, profile, isBossStage, quality.midStarCount);
+        if (quality.dustCount > 0) this.renderForegroundDust(ctx, width, height, timeElapsed, profile, quality.dustCount);
         this.renderVignette(ctx, width, height, profile, isBossStage);
     }
 
-    private static renderFarStars(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, profile: SectorVisualProfile): void {
+    private static renderFarStars(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, profile: SectorVisualProfile, count: number): void {
         const scroll = (time * 7) % height;
         ctx.save();
-        for (let index = 0; index < 94; index++) {
+        for (let index = 0; index < count; index++) {
             const x = ((index * 137.17) % width + width) % width;
             const y = (index * 83.71 + scroll * (index % 3 === 0 ? 1.35 : 0.66)) % height;
             const size = index % 13 === 0 ? 1.8 : index % 4 === 0 ? 1.1 : 0.7;
@@ -56,11 +59,11 @@ export class BackgroundRenderer {
         ctx.restore();
     }
 
-    private static renderNebula(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, profile: SectorVisualProfile): void {
+    private static renderNebula(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, profile: SectorVisualProfile, count: number): void {
         const drift = Math.sin(time * 0.08) * 38;
         ctx.save();
         ctx.globalCompositeOperation = 'screen';
-        for (let index = 0; index < 3; index++) {
+        for (let index = 0; index < count; index++) {
             const x = width * (0.18 + index * 0.36) + drift * (index % 2 === 0 ? 1 : -1);
             const y = height * (0.17 + ((index * 0.23 + time * 0.01) % 0.58));
             const radius = 160 + index * 55;
@@ -217,11 +220,11 @@ export class BackgroundRenderer {
         ctx.fill();
     }
 
-    private static renderMidStars(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, profile: SectorVisualProfile, boss: boolean): void {
+    private static renderMidStars(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, profile: SectorVisualProfile, boss: boolean, count: number): void {
         const scroll = (time * (boss ? 54 : 38)) % height;
         ctx.save();
         ctx.globalCompositeOperation = 'lighter';
-        for (let index = 0; index < 38; index++) {
+        for (let index = 0; index < count; index++) {
             const x = (index * 211.31 + 47) % width;
             const y = (index * 127.13 + scroll * (0.75 + (index % 4) * 0.28)) % height;
             const streak = 4 + (index % 5) * 3 + (boss ? 4 : 0);
@@ -236,11 +239,11 @@ export class BackgroundRenderer {
         ctx.restore();
     }
 
-    private static renderForegroundDust(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, profile: SectorVisualProfile): void {
+    private static renderForegroundDust(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, profile: SectorVisualProfile, count: number): void {
         const scroll = (time * 92) % (height + 80);
         ctx.save();
         ctx.globalCompositeOperation = 'lighter';
-        for (let index = 0; index < 18; index++) {
+        for (let index = 0; index < count; index++) {
             const x = (index * 307.17 + 71) % width;
             const y = (index * 197.93 + scroll) % (height + 80) - 40;
             const length = 13 + (index % 5) * 6;

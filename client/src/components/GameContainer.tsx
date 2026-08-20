@@ -24,6 +24,7 @@ import { CollisionSystem } from '@/game/systems/CollisionSystem';
 import { EnemySpawner, StageCombatEvent } from '@/game/systems/EnemySpawner';
 import { PowerSystem } from '@/game/core/PowerSystem';
 import { EngineUpgradeSystem } from '@/game/core/EngineUpgradeSystem';
+import type { GraphicsQuality } from '@/game/core/GraphicsSettings';
 import { Boss } from '@/game/entities/Boss';
 import { SeraDuelEntity, SeraMirrorLoadout, SeraShot } from '@/game/entities/SeraDuelEntity';
 import { SeraAllyShipEntity, SeraAllyLoadout } from '@/game/entities/SeraAllyShipEntity';
@@ -101,9 +102,10 @@ interface GameContainerProps {
     launchMode?: 'new' | 'continue';
     initialStage?: number;
     onReturnToTitle?: () => void;
+    graphicsQuality?: GraphicsQuality;
 }
 
-export function GameContainer({ touchControlsEnabled = true, mouseControlsEnabled = true, launchMode = 'continue', initialStage, onReturnToTitle }: GameContainerProps) {
+export function GameContainer({ touchControlsEnabled = true, mouseControlsEnabled = true, launchMode = 'continue', initialStage, onReturnToTitle, graphicsQuality = 'standard' }: GameContainerProps) {
     const isMobile = useIsMobile();
     const isNativeAndroid = Capacitor.isNativePlatform();
     // Android runs in landscape, where viewport width is usually larger than the mobile CSS breakpoint.
@@ -197,7 +199,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             // Initialize systems
             const inputManager = new InputManager();
             const starField = new StarField(game.getCanvas().width, GAME_CANVAS_HEIGHT, 150);
-            const combatVisualEffects = new CombatVisualEffects();
+            const combatVisualEffects = new CombatVisualEffects(graphicsQuality);
             const collisionSystem = new CollisionSystem();
             const enemySpawner = new EnemySpawner();
             let difficultyId: DifficultyId = DifficultySystem.load();
@@ -2388,7 +2390,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     GAME_CANVAS_HEIGHT,
                     gameState.level,
                     gameState.levelTimeElapsed,
-                    gameState.level % 3 === 0 || gameState.level === 101
+                    gameState.level % 3 === 0 || gameState.level === 101,
+                    graphicsQuality
                 );
 
                 // Engine trails and slow energy mist stay behind all ships and projectiles.
@@ -4368,7 +4371,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
         } catch (error) {
             console.error('Failed to initialize game:', error);
         }
-    }, [gameStarted, initialStage, startFromResume]);
+    }, [gameStarted, initialStage, startFromResume, graphicsQuality]);
 
     const updateTouchJoystick = (event: ReactPointerEvent<HTMLDivElement>): void => {
         event.preventDefault();

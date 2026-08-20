@@ -10,6 +10,7 @@ import { ControlsSettingsModal } from '@/components/ControlsSettingsModal';
 import { StageSelectModal } from '@/components/StageSelectModal';
 import { SaveData, SaveSystem } from '@/game/core/SaveSystem';
 import { DifficultyId, DifficultySystem } from '@/game/core/DifficultySystem';
+import { GraphicsQuality, loadGraphicsQuality, saveGraphicsQuality } from '@/game/core/GraphicsSettings';
 import { SoundSystem } from '@/game/core/SoundSystem';
 import { VoicePlaybackManager } from '@/game/core/VoicePlaybackManager';
 import { FlightControlMode, loadFlightControlMode, saveFlightControlMode } from '@/game/systems/ControlSettings';
@@ -62,6 +63,7 @@ export default function Home() {
         return Capacitor.isNativePlatform() || window.matchMedia('(max-width: 767px)').matches;
     });
     const [flightControlMode, setFlightControlMode] = useState<FlightControlMode>(() => loadFlightControlMode());
+    const [graphicsQuality, setGraphicsQuality] = useState<GraphicsQuality>(() => loadGraphicsQuality());
 
     const resumePreview = useMemo(() => readResumePreview(), [saveRevision]);
     const manualSaveCount = useMemo(() => SaveSystem.getManualSaveCount(), [saveRevision]);
@@ -86,6 +88,10 @@ export default function Home() {
     useEffect(() => {
         DifficultySystem.save(difficultyId);
     }, [difficultyId]);
+
+    useEffect(() => {
+        saveGraphicsQuality(graphicsQuality);
+    }, [graphicsQuality]);
 
     const startNewMission = () => {
         VoicePlaybackManager.primeFromGesture();
@@ -145,6 +151,7 @@ export default function Home() {
             musicEnabled={musicEnabled}
             gameplayLanguage={gameplayLanguage}
             difficultyId={difficultyId}
+            graphicsQuality={graphicsQuality}
             onStartNewMission={startNewMission}
             onContinueMission={continueMission}
             onOpenStageMap={() => setShowStageMapModal(true)}
@@ -156,6 +163,7 @@ export default function Home() {
             onToggleMusic={() => setMusicEnabled(SoundSystem.toggleMusic())}
             onChangeLanguage={setGameplayLanguage}
             onChangeDifficulty={setDifficultyId}
+            onChangeGraphicsQuality={setGraphicsQuality}
         />
     );
 
@@ -190,7 +198,7 @@ export default function Home() {
                     {!isNativeAndroid && <div className="flex justify-between items-center gap-3 mb-3"><span className="status-tag">{initialStage ? `TEST STAGE // ${initialStage}` : launchMode === 'new' ? 'NEW MISSION // STAGE 1' : `CONTINUE MISSION // STAGE ${resumePreview?.level ?? 1}`}</span><button type="button" onClick={() => { setInitialStage(null); setLaunchMode(null); }} className="console-button console-button--muted">RETURN TO COMMAND CENTER</button></div>}
                     <section className={`launch-frame hud-frame ${isNativeAndroid ? 'launch-frame--android' : ''}`}>
                         {!isNativeAndroid && <div className="launch-frame__topline"><span>FLIGHT DECK // PILOT LINKED</span><span>FLIGHT INPUT: {flightControlMode === 'mouse' ? 'MOUSE // ARMED' : 'KEYBOARD // ARMED'} // TOUCH {touchControlsEnabled ? 'ARMED' : 'HIDDEN'}</span></div>}
-                        <div className="game-window"><GameContainer key={`${launchMode}-${initialStage ?? 'standard'}`} touchControlsEnabled={touchControlsEnabled} mouseControlsEnabled={flightControlMode === 'mouse'} launchMode={launchMode} initialStage={initialStage ?? undefined} onReturnToTitle={() => { setInitialStage(null); setLaunchMode(null); }} /></div>
+                        <div className="game-window"><GameContainer key={`${launchMode}-${initialStage ?? 'standard'}-${graphicsQuality}`} touchControlsEnabled={touchControlsEnabled} mouseControlsEnabled={flightControlMode === 'mouse'} graphicsQuality={graphicsQuality} launchMode={launchMode} initialStage={initialStage ?? undefined} onReturnToTitle={() => { setInitialStage(null); setLaunchMode(null); }} /></div>
                     </section>
                 </main>
             ) : (isNativeAndroid ? androidTitleScreen : commandCenter)}

@@ -1,4 +1,5 @@
 import type { ElementalCoreType } from './ElementalCoreSystem';
+import { getGraphicsQualityProfile, type GraphicsQuality, type GraphicsQualityProfile } from './GraphicsSettings';
 
 export type VisualFaction = 'raiders' | 'military' | 'aliens' | 'neutral';
 
@@ -36,7 +37,11 @@ const FACTION_COLORS: Record<VisualFaction, readonly string[]> = {
 export class CombatVisualEffects {
     private particles: VisualParticle[] = [];
     private engineTimer = 0;
-    private readonly maxParticles = 260;
+    private readonly quality: GraphicsQualityProfile;
+
+    public constructor(graphicsQuality: GraphicsQuality = 'standard') {
+        this.quality = getGraphicsQualityProfile(graphicsQuality);
+    }
 
     public update(deltaTime: number): void {
         this.engineTimer = Math.max(0, this.engineTimer - deltaTime);
@@ -68,7 +73,8 @@ export class CombatVisualEffects {
         const colors = ELEMENT_COLORS[activeCore];
         const lateralDrift = moveX * -18;
         const verticalDrift = 56 + Math.max(0, moveY) * 18;
-        for (const offset of [-0.22, 0.22]) {
+        const offsets = this.quality.particleMultiplier < 0.7 ? [0] : [-0.22, 0.22];
+        for (const offset of offsets) {
             this.addParticle({
                 x: x + width * (0.5 + offset),
                 y: y + height * 0.77,
@@ -87,7 +93,7 @@ export class CombatVisualEffects {
 
     public spawnElementImpact(x: number, y: number, core: ElementalCoreType, rank: number): void {
         const colors = ELEMENT_COLORS[core];
-        const count = 4 + Math.min(4, rank);
+        const count = Math.max(2, Math.round((4 + Math.min(4, rank)) * this.quality.particleMultiplier));
         for (let index = 0; index < count; index++) {
             const angle = (Math.PI * 2 * index) / count + Math.random() * 0.55;
             const speed = 24 + Math.random() * 42 + rank * 3;
@@ -105,7 +111,7 @@ export class CombatVisualEffects {
                 kind: core === 'fire' ? 'ember' : core === 'cryo' ? 'shard' : 'spark',
             });
         }
-        if (core === 'plasma' || core === 'kinetic') {
+        if ((core === 'plasma' || core === 'kinetic') && this.quality.particleMultiplier >= 0.7) {
             this.addParticle({
                 x,
                 y,
@@ -120,7 +126,7 @@ export class CombatVisualEffects {
                 kind: 'ring',
             });
         }
-        if (core === 'corrosion') {
+        if (core === 'corrosion' && this.quality.particleMultiplier >= 0.7) {
             this.addParticle({
                 x,
                 y,
@@ -139,7 +145,7 @@ export class CombatVisualEffects {
 
     public spawnFactionExplosion(x: number, y: number, faction: VisualFaction, radius: number): void {
         const colors = FACTION_COLORS[faction];
-        const count = Math.max(7, Math.min(18, Math.round(radius * 0.35)));
+        const count = Math.max(4, Math.round(Math.min(18, Math.round(radius * 0.35)) * this.quality.particleMultiplier));
         for (let index = 0; index < count; index++) {
             const angle = (Math.PI * 2 * index) / count + (Math.random() - 0.5) * 0.35;
             const speed = radius * (1.1 + Math.random() * 1.5);
@@ -157,19 +163,21 @@ export class CombatVisualEffects {
                 kind: faction === 'aliens' ? 'mist' : index % 3 === 0 ? 'shard' : 'spark',
             });
         }
-        this.addParticle({
-            x,
-            y,
-            vx: 0,
-            vy: 0,
-            size: Math.max(8, radius * 0.45),
-            life: 0.26,
-            maxLife: 0.26,
-            color: colors[1],
-            alpha: 0.45,
-            drag: 1,
-            kind: 'ring',
-        });
+        if (this.quality.particleMultiplier >= 0.7) {
+            this.addParticle({
+                x,
+                y,
+                vx: 0,
+                vy: 0,
+                size: Math.max(8, radius * 0.45),
+                life: 0.26,
+                maxLife: 0.26,
+                color: colors[1],
+                alpha: 0.45,
+                drag: 1,
+                kind: 'ring',
+            });
+        }
     }
 
     public renderBehind(ctx: CanvasRenderingContext2D): void {
@@ -229,8 +237,8 @@ export class CombatVisualEffects {
 
     private addParticle(particle: VisualParticle): void {
         this.particles.push(particle);
-        if (this.particles.length > this.maxParticles) {
-            this.particles.splice(0, this.particles.length - this.maxParticles);
+        if (this.particles.length > this.quality.maxParticles) {
+            this.particles.splice(0, this.particles.length - this.quality.maxParticles);
         }
     }
 }

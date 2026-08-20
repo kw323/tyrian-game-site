@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { SaveData } from '@/game/core/SaveSystem';
 import { DifficultyId, DifficultySystem } from '@/game/core/DifficultySystem';
+import { GRAPHICS_QUALITY_PROFILES, GraphicsQuality } from '@/game/core/GraphicsSettings';
+import { getInterfaceText } from '@/game/story/InterfaceLocalization';
 
 export type CommandSectionId = 'game' | 'upgrades' | 'saves' | 'settings' | 'intel' | 'exit';
 export type GameplayLanguage = 'he' | 'en' | 'ja' | 'zh';
@@ -18,6 +20,7 @@ interface Props {
     musicEnabled: boolean;
     gameplayLanguage: GameplayLanguage;
     difficultyId: DifficultyId;
+    graphicsQuality: GraphicsQuality;
     onStartNewMission: () => void;
     onContinueMission: () => void;
     onOpenStageMap: () => void;
@@ -29,6 +32,7 @@ interface Props {
     onToggleMusic: () => void;
     onChangeLanguage: (language: GameplayLanguage) => void;
     onChangeDifficulty: (difficulty: DifficultyId) => void;
+    onChangeGraphicsQuality: (quality: GraphicsQuality) => void;
 }
 
 const SECTIONS: Array<{ id: CommandSectionId; index: string; label: string; description: string }> = [
@@ -60,11 +64,12 @@ function ActionButton({ label, hint, tone = 'cyan', onClick, disabled = false }:
     );
 }
 
-export function CommandCenter({ resumePreview, manualSaveCount, autoSave, musicEnabled, gameplayLanguage, difficultyId, onStartNewMission, onContinueMission, onOpenStageMap, onOpenSaves, onOpenSystems, onOpenControls, onOpenDatabase, onOpenArchive, onToggleMusic, onChangeLanguage, onChangeDifficulty }: Props) {
+export function CommandCenter({ resumePreview, manualSaveCount, autoSave, musicEnabled, gameplayLanguage, difficultyId, graphicsQuality, onStartNewMission, onContinueMission, onOpenStageMap, onOpenSaves, onOpenSystems, onOpenControls, onOpenDatabase, onOpenArchive, onToggleMusic, onChangeLanguage, onChangeDifficulty, onChangeGraphicsQuality }: Props) {
     const [activeSection, setActiveSection] = useState<CommandSectionId>('game');
     const [showExitConfirm, setShowExitConfirm] = useState(false);
     const activeIndex = useMemo(() => SECTIONS.findIndex((section) => section.id === activeSection), [activeSection]);
     const activeProfile = DifficultySystem.get(difficultyId);
+    const text = getInterfaceText(gameplayLanguage);
 
     useEffect(() => {
         const handleKeyboardNavigation = (event: KeyboardEvent): void => {
@@ -110,14 +115,14 @@ export function CommandCenter({ resumePreview, manualSaveCount, autoSave, musicE
             return (
                 <>
                     <div className="command-center__content-heading">
-                        <p>PRIMARY FLIGHT ORDERS</p>
-                        <h2>{resumePreview ? `RESUME FROM STAGE ${resumePreview.level}` : 'BEGIN THE ARK-9 CAMPAIGN'}</h2>
-                        <span>{resumePreview ? `${resumePreview.score.toLocaleString()} credits secured ${formatTime(resumePreview.savedAt)}` : 'No active checkpoint. A new mission begins at Stage 1.'}</span>
+                        <p>{text.gameHeading}</p>
+                        <h2>{resumePreview ? text.resumeStage(resumePreview.level) : text.newCampaign}</h2>
+                        <span>{resumePreview ? `${resumePreview.score.toLocaleString()} ${text.savedCheckpoint} • ${formatTime(resumePreview.savedAt)}` : text.noCheckpoint}</span>
                     </div>
                     <div className="command-center__action-grid">
-                        <ActionButton label={resumePreview ? 'CONTINUE MISSION' : 'NEW MISSION'} hint={resumePreview ? 'ENTER // RESUME CHECKPOINT' : 'ENTER // START STAGE 1'} tone="green" onClick={resumePreview ? onContinueMission : onStartNewMission} />
-                        <ActionButton label="NEW MISSION" hint="RESET CHECKPOINT // STAGE 1" onClick={onStartNewMission} />
-                        <ActionButton label="STAGE MAP" hint="TEST ROUTE // SELECT ANY STAGE" tone="amber" onClick={onOpenStageMap} />
+                        <ActionButton label={resumePreview ? text.continueMission : text.newMission} hint={resumePreview ? `ENTER // ${text.savedCheckpoint}` : 'ENTER // STAGE 1'} tone="green" onClick={resumePreview ? onContinueMission : onStartNewMission} />
+                        <ActionButton label={text.newMission} hint="STAGE 1" onClick={onStartNewMission} />
+                        <ActionButton label={text.stageMap} hint="TEST ROUTE" tone="amber" onClick={onOpenStageMap} />
                     </div>
                 </>
             );
@@ -170,28 +175,34 @@ export function CommandCenter({ resumePreview, manualSaveCount, autoSave, musicE
                     </div>
                     <div className="command-center__settings-stack">
                         <section className="command-center__setting-card">
-                            <div><p>DISPLAY</p><h3>LARGE COMMAND TEXT ACTIVE</h3><span>High-contrast panels and large controls are the desktop standard.</span></div>
+                            <div><p>DISPLAY</p><h3>{text.standardDisplay}</h3><span>{text.graphicsDescription}</span></div>
                             <b>1080P+</b>
                         </section>
+                        <section className="command-center__setting-card command-center__setting-card--difficulty">
+                            <div><p>{text.graphics}</p><h3>{text.quality[graphicsQuality].label}</h3><span>{text.graphicsDescription}</span></div>
+                            <div className="command-center__choice-row">
+                                {(Object.keys(GRAPHICS_QUALITY_PROFILES) as GraphicsQuality[]).map((quality) => <button key={quality} type="button" onClick={() => onChangeGraphicsQuality(quality)} className={quality === graphicsQuality ? 'is-active' : ''}>{text.quality[quality].label}<small>{text.quality[quality].detail}</small></button>)}
+                            </div>
+                        </section>
                         <section className="command-center__setting-card">
-                            <div><p>SOUND</p><h3>MUSIC CHANNEL</h3><span>Toggle the tactical soundtrack without changing other game systems.</span></div>
+                            <div><p>{text.music}</p><h3>MUSIC CHANNEL</h3><span>Toggle the tactical soundtrack without changing other game systems.</span></div>
                             <button type="button" onClick={onToggleMusic} className={musicEnabled ? 'command-center__toggle is-on' : 'command-center__toggle'}>{musicEnabled ? 'ON' : 'OFF'}</button>
                         </section>
                         <section className="command-center__setting-card command-center__setting-card--languages">
-                            <div><p>LANGUAGE</p><h3>CAMPAIGN COMMUNICATIONS</h3><span>Dialogue and briefings switch at the next active display.</span></div>
+                            <div><p>{text.language}</p><h3>CAMPAIGN COMMUNICATIONS</h3><span>Dialogue and briefings switch at the next active display.</span></div>
                             <div className="command-center__choice-row">
                                 {LANGUAGE_OPTIONS.map((option) => <button key={option.id} type="button" onClick={() => onChangeLanguage(option.id)} className={option.id === gameplayLanguage ? 'is-active' : ''}>{option.label}<small>{option.detail}</small></button>)}
                             </div>
                         </section>
                         <section className="command-center__setting-card command-center__setting-card--difficulty">
-                            <div><p>DIFFICULTY</p><h3>{activeProfile.label}</h3><span>{activeProfile.description}</span></div>
+                            <div><p>{text.difficulty}</p><h3>{activeProfile.label}</h3><span>{activeProfile.description}</span></div>
                             <div className="command-center__choice-row">
                                 {DifficultySystem.PROFILES.map((profile) => <button key={profile.id} type="button" onClick={() => onChangeDifficulty(profile.id)} className={profile.id === difficultyId ? 'is-active' : ''}>{profile.label}</button>)}
                             </div>
                         </section>
                         <section className="command-center__setting-card">
-                            <div><p>CONTROLS</p><h3>KEYBOARD AND MOUSE</h3><span>Open the complete control map to remap flight, fire, tactical ability, and menus.</span></div>
-                            <button type="button" onClick={onOpenControls} className="command-center__inline-button">OPEN MAP</button>
+                            <div><p>{text.controls}</p><h3>KEYBOARD AND MOUSE</h3><span>Open the complete control map to remap flight, fire, tactical ability, and menus.</span></div>
+                            <button type="button" onClick={onOpenControls} className="command-center__inline-button">{text.openControls}</button>
                         </section>
                     </div>
                 </>
@@ -231,7 +242,7 @@ export function CommandCenter({ resumePreview, manualSaveCount, autoSave, musicE
     };
 
     return (
-        <main className="command-center" aria-label="Protect The Starship command center">
+        <main className="command-center" dir={gameplayLanguage === 'he' ? 'rtl' : 'ltr'} aria-label="Protect The Starship command center">
             <div className="command-center__stars" aria-hidden="true" />
             <header className="command-center__masthead">
                 <div>
@@ -246,14 +257,14 @@ export function CommandCenter({ resumePreview, manualSaveCount, autoSave, musicE
                     <nav>
                         {SECTIONS.map((section) => (
                             <button key={section.id} type="button" onClick={() => setActiveSection(section.id)} aria-current={activeSection === section.id ? 'page' : undefined} className={activeSection === section.id ? 'is-active' : ''}>
-                                <span>{section.index}</span><b>{section.label}</b><small>{section.description}</small>
+                                <span>{section.index}</span><b>{text.sections[section.id]}</b><small>{section.description}</small>
                             </button>
                         ))}
                     </nav>
                     <p className="command-center__sidebar-help">↑↓ / W S SELECT CATEGORY<br />1–6 QUICK SELECT<br />ENTER ACTIVATE • ESC BACK</p>
                 </aside>
                 <section className="command-center__content" aria-live="polite">
-                    <div className="command-center__section-number">{SECTIONS[activeIndex].index} // {SECTIONS[activeIndex].label}</div>
+                    <div className="command-center__section-number">{SECTIONS[activeIndex].index} // {text.sections[SECTIONS[activeIndex].id]}</div>
                     {renderContent()}
                 </section>
             </div>
