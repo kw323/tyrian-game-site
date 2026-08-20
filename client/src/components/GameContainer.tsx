@@ -1209,13 +1209,14 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             };
 
             const openStageBriefing = (): void => {
-                // Stage dialogue is preserved in the mission archive, but it no longer blocks
-                // the player at the beginning of every stage.
+                // Campaign dialogue and voice-over are an authored part of every stage. They
+                // appear only before launch, where the player can advance or skip them; no
+                // separate transmission interrupts the actual fight.
                 commsParagraphIndex = 0;
-                showCommsModal = false;
+                showCommsModal = true;
                 commVisibleUntil = 0;
                 VoicePlaybackManager.stop();
-                startStagePlay();
+                playBriefingLine(commsParagraphIndex);
             };
 
             const advanceBriefing = (): void => {
@@ -2041,9 +2042,9 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     target.takeDamage(damage);
                     return true;
                 };
-                const resolveChainLightning = (bolt: ChainLightningBullet, initialTarget: Enemy | EnemyAdvanced | Boss): void => {
+                const resolveChainLightning = (bolt: ChainLightningBullet, initialTarget: Enemy | EnemyAdvanced | Boss | MissionTargetEntity): void => {
                     if (!bolt.canStrike(initialTarget)) return;
-                    let currentTarget: Enemy | EnemyAdvanced | Boss | null = initialTarget;
+                    let currentTarget: Enemy | EnemyAdvanced | Boss | MissionTargetEntity | null = initialTarget;
                     let sourceX = bolt.x + bolt.width / 2;
                     let sourceY = bolt.y + bolt.height / 2;
                     let damage = bolt.damage;
@@ -2055,9 +2056,21 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         // a controlled 35% conductivity bonus while each jump still decays by 50%.
                         const resolvedDamage = currentTarget instanceof Boss ? damage * 1.35 : damage;
                         bolt.registerStrike(sourceX, sourceY, currentTarget, resolvedDamage);
-                        currentTarget.takeDamage(resolvedDamage);
-                        if (currentTarget instanceof Enemy || currentTarget instanceof EnemyAdvanced) registerEnemyDefeat(currentTarget);
-                        else registerBossDefeat(currentTarget);
+                        const destroyed = currentTarget.takeDamage(resolvedDamage);
+                        if (currentTarget instanceof MissionTargetEntity) {
+                            if (destroyed && currentTarget.isActive) {
+                                currentTarget.isActive = false;
+                                gameState.addScore(currentTarget.reward);
+                                testNoticeText = `MISSION OBJECTIVE SECURED // +${currentTarget.reward} CREDITS`;
+                                testNoticeUntil = performance.now() + 5000;
+                                SoundSystem.playUpgrade();
+                                game.addEntity(new Explosion(currentTarget.x + currentTarget.width / 2, currentTarget.y + currentTarget.height / 2, 35));
+                            }
+                        } else if (currentTarget instanceof Enemy || currentTarget instanceof EnemyAdvanced) {
+                            registerEnemyDefeat(currentTarget);
+                        } else {
+                            registerBossDefeat(currentTarget);
+                        }
 
                         sourceX = currentTarget.x + currentTarget.width / 2;
                         sourceY = currentTarget.y + currentTarget.height / 2;
@@ -2065,8 +2078,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         damage *= 0.5;
 
                         const nextTarget = game['entities']
-                            .filter((entity: any) => (entity instanceof Enemy || entity instanceof EnemyAdvanced || entity instanceof Boss) && entity.isActive && !bolt.hasStruck(entity))
-                            .map((entity: Enemy | EnemyAdvanced | Boss) => ({
+                            .filter((entity: any) => (entity instanceof Enemy || entity instanceof EnemyAdvanced || entity instanceof Boss || (entity instanceof MissionTargetEntity && entity.missionType === 'bounty')) && entity.isActive && !bolt.hasStruck(entity))
+                            .map((entity: Enemy | EnemyAdvanced | Boss | MissionTargetEntity) => ({
                                 entity,
                                 distance: Math.hypot((entity.x + entity.width / 2) - sourceX, (entity.y + entity.height / 2) - sourceY)
                             }))
@@ -2217,10 +2230,10 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     }
 
                     // Chain Lightning has a fixed electrical identity and resolves its full chain on the first hit.
-                    if (entityA instanceof ChainLightningBullet && (entityB instanceof Enemy || entityB instanceof EnemyAdvanced || entityB instanceof Boss)) {
+                    if (entityA instanceof ChainLightningBullet && (entityB instanceof Enemy || entityB instanceof EnemyAdvanced || entityB instanceof Boss || (entityB instanceof MissionTargetEntity && entityB.missionType === 'bounty'))) {
                         resolveChainLightning(entityA, entityB);
                         return;
-                    } else if (entityB instanceof ChainLightningBullet && (entityA instanceof Enemy || entityA instanceof EnemyAdvanced || entityA instanceof Boss)) {
+                    } else if (entityB instanceof ChainLightningBullet && (entityA instanceof Enemy || entityA instanceof EnemyAdvanced || entityA instanceof Boss || (entityA instanceof MissionTargetEntity && entityA.missionType === 'bounty'))) {
                         resolveChainLightning(entityB, entityA);
                         return;
                     }
@@ -2448,12 +2461,11 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 // after the boss is destroyed, rather than forcing the player to wait.
                 const currentTime = performance.now() / 1000;
                 gameState.updateLevelTime(currentTime);
+                // In-mission communications are retained in the mission archive, but no
+                // longer interrupt or overlay combat after the pre-launch dialogue is complete.
                 if (!inMissionCommsTriggered && stageBriefing.inMissionComms && gameState.levelTimeElapsed >= 6.0) {
                     inMissionCommsTriggered = true;
-                    activeContactLine = stageBriefing.inMissionComms;
                     MissionArchiveSystem.recordInMissionComms(stageBriefing);
-                    commVisibleUntil = performance.now() + 9000;
-                    SoundSystem.playCriticalComms(stageBriefing.inMissionComms.speaker, 'intercept');
                 }
                 if (!currentMissionTarget && gameState.level % 3 !== 0 && gameState.level !== 31 && gameState.levelTimeElapsed >= 45) {
                     spawnMissionTarget();
@@ -2473,9 +2485,10 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         // Special campaign completion finale screen flow
                         finaleSceneIndex = 0;
                     shopScreen = 'finale_victory';
-                    } else if ((gameState.level % 10 === 0 || gameState.level === 31) && stageBriefing.afterAction) {
+                    } else {
+                        // Every completed stage receives a proper debrief with its earned XP
+                        // and performance data; chapter dialogue is an optional extra inside it.
                         showAfterActionModal = true;
-                        SoundSystem.playCriticalComms(stageBriefing.afterAction.speaker, 'briefing');
                     }
                 }
             };
@@ -3176,7 +3189,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     ctx.textAlign = 'left';
                     ctx.fillStyle = '#00FF88';
                     ctx.font = 'bold 22px Arial';
-                    ctx.fillText(`TYRIAN 2000 // STAGE ${gameState.level} READY ROOM`, 28, 44);
+                    ctx.fillText(`PROTECT THE STARSHIP // STAGE ${gameState.level} READY ROOM`, 28, 44);
                     ctx.fillStyle = '#FFD700';
                     ctx.font = 'bold 16px Arial';
                     ctx.fillText(`Available Credits: ${gameState.score}`, 28, 72);
@@ -3216,15 +3229,28 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                                 ? `${resumeData ? `CONTINUE FROM STAGE ${gameState.level}` : 'INITIATE NEW LAUNCH'}  [ENTER]`
                                 : 'CONTINUE TO NEXT LEVEL  [ENTER]';
                         drawButton('shop-continue', launchLabel, 310, 820, 462, 52, stageFailureReason ? '#ff9b9b' : '#00FF88', advanceFromShop);
-                        drawButton('shop-save-progress', 'SAVE PROGRESS', 790, 820, 180, 52, '#c59cff', openBetweenStageSave);
+                        if (shopScreen === 'hub') {
+                            drawButton('shop-save-progress', 'SAVE PROGRESS', 790, 820, 180, 52, '#c59cff', openBetweenStageSave);
+                        }
                         ctx.textAlign = 'left';
                         ctx.fillStyle = '#7996a4';
                         ctx.font = '13px monospace';
                         ctx.fillText('ESC: control deck  •  mouse: navigate and purchase  •  credits remain shared across all bays', 28, 910);
                     };
 
-                if (showAfterActionModal && stageBriefing.afterAction) {
-                    const aa = stageBriefing.afterAction;
+                if (showAfterActionModal) {
+                    const genericDebriefMessage = gameplayLangRef.current === 'he'
+                        ? 'נתוני המשימה נשמרו. בדוק את ביצועי הטיסה, הכן את מערכות הספינה והמשך כאשר אתה מוכן.'
+                        : gameplayLangRef.current === 'ja'
+                            ? '任務データを記録しました。飛行成績を確認し、艦のシステムを整えてから次の任務へ進んでください。'
+                            : gameplayLangRef.current === 'zh'
+                                ? '任务数据已记录。请查看飞行表现，准备舰船系统，然后继续执行下一项任务。'
+                                : 'Mission data has been archived. Review your flight performance, prepare your systems, and continue when ready.';
+                    const aa = stageBriefing.afterAction ?? {
+                        speaker: stageBriefing.contact.speaker,
+                        name: stageBriefing.contact.name,
+                        message: genericDebriefMessage
+                    };
                     ctx.fillStyle = 'rgba(2, 6, 20, 0.95)';
                     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
@@ -3242,22 +3268,32 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     ctx.textAlign = 'center';
                     ctx.fillStyle = '#FFD166';
                     ctx.font = 'bold 30px Arial';
-                    ctx.fillText(stageBriefing.stage === 31 ? 'STAGE 31 // PILOT TRIAL OUTCOME' : `CHAPTER ${stageBriefing.chapter} // AFTER-ACTION DEBRIEF`, canvasWidth / 2, boxY - 40);
+                    ctx.fillText(stageBriefing.stage === 31 ? 'STAGE 31 // PILOT TRIAL OUTCOME' : `STAGE ${gameState.level} // FLIGHT REPORT`, canvasWidth / 2, boxY - 40);
 
                     drawPortrait(ctx, aa.speaker, boxX + 28, boxY + 28, 96);
                     ctx.textAlign = 'left';
                     ctx.fillStyle = '#f0b84e';
                     ctx.font = 'bold 20px Arial';
-                    ctx.fillText(`${aa.name}  •  CHAPTER CLEAR DEBRIEF`, boxX + 144, boxY + 54);
+                    ctx.fillText(`${aa.name}  •  MISSION DEBRIEF`, boxX + 144, boxY + 54);
                     ctx.fillStyle = '#00FF88';
                     ctx.font = 'bold 14px monospace';
                     ctx.fillText(stageBriefing.stage === 31
                         ? (seraDuelOutcome === 'win' ? 'SERA DUEL // VICTORY CONFIRMED' : 'SERA DUEL // TRIAL COMPLETE // CONTINUATION AUTHORIZED')
                         : `STAGE ${gameState.level} COMPLETED SUCCESSFULLY`, boxX + 144, boxY + 80);
 
+                    const performance = lastStagePerformanceXp;
+                    const telemetry = lastStageMasteryResult?.telemetry;
+                    if (performance && telemetry) {
+                        ctx.fillStyle = '#75d8e7';
+                        ctx.font = 'bold 14px monospace';
+                        ctx.fillText(`XP +${performance.totalXp}  //  ELIMINATION ${telemetry.eliminationPercent.toFixed(0)}%  //  DAMAGE ${telemetry.totalDamageTaken.toFixed(1)}`, boxX + 144, boxY + 108);
+                        ctx.fillStyle = performance.superBonusPercent > 0 ? '#ff77e8' : performance.noHit ? '#00ff88' : '#ffd166';
+                        ctx.fillText(performance.superBonusPercent > 0 ? 'SUPER BONUS +50%  //  NO HIT +30%  //  CLEAN SWEEP +30%' : performance.noHit ? 'NO HIT BONUS +30%' : performance.fullClear ? 'CLEAN SWEEP BONUS +30%' : 'PERFORMANCE DATA RECORDED', boxX + 144, boxY + 134);
+                    }
+
                     ctx.fillStyle = '#dbe9ee';
                     ctx.font = '16px Arial';
-                    drawWrappedText(ctx, aa.message, boxX + 144, boxY + 120, boxWidth - 168, 24, 5);
+                    drawWrappedText(ctx, aa.message, boxX + 144, boxY + 168, boxWidth - 168, 24, 4);
 
                     drawButton('after-action-continue', 'PROCEED TO CONTROL DECK  [ENTER]', boxX + 28, boxY + 310, boxWidth - 56, 52, '#00FF88', () => {
                         showAfterActionModal = false;
@@ -3315,6 +3351,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         drawButton('hub-stagemap', 'STAGE MAP 01-100', 585, 752, 180, 56, '#38bdf8', () => {
                             setShowStageMapModal(true);
                         });
+                        drawButton('hub-main-menu', 'MAIN MENU', 780, 752, 172, 56, '#c59cff', returnToTitle);
                         ctx.fillStyle = '#7996a4';
                         ctx.font = '13px monospace';
                         ctx.fillText('Select a bay above to upgrade armaments, hull systems, or tactical ops.', 242, 840);
@@ -4528,7 +4565,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 </div>
                 <div className="launch-console__core">
                     <p className="launch-console__eyebrow">ARK-9 / EXPERIMENTAL HULL 01</p>
-                    <h2>TYRIAN <span>2000</span></h2>
+                            <h2>PROTECT <span>THE STARSHIP</span></h2>
                     <p className="launch-console__briefing">
                         Arm the 100-stage campaign, protect Ark-9, and break the signal behind the border war. Boss contact is expected every third stage.
                     </p>

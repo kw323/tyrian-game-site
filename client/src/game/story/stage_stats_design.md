@@ -1,7 +1,7 @@
 # Program Zero // Stage Statistics & Mastery Streaks Architecture
 
 ## 1. Executive Summary
-To reward precision and consistent tactical execution, Tyrian 2000 introduces a post-mission telemetry and streak mastery system. Players receive granular performance data at the end of every stage—specifically tracking enemy elimination percentages and shield impact metrics—while maintaining consecutive stage streaks that unlock exclusive shielding and weaponry augmentations.
+To reward precision and consistent tactical execution, Protect The Starship introduces a post-mission telemetry and streak mastery system. Players receive granular performance data at the end of every stage—specifically tracking enemy elimination percentages and shield impact metrics—while maintaining consecutive stage streaks that unlock exclusive shielding and weaponry augmentations.
 
 ## 2. Post-Mission Telemetry Metrics
 Every stage tracks three operational counters from mission start to boss defeat or timer expiration:
