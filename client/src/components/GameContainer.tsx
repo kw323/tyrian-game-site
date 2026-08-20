@@ -33,6 +33,7 @@ import { TacticalAbilitySystem, TacticalAbilityType, TacticalAbilitySaveState } 
 import { PilotSkillSystem } from '@/game/core/PilotSkillSystem';
 import { EquipmentSystem, EquipmentPartType } from '@/game/core/EquipmentSystem';
 import { CampaignSystem, CharacterId, GameplayLanguage, UpgradeBriefing } from '@/game/story/CampaignSystem';
+import { getNaomiTutorialStorageKey, getNaomiUpgradeTutorial, NaomiTutorialTopic } from '@/game/story/NaomiUpgradeTutorials';
 import { SoundSystem } from '@/game/core/SoundSystem';
 import { BranchSystem, BranchRoute } from '@/game/story/BranchSystem';
 import { BackgroundRenderer } from '@/game/story/BackgroundRenderer';
@@ -48,9 +49,13 @@ import { DifficultySystem, DifficultyId, DifficultyProfile } from '@/game/core/D
 import { FinalBossAssembly, FinalBossPart } from '@/game/entities/FinalBossPart';
 import { VoicePlaybackManager } from '@/game/core/VoicePlaybackManager';
 import { StageSelectModal } from '@/components/StageSelectModal';
-import { SaveLoadModal } from '@/components/SaveLoadModal';
-import { SaveData, SaveSystem } from '@/game/core/SaveSystem';
+import { SaveSystem } from '@/game/core/SaveSystem';
 import { Capacitor } from '@capacitor/core';
+
+interface NaomiTutorialDialog {
+    title: string;
+    message: string;
+}
 
 interface ResumeCheckpoint {
     level: number;
@@ -155,8 +160,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
         return stored ? Math.max(1, parseInt(stored, 10)) : 1;
     });
     const [showStageMapModal, setShowStageMapModal] = useState<boolean>(false);
-    const [showManualSaveModal, setShowManualSaveModal] = useState<boolean>(false);
-    const [manualSaveState, setManualSaveState] = useState<Omit<SaveData, 'slotId' | 'slotName' | 'timestamp'> | undefined>(undefined);
+    const [naomiTutorial, setNaomiTutorial] = useState<NaomiTutorialDialog | null>(null);
     const [resumeCheckpoint, setResumeCheckpoint] = useState<ResumeCheckpoint | null>(() => {
         const raw = localStorage.getItem(RESUME_CHECKPOINT_KEY);
         if (!raw) return null;
@@ -497,6 +501,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 weaponSystem.setCurrentWeapon(type);
                 syncPlayerWeapon(type);
                 setWeaponHoverBriefing(type);
+                showNaomiUpgradeTutorial('weapon');
             };
 
             const upgradeElementalCore = (core: ElementalCoreType): void => {
@@ -508,6 +513,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 testNoticeText = `ELEMENT CORE // ${profile.name} // RANK ${profile.rank}`;
                 testNoticeUntil = performance.now() + 3000;
                 SoundSystem.playUpgrade();
+                showNaomiUpgradeTutorial('elemental_core');
             };
 
             const downgradeWeapon = (type: WeaponType): void => {
@@ -528,6 +534,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 gameState.score -= nextCost;
                 powerSystem.upgradeGenerator();
                 upgradeBriefing = CampaignSystem.getUpgradeBriefing('generator', 'Generator', powerSystem.generatorLevel + 1);
+                showNaomiUpgradeTutorial('generator');
             };
 
             const upgradeEngine = (): void => {
@@ -538,6 +545,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 testNoticeText = `ENGINE THRUSTERS // RANK ${engineUpgradeSystem.getRank()} // +${engineUpgradeSystem.getBonusPercent()}% PROPULSION`;
                 testNoticeUntil = performance.now() + 3000;
                 SoundSystem.playUpgrade();
+                showNaomiUpgradeTutorial('engine');
             };
 
             const upgradeShield = (): void => {
@@ -548,6 +556,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 applyPlayerDefenseProfile(false, true);
                 upgradeBriefing = CampaignSystem.getUpgradeBriefing('generator', 'Shield System', shieldLevel);
                 SoundSystem.playUpgrade();
+                showNaomiUpgradeTutorial('shield');
             };
 
             const purchaseShip = (shipId: number): void => {
@@ -562,6 +571,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     player.height = result.newShip.height;
                     applyPlayerDefenseProfile(true, true);
                     upgradeBriefing = CampaignSystem.getUpgradeBriefing('ship', result.newShip.name, result.newShip.id + 1);
+                    showNaomiUpgradeTutorial('ship');
                 }
             };
 
@@ -584,6 +594,14 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                             : 'PHASE CLOAK';
                 upgradeBriefing = CampaignSystem.getUpgradeBriefing('generator', abilityName, result.level);
                 SoundSystem.playUpgrade();
+                const tutorialTopic: NaomiTutorialTopic = type === TacticalAbilityType.TIME_LOCK
+                    ? 'time_lock'
+                    : type === TacticalAbilityType.VOID_ARMOR
+                        ? 'void_armor'
+                        : type === TacticalAbilityType.OVER_POWER
+                            ? 'over_power'
+                            : 'phase_cloak';
+                showNaomiUpgradeTutorial(tutorialTopic);
             };
 
             const purchaseTacticalMagazine = (): void => {
@@ -592,6 +610,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 gameState.score -= result.cost;
                 upgradeBriefing = CampaignSystem.getUpgradeBriefing('generator', `TACTICAL MAGAZINE // ${result.capacity} CARTRIDGES`, result.capacity);
                 SoundSystem.playUpgrade();
+                showNaomiUpgradeTutorial('tactical_magazine');
             };
 
             const toggleTacticalAbility = (): void => {
@@ -847,36 +866,15 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 return checkpoint;
             };
 
-            const openManualSave = (): void => {
-                if (isTestSession || gameState.gameOver || gameState.showLevelScreen) return;
-                const checkpoint = buildResumeCheckpoint('MANUAL SAVE // SELECT A SLOT');
-                const weaponState = checkpoint.weaponState ?? {};
-                setManualSaveState({
-                    score: checkpoint.score,
-                    level: checkpoint.level,
-                    shipId: checkpoint.shipId ?? 0,
-                    generatorLevel: checkpoint.generatorLevel ?? 1,
-                    shieldLevel: checkpoint.shieldLevel ?? 1,
-                    engineUpgradeLevel: checkpoint.engineUpgradeLevel ?? 0,
-                    weaponLevels: weaponState.weaponLevels ?? {},
-                    currentWeapon: weaponState.currentWeapon ?? 'straight',
-                    elementalCoreState: checkpoint.elementalCoreState,
-                    pilotSkillsState: checkpoint.pilotSkillsState,
-                    equipmentState: checkpoint.equipmentState,
-                    tacticalAbilityState: checkpoint.tacticalAbilityState,
-                    maxUnlockedLevel: Math.max(maxUnlockedLevel, checkpoint.level),
-                });
-                gameState.isPaused = true;
-                setShowManualSaveModal(true);
+            const showNaomiUpgradeTutorial = (topic: NaomiTutorialTopic): void => {
+                const storageKey = getNaomiTutorialStorageKey(topic);
+                if (localStorage.getItem(storageKey)) return;
+                localStorage.setItem(storageKey, 'seen');
+                const abilityKey = formatControlCode(loadControlBindings().tacticalAbility);
+                setNaomiTutorial(getNaomiUpgradeTutorial(topic, gameplayLangRef.current, abilityKey));
             };
-
-            const handleManualSaveClosed = (): void => {
-                gameState.isPaused = false;
-            };
-            window.addEventListener('tyrian:manual-save-closed', handleManualSaveClosed);
 
             const saveResumeCheckpoint = (reason: string): void => {
-                persistAutosave(reason);
                 stageFailureReason = reason;
                 shopScreen = 'hub';
                 gameState.gameOver = false;
@@ -4064,11 +4062,6 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     testNoticeUntil = performance.now() + 2400;
                     return;
                 }
-                if (e.key === 'F5') {
-                    e.preventDefault();
-                    openManualSave();
-                    return;
-                }
                     if (showAfterActionModal) {
                         e.preventDefault();
                         showAfterActionModal = false;
@@ -4334,18 +4327,6 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             console.log('Starting game...');
             game.start();
 
-            const autosaveInterval = window.setInterval(() => {
-                if (!gameState.showLevelScreen && !showCommsModal && !gameState.gameOver) {
-                    persistAutosave('AUTOSAVE // IN FLIGHT');
-                }
-            }, 15000);
-            const handleAppBackground = (): void => {
-                if (document.visibilityState === 'hidden') {
-                    persistAutosave('AUTOSAVE // APP BACKGROUNDED');
-                }
-            };
-            document.addEventListener('visibilitychange', handleAppBackground);
-
             // Cleanup
             const langUnsubCheck = setInterval(() => {
                 if (gameplayLangRef.current !== currentLangForBriefing) {
@@ -4362,9 +4343,6 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             return () => {
                 languageRefreshActionRef.current = null;
                 clearInterval(langUnsubCheck);
-                clearInterval(autosaveInterval);
-                document.removeEventListener('visibilitychange', handleAppBackground);
-                persistAutosave('AUTOSAVE // SESSION PAUSED');
                 game.stop();
                 window.removeEventListener('keydown', handleKeyDown);
                 window.removeEventListener('keyup', handleKeyUp);
@@ -4386,7 +4364,6 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 canvas.style.cursor = 'default';
                 if (initialStageTimer !== null) window.clearTimeout(initialStageTimer);
                 window.removeEventListener('tyrian:jump-to-stage', handleStageJumpEvent as EventListener);
-                window.removeEventListener('tyrian:manual-save-closed', handleManualSaveClosed);
             };
         } catch (error) {
             console.error('Failed to initialize game:', error);
@@ -4513,16 +4490,21 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
     return (
         <div className="flex flex-col items-center justify-center gap-6 w-full">
-            {showManualSaveModal && manualSaveState && (
-                <SaveLoadModal
-                    isOpen={showManualSaveModal}
-                    mode="save"
-                    currentState={manualSaveState}
-                    onClose={() => {
-                        setShowManualSaveModal(false);
-                        window.dispatchEvent(new Event('tyrian:manual-save-closed'));
-                    }}
-                />
+            {naomiTutorial && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/85 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="naomi-upgrade-title">
+                    <section className="grid w-full max-w-3xl overflow-hidden border border-cyan-200/75 bg-[#071426] shadow-2xl shadow-cyan-950/70 sm:grid-cols-[250px_1fr]">
+                        <div className="relative min-h-56 overflow-hidden border-b border-cyan-200/35 bg-cyan-950/30 sm:min-h-full sm:border-b-0 sm:border-r">
+                            <img src="/portraits/naomi.png" alt="Dr. Naomi" className="absolute inset-0 h-full w-full object-cover object-top" />
+                            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent px-4 py-5 text-sm font-black tracking-[0.15em] text-cyan-100">NAOMI // ENGINEERING</div>
+                        </div>
+                        <div className="flex min-h-64 flex-col p-6 sm:p-8">
+                            <p className="text-xs font-black tracking-[0.22em] text-amber-200">FIRST-TIME SYSTEM BRIEFING</p>
+                            <h2 id="naomi-upgrade-title" className="mt-2 text-2xl font-black tracking-wide text-white sm:text-3xl">{naomiTutorial.title}</h2>
+                            <p className="mt-5 flex-1 text-lg leading-relaxed text-slate-100">{naomiTutorial.message}</p>
+                            <button type="button" onClick={() => setNaomiTutorial(null)} className="mt-7 min-h-12 border border-cyan-200/70 bg-cyan-950/65 px-5 text-base font-black tracking-[0.12em] text-cyan-50 transition hover:bg-cyan-800/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-100">ACKNOWLEDGED // CONTINUE</button>
+                        </div>
+                    </section>
+                </div>
             )}
             {showStageMapModal && (
                 <StageSelectModal
@@ -4666,7 +4648,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 )}
             </div>
             <div className="text-center text-sm text-gray-400">
-                <p><span className="text-green-400 font-semibold">{movementKeysLabel}</span> move · <span className="text-green-400 font-semibold">{formatControlCode(activeControlBindings.fire)}</span> fires · <span className="text-green-400 font-semibold">{formatControlCode(activeControlBindings.tacticalAbility)}</span> toggles tactical · <span className="text-cyan-300 font-semibold">F5</span> manual save {mouseControlsEnabled && <>· <span className="text-cyan-300 font-semibold">MOUSE</span> flies / left click fires</>}</p>
+                <p><span className="text-green-400 font-semibold">{movementKeysLabel}</span> move · <span className="text-green-400 font-semibold">{formatControlCode(activeControlBindings.fire)}</span> fires · <span className="text-green-400 font-semibold">{formatControlCode(activeControlBindings.tacticalAbility)}</span> toggles tactical {mouseControlsEnabled && <>· <span className="text-cyan-300 font-semibold">MOUSE</span> flies / left click fires</>}</p>
                 {showTouchControls && <p className="mobile-input-hint">{showDirectTouchFlight ? 'Android: drag anywhere on the battle field to fly. Hold FIRE and tap TACTICAL.' : 'On mobile: drag the left joystick, hold FIRE, and tap TACTICAL to start or stop the ability.'}</p>}
             </div>
         </div>
