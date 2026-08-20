@@ -22,6 +22,7 @@ export class Player extends Entity {
     public maxHealth: number = 220;
     public weaponMasteryUnlocked: boolean = false;
     public shipTier: number = 0;
+    private visualTilt: number = 0;
 
     constructor(x: number, y: number, width: number, height: number, speed: number) {
         super(x, y, width, height);
@@ -45,6 +46,8 @@ export class Player extends Entity {
         const step = this.speed * deltaTime * 60;
         this.x = Math.max(0, Math.min(gameWidth - this.width, this.x + (moveX / normalizer) * step));
         this.y = Math.max(0, Math.min(gameHeight - this.height, this.y + (moveY / normalizer) * step));
+        const targetTilt = (moveX / normalizer) * 0.16;
+        this.visualTilt += (targetTilt - this.visualTilt) * Math.min(1, deltaTime * 10);
 
         // Shield recovery is continuous: it begins again in the very next frame
         // after any impact, while the modest regen rate keeps hull integrity vital.
@@ -71,8 +74,12 @@ export class Player extends Entity {
     public render(ctx: CanvasRenderingContext2D, isCloaked: boolean = false): void {
         const { x, y, width: w, height: h } = this;
         const centerX = x + w / 2;
+        const centerY = y + h / 2;
 
         ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.rotate(this.visualTilt);
+        ctx.translate(-centerX, -centerY);
         if (isCloaked) {
             ctx.globalAlpha = 0.22; // Semi-transparent ghost silhouette when cloaked
         }

@@ -15,6 +15,7 @@ import { EnemyBullet } from '@/game/entities/EnemyBullet';
 import { Explosion } from '@/game/entities/Explosion';
 import { WeaponUpgradeSystem, WeaponType } from '@/game/core/WeaponUpgradeSystem';
 import { ElementalCoreSystem, ElementalCoreSaveState, ElementalCoreType, ELEMENTAL_CORE_ORDER } from '@/game/core/ElementalCoreSystem';
+import { CombatVisualEffects, VisualFaction } from '@/game/core/CombatVisualEffects';
 import { getHeavyFragmentAngles, getWeaponRuntimeProfile } from '@/game/core/WeaponRuntimeProfile';
 import { StarField } from '@/game/systems/StarField';
 import { InputManager } from '@/game/systems/InputManager';
@@ -187,6 +188,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             // Initialize systems
             const inputManager = new InputManager();
             const starField = new StarField(game.getCanvas().width, GAME_CANVAS_HEIGHT, 150);
+            const combatVisualEffects = new CombatVisualEffects();
             const collisionSystem = new CollisionSystem();
             const enemySpawner = new EnemySpawner();
             let difficultyId: DifficultyId = DifficultySystem.load();
@@ -1290,7 +1292,11 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         testNoticeText = `COMPONENT COMPASS // SALVAGE DROP DETECTED`;
                         testNoticeUntil = performance.now() + 3000;
                     }
-                    game.addEntity(new Explosion(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2, isSpecialEnemy ? 32 : 20));
+                    const explosionX = enemy.x + enemy.width / 2;
+                    const explosionY = enemy.y + enemy.height / 2;
+                    const faction: VisualFaction = enemy instanceof EnemyAdvanced ? enemy.faction : 'raiders';
+                    combatVisualEffects.spawnFactionExplosion(explosionX, explosionY, faction, isSpecialEnemy ? 32 : 20);
+                    game.addEntity(new Explosion(explosionX, explosionY, isSpecialEnemy ? 32 : 20));
                 }
             };
 
@@ -1306,6 +1312,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 const deltaX = targetX - sourceX;
                 const deltaY = targetY - sourceY;
                 const distance = Math.max(1, Math.hypot(deltaX, deltaY));
+                combatVisualEffects.spawnElementImpact(targetX, targetY, core, rank);
 
                 if (core === 'cryo') {
                     const multiplier = Math.max(0.5, 0.82 - rank * 0.055);
@@ -1484,6 +1491,18 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
                 // Flight mode is exclusive: keyboard or pointer steers the ship, while touch remains mobile-only.
                 player.updateWithInput(deltaTime, pilotKeys, game.getCanvas().width, GAME_CANVAS_HEIGHT);
+                const visualMoveX = typeof (pilotKeys as any).moveX === 'number' ? (pilotKeys as any).moveX : 0;
+                const visualMoveY = typeof (pilotKeys as any).moveY === 'number' ? (pilotKeys as any).moveY : 0;
+                combatVisualEffects.spawnPlayerEngineTrail(
+                    player.x,
+                    player.y,
+                    player.width,
+                    player.height,
+                    elementalCoreSystem.getActiveCore(),
+                    visualMoveX,
+                    visualMoveY,
+                    powerSystem.currentPower < 20 ? 0.72 : 1,
+                );
 
                 // Generate power; OVER POWER keeps the reactor at maximum output for its duration.
                 powerSystem.setPilotModifiers(
@@ -1756,6 +1775,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
                 // Call original update
                 originalUpdate(deltaTime);
+                combatVisualEffects.update(deltaTime);
                 resolveStageHazardCollisions();
 
                 if (finalBossAssembly?.isMeltdownActive()) {
@@ -2321,6 +2341,9 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     gameState.level % 3 === 0 || gameState.level === 101
                 );
 
+                // Engine trails and slow energy mist stay behind all ships and projectiles.
+                combatVisualEffects.renderBehind(ctx);
+
                 // Render entities with phase cloak state for player
                 game['entities'].forEach((entity: any) => {
                     if (entity instanceof Player) {
@@ -2329,6 +2352,9 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         entity.render(ctx);
                     }
                 });
+
+                // Impact sparks, elemental pulses and explosion rings stay above the battlefield.
+                combatVisualEffects.renderOver(ctx);
 
                 // Render UI
                 ctx.fillStyle = '#00FF88';
