@@ -32,6 +32,17 @@ export class SaveSystem {
     private static readonly SAVE_KEY_PREFIX = 'tyrian_save_slot_';
     private static readonly AUTOSAVE_KEY = 'tyrian_autosave';
 
+    private static mirrorToDesktopSaveFolder(key: string, payload: string): void {
+        // The offline Windows build exposes this same-origin endpoint. Browser builds keep
+        // their localStorage behavior; the failed request is deliberately ignored.
+        if (typeof fetch !== 'function') return;
+        void fetch('/api/save-backup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ key, payload })
+        }).catch(() => undefined);
+    }
+
     public static getSlots(pageIndex = 0): Array<SaveData | null> {
         const safePageIndex = Math.max(0, Math.floor(pageIndex));
         const firstSlotId = safePageIndex * this.SLOTS_PER_PAGE + 1;
@@ -78,7 +89,10 @@ export class SaveSystem {
             slotId: String(safeSlotId),
             timestamp: Date.now()
         };
-        localStorage.setItem(`${this.SAVE_KEY_PREFIX}${safeSlotId}`, JSON.stringify(saveData));
+        const payload = JSON.stringify(saveData);
+        const key = `${this.SAVE_KEY_PREFIX}${safeSlotId}`;
+        localStorage.setItem(key, payload);
+        this.mirrorToDesktopSaveFolder(key, payload);
     }
 
     public static loadGame(slotId: number): SaveData | null {
@@ -99,7 +113,9 @@ export class SaveSystem {
             slotName: `AutoSave (Level ${data.level})`,
             timestamp: Date.now()
         };
-        localStorage.setItem(this.AUTOSAVE_KEY, JSON.stringify(saveData));
+        const payload = JSON.stringify(saveData);
+        localStorage.setItem(this.AUTOSAVE_KEY, payload);
+        this.mirrorToDesktopSaveFolder(this.AUTOSAVE_KEY, payload);
     }
 
     public static loadAutoSave(): SaveData | null {

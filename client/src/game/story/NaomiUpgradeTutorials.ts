@@ -11,7 +11,8 @@ export type NaomiTutorialTopic =
     | 'void_armor'
     | 'over_power'
     | 'phase_cloak'
-    | 'tactical_magazine';
+    | 'tactical_magazine'
+    | 'research_courier';
 
 export interface NaomiUpgradeTutorial {
     title: string;
@@ -63,6 +64,10 @@ const TUTORIALS: Record<GameplayLanguage, Record<NaomiTutorialTopic, NaomiUpgrad
         tactical_magazine: {
             title: 'ד״ר נעמי // מחסנית טקטית',
             message: 'המחסנית מוסיפה שימושים רצופים ליכולת הטקטית. היא יקרה כי היא מצילה חיים; ואני מעדיפה להציל חיים במקום לכתוב דוחות תאונה.'
+        },
+        research_courier: {
+            title: 'ד״ר נעמי // שליחי מחקר',
+            message: 'הספינות הזרות האלה נשאו חלקים ממערכת נשק מסווגת. אם תשמיד שלוש מהן, אוכל להרכיב מחדש את מנוע הסינגולריות. הן נשארות באזור בערך חמש שניות מרגע ההופעה — אז תסתכל למעלה ותירה מהר.'
         }
     },
     en: {
@@ -109,6 +114,10 @@ const TUTORIALS: Record<GameplayLanguage, Record<NaomiTutorialTopic, NaomiUpgrad
         tactical_magazine: {
             title: 'DR. NAOMI // TACTICAL MAGAZINE',
             message: 'The magazine adds consecutive tactical uses. It costs plenty because it saves lives, and I would rather save lives than write accident reports.'
+        },
+        research_courier: {
+            title: 'DR. NAOMI // RESEARCH COURIERS',
+            message: 'Those alien research ships carry fragments of a classified weapon system. Destroy three and I can reconstruct the singularity drive. They remain in the area for roughly five seconds after appearing, so look up and fire quickly.'
         }
     },
     ja: {
@@ -155,6 +164,10 @@ const TUTORIALS: Record<GameplayLanguage, Record<NaomiTutorialTopic, NaomiUpgrad
         tactical_magazine: {
             title: 'ナオミ博士 // タクティカルマガジン',
             message: 'マガジンは戦術能力の連続使用回数を増やします。高価なのは命を救うからです。事故報告書は増やしたくありません。'
+        },
+        research_courier: {
+            title: 'ナオミ博士 // 研究輸送船',
+            message: 'あの異星の研究輸送船は、機密兵器システムの断片を運んでいました。三隻破壊できれば、私が特異点ドライブを再構成できます。出現してから約五秒しかその場にいないので、見つけたらすぐ撃ってください。'
         }
     },
     zh: {
@@ -201,6 +214,10 @@ const TUTORIALS: Record<GameplayLanguage, Record<NaomiTutorialTopic, NaomiUpgrad
         tactical_magazine: {
             title: '娜奥米博士 // 战术弹匣',
             message: '弹匣会增加战术能力的连续使用次数。它很贵，因为能救命；我宁愿救人，也不想写事故报告。'
+        },
+        research_courier: {
+            title: '娜奥米博士 // 研究信使舰',
+            message: '那些外星研究舰携带着一套机密武器系统的碎片。击毁三艘后，我就能重建奇点驱动器。它们现身后大约五秒就会离开，所以看见就立刻开火。'
         }
     }
 };

@@ -132,10 +132,72 @@ function configureAutoUpdate() {
         });
     }, 6000);
 }
+function getSaveBackupDirectory() {
+    return path.join(app.getPath('documents'), 'Protect The Starship', 'Saves');
+}
+function sendJson(response, status, value) {
+    response.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
+    response.end(JSON.stringify(value));
+}
+function getSaveFilename(key) {
+    if (key === 'tyrian_autosave')
+        return 'autosave.json';
+    const match = /^tyrian_save_slot_(\d+)$/.exec(key);
+    return match ? `slot-${match[1].padStart(3, '0')}.json` : null;
+}
 function startLocalGameServer(publicDir) {
     return new Promise((resolve, reject) => {
         const indexPath = path.join(publicDir, 'index.html');
         const server = http.createServer((request, response) => {
+            const requestUrl = new URL(request.url || '/', 'http://127.0.0.1');
+            if (requestUrl.pathname === '/api/save-backup' && request.method === 'GET') {
+                const saveDirectory = getSaveBackupDirectory();
+                const entries = {};
+                try {
+                    if (fs.existsSync(saveDirectory)) {
+                        for (const filename of fs.readdirSync(saveDirectory)) {
+                            const key = filename === 'autosave.json'
+                                ? 'tyrian_autosave'
+                                : /^slot-(\d+)\.json$/.exec(filename)?.[1];
+                            if (!key)
+                                continue;
+                            const storageKey = key === 'tyrian_autosave' ? key : `tyrian_save_slot_${Number(key)}`;
+                            entries[storageKey] = fs.readFileSync(path.join(saveDirectory, filename), 'utf8');
+                        }
+                    }
+                }
+                catch (error) {
+                    console.warn('[saves] Could not read save backup folder:', error);
+                }
+                sendJson(response, 200, { directory: saveDirectory, entries });
+                return;
+            }
+            if (requestUrl.pathname === '/api/save-backup' && request.method === 'POST') {
+                const chunks = [];
+                request.on('data', (chunk) => {
+                    if (chunks.reduce((size, item) => size + item.length, 0) < 4 * 1024 * 1024)
+                        chunks.push(chunk);
+                });
+                request.on('end', () => {
+                    try {
+                        const body = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+                        const filename = typeof body.key === 'string' ? getSaveFilename(body.key) : null;
+                        if (!filename || typeof body.payload !== 'string') {
+                            sendJson(response, 400, { error: 'Invalid save payload.' });
+                            return;
+                        }
+                        const saveDirectory = getSaveBackupDirectory();
+                        fs.mkdirSync(saveDirectory, { recursive: true });
+                        fs.writeFileSync(path.join(saveDirectory, filename), body.payload, 'utf8');
+                        sendJson(response, 200, { directory: saveDirectory });
+                    }
+                    catch (error) {
+                        console.warn('[saves] Could not write save backup:', error);
+                        sendJson(response, 500, { error: 'Could not write save backup.' });
+                    }
+                });
+                return;
+            }
             if (request.method !== 'GET' && request.method !== 'HEAD') {
                 response.writeHead(405, { Allow: 'GET, HEAD' });
                 response.end();

@@ -18,6 +18,7 @@ import { Capacitor } from '@capacitor/core';
 
 const RESUME_CHECKPOINT_KEY = 'tyrian_resume_checkpoint';
 type LaunchMode = 'new' | 'continue' | null;
+type StageMapMode = 'campaign' | 'test';
 
 interface ResumePreview {
     level: number;
@@ -39,7 +40,7 @@ function readResumePreview(): ResumePreview | null {
 
 function readGameplayLanguage(): GameplayLanguage {
     const stored = window.localStorage.getItem('tyrian_gameplay_lang');
-    return stored === 'he' || stored === 'en' || stored === 'ja' || stored === 'zh' ? stored : 'he';
+    return stored === 'he' || stored === 'en' || stored === 'ja' || stored === 'zh' ? stored : 'en';
 }
 
 export default function Home() {
@@ -52,6 +53,8 @@ export default function Home() {
     const [showLoadModal, setShowLoadModal] = useState(false);
     const [showControlsModal, setShowControlsModal] = useState(false);
     const [showStageMapModal, setShowStageMapModal] = useState(false);
+    const [stageMapMode, setStageMapMode] = useState<StageMapMode>('campaign');
+    const [testMode, setTestMode] = useState(false);
     const [saveRevision, setSaveRevision] = useState(0);
     const [musicEnabled, setMusicEnabled] = useState(() => SoundSystem.isMusicEnabled());
     const [gameplayLanguage, setGameplayLanguage] = useState<GameplayLanguage>(readGameplayLanguage);
@@ -68,6 +71,31 @@ export default function Home() {
     const resumePreview = useMemo(() => readResumePreview(), [saveRevision]);
     const manualSaveCount = useMemo(() => SaveSystem.getManualSaveCount(), [saveRevision]);
     const autoSave = useMemo(() => SaveSystem.loadAutoSave(), [saveRevision]);
+
+    useEffect(() => {
+        // In the offline Windows build, restore any independent Documents backups before
+        // the command center calculates the available save slots. A normal browser has no
+        // such endpoint, so its local saves are left untouched.
+        let cancelled = false;
+        void fetch('/api/save-backup')
+            .then((response) => response.ok ? response.json() : null)
+            .then((backup: { entries?: Record<string, string> } | null) => {
+                if (cancelled || !backup?.entries) return;
+                let restored = false;
+                for (const [key, payload] of Object.entries(backup.entries)) {
+                    try {
+                        JSON.parse(payload);
+                        window.localStorage.setItem(key, payload);
+                        restored = true;
+                    } catch {
+                        // Ignore a damaged external backup rather than blocking game launch.
+                    }
+                }
+                if (restored) setSaveRevision((revision) => revision + 1);
+            })
+            .catch(() => undefined);
+        return () => { cancelled = true; };
+    }, []);
 
     useEffect(() => {
         if (isNativeAndroid && !touchControlsEnabled) {
@@ -97,6 +125,7 @@ export default function Home() {
         VoicePlaybackManager.primeFromGesture();
         window.localStorage.removeItem(RESUME_CHECKPOINT_KEY);
         setInitialStage(null);
+        setTestMode(false);
         setSaveRevision((revision) => revision + 1);
         setLaunchMode('new');
     };
@@ -108,6 +137,7 @@ export default function Home() {
             return;
         }
         setInitialStage(null);
+        setTestMode(false);
         setLaunchMode('continue');
     };
 
@@ -115,6 +145,7 @@ export default function Home() {
         VoicePlaybackManager.primeFromGesture();
         setShowStageMapModal(false);
         setInitialStage(stage);
+        setTestMode(stageMapMode === 'test');
         setLaunchMode('new');
     };
 
@@ -156,7 +187,14 @@ export default function Home() {
             graphicsQuality={graphicsQuality}
             onStartNewMission={startNewMission}
             onContinueMission={continueMission}
-            onOpenStageMap={() => setShowStageMapModal(true)}
+            onOpenStageMap={() => {
+                setStageMapMode('campaign');
+                setShowStageMapModal(true);
+            }}
+            onOpenTestStageMap={() => {
+                setStageMapMode('test');
+                setShowStageMapModal(true);
+            }}
             onOpenSaves={() => setShowLoadModal(true)}
             onOpenSystems={() => setShowSystemsDatabase(true)}
             onOpenControls={() => setShowControlsModal(true)}
@@ -197,10 +235,10 @@ export default function Home() {
 
             {launchMode ? (
                 <main className={isNativeAndroid ? 'android-mission-shell' : 'command-main'}>
-                    {!isNativeAndroid && <div className="flex justify-between items-center gap-3 mb-3"><span className="status-tag">{initialStage ? `TEST STAGE // ${initialStage}` : launchMode === 'new' ? 'NEW MISSION // STAGE 1' : `CONTINUE MISSION // STAGE ${resumePreview?.level ?? 1}`}</span><button type="button" onClick={() => { setInitialStage(null); setLaunchMode(null); }} className="console-button console-button--muted">RETURN TO COMMAND CENTER</button></div>}
+                    {!isNativeAndroid && <div className="flex justify-between items-center gap-3 mb-3"><span className="status-tag">{initialStage ? `${testMode ? 'TEST STAGE' : 'CAMPAIGN STAGE'} // ${initialStage}` : launchMode === 'new' ? 'NEW MISSION // STAGE 1' : `CONTINUE MISSION // STAGE ${resumePreview?.level ?? 1}`}</span><button type="button" onClick={() => { setInitialStage(null); setTestMode(false); setLaunchMode(null); }} className="console-button console-button--muted">RETURN TO COMMAND CENTER</button></div>}
                     <section className={`launch-frame hud-frame ${isNativeAndroid ? 'launch-frame--android' : ''}`}>
                         {!isNativeAndroid && <div className="launch-frame__topline"><span>FLIGHT DECK // PILOT LINKED</span><span>FLIGHT INPUT: {flightControlMode === 'mouse' ? 'MOUSE // ARMED' : 'KEYBOARD // ARMED'} // TOUCH {touchControlsEnabled ? 'ARMED' : 'HIDDEN'}</span></div>}
-                        <div className="game-window"><GameContainer key={`${launchMode}-${initialStage ?? 'standard'}-${graphicsQuality}`} touchControlsEnabled={touchControlsEnabled} mouseControlsEnabled={flightControlMode === 'mouse'} graphicsQuality={graphicsQuality} launchMode={launchMode} initialStage={initialStage ?? undefined} onReturnToTitle={() => { setInitialStage(null); setLaunchMode(null); }} /></div>
+                        <div className="game-window"><GameContainer key={`${launchMode}-${initialStage ?? 'standard'}-${testMode ? 'test' : 'campaign'}-${graphicsQuality}`} touchControlsEnabled={touchControlsEnabled} mouseControlsEnabled={flightControlMode === 'mouse'} graphicsQuality={graphicsQuality} launchMode={launchMode} initialStage={initialStage ?? undefined} testMode={testMode} onReturnToTitle={() => { setInitialStage(null); setTestMode(false); setLaunchMode(null); }} /></div>
                     </section>
                 </main>
             ) : (isNativeAndroid ? androidTitleScreen : commandCenter)}
@@ -209,7 +247,7 @@ export default function Home() {
             {showDatabase && <EnemyDatabaseModal onClose={() => setShowDatabase(false)} />}
             {showSystemsDatabase && <PlayerSystemsModal onClose={() => setShowSystemsDatabase(false)} />}
             {showMissionArchive && <MissionArchiveModal onClose={() => setShowMissionArchive(false)} />}
-            {showStageMapModal && <StageSelectModal maxUnlockedLevel={autoSave?.maxUnlockedLevel ?? 1} onSelectStage={launchTestStage} onClose={() => setShowStageMapModal(false)} />}
+            {showStageMapModal && <StageSelectModal maxUnlockedLevel={autoSave?.maxUnlockedLevel ?? 1} allowAllStages={stageMapMode === 'test'} onSelectStage={launchTestStage} onClose={() => setShowStageMapModal(false)} />}
             {showLoadModal && <SaveLoadModal isOpen={showLoadModal} mode="load" onClose={() => setShowLoadModal(false)} onLoadGame={loadSelectedSave} onDeleteSave={() => setSaveRevision((revision) => revision + 1)} />}
 
             {!isNativeAndroid && <footer className="command-footer"><span>PROTECT THE STARSHIP // PROGRAM ZERO</span><span>ARK-9 FLIGHT NETWORK © 2026</span></footer>}

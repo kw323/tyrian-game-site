@@ -104,11 +104,12 @@ interface GameContainerProps {
     mouseControlsEnabled?: boolean;
     launchMode?: 'new' | 'continue';
     initialStage?: number;
+    testMode?: boolean;
     onReturnToTitle?: () => void;
     graphicsQuality?: GraphicsQuality;
 }
 
-export function GameContainer({ touchControlsEnabled = true, mouseControlsEnabled = true, launchMode = 'continue', initialStage, onReturnToTitle, graphicsQuality = 'standard' }: GameContainerProps) {
+export function GameContainer({ touchControlsEnabled = true, mouseControlsEnabled = true, launchMode = 'continue', initialStage, testMode = false, onReturnToTitle, graphicsQuality = 'standard' }: GameContainerProps) {
     const isMobile = useIsMobile();
     const isNativeAndroid = Capacitor.isNativePlatform();
     // Android runs in landscape, where viewport width is usually larger than the mobile CSS breakpoint.
@@ -119,7 +120,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
     const [touchAbilityPulse, setTouchAbilityPulse] = useState(false);
     const [gameplayLang, setGameplayLang] = useState<GameplayLanguage>(() => {
         const stored = localStorage.getItem('tyrian_gameplay_lang');
-        return isGameplayLanguage(stored) ? stored : 'he';
+        return isGameplayLanguage(stored) ? stored : 'en';
     });
     const gameplayLangRef = useRef<GameplayLanguage>(gameplayLang);
     const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
@@ -321,7 +322,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             let stageTelemetryFinalized = false;
             let lastStagePerformanceXp: StagePerformanceXPResult | null = null;
             let sectorSealed = false;
-            let isTestSession = false;
+            let isTestSession = testMode;
+            let pendingResearchCourierTutorial = false;
             let mCheatStartedAt: number | null = null;
             let mCheatLastGrantAt: number | null = null;
             let testNoticeUntil = 0;
@@ -858,10 +860,14 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 equipmentState: equipmentSystem.getState()
             });
 
-            const persistAutosave = (reason: string): ResumeCheckpoint => {
+            const persistAutosave = (reason: string, resumeLevel = gameState.level): ResumeCheckpoint => {
                 const checkpoint = buildResumeCheckpoint(reason);
+                checkpoint.level = Math.max(1, Math.min(CampaignSystem.TOTAL_STAGES, Math.floor(resumeLevel)));
                 if (isTestSession) return checkpoint;
+                const unlockedLevel = Math.max(maxUnlockedLevel, checkpoint.level);
                 localStorage.setItem(RESUME_CHECKPOINT_KEY, JSON.stringify(checkpoint));
+                localStorage.setItem('tyrian_max_unlocked_level', String(unlockedLevel));
+                setMaxUnlockedLevel(unlockedLevel);
                 setResumeCheckpoint(checkpoint);
 
                 const weaponState = checkpoint.weaponState ?? {};
@@ -880,7 +886,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     pilotSkillsState: checkpoint.pilotSkillsState,
                     equipmentState: checkpoint.equipmentState,
                     tacticalAbilityState: checkpoint.tacticalAbilityState,
-                    maxUnlockedLevel: Math.max(maxUnlockedLevel, checkpoint.level)
+                    maxUnlockedLevel: unlockedLevel
                 });
 
                 return checkpoint;
@@ -1327,9 +1333,9 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 if (gameState.showLevelScreen || showBranchModal) advanceFromShop();
             };
 
-            const jumpToStage = (requestedStage: number): void => {
+            const jumpToStage = (requestedStage: number, markTestSession = true): void => {
                 const targetStage = Math.max(1, Math.min(CampaignSystem.TOTAL_STAGES, Math.floor(requestedStage)));
-                isTestSession = true;
+                isTestSession = markTestSession;
                 gameState.level = targetStage;
                 initialLaunchPending = false;
                 shopScreen = 'hub';
@@ -1378,7 +1384,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             };
             window.addEventListener('tyrian:jump-to-stage', handleStageJumpEvent as EventListener);
             const initialStageTimer = initialStage
-                ? window.setTimeout(() => jumpToStage(initialStage), 0)
+                ? window.setTimeout(() => jumpToStage(initialStage, testMode), 0)
                 : null;
 
             const awardPilotXp = (amount: number, source: string): void => {
@@ -1401,6 +1407,9 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     const isSpecialEnemy = enemy instanceof EnemyAdvanced && enemy.isSpecial;
                     if (isSpecialEnemy) {
                         const recovery = weaponSystem.collectSecretWeaponFragment();
+                        if (recovery.fragments === 1 && !recovery.unlocked) {
+                            pendingResearchCourierTutorial = true;
+                        }
                         if (recovery.unlocked) {
                             upgradeBriefing = CampaignSystem.getUpgradeBriefing('weapon', 'Black Hole Projectile', 1);
                             localStorage.setItem('tyrian_secret_weapon_unlocked', 'true');
@@ -2523,6 +2532,9 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 const regularStageClear = !bossStage && gameState.isLevelComplete() && activeHostiles === 0;
                 if (regularStageClear || (bossStage && bossStageClear)) {
                     finalizeStageTelemetry(true);
+                    // Winning establishes a safe checkpoint for the next stage before the
+                    // debrief appears; test-console sessions intentionally remain unsaved.
+                    persistAutosave('AUTOSAVE // STAGE COMPLETE', Math.min(CampaignSystem.TOTAL_STAGES, gameState.level + 1));
                     gameState.levelComplete = true;
                     gameState.showLevelScreen = true;
                     if (gameState.level === 101) {
@@ -3327,6 +3339,10 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
                     drawButton('after-action-continue', 'PROCEED TO CONTROL DECK  [ENTER]', boxX + 28, boxY + 310, boxWidth - 56, 52, '#00FF88', () => {
                         showAfterActionModal = false;
+                        if (pendingResearchCourierTutorial) {
+                            pendingResearchCourierTutorial = false;
+                            showNaomiUpgradeTutorial('research_courier');
+                        }
                     });
                     return;
                 }
@@ -4222,7 +4238,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
             // Handle key presses for weapon selection, progression, and explicit test cheats.
             const handleKeyDown = (e: KeyboardEvent) => {
-                if (e.key === 'm' || e.key === 'M') {
+                if (e.code === 'KeyM') {
                     e.preventDefault();
                     if (mCheatStartedAt === null) {
                         mCheatStartedAt = performance.now();
@@ -4232,7 +4248,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     }
                     return;
                 }
-                if (e.key === 'l' || e.key === 'L') {
+                if (e.code === 'KeyL') {
                     e.preventDefault();
                     setShowStageMapModal(true);
                     testNoticeText = 'TEST MODE // STAGE SELECT OPENED';
@@ -4242,19 +4258,23 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     if (showAfterActionModal) {
                         e.preventDefault();
                         showAfterActionModal = false;
+                        if (pendingResearchCourierTutorial) {
+                            pendingResearchCourierTutorial = false;
+                            showNaomiUpgradeTutorial('research_courier');
+                        }
                         return;
                     }
                     if (showCommsModal) {
                         e.preventDefault();
-                        if (e.key === 'Escape') {
+                        if (e.code === 'Escape') {
                             startStagePlay();
-                        } else if (e.key === 'Enter' || e.key === ' ') {
+                        } else if (e.code === 'Enter' || e.code === 'Space') {
                             advanceBriefing();
                         }
                         return;
                     }
 
-                if (!gameState.gameOver && !gameState.showLevelScreen && gameState.isPaused && (e.key === 'q' || e.key === 'Q')) {
+                if (!gameState.gameOver && !gameState.showLevelScreen && gameState.isPaused && e.code === 'KeyQ') {
                     e.preventDefault();
                     if (!e.repeat) {
                         gameState.isPaused = false;
@@ -4263,7 +4283,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     return;
                 }
 
-                if (!gameState.gameOver && !gameState.showLevelScreen && (e.key === 'p' || e.key === 'P' || e.key === 'Escape')) {
+                if (!gameState.gameOver && !gameState.showLevelScreen && (e.code === 'KeyP' || e.code === 'Escape')) {
                     e.preventDefault();
                     if (!e.repeat) gameState.togglePause();
                     return;
@@ -4281,8 +4301,9 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         if (!e.repeat) toggleTacticalAbility();
                         return;
                     }
-                    const coreIndex = Number(e.key) - 1;
-                    if (!e.repeat && Number.isInteger(coreIndex) && coreIndex >= 0 && coreIndex < ELEMENTAL_CORE_ORDER.length) {
+                    const coreDigit = /^Digit([1-5])$/.exec(e.code);
+                    const coreIndex = coreDigit ? Number(coreDigit[1]) - 1 : -1;
+                    if (!e.repeat && coreIndex >= 0 && coreIndex < ELEMENTAL_CORE_ORDER.length) {
                         e.preventDefault();
                         const core = ELEMENTAL_CORE_ORDER[coreIndex];
                         elementalCoreSystem.selectCore(core);
@@ -4298,74 +4319,74 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 if (gameState.showLevelScreen) {
                     if (shopScreen === 'finale_victory') {
                         e.preventDefault();
-                        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') returnToTitle();
+                        if (e.code === 'Enter' || e.code === 'Space' || e.code === 'Escape') returnToTitle();
                         return;
                     }
-                    if (e.key === 'Escape') {
+                    if (e.code === 'Escape') {
                         e.preventDefault();
                         shopScreen = 'hub';
                         hoveredShopItem = null;
                         return;
-                    } else if (e.key === '1') {
+                    } else if (e.code === 'Digit1') {
                         e.preventDefault();
                         selectWeapon(WeaponType.STRAIGHT);
-                    } else if (e.key === '2') {
+                    } else if (e.code === 'Digit2' && !e.shiftKey) {
                         e.preventDefault();
                         upgradeWeapon(WeaponType.SPREAD);
-                    } else if (e.key === 'Shift' && e.code === 'Digit2') {
+                    } else if (e.code === 'Digit2' && e.shiftKey) {
                         // Shift+2 to downgrade Spread Shot
                         e.preventDefault();
                         downgradeWeapon(WeaponType.SPREAD);
-                    } else if (e.key === '3') {
+                    } else if (e.code === 'Digit3' && !e.shiftKey) {
                         e.preventDefault();
                         upgradeWeapon(WeaponType.HOMING);
-                    } else if (e.key === 'Shift' && e.code === 'Digit3') {
+                    } else if (e.code === 'Digit3' && e.shiftKey) {
                         // Shift+3 to downgrade Homing Missiles
                         e.preventDefault();
                         downgradeWeapon(WeaponType.HOMING);
-                    } else if (e.key === '4') {
+                    } else if (e.code === 'Digit4' && !e.shiftKey) {
                         e.preventDefault();
                         upgradeWeapon(WeaponType.HEAVY);
-                    } else if (e.key === '5') {
+                    } else if (e.code === 'Digit5') {
                         e.preventDefault();
                         selectWeapon(WeaponType.LASER);
-                    } else if (e.key === '6') {
+                    } else if (e.code === 'Digit6') {
                         e.preventDefault();
                         selectWeapon(WeaponType.ARC);
-                    } else if (e.key === '7') {
+                    } else if (e.code === 'Digit7') {
                         e.preventDefault();
                         selectWeapon(WeaponType.VOID_LANCE);
-                    } else if (e.key === 'Shift' && e.code === 'Digit4') {
+                    } else if (e.code === 'Digit4' && e.shiftKey) {
                         // Shift+4 to downgrade Heavy Cannon
                         e.preventDefault();
                         downgradeWeapon(WeaponType.HEAVY);
-                    } else if (e.key === 'g' || e.key === 'G') {
+                    } else if (e.code === 'KeyG') {
                         e.preventDefault();
                         upgradeGenerator();
-                    } else if (e.key === 's' || e.key === 'S') {
+                    } else if (e.code === 'KeyS') {
                         // Ship 1 (Starter Fighter - free)
                         e.preventDefault();
                         shipSystem.reset();
                         upgradeBriefing = CampaignSystem.getUpgradeBriefing('ship', 'Starter Fighter', 1);
-                    } else if (e.key === 'i' || e.key === 'I') {
+                    } else if (e.code === 'KeyI') {
                         // Ship 2 (Interceptor)
                         e.preventDefault();
                         purchaseShip(1);
-                    } else if (e.key === 'd' || e.key === 'D') {
+                    } else if (e.code === 'KeyD') {
                         // Ship 3 (Destroyer)
                         e.preventDefault();
                         purchaseShip(2);
-                    } else if (e.key === 'b' || e.key === 'B') {
+                    } else if (e.code === 'KeyB') {
                         // Ship 4 (Battleship)
                         e.preventDefault();
                         purchaseShip(3);
-                    } else if (e.key === 'Enter') {
+                    } else if (e.code === 'Enter') {
                         e.preventDefault();
                         if (shopScreen === 'hub') advanceFromShop();
                         else shopScreen = 'hub';
                     }
                 } else if (gameState.gameOver) {
-                    if (e.key === ' ') {
+                    if (e.code === 'Space') {
                         e.preventDefault();
                         gameState.reset();
                         stageMasterySystem.beginStage(gameState.level);
@@ -4389,7 +4410,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 }
             };
             const handleKeyUp = (e: KeyboardEvent): void => {
-                if (e.key === 'm' || e.key === 'M') {
+                if (e.code === 'KeyM') {
                     mCheatStartedAt = null;
                     mCheatLastGrantAt = null;
                 }
@@ -4560,7 +4581,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
         } catch (error) {
             console.error('Failed to initialize game:', error);
         }
-    }, [gameStarted, initialStage, startFromResume, graphicsQuality]);
+    }, [gameStarted, initialStage, testMode, startFromResume, graphicsQuality]);
 
     const updateTouchJoystick = (event: ReactPointerEvent<HTMLDivElement>): void => {
         event.preventDefault();

@@ -24,6 +24,7 @@ interface Props {
     onStartNewMission: () => void;
     onContinueMission: () => void;
     onOpenStageMap: () => void;
+    onOpenTestStageMap: () => void;
     onOpenSaves: () => void;
     onOpenSystems: () => void;
     onOpenControls: () => void;
@@ -64,7 +65,7 @@ function ActionButton({ label, hint, tone = 'cyan', onClick, disabled = false }:
     );
 }
 
-export function CommandCenter({ resumePreview, manualSaveCount, autoSave, musicEnabled, gameplayLanguage, difficultyId, graphicsQuality, onStartNewMission, onContinueMission, onOpenStageMap, onOpenSaves, onOpenSystems, onOpenControls, onOpenDatabase, onOpenArchive, onToggleMusic, onChangeLanguage, onChangeDifficulty, onChangeGraphicsQuality }: Props) {
+export function CommandCenter({ resumePreview, manualSaveCount, autoSave, musicEnabled, gameplayLanguage, difficultyId, graphicsQuality, onStartNewMission, onContinueMission, onOpenStageMap, onOpenTestStageMap, onOpenSaves, onOpenSystems, onOpenControls, onOpenDatabase, onOpenArchive, onToggleMusic, onChangeLanguage, onChangeDifficulty, onChangeGraphicsQuality }: Props) {
     const [activeSection, setActiveSection] = useState<CommandSectionId>('game');
     const [showExitConfirm, setShowExitConfirm] = useState(false);
     const activeIndex = useMemo(() => SECTIONS.findIndex((section) => section.id === activeSection), [activeSection]);
@@ -75,10 +76,10 @@ export function CommandCenter({ resumePreview, manualSaveCount, autoSave, musicE
         const handleKeyboardNavigation = (event: KeyboardEvent): void => {
             if (event.altKey || event.ctrlKey || event.metaKey) return;
             if (showExitConfirm) {
-                if (event.key === 'Escape') {
+                if (event.code === 'Escape') {
                     event.preventDefault();
                     setShowExitConfirm(false);
-                } else if (event.key === 'Enter' || event.key === ' ') {
+                } else if (event.code === 'Enter' || event.code === 'Space') {
                     event.preventDefault();
                     window.close();
                 }
@@ -87,16 +88,17 @@ export function CommandCenter({ resumePreview, manualSaveCount, autoSave, musicE
             if (document.querySelector('[role="dialog"][aria-modal="true"]')) return;
             const target = event.target as HTMLElement | null;
             if (target?.closest('button, a, input, select, textarea')) return;
-            if (event.key >= '1' && event.key <= '6') {
+            const sectionDigit = /^Digit([1-6])$/.exec(event.code);
+            if (sectionDigit) {
                 event.preventDefault();
-                setActiveSection(SECTIONS[Number(event.key) - 1].id);
-            } else if (event.key === 'ArrowUp' || event.key.toLowerCase() === 'w') {
+                setActiveSection(SECTIONS[Number(sectionDigit[1]) - 1].id);
+            } else if (event.code === 'ArrowUp' || event.code === 'KeyW') {
                 event.preventDefault();
                 setActiveSection(SECTIONS[Math.max(0, activeIndex - 1)].id);
-            } else if (event.key === 'ArrowDown' || event.key.toLowerCase() === 's') {
+            } else if (event.code === 'ArrowDown' || event.code === 'KeyS') {
                 event.preventDefault();
                 setActiveSection(SECTIONS[Math.min(SECTIONS.length - 1, activeIndex + 1)].id);
-            } else if (event.key === 'Enter' || event.key === ' ') {
+            } else if (event.code === 'Enter' || event.code === 'Space') {
                 event.preventDefault();
                 if (activeSection === 'game') (resumePreview ? onContinueMission : onStartNewMission)();
                 else if (activeSection === 'upgrades') onOpenSystems();
@@ -122,7 +124,8 @@ export function CommandCenter({ resumePreview, manualSaveCount, autoSave, musicE
                     <div className="command-center__action-grid">
                         <ActionButton label={resumePreview ? text.continueMission : text.newMission} hint={resumePreview ? `ENTER // ${text.savedCheckpoint}` : 'ENTER // STAGE 1'} tone="green" onClick={resumePreview ? onContinueMission : onStartNewMission} />
                         <ActionButton label={text.newMission} hint="STAGE 1" onClick={onStartNewMission} />
-                        <ActionButton label={text.stageMap} hint="TEST ROUTE" tone="amber" onClick={onOpenStageMap} />
+                        <ActionButton label={text.stageMap} hint="UNLOCKED CAMPAIGN STAGES" tone="amber" onClick={onOpenStageMap} />
+                        <ActionButton label="TEST CONSOLE" hint="ALL 101 STAGES // NO PROGRESS CHANGE" tone="red" onClick={onOpenTestStageMap} />
                     </div>
                 </>
             );
