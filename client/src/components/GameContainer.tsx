@@ -305,6 +305,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             let showBranchModal = false;
             let currentBranchRoute: BranchRoute | null = null;
             let bossDefeatedAt: number | null = null;
+            const defeatedBosses = new Set<Boss>();
             let finalBossAssembly: FinalBossAssembly | null = null;
             let seraDuelOutcome: 'win' | 'loss' | null = null;
             let seraAlly: SeraAllyShipEntity | null = null;
@@ -1210,6 +1211,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 stageTelemetryFinalized = false;
                 bossSpawnedForLevel = false;
                 bossDefeatedAt = null;
+                defeatedBosses.clear();
                 finalBossAssembly = null;
                 seraDuelOutcome = null;
                 seraAlly = null;
@@ -1262,6 +1264,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 stageTelemetryFinalized = false;
                 bossSpawnedForLevel = false;
                 bossDefeatedAt = null;
+                defeatedBosses.clear();
                 finalBossAssembly = null;
                 seraDuelOutcome = null;
                 seraAlly = null;
@@ -1300,6 +1303,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 upgradeBriefing = CampaignSystem.getUpgradeBriefing('weapon', 'Straight Shot', 1);
                 bossSpawnedForLevel = false;
                 bossDefeatedAt = null;
+                defeatedBosses.clear();
                 finalBossAssembly = null;
                 seraDuelOutcome = null;
                 stageBriefing = CampaignSystem.getStageBriefing(targetStage, gameplayLangRef.current);
@@ -1450,13 +1454,20 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         target.takeDamage(burn.damage);
                         burn.tick += 0.45;
                         if (target instanceof Enemy || target instanceof EnemyAdvanced) registerEnemyDefeat(target);
+                        else registerBossDefeat(target);
                     }
                     if (burn.remaining <= 0) elementalBurns.delete(target);
                 });
             };
 
             const registerBossDefeat = (boss: Boss): void => {
-                if (!boss.isActive && !boss.isAlive()) {
+                // Every damage path (including Chain Lightning and elemental burn) reaches
+                // this gate. A boss may be declared only once, even if several projectiles land
+                // in the same frame after its hull reaches zero.
+                if (boss.isAlive() || defeatedBosses.has(boss)) return;
+                defeatedBosses.add(boss);
+                boss.isActive = false;
+                {
                     if (boss instanceof FinalBossPart) {
                         stageMasterySystem.recordEnemyDefeat();
                         game.addEntity(new Explosion(boss.x + boss.width / 2, boss.y + boss.height / 2, 58));
@@ -1721,6 +1732,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     }
                     bossSpawnedForLevel = true;
                     bossDefeatedAt = null;
+                    defeatedBosses.clear();
                 }
 
                 if (!bossDefeatedAt && !missionEventSpawned && gameState.levelTimeElapsed >= 45) spawnMissionTarget();

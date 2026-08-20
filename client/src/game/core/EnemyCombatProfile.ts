@@ -61,11 +61,9 @@ const profiles: Record<CombatFaction, Partial<Record<CombatEnemyType, EnemyComba
     },
     aliens: {
         scout: { motion: 'alien_scout', shotPattern: 'single', moveMultiplier: 1.0, shootCooldown: 2.25, projectileSpeedMultiplier: 0.86 },
-        // Alien plasma remains distinct and curved, but the late-chapter volleys leave
-        // readable escape lanes instead of overwhelming the stage-60 arena.
-        drone: { motion: 'alien_drone', shotPattern: 'plasma_pair', moveMultiplier: 1.00, shootCooldown: 2.25, projectileSpeedMultiplier: 0.76 },
-        orbiter: { motion: 'alien_orbiter', shotPattern: 'plasma_arc', moveMultiplier: 0.93, shootCooldown: 2.05, projectileSpeedMultiplier: 0.72 },
-        sentinel: { motion: 'alien_sentinel', shotPattern: 'plasma_crown', moveMultiplier: 0.88, shootCooldown: 2.20, projectileSpeedMultiplier: 0.70 },
+        drone: { motion: 'alien_drone', shotPattern: 'plasma_pair', moveMultiplier: 1.03, shootCooldown: 1.85, projectileSpeedMultiplier: 0.88 },
+        orbiter: { motion: 'alien_orbiter', shotPattern: 'plasma_arc', moveMultiplier: 0.96, shootCooldown: 1.55, projectileSpeedMultiplier: 0.84 },
+        sentinel: { motion: 'alien_sentinel', shotPattern: 'plasma_crown', moveMultiplier: 0.90, shootCooldown: 1.75, projectileSpeedMultiplier: 0.80 },
         evasive_hunter: { motion: 'hunter', shotPattern: 'hunter_burst', moveMultiplier: 1.18, shootCooldown: 2.05, projectileSpeedMultiplier: 1.0 },
     },
 };
@@ -73,7 +71,7 @@ const profiles: Record<CombatFaction, Partial<Record<CombatEnemyType, EnemyComba
 const waveProfiles: Record<CombatFaction, FactionWaveProfile> = {
     raiders: { spawnRate: 1.22, standardCount: 3, chainMin: 6, chainMax: 9, swarmMin: 10, swarmMax: 14, ambushMin: 8, ambushMax: 12, singleMin: 4, singleMax: 7 },
     military: { spawnRate: 1.80, standardCount: 2, chainMin: 4, chainMax: 6, swarmMin: 6, swarmMax: 9, ambushMin: 4, ambushMax: 6, singleMin: 3, singleMax: 5 },
-    aliens: { spawnRate: 1.72, standardCount: 2, chainMin: 4, chainMax: 6, swarmMin: 6, swarmMax: 8, ambushMin: 4, ambushMax: 6, singleMin: 3, singleMax: 5 },
+    aliens: { spawnRate: 1.55, standardCount: 2, chainMin: 4, chainMax: 6, swarmMin: 7, swarmMax: 10, ambushMin: 5, ambushMax: 7, singleMin: 3, singleMax: 6 },
 };
 
 const fallback: EnemyCombatProfile = {

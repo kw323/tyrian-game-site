@@ -212,6 +212,9 @@ export class EnemyAdvanced extends Entity {
     }
 
     public takeDamage(amount: number): void {
+        // Spawn waves arrive from beyond the top edge. They cannot fire until visible,
+        // so they cannot be destroyed by long-range player fire before they enter either.
+        if (!this.hasEnteredScreen) return;
         this.health -= amount;
         if (this.health <= 0) {
             this.isActive = false;
