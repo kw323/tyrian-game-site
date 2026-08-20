@@ -50,7 +50,8 @@ import { DifficultySystem, DifficultyId, DifficultyProfile } from '@/game/core/D
 import { FinalBossAssembly, FinalBossPart } from '@/game/entities/FinalBossPart';
 import { VoicePlaybackManager } from '@/game/core/VoicePlaybackManager';
 import { StageSelectModal } from '@/components/StageSelectModal';
-import { SaveSystem } from '@/game/core/SaveSystem';
+import { SaveLoadModal } from '@/components/SaveLoadModal';
+import { SaveData, SaveSystem } from '@/game/core/SaveSystem';
 import { Capacitor } from '@capacitor/core';
 
 interface NaomiTutorialDialog {
@@ -163,6 +164,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
     });
     const [showStageMapModal, setShowStageMapModal] = useState<boolean>(false);
     const [naomiTutorial, setNaomiTutorial] = useState<NaomiTutorialDialog | null>(null);
+    const [showManualSaveModal, setShowManualSaveModal] = useState<boolean>(false);
+    const [manualSaveState, setManualSaveState] = useState<Omit<SaveData, 'slotId' | 'slotName' | 'timestamp'> | undefined>(undefined);
     const [resumeCheckpoint, setResumeCheckpoint] = useState<ResumeCheckpoint | null>(() => {
         const raw = localStorage.getItem(RESUME_CHECKPOINT_KEY);
         if (!raw) return null;
@@ -866,6 +869,30 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 });
 
                 return checkpoint;
+            };
+
+            const openBetweenStageSave = (): void => {
+                // Manual save is intentionally available only in the Ready Room. Combat always
+                // resumes from the last safe checkpoint, so a failed dodge cannot be retried.
+                if (!gameState.showLevelScreen || showAfterActionModal || showBranchModal) return;
+                const checkpoint = buildResumeCheckpoint('MANUAL SAVE // READY ROOM');
+                const weaponState = checkpoint.weaponState ?? {};
+                setManualSaveState({
+                    score: checkpoint.score,
+                    level: checkpoint.level,
+                    shipId: checkpoint.shipId ?? 0,
+                    generatorLevel: checkpoint.generatorLevel ?? 1,
+                    shieldLevel: checkpoint.shieldLevel ?? 1,
+                    engineUpgradeLevel: checkpoint.engineUpgradeLevel ?? 0,
+                    weaponLevels: weaponState.weaponLevels ?? {},
+                    currentWeapon: weaponState.currentWeapon ?? 'straight',
+                    elementalCoreState: checkpoint.elementalCoreState,
+                    pilotSkillsState: checkpoint.pilotSkillsState,
+                    equipmentState: checkpoint.equipmentState,
+                    tacticalAbilityState: checkpoint.tacticalAbilityState,
+                    maxUnlockedLevel: Math.max(maxUnlockedLevel, checkpoint.level),
+                });
+                setShowManualSaveModal(true);
             };
 
             const showNaomiUpgradeTutorial = (topic: NaomiTutorialTopic): void => {
@@ -1698,7 +1725,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     bossDefeatedAt = null;
                 }
 
-                if (!missionEventSpawned && gameState.levelTimeElapsed >= 45) spawnMissionTarget();
+                if (!bossDefeatedAt && !missionEventSpawned && gameState.levelTimeElapsed >= 45) spawnMissionTarget();
 
                 const bossStageForSpawns = gameState.level % 3 === 0 || gameState.level === 31 || gameState.level === 101;
                 const waveWindowOpen = bossStageForSpawns || gameState.levelTimeElapsed < gameState.levelDuration;
@@ -1708,7 +1735,9 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     testNoticeUntil = performance.now() + 5500;
                     SoundSystem.playCriticalComms('elena', 'warning');
                 }
-                const newEnemies = gameState.level === 31 || !waveWindowOpen
+                // Once a boss dies, no reinforcement wave or new bounty target may enter.
+                // The player clears the remaining escorts, then the stage resolves immediately.
+                const newEnemies = bossDefeatedAt !== null || gameState.level === 31 || !waveWindowOpen
                     ? []
                     : enemySpawner.update(deltaTime, game['entities'], gameState.level);
                 stageMasterySystem.recordEnemySpawn(newEnemies.length);
@@ -2354,9 +2383,9 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     entity instanceof Enemy || entity instanceof EnemyAdvanced || entity instanceof Boss ||
                     (entity instanceof MissionTargetEntity && entity.missionType === 'bounty')
                 )).length;
-                const bossGracePeriodComplete = bossDefeatedAt !== null && currentTime - bossDefeatedAt >= 5;
+                const bossStageClear = bossDefeatedAt !== null && activeHostiles === 0;
                 const regularStageClear = !bossStage && gameState.isLevelComplete() && activeHostiles === 0;
-                if (regularStageClear || (bossStage && bossGracePeriodComplete)) {
+                if (regularStageClear || (bossStage && bossStageClear)) {
                     finalizeStageTelemetry(true);
                     gameState.levelComplete = true;
                     gameState.showLevelScreen = true;
@@ -3116,6 +3145,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                                 ? `${resumeData ? `CONTINUE FROM STAGE ${gameState.level}` : 'INITIATE NEW LAUNCH'}  [ENTER]`
                                 : 'CONTINUE TO NEXT LEVEL  [ENTER]';
                         drawButton('shop-continue', launchLabel, 310, 820, 462, 52, stageFailureReason ? '#ff9b9b' : '#00FF88', advanceFromShop);
+                        drawButton('shop-save-progress', 'SAVE PROGRESS', 790, 820, 180, 52, '#c59cff', openBetweenStageSave);
                         ctx.textAlign = 'left';
                         ctx.fillStyle = '#7996a4';
                         ctx.font = '13px monospace';
@@ -4508,6 +4538,17 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         </div>
                     </section>
                 </div>
+            )}
+            {showManualSaveModal && manualSaveState && (
+                <SaveLoadModal
+                    isOpen={showManualSaveModal}
+                    mode="save"
+                    currentState={manualSaveState}
+                    onClose={() => {
+                        setShowManualSaveModal(false);
+                        setManualSaveState(undefined);
+                    }}
+                />
             )}
             {showStageMapModal && (
                 <StageSelectModal

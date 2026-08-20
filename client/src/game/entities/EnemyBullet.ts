@@ -24,7 +24,9 @@ export class EnemyBullet extends Entity {
         this.x += this.dirX * this.speed * deltaTime * 60;
         this.y += this.dirY * this.speed * deltaTime * 60;
 
-        if (this.y > 900 || this.x < -50 || this.x > 850) {
+        // The combat canvas is 1200px wide; keeping the projectile alive through 1250px
+        // prevents shots fired on the right flank from vanishing before they leave the arena.
+        if (this.y > 950 || this.y < -50 || this.x < -60 || this.x > 1260) {
             this.isActive = false;
         }
     }

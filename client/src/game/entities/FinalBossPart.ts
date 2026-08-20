@@ -30,13 +30,15 @@ export class FinalBossAssembly {
 
     public createParts(): FinalBossPart[] {
         if (this.parts.length) return this.parts;
+        // All hit zones overlap as one 900px-wide capital ship centred on the 1200px arena.
+        // They remain separate damage targets, but no longer look like unrelated shapes drifting at one side.
         const configs: FinalBossPartConfig[] = [
-            { id: 'core', label: 'ARCHON CORE', role: 'core', x: 120, y: 122, width: 560, height: 224, health: 64000, shield: 36000, color: '#d83b5b' },
-            { id: 'left-wing', label: 'PORT WING', role: 'wing', x: 42, y: 210, width: 190, height: 142, health: 26000, shield: 12000, color: '#a52349' },
-            { id: 'right-wing', label: 'STARBOARD WING', role: 'wing', x: 568, y: 210, width: 190, height: 142, health: 26000, shield: 12000, color: '#a52349' },
-            { id: 'left-cannon', label: 'PORT CANNON', role: 'cannon', x: 64, y: 64, width: 176, height: 112, health: 16800, shield: 8800, color: '#ff7b39' },
-            { id: 'right-cannon', label: 'STARBOARD CANNON', role: 'cannon', x: 560, y: 64, width: 176, height: 112, health: 16800, shield: 8800, color: '#ff7b39' },
-            { id: 'reactor', label: 'VOID REACTOR', role: 'reactor', x: 292, y: 28, width: 216, height: 108, health: 20800, shield: 14400, color: '#b06cff' }
+            { id: 'core', label: 'ARCHON CORE', role: 'core', x: 330, y: 142, width: 540, height: 218, health: 64000, shield: 36000, color: '#d83b5b' },
+            { id: 'left-wing', label: 'PORT WING', role: 'wing', x: 148, y: 210, width: 232, height: 150, health: 26000, shield: 12000, color: '#a52349' },
+            { id: 'right-wing', label: 'STARBOARD WING', role: 'wing', x: 820, y: 210, width: 232, height: 150, health: 26000, shield: 12000, color: '#a52349' },
+            { id: 'left-cannon', label: 'PORT CANNON', role: 'cannon', x: 222, y: 126, width: 168, height: 104, health: 16800, shield: 8800, color: '#ff7b39' },
+            { id: 'right-cannon', label: 'STARBOARD CANNON', role: 'cannon', x: 810, y: 126, width: 168, height: 104, health: 16800, shield: 8800, color: '#ff7b39' },
+            { id: 'reactor', label: 'VOID REACTOR', role: 'reactor', x: 500, y: 70, width: 200, height: 112, health: 20800, shield: 14400, color: '#b06cff' }
         ];
         configs.forEach((config) => this.parts.push(new FinalBossPart(config, this, this.difficulty)));
         return this.parts;
@@ -131,6 +133,10 @@ export class FinalBossPart extends Boss {
 
     public constructor(config: FinalBossPartConfig, assembly: FinalBossAssembly, difficulty: DifficultyProfile) {
         super(config.x, config.y, 101);
+        // Boss defaults are intentionally overridden: final-boss hit zones use the
+        // authored flagship dimensions from the assembly configuration.
+        this.width = config.width;
+        this.height = config.height;
         this.partId = config.id;
         this.partLabel = config.label;
         this.role = config.role;
@@ -232,12 +238,29 @@ export class FinalBossPart extends Boss {
         ctx.fillStyle = this.partColor;
         ctx.strokeStyle = lockedReactor ? '#d2f8ff' : '#ffe8ed';
         ctx.lineWidth = this.role === 'core' ? 3 : 2;
+        // The core paints its structural spine first, then the overlapping wing/cannon zones
+        // complete the silhouette as a single connected flagship.
+        if (this.role === 'core') {
+            ctx.save();
+            ctx.fillStyle = '#1a1b38';
+            ctx.strokeStyle = '#8d3557';
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.moveTo(-this.width * 0.7, this.height * 0.16);
+            ctx.lineTo(this.width * 0.7, this.height * 0.16);
+            ctx.lineTo(this.width * 0.58, this.height * 0.34);
+            ctx.lineTo(-this.width * 0.58, this.height * 0.34);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            ctx.restore();
+        }
         ctx.beginPath();
         if (this.role === 'core') {
-            ctx.moveTo(-this.width / 2, -this.height * 0.22);
-            ctx.lineTo(-this.width * 0.35, -this.height / 2);
-            ctx.lineTo(this.width * 0.35, -this.height / 2);
-            ctx.lineTo(this.width / 2, -this.height * 0.22);
+            ctx.moveTo(-this.width / 2, -this.height * 0.18);
+            ctx.lineTo(-this.width * 0.32, -this.height / 2);
+            ctx.lineTo(this.width * 0.32, -this.height / 2);
+            ctx.lineTo(this.width / 2, -this.height * 0.18);
             ctx.lineTo(this.width * 0.42, this.height / 2);
             ctx.lineTo(-this.width * 0.42, this.height / 2);
         } else if (this.role === 'wing') {
@@ -247,7 +270,12 @@ export class FinalBossPart extends Boss {
             ctx.lineTo(this.width * 0.35, this.height / 2);
             ctx.lineTo(-this.width * 0.3, this.height * 0.35);
         } else if (this.role === 'cannon') {
-            ctx.rect(-this.width / 2, -this.height / 2, this.width, this.height);
+            ctx.moveTo(-this.width / 2, -this.height * 0.34);
+            ctx.lineTo(this.width * 0.14, -this.height / 2);
+            ctx.lineTo(this.width / 2, -this.height * 0.22);
+            ctx.lineTo(this.width * 0.42, this.height * 0.28);
+            ctx.lineTo(this.width * 0.04, this.height / 2);
+            ctx.lineTo(-this.width / 2, this.height * 0.24);
         } else {
             ctx.arc(0, 0, Math.min(this.width, this.height) * 0.44, 0, Math.PI * 2);
         }
@@ -255,6 +283,17 @@ export class FinalBossPart extends Boss {
         ctx.fill();
         ctx.stroke();
         ctx.shadowBlur = 0;
+        if (this.role === 'core') {
+            ctx.fillStyle = '#2b1739';
+            ctx.fillRect(-this.width * 0.24, -this.height * 0.33, this.width * 0.48, this.height * 0.11);
+            ctx.fillStyle = '#f2a4bd';
+            ctx.fillRect(-this.width * 0.18, -this.height * 0.28, this.width * 0.36, this.height * 0.035);
+        } else if (this.role === 'cannon') {
+            ctx.fillStyle = '#27152b';
+            ctx.fillRect(-this.width * 0.1, -this.height * 0.68, this.width * 0.2, this.height * 0.7);
+            ctx.fillStyle = '#fff0bd';
+            ctx.fillRect(-this.width * 0.045, -this.height * 0.62, this.width * 0.09, this.height * 0.38);
+        }
         ctx.fillStyle = '#1b1027';
         ctx.strokeStyle = lockedReactor ? '#67d9ff' : '#fff3a6';
         ctx.lineWidth = 2;
