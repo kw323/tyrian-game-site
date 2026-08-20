@@ -48,7 +48,9 @@ export class BlackHoleBullet extends Bullet {
     }
 
     public getDamageForTarget(): number {
-        return this.damage * Math.pow(0.82, this.hitTargets.size);
+        // A singularity has a meaningful impact when it catches a new target; later
+        // contacts remain weaker, but no longer make the weapon feel harmless.
+        return this.damage * 1.35 * Math.pow(0.88, this.hitTargets.size);
     }
 
     public getFieldRadius(): number {
@@ -73,7 +75,7 @@ export class BlackHoleBullet extends Bullet {
         return Math.hypot(targetCenterX - center.x, targetCenterY - center.y) <= this.getFieldRadius();
     }
 
-    public registerSuction(target: Entity, cooldown = 0.12): void {
+    public registerSuction(target: Entity, cooldown = 0.09): void {
         this.affectedTargets.add(target);
         this.affectCooldowns.set(target, cooldown);
     }
@@ -87,7 +89,7 @@ export class BlackHoleBullet extends Bullet {
     }
 
     public getSuctionDamage(): number {
-        return Math.max(3, this.damage * (0.1 + this.level * 0.01));
+        return Math.max(4, this.damage * (0.15 + this.level * 0.014));
     }
 
     public render(ctx: CanvasRenderingContext2D): void {

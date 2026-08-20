@@ -98,6 +98,18 @@ describe('Weapon runtime profile', () => {
         }
     });
 
+    it('keeps Void Lance compact while making its high-rank pull more dangerous', () => {
+        const rankOne = getWeaponRuntimeProfile('void_lance', 0);
+        const rankTwentyFive = getWeaponRuntimeProfile('void_lance', 24);
+        const rankTwentyFiveSingularity = new BlackHoleBullet(500, 700, 10, 24);
+
+        expect(rankTwentyFive.voidFieldRadius).toBeLessThan(90);
+        expect(rankTwentyFive.voidFieldRadius).toBeGreaterThan(rankOne.voidFieldRadius ?? 0);
+        expect(rankTwentyFive.voidSuctionStrength).toBeGreaterThan(6);
+        expect(rankTwentyFiveSingularity.getDamageForTarget()).toBeGreaterThan(13);
+        expect(rankTwentyFiveSingularity.getSuctionDamage()).toBeGreaterThan(4);
+    });
+
     it('keeps rank-25 advanced weapons in a campaign-scale credit range', () => {
         const system = new WeaponUpgradeSystem();
         const heavy = system.getWeaponLevels(WeaponType.HEAVY);

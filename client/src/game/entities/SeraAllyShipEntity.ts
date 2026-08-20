@@ -1,4 +1,5 @@
 import { Entity } from '../core/Entity';
+import { getWeaponRuntimeProfile } from '../core/WeaponRuntimeProfile';
 
 export interface SeraAllyShot {
     type: 'laser';
@@ -184,10 +185,18 @@ export class SeraAllyShipEntity extends Entity {
         const targetY = this.combatTarget?.y ?? Math.max(0, originY - 400);
         const primaryAngle = Math.atan2(targetX - centerX, Math.max(40, originY - targetY));
         const shots: SeraAllyShot[] = [{ type: 'laser', x: centerX, y: originY, angle: primaryAngle }];
-        if (this.loadout.weaponLevel >= 6) {
-            const secondaryAngle = 0.14 + Math.min(0.08, (this.loadout.weaponLevel - 6) * 0.012);
-            shots.push({ type: 'laser', x: centerX, y: originY, angle: primaryAngle - secondaryAngle, isSecondary: true });
-            shots.push({ type: 'laser', x: centerX, y: originY, angle: primaryAngle + secondaryAngle, isSecondary: true });
+        const profile = getWeaponRuntimeProfile('laser', this.loadout.weaponLevel);
+        const secondaryCount = profile.laserSecondaryBeamCount ?? 0;
+        const secondarySpread = profile.laserSecondaryAngle ?? 0.14;
+        for (let index = 0; index < secondaryCount; index++) {
+            const normalized = secondaryCount === 1 ? 0 : (index - (secondaryCount - 1) / 2) / ((secondaryCount - 1) / 2);
+            shots.push({
+                type: 'laser',
+                x: centerX,
+                y: originY,
+                angle: primaryAngle + normalized * secondarySpread,
+                isSecondary: true
+            });
         }
         return shots;
     }

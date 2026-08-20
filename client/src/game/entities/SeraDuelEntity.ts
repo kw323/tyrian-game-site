@@ -1,5 +1,6 @@
 import { Boss } from './Boss';
 import { EnemyBullet } from './EnemyBullet';
+import { getWeaponRuntimeProfile, type RuntimeWeaponType } from '../core/WeaponRuntimeProfile';
 
 export type SeraMirrorAbility = 'time_lock' | 'void_armor' | 'over_power' | 'phase_cloak' | null;
 
@@ -23,7 +24,7 @@ export interface SeraMirrorLoadout {
 }
 
 export interface SeraShot {
-    type: 'straight' | 'spread' | 'homing' | 'heavy' | 'void_lance' | 'laser';
+    type: 'straight' | 'spread' | 'homing' | 'heavy' | 'void_lance' | 'arc' | 'laser';
     x: number;
     y: number;
     angle: number;
@@ -183,42 +184,38 @@ export class SeraDuelEntity extends Boss {
             shots.push({ type, x, y: centerY, angle, isSecondary });
         };
 
-        if (weaponType === 'straight') {
-            const shotCount = level <= 9 ? 1 + Math.floor(level / 2) : level - 4;
-            const spacing = 9;
-            const midpoint = (shotCount - 1) / 2;
-            for (let index = 0; index < shotCount; index++) add('straight', centerX + (index - midpoint) * spacing);
-        } else if (weaponType === 'spread') {
-            const spreadCount = level < 3 ? (level === 0 ? 1 : 3) : Math.min(10, 5 + Math.floor((level - 3) / 2));
-            const maxAngle = Math.min(0.96, 0.54 + level * 0.035);
-            const midpoint = (spreadCount - 1) / 2;
-            for (let index = 0; index < spreadCount; index++) {
-                const normalized = spreadCount === 1 ? 0 : (index - midpoint) / midpoint;
-                add('spread', centerX + (index - midpoint) * 10, normalized * maxAngle);
+        const profile = getWeaponRuntimeProfile(weaponType as RuntimeWeaponType, level);
+        const fan = (type: SeraShot['type'], count: number, spread: number, spacing: number, secondary = false): void => {
+            const midpoint = (count - 1) / 2;
+            for (let index = 0; index < count; index++) {
+                const normalized = count === 1 ? 0 : (index - midpoint) / midpoint;
+                add(type, centerX + (index - midpoint) * spacing, normalized * spread, secondary);
             }
+        };
+
+        if (weaponType === 'straight') {
+            fan('straight', profile.projectileCount, 0, 10);
+        } else if (weaponType === 'spread') {
+            fan('spread', profile.projectileCount, profile.spreadAngle ?? 0.42, 10);
         } else if (weaponType === 'homing') {
-            const missileCount = level >= 4 ? 3 : level >= 2 ? 2 : 1;
-            for (let index = 0; index < missileCount; index++) add('homing', centerX + (index - (missileCount - 1) / 2) * 14);
+            fan('homing', profile.projectileCount, 0.08, 14);
         } else if (weaponType === 'heavy') {
-            const heavyCount = level >= 4 ? 4 : level === 3 ? 3 : level === 2 ? 2 : 1;
-            for (let index = 0; index < heavyCount; index++) add('heavy', centerX + (index - (heavyCount - 1) / 2) * 16);
+            fan('heavy', profile.projectileCount, 0.05, 16);
         } else if (weaponType === 'void_lance') {
-            const angles = level >= 6 ? [-0.1, 0, 0.1] : level >= 2 ? [-0.08, 0.08] : [0];
-            angles.forEach((angle) => add('void_lance', centerX, angle));
+            fan('void_lance', profile.projectileCount, 0.12, 0);
+        } else if (weaponType === 'arc') {
+            add('arc', centerX, 0);
         } else {
             add('laser', centerX, 0);
-            if (level >= 6) {
-                const secondaryAngle = 0.14 + Math.min(0.08, (level - 6) * 0.012);
-                add('laser', centerX, -secondaryAngle, true);
-                add('laser', centerX, secondaryAngle, true);
-            }
+            const secondaryCount = profile.laserSecondaryBeamCount ?? 0;
+            fan('laser', secondaryCount, profile.laserSecondaryAngle ?? 0.14, 0, true);
         }
         return shots;
     }
 
     public getMirrorShotDamage(type: SeraShot['type'], isSecondary = false): number {
         const baseDamage = this.mirrorLoadout?.weaponDamage ?? 10;
-        const multiplier = type === 'heavy' ? 1.25 : type === 'void_lance' ? 1.08 : type === 'laser' && isSecondary ? 0.45 : 1;
+        const multiplier = type === 'heavy' ? 1.25 : type === 'void_lance' ? 1.35 : type === 'arc' ? 1.15 : type === 'laser' && isSecondary ? 0.45 : 1;
         return baseDamage * multiplier;
     }
 

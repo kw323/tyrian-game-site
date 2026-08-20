@@ -95,13 +95,14 @@ export function getWeaponRuntimeProfile(type: RuntimeWeaponType, requestedLevel:
         case 'void_lance':
             return {
                 projectileCount: rank >= 22 ? 4 : rank >= 14 ? 3 : rank >= 7 ? 2 : 1,
-                // A slow-moving singularity stays in the combat space long enough to
-                // control lanes. Higher ranks widen and intensify its event horizon.
-                voidProjectileSpeed: 7.4 - level * 0.05,
-                voidFieldRadius: 44 + level * 5,
-                voidFieldDuration: 1.65 + level * 0.05,
-                voidSuctionStrength: 1.2 + level * 0.14,
-                voidProjectileCaptureRadius: 11 + level * 0.7
+                // Void Lance trades its former oversized field for a tighter, far more
+                // dangerous singularity. Rank improves control intensity, damage uptime and
+                // interception rather than letting the visual event horizon fill the arena.
+                voidProjectileSpeed: 7.1 - level * 0.04,
+                voidFieldRadius: 30 + level * 2.2,
+                voidFieldDuration: 1.8 + level * 0.055,
+                voidSuctionStrength: 2.3 + level * 0.18,
+                voidProjectileCaptureRadius: 18 + level * 0.55
             };
     }
 }

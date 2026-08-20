@@ -682,7 +682,9 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             const getSeraMirrorLoadout = (): SeraMirrorLoadout => {
                 const selectedWeapon = weaponSystem.getCurrentWeapon();
                 const weaponStats = weaponSystem.getCurrentWeaponStats();
-                const selectedAbility = tacticalAbilitySystem.getCurrentAbility();
+                // Sera's duel craft is aggressive rather than controlling: it uses the
+                // current OVER POWER module, never TIME LOCK, when the pilot has unlocked it.
+                const selectedAbility = TacticalAbilityType.OVER_POWER;
                 const abilityLevel = tacticalAbilitySystem.getCurrentLevel(selectedAbility);
                 const abilityData = tacticalAbilitySystem.getAbilityLevel(selectedAbility);
                 return {
@@ -739,7 +741,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     maxPower: Math.round(200 + 36 * 13.25),
                     ability: 'over_power',
                     abilityLevel: 5,
-                    abilityDuration: 5.2,
+                    abilityDuration: 3.0,
                     pilotInvestmentBudget
                 };
             };
@@ -786,18 +788,19 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         singularity.isFriendly = friendly;
                         game.addEntity(singularity);
                     } else {
-                        const speed = shot.type === 'heavy' ? 2.6 : shot.type === 'homing' ? 2.35 : 3.05;
-                        const style = shot.type === 'heavy' ? 'heavy' : shot.type === 'homing' ? 'plasma' : 'orb';
+                        const speed = shot.type === 'heavy' ? 2.6 : shot.type === 'homing' ? 2.35 : shot.type === 'arc' ? 4.2 : 3.05;
+                        const style = shot.type === 'heavy' ? 'heavy' : shot.type === 'homing' ? 'plasma' : shot.type === 'arc' ? 'needle' : 'orb';
+                        const color = shot.type === 'arc' ? '#f8ff79' : friendly ? '#63f5ff' : '#ff668f';
                         const mirrorBullet = new EnemyBullet(
                             shot.x,
                             shot.y,
-                            shot.type === 'heavy' ? 12 : 7,
-                            shot.type === 'heavy' ? 12 : 7,
+                            shot.type === 'heavy' ? 12 : shot.type === 'arc' ? 5 : 7,
+                            shot.type === 'heavy' ? 12 : shot.type === 'arc' ? 16 : 7,
                             speed,
                             damage,
                             dirX,
                             dirY,
-                            friendly ? '#63f5ff' : '#ff668f',
+                            color,
                             style
                         );
                         mirrorBullet.isFriendly = friendly;
@@ -1002,7 +1005,9 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 if (gameState.level < 70) return;
                 if (gameState.level % 5 === 0 || b.missionType === 'singularity') {
                     stageHazardKind = 'singularity';
-                    gravityWell = new GravityWell(cWidth / 2, 390, 42, 2.2);
+                    // A compact singularity with a serious pull: it creates an escape
+                    // challenge without dominating the visual playfield.
+                    gravityWell = new GravityWell(cWidth / 2, 390, 32, 3.8);
                     missionEventSpawned = true;
                     game.addEntity(gravityWell);
                     return;
@@ -1017,34 +1022,57 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
             const spawnAsteroidBeltHazardIfNeeded = (currentTime: number, deltaTime: number): void => {
                 if (gameState.level < 41 || gameState.level > 50) return;
-                if (currentTime - lastAsteroidSpawnTime < 2.2) return;
+                if (currentTime - lastAsteroidSpawnTime < 1.75) return;
                 lastAsteroidSpawnTime = currentTime;
 
                 const canvasWidth = game.getCanvas().width;
-                const fromLeft = Math.random() < 0.5;
-                const startX = fromLeft ? -80 : canvasWidth + 20;
-                const targetY = Math.random() * (GAME_CANVAS_HEIGHT - 300) + 120;
-                const speed = 2.5 + Math.random() * 2.5;
-                const vx = (fromLeft ? 1 : -1) * speed;
-                const vy = (Math.random() - 0.5) * 0.8;
-
                 const roll = Math.random();
                 let kind: 'massive' | 'fragile' | 'debris' = 'debris';
-                let size = 42;
-                if (roll < 0.25) {
+                let size = 48;
+                if (roll < 0.28) {
                     kind = 'massive';
-                    size = 78;
-                } else if (roll < 0.65) {
+                    size = 128 + Math.round(Math.random() * 24);
+                } else if (roll < 0.68) {
                     kind = 'fragile';
-                    size = 56;
+                    size = 82 + Math.round(Math.random() * 18);
                 } else {
                     kind = 'debris';
-                    size = 32;
+                    size = 42 + Math.round(Math.random() * 14);
                 }
+
+                // Asteroids enter from the top, left or right and cross the arena on a
+                // genuine vector. Their apparent speed falls as their size rises.
+                const entryEdge = Math.floor(Math.random() * 3);
+                let startX: number;
+                let startY: number;
+                let destinationX: number;
+                let destinationY: number;
+                if (entryEdge === 0) {
+                    startX = Math.random() * canvasWidth;
+                    startY = -size - 42;
+                    destinationX = 90 + Math.random() * (canvasWidth - 180);
+                    destinationY = GAME_CANVAS_HEIGHT + size + 90;
+                } else if (entryEdge === 1) {
+                    startX = -size - 42;
+                    startY = 90 + Math.random() * (GAME_CANVAS_HEIGHT - 270);
+                    destinationX = canvasWidth + size + 90;
+                    destinationY = 80 + Math.random() * (GAME_CANVAS_HEIGHT - 180);
+                } else {
+                    startX = canvasWidth + size + 42;
+                    startY = 90 + Math.random() * (GAME_CANVAS_HEIGHT - 270);
+                    destinationX = -size - 90;
+                    destinationY = 80 + Math.random() * (GAME_CANVAS_HEIGHT - 180);
+                }
+                const directionX = destinationX - startX;
+                const directionY = destinationY - startY;
+                const directionMagnitude = Math.max(1, Math.hypot(directionX, directionY));
+                const speed = Math.max(1.8, 6.3 - size * 0.028) + Math.random() * 0.45;
+                const vx = directionX / directionMagnitude * speed;
+                const vy = directionY / directionMagnitude * speed;
 
                 const asteroid = new AsteroidBeltEntity(
                     startX,
-                    targetY,
+                    startY,
                     size,
                     vx,
                     vy,
@@ -1181,11 +1209,13 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             };
 
             const openStageBriefing = (): void => {
+                // Stage dialogue is preserved in the mission archive, but it no longer blocks
+                // the player at the beginning of every stage.
                 commsParagraphIndex = 0;
-                showCommsModal = true;
+                showCommsModal = false;
                 commVisibleUntil = 0;
                 VoicePlaybackManager.stop();
-                playBriefingLine(commsParagraphIndex);
+                startStagePlay();
             };
 
             const advanceBriefing = (): void => {
@@ -1230,7 +1260,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 game['entities'] = [player];
                 deploySeraAlly();
                 deployStageHazards();
-                commVisibleUntil = performance.now() + 9000;
+                // No automatic opening transmission: missions now begin directly from the Ready Room.
+                commVisibleUntil = 0;
                 SoundSystem.toggleSound(true);
                 SoundSystem.toggleMusic(true);
                 SoundSystem.startMusic();
@@ -1874,6 +1905,34 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 // Call original update
                 originalUpdate(deltaTime);
                 combatVisualEffects.update(deltaTime);
+
+                // Enemy pilots read the nearby asteroid field and steer away before impact.
+                // This is deliberate flight behavior, not an immunity: sharp crossings and
+                // close spawns can still catch an enemy that reacts too late.
+                const activeAsteroids = game['entities'].filter((entity: any) => entity instanceof AsteroidBeltEntity && entity.isActive) as AsteroidBeltEntity[];
+                if (activeAsteroids.length) {
+                    game['entities'].forEach((entity: any) => {
+                        if (!(entity instanceof Enemy || entity instanceof EnemyAdvanced) || !entity.isActive) return;
+                        const entityCenterX = entity.x + entity.width / 2;
+                        const entityCenterY = entity.y + entity.height / 2;
+                        const nearest = activeAsteroids
+                            .map((asteroid) => {
+                                const asteroidX = asteroid.x + asteroid.width / 2;
+                                const asteroidY = asteroid.y + asteroid.height / 2;
+                                return { asteroid, asteroidX, asteroidY, distance: Math.hypot(entityCenterX - asteroidX, entityCenterY - asteroidY) };
+                            })
+                            .sort((a, b) => a.distance - b.distance)[0];
+                        if (!nearest) return;
+                        const safeDistance = nearest.asteroid.radius + Math.max(entity.width, entity.height) * 0.65 + 118;
+                        if (nearest.distance >= safeDistance || nearest.distance <= 1) return;
+                        const urgency = (safeDistance - nearest.distance) / safeDistance;
+                        const awayX = (entityCenterX - nearest.asteroidX) / nearest.distance;
+                        const awayY = (entityCenterY - nearest.asteroidY) / nearest.distance;
+                        entity.applyKnockback(awayX * 3.2 * urgency, awayY * 2.4 * urgency, 1);
+                        entity.x += awayX * urgency * deltaTime * 108;
+                        entity.y += awayY * urgency * deltaTime * 76;
+                    });
+                }
                 resolveStageHazardCollisions();
 
                 if (finalBossAssembly?.isMeltdownActive()) {
@@ -2034,7 +2093,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         const fieldRadius = bullet.getFieldRadius();
                         const falloff = Math.max(0.35, 1 - distance / fieldRadius);
                         const suction = bullet.getSuctionStrength() * (0.65 + falloff * 0.75);
-                        bullet.registerSuction(target, isHostileShot ? 0.035 : 0.12);
+                        bullet.registerSuction(target, isHostileShot ? 0.025 : 0.09);
 
                         if (target instanceof EnemyBullet && !target.isFriendly) {
                             // Bend hostile fire toward the event horizon. Repeated pulls make
@@ -2557,15 +2616,27 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
                 const activeCoreProfile = elementalCoreSystem.getProfile(elementalCoreSystem.getActiveCore());
                 const fixedElementWeapon = player.weaponType === 'arc' || player.weaponType === 'void_lance';
-                ctx.fillStyle = fixedElementWeapon ? (player.weaponType === 'arc' ? '#f8ff79' : '#b06cff') : activeCoreProfile.color;
+                const coreHudX = 744;
+                const coreHudY = 38;
+                const coreHudWidth = 432;
+                const coreColor = fixedElementWeapon ? (player.weaponType === 'arc' ? '#f8ff79' : '#b06cff') : activeCoreProfile.color;
+                ctx.fillStyle = 'rgba(4, 18, 36, 0.9)';
+                ctx.fillRect(coreHudX, coreHudY, coreHudWidth, 48);
+                ctx.strokeStyle = coreColor;
+                ctx.lineWidth = 1;
+                ctx.strokeRect(coreHudX, coreHudY, coreHudWidth, 48);
+                ctx.fillStyle = coreColor;
                 ctx.font = 'bold 13px monospace';
                 ctx.fillText(
                     fixedElementWeapon
-                        ? `ELEMENT: FIXED ${player.weaponType === 'arc' ? 'ELECTRIC // CHAIN LIGHTNING' : 'VOID // BLACK HOLE'}`
-                        : `ELEMENT [1–5]: ${activeCoreProfile.name} // RANK ${activeCoreProfile.rank}/5`,
-                    760,
-                    72
+                        ? `FIXED IDENTITY // ${player.weaponType === 'arc' ? 'ELECTRIC // CHAIN LIGHTNING' : 'VOID // BLACK HOLE'}`
+                        : `ACTIVE CORE // ${activeCoreProfile.name.toUpperCase()} // RANK ${activeCoreProfile.rank}/5`,
+                    coreHudX + 12,
+                    coreHudY + 19
                 );
+                ctx.fillStyle = '#b8d4df';
+                ctx.font = '11px monospace';
+                ctx.fillText(fixedElementWeapon ? '1–5 STORE YOUR NEXT SWITCHABLE CORE' : '1 CRYO   2 FIRE   3 CORROSION   4 KINETIC   5 PLASMA', coreHudX + 12, coreHudY + 37);
 
                 // Tactical ability readout: only the selected module can be armed at once.
                 const abilityBarY = 250;
@@ -3225,25 +3296,17 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         const deckHazard = getStageHazardBrief(gameState.level, stageBriefing.missionType);
                         ctx.fillStyle = '#f0b84e';
                         ctx.fillText(`FIELD HAZARD: ${deckHazard.name}`, 52, 418);
-                        drawPortrait(ctx, stageBriefing.contact.speaker, 52, 442, 56);
-                        ctx.fillStyle = stageBriefing.contact.speaker === 'sera' ? '#ff9b9b' : '#72ffe1';
-                        ctx.font = 'bold 15px Arial';
-                        ctx.fillText(`${stageBriefing.contact.name} // SECURE COMMS`, 122, 462);
-                        ctx.fillStyle = '#dbe9ee';
-                        ctx.font = '14px Arial';
-                        drawWrappedText(ctx, stageBriefing.contact.message, 122, 488, 830, 18, 2);
-
                         ctx.fillStyle = '#c59cff';
                         ctx.font = 'bold 15px monospace';
-                        ctx.fillText(`EXPECTED EVENT: ${eventInfo.name}`, 52, 548);
+                        ctx.fillText(`EXPECTED EVENT: ${eventInfo.name}`, 52, 482);
                         ctx.fillStyle = '#b7cdd6';
                         ctx.font = '13px Arial';
-                        drawWrappedText(ctx, `${eventInfo.desc}  ${deckHazard.detail}`, 52, 572, 890, 16, 2);
+                        drawWrappedText(ctx, `${eventInfo.desc}  ${deckHazard.detail}`, 52, 506, 890, 16, 2);
 
                         ctx.fillStyle = '#00FF88';
                         ctx.font = 'bold 15px monospace';
-                        ctx.fillText(`PRIMARY OBJECTIVE: ${stageBriefing.missionTargetName}`, 52, 624);
-                        ctx.fillText(`BOUNTY: +${Math.floor(stageBriefing.bountyReward * COMBAT_REWARD_MULTIPLIER)} CREDITS`, 52, 650);
+                        ctx.fillText(`PRIMARY OBJECTIVE: ${stageBriefing.missionTargetName}`, 52, 570);
+                        ctx.fillText(`BOUNTY: +${Math.floor(stageBriefing.bountyReward * COMBAT_REWARD_MULTIPLIER)} CREDITS`, 52, 596);
 
                         ctx.fillStyle = '#FFD166';
                         ctx.font = 'bold 16px Arial';
@@ -3256,19 +3319,6 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         ctx.font = '13px monospace';
                         ctx.fillText('Select a bay above to upgrade armaments, hull systems, or tactical ops.', 242, 840);
 
-                        drawCard(28, 860, 944, 130, `GLOBAL DIFFICULTY // ACTIVE: ${difficultyProfile.label}`, '#ff6b6b');
-                        ctx.textAlign = 'left';
-                        ctx.fillStyle = '#dbe9ee';
-                        ctx.font = '13px Arial';
-                        ctx.fillText('Applies to enemy hull, shields, damage, speed, fire rate, mission threats, and bosses.', 48, 892);
-                        DifficultySystem.PROFILES.forEach((profile, index) => {
-                            const x = 42 + index * 145;
-                            const active = profile.id === difficultyId;
-                            drawButton(`difficulty-${profile.id}`, active ? `● ${profile.label}` : profile.label, x, 912, 132, 34, active ? '#00FF88' : '#ff8f8f', () => selectDifficulty(profile.id));
-                        });
-                        ctx.fillStyle = '#8ea9b4';
-                        ctx.font = '12px Arial';
-                        ctx.fillText(difficultyProfile.description, 48, 972);
                         return;
                     }
 
@@ -4056,6 +4106,22 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     }
                 }
 
+                if (gameState.isPaused && !gameState.gameOver && !gameState.showLevelScreen) {
+                    ctx.fillStyle = 'rgba(1, 8, 20, 0.76)';
+                    ctx.fillRect(0, 0, game.getCanvas().width, game.getCanvas().height);
+                    ctx.strokeStyle = '#75d8e7';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(game.getCanvas().width / 2 - 230, game.getCanvas().height / 2 - 85, 460, 170);
+                    ctx.fillStyle = '#00ff88';
+                    ctx.font = 'bold 42px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('PAUSED', game.getCanvas().width / 2, game.getCanvas().height / 2 - 18);
+                    ctx.fillStyle = '#dbe9ee';
+                    ctx.font = 'bold 17px Arial';
+                    ctx.fillText('P / ESC  //  RESUME MISSION', game.getCanvas().width / 2, game.getCanvas().height / 2 + 24);
+                    ctx.textAlign = 'left';
+                }
+
                 // Game over screen
                 if (gameState.gameOver) {
                     ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
@@ -4112,8 +4178,14 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         return;
                     }
 
+                if (!gameState.gameOver && !gameState.showLevelScreen && (e.key === 'p' || e.key === 'P' || e.key === 'Escape')) {
+                    e.preventDefault();
+                    if (!e.repeat) gameState.togglePause();
+                    return;
+                }
+
                 // A user key press is a valid browser gesture for resuming the AudioContext.
-                if (!gameState.gameOver && !gameState.showLevelScreen) SoundSystem.startMusic();
+                if (!gameState.gameOver && !gameState.showLevelScreen && !gameState.isPaused) SoundSystem.startMusic();
 
                 // Weapon selection is locked to the Ready Room. During combat, 1–5 switch
                 // the active elemental core instead; Black Hole and Chain Lightning keep their
