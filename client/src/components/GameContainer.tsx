@@ -49,6 +49,7 @@ import { MissionArchiveSystem } from '@/game/story/MissionArchiveSystem';
 import { DifficultySystem, DifficultyId, DifficultyProfile } from '@/game/core/DifficultySystem';
 import { FinalBossAssembly, FinalBossPart } from '@/game/entities/FinalBossPart';
 import { VoicePlaybackManager } from '@/game/core/VoicePlaybackManager';
+import { EpilogueCharacterId, getEpilogueInterfaceCopy, getEpilogueScenes } from '@/game/story/EpilogueSystem';
 import { StageSelectModal } from '@/components/StageSelectModal';
 import { SaveLoadModal } from '@/components/SaveLoadModal';
 import { SaveData, SaveSystem } from '@/game/core/SaveSystem';
@@ -250,6 +251,12 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 const image = new Image();
                 image.src = CampaignSystem.getPortraitUrl(character);
                 portraitImages[character] = image;
+            });
+            const epilogueImages: Partial<Record<EpilogueCharacterId, HTMLImageElement>> = {};
+            getEpilogueScenes('he').forEach((scene) => {
+                const image = new Image();
+                image.src = scene.imageUrl;
+                epilogueImages[scene.id] = image;
             });
             let stageBriefing = CampaignSystem.getStageBriefing(gameState.level, currentLangForBriefing);
             let commVisibleUntil = performance.now() + 9000;
@@ -2952,132 +2959,111 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                             addButton(id, x, y, width, height, action);
                         };
 
-                        const isHebrew = gameplayLangRef.current === 'he';
-                        ctx.textAlign = 'center';
+                        const activeLanguage = gameplayLangRef.current;
+                        const isHebrew = activeLanguage === 'he';
+                        const finaleCopy = getEpilogueInterfaceCopy(activeLanguage);
+                        const epilogueScenes = getEpilogueScenes(activeLanguage);
+                        const sceneIndex = finaleSceneIndex % epilogueScenes.length;
+                        const currentScene = epilogueScenes[sceneIndex];
+                        const currentImage = epilogueImages[currentScene.id];
+                        const textX = isHebrew ? canvasWidth - 76 : 76;
+                        const textWidth = 500;
+                        const imageX = isHebrew ? 76 : canvasWidth - 526;
+                        const imageY = 158;
+                        const imageWidth = 450;
+                        const imageHeight = 410;
+
+                        ctx.save();
                         ctx.fillStyle = '#00FF88';
                         ctx.font = 'bold 40px Arial';
-                        ctx.fillText(isHebrew ? 'הקמפיין הושלם // ארק-9 בטוחה' : 'CAMPAIGN COMPLETE // ARK-9 SECURED', canvasWidth / 2, 60);
-
+                        ctx.textAlign = 'center';
+                        ctx.direction = 'ltr';
+                        ctx.fillText(finaleCopy.campaignComplete, canvasWidth / 2, 60);
                         ctx.fillStyle = '#FFD700';
-                        ctx.font = 'bold 18px Arial';
-                        ctx.fillText(isHebrew ? 'ספינת האם של הארכון הושמדה. החייזרים נסוגו בחזרה לחלל העמוק.' : 'The Archon Mothership has fallen. The alien fleet has retreated into the void.', canvasWidth / 2, 94);
+                        ctx.font = 'bold 17px Arial';
+                        ctx.fillText(finaleCopy.lead, canvasWidth / 2, 94);
 
-                        // Epilogue narrative scenes box
                         ctx.fillStyle = '#06121e';
-                        ctx.fillRect(60, 118, canvasWidth - 120, 275);
+                        ctx.fillRect(60, 118, canvasWidth - 120, 490);
                         ctx.strokeStyle = '#75d8e7';
                         ctx.lineWidth = 1;
-                        ctx.strokeRect(60, 118, canvasWidth - 120, 275);
-
+                        ctx.strokeRect(60, 118, canvasWidth - 120, 490);
                         ctx.fillStyle = '#75d8e7';
-                        ctx.font = 'bold 16px Arial';
+                        ctx.font = 'bold 15px Arial';
                         ctx.textAlign = isHebrew ? 'right' : 'left';
-                        ctx.fillText(isHebrew ? 'יומן אפילוג // סיפורי הדמויות והגלקסיה' : 'MISSION ARCHIVE // TRUE EPILOGUE & CHARACTER ARCS', isHebrew ? canvasWidth - 90 : 90, 150);
-
-                        ctx.fillStyle = '#dbe9ee';
-                        ctx.font = '14px Arial';
-                        const epilogueScenes = isHebrew ? [
-                            [
-                                '1. השניות שאחרי הניצחון:',
-                                'הטייס מנסה לקרוא בקשר ומוצא רק רעש סטטי. "כולם איתי?" הוא שואל.',
-                                'נעמי: "החללית שלך איבדה 43% מעטפת ו-61% מערכות, כולל מכונת הקפה!"',
-                                'סרה מגיעה לצדו עם חללית פגועה וגוררת אותו החוצה: "תפסיק לנסות למות בדרמטיות. תן לי לנצח את כוח הכבידה."'
-                            ],
-                            [
-                                '2. הטייס וסרה:',
-                                'בזמן טיסה משותפת בגבול ארק-9, סרה מודה שבתחילת הדרך נשלחה לעצור אותו אך מצאה בו אמת.',
-                                'סרה: "אם לא היית משמיד חצי מהצי שלי, הייתי מזמינה אותך לשתות משהו."',
-                                'הטייס: "ואם לא היית מנסה להפיל אותי לשמש, הייתי מסכים. נשמע כמו דייט."',
-                                'סרה מחזיקה את ידו בזמן ששתי החלליות הניסיוניות גולשות יחד אל תוך הזריחה.'
-                            ],
-                            [
-                                '3. נקמתה של ד״ר נעמי:',
-                                'נעמי מגלה שאביה, פרופסור רחב, תכנן את ספינת האם וניצל את המחקר שלה.',
-                                'במקום להרוג אותו, היא משדרת את כל סודותיו לכל הגלקסיה ונועלת עליו את המעבדה.',
-                                'נעמי: "אבא, תנסה לפעם אחת בחיים להגיע למסקנה בעצמך. זו שמתפוצצת בעוד שלוש דקות."'
-                            ],
-                            [
-                                '4. גורל הצבא והחייזרים:',
-                                'המפקדת אלנה וייל מובילה טיהור יסודי של האדמירלים המושחתים ומציעה לטייס ולסרה פיקוד עצמאי.',
-                                'החייזרים נסוגו דרך שערים רחוקים לאחר שהבינו שחלק מהמלחמה הונעה על ידי שקרים של הצי.',
-                                'אך גוסט כבר מודיע בקשר מוצפן: "מצאתי עוד אות בדרק-ווב. המשחק רק מתחיל."'
-                            ]
-                        ] : [
-                            [
-                                '1. The Moments After Victory:',
-                                'The pilot tries calling on the comms: "Is anyone still with me?"',
-                                'Naomi: "Your hull is at 43% and your coffee maker is vaporized!"',
-                                'Sera arrives alongside with a damaged frame: "Stop trying to die dramatically. Let me beat gravity instead."'
-                            ],
-                            [
-                                '2. Pilot & Sera Arc:',
-                                'Cruising along the Ark-9 border, Sera admits she was originally sent to stop him but found loyalty instead.',
-                                'Sera: "If you had not blasted half my fleet, I would buy you a drink."',
-                                'Pilot: "And if you had not tried to drop me into a sun, I would agree. Sounds like a date."',
-                                'Sera holds his hand as both experimental vessels glide together toward dawn.'
-                            ],
-                            [
-                                '3. Dr. Naomi\'s Payback:',
-                                'Naomi discovers her father, Professor Arch, engineered the mothership behind her back.',
-                                'Instead of a simple execution, she broadcasts his treason across the galaxy and locks him in his lab.',
-                                'Naomi: "Father, try reaching a conclusion on your own. The lab explodes in three minutes."'
-                            ],
-                            [
-                                '4. Fleet & Alien Aftermath:',
-                                'Commander Elena purges corrupt admirals and offers the pilot and Sera an autonomous task force.',
-                                'The alien invaders retreat through distant gates after realizing the war was built on lies.',
-                                'Ghost chimes in via a secure pulse: "I found a new signal on the dark web. The game continues."'
-                            ]
-                        ];
-
-                        epilogueScenes.push(isHebrew ? [
-                            '5. תיעוד מסע הקמפיין:',
-                            `ניקוד סופי: ${Math.floor(gameState.score)}  //  דרגת חללית: Mk.${shipSystem.getCurrentShipId() + 1}`,
-                            `גנרטור: דרגה ${powerSystem.generatorLevel + 1}  //  נשק פעיל: ${weaponSystem.getCurrentWeapon().toUpperCase()}`,
-                            `דו־קרב סרה: ${seraDuelOutcome === 'win' ? 'ניצחון' : seraDuelOutcome === 'loss' ? 'ניסיון הושלם' : 'ללא תיעוד'}`,
-                            'ארק-9 מאובטחת. יומן המשימות נשאר פתוח לכל קריאה חוזרת.'
-                        ] : [
-                            '5. Campaign Record:',
-                            `Final Score: ${Math.floor(gameState.score)}  //  Ship Tier: Mk.${shipSystem.getCurrentShipId() + 1}`,
-                            `Generator: Rank ${powerSystem.generatorLevel + 1}  //  Active Weapon: ${weaponSystem.getCurrentWeapon().toUpperCase()}`,
-                            `Sera Duel: ${seraDuelOutcome === 'win' ? 'Victory' : seraDuelOutcome === 'loss' ? 'Trial Completed' : 'No Record'}`,
-                            'Ark-9 is secured. The mission archive remains open for review.'
-                        ]);
-                        const currentScene = epilogueScenes[finaleSceneIndex % epilogueScenes.length];
+                        ctx.direction = isHebrew ? 'rtl' : 'ltr';
+                        ctx.fillText(finaleCopy.archive, textX, 146);
                         ctx.fillStyle = '#8da8b5';
                         ctx.font = '12px Arial';
                         ctx.textAlign = isHebrew ? 'left' : 'right';
-                        ctx.fillText(`${finaleSceneIndex % epilogueScenes.length + 1} / ${epilogueScenes.length}`, isHebrew ? 90 : canvasWidth - 90, 150);
-                        ctx.fillStyle = '#dbe9ee';
-                        ctx.font = '14px Arial';
-                        currentScene.forEach((line, idx) => {
-                            ctx.textAlign = isHebrew ? 'right' : 'left';
-                            ctx.fillText(line, isHebrew ? canvasWidth - 90 : 90, 185 + idx * 42);
-                        });
+                        ctx.fillText(`${sceneIndex + 1} / ${epilogueScenes.length}`, isHebrew ? 76 : canvasWidth - 76, 146);
 
-                        // Credits section
-                        ctx.fillStyle = '#06121e';
-                        ctx.fillRect(60, 408, canvasWidth - 120, 115);
+                        ctx.fillStyle = '#0a1a29';
+                        ctx.fillRect(imageX - 4, imageY - 4, imageWidth + 8, imageHeight + 8);
                         ctx.strokeStyle = '#c084fc';
-                        ctx.strokeRect(60, 408, canvasWidth - 120, 115);
+                        ctx.strokeRect(imageX - 4, imageY - 4, imageWidth + 8, imageHeight + 8);
+                        if (currentImage?.complete && currentImage.naturalWidth > 0) {
+                            const sourceRatio = currentImage.naturalWidth / currentImage.naturalHeight;
+                            const targetRatio = imageWidth / imageHeight;
+                            let sourceX = 0;
+                            let sourceY = 0;
+                            let sourceWidth = currentImage.naturalWidth;
+                            let sourceHeight = currentImage.naturalHeight;
+                            if (sourceRatio > targetRatio) {
+                                sourceWidth = currentImage.naturalHeight * targetRatio;
+                                sourceX = (currentImage.naturalWidth - sourceWidth) / 2;
+                            } else {
+                                sourceHeight = currentImage.naturalWidth / targetRatio;
+                                sourceY = (currentImage.naturalHeight - sourceHeight) / 2;
+                            }
+                            ctx.drawImage(currentImage, sourceX, sourceY, sourceWidth, sourceHeight, imageX, imageY, imageWidth, imageHeight);
+                        } else {
+                            ctx.fillStyle = '#102c3e';
+                            ctx.fillRect(imageX, imageY, imageWidth, imageHeight);
+                        }
 
+                        ctx.textAlign = isHebrew ? 'right' : 'left';
+                        ctx.direction = isHebrew ? 'rtl' : 'ltr';
+                        ctx.fillStyle = '#f4c66a';
+                        ctx.font = 'bold 16px Arial';
+                        ctx.fillText(currentScene.characterName, textX, 188);
+                        ctx.fillStyle = '#f2f8fb';
+                        ctx.font = 'bold 27px Arial';
+                        ctx.fillText(currentScene.title, textX, 225);
+                        ctx.strokeStyle = 'rgba(114, 255, 225, 0.35)';
+                        ctx.beginPath();
+                        ctx.moveTo(isHebrew ? textX - textWidth : textX, 244);
+                        ctx.lineTo(isHebrew ? textX : textX + textWidth, 244);
+                        ctx.stroke();
+                        ctx.fillStyle = '#dbe9ee';
+                        ctx.font = '18px Arial';
+                        drawWrappedText(ctx, currentScene.body[0], textX, 280, textWidth, 27, 4);
+                        ctx.fillStyle = '#b8d4df';
+                        ctx.font = '17px Arial';
+                        drawWrappedText(ctx, currentScene.body[1], textX, 420, textWidth, 26, 4);
+                        ctx.restore();
+
+                        ctx.fillStyle = '#06121e';
+                        ctx.fillRect(60, 626, canvasWidth - 120, 94);
+                        ctx.strokeStyle = '#c084fc';
+                        ctx.strokeRect(60, 626, canvasWidth - 120, 94);
                         ctx.fillStyle = '#c084fc';
                         ctx.font = 'bold 15px Arial';
                         ctx.textAlign = isHebrew ? 'right' : 'left';
-                        ctx.fillText(isHebrew ? 'קרדיטים ויוצרי המשחק' : 'CREDITS & ACKNOWLEDGMENTS', isHebrew ? canvasWidth - 85 : 90, 435);
-
+                        ctx.direction = isHebrew ? 'rtl' : 'ltr';
+                        ctx.fillText(finaleCopy.credits, isHebrew ? canvasWidth - 85 : 85, 656);
                         ctx.fillStyle = '#dbe9ee';
                         ctx.font = '13px Arial';
-                        ctx.fillText(isHebrew ? 'עיצוב ופיתוח: Manus AI & טייס פרויקט Zero  •  עלילה ודמויות: ד״ר נעמי רן & אלנה וייל' : 'Lead Design: Manus AI & Pilot  •  Narrative & Voice: Dr. Naomi Ren & Elena Vail', isHebrew ? canvasWidth - 85 : 90, 460);
-                        ctx.fillText(isHebrew ? 'מנוע סאונד רטרו שמיאסן וסינתיסייזר: Web Audio API  •  גלקסיה: ארק-9' : 'Retro Shamisen Sound Engine: Web Audio API  •  Galaxy: Ark-9', isHebrew ? canvasWidth - 85 : 90, 485);
+                        ctx.fillText(finaleCopy.creditsLine, isHebrew ? canvasWidth - 85 : 85, 684);
+                        ctx.fillText(finaleCopy.closingLine, isHebrew ? canvasWidth - 85 : 85, 706);
 
-                        drawButton('finale-previous', isHebrew ? 'הקודם' : 'PREVIOUS', 90, 548, 180, 48, '#75d8e7', () => {
+                        drawButton('finale-previous', finaleCopy.previous, 90, 750, 180, 52, '#75d8e7', () => {
                             finaleSceneIndex = (finaleSceneIndex + epilogueScenes.length - 1) % epilogueScenes.length;
                         });
-                        drawButton('finale-next', isHebrew ? 'הבא' : 'NEXT', canvasWidth - 270, 548, 180, 48, '#75d8e7', () => {
+                        drawButton('finale-next', finaleCopy.next, canvasWidth - 270, 750, 180, 52, '#75d8e7', () => {
                             finaleSceneIndex = (finaleSceneIndex + 1) % epilogueScenes.length;
                         });
-                        drawButton('finale-return', isHebrew ? 'חזרה למסך הראשי // תפריט ראשי' : 'RETURN TO TITLE // MAIN MENU', canvasWidth / 2 - 190, 548, 380, 48, '#00FF88', () => {
+                        drawButton('finale-return', finaleCopy.returnToTitle, canvasWidth / 2 - 190, 750, 380, 52, '#00FF88', () => {
                             returnToTitle();
                             shopScreen = 'hub';
                         });
