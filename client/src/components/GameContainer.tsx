@@ -4181,7 +4181,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     ctx.fillRect(0, 0, game.getCanvas().width, game.getCanvas().height);
                     ctx.strokeStyle = '#75d8e7';
                     ctx.lineWidth = 2;
-                    ctx.strokeRect(game.getCanvas().width / 2 - 230, game.getCanvas().height / 2 - 85, 460, 170);
+                    ctx.strokeRect(game.getCanvas().width / 2 - 260, game.getCanvas().height / 2 - 110, 520, 220);
                     ctx.fillStyle = '#00ff88';
                     ctx.font = 'bold 42px Arial';
                     ctx.textAlign = 'center';
@@ -4189,6 +4189,12 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     ctx.fillStyle = '#dbe9ee';
                     ctx.font = 'bold 17px Arial';
                     ctx.fillText('P / ESC  //  RESUME MISSION', game.getCanvas().width / 2, game.getCanvas().height / 2 + 24);
+                    ctx.fillStyle = '#ffb4c0';
+                    ctx.font = 'bold 15px Arial';
+                    ctx.fillText('Q  //  ABANDON MISSION AND RETURN TO COMMAND CENTER', game.getCanvas().width / 2, game.getCanvas().height / 2 + 60);
+                    ctx.fillStyle = '#8ea6b2';
+                    ctx.font = '13px Arial';
+                    ctx.fillText('Current combat progress is discarded; the last Ready Room save remains safe.', game.getCanvas().width / 2, game.getCanvas().height / 2 + 86);
                     ctx.textAlign = 'left';
                 }
 
@@ -4247,6 +4253,15 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         }
                         return;
                     }
+
+                if (!gameState.gameOver && !gameState.showLevelScreen && gameState.isPaused && (e.key === 'q' || e.key === 'Q')) {
+                    e.preventDefault();
+                    if (!e.repeat) {
+                        gameState.isPaused = false;
+                        returnToTitle();
+                    }
+                    return;
+                }
 
                 if (!gameState.gameOver && !gameState.showLevelScreen && (e.key === 'p' || e.key === 'P' || e.key === 'Escape')) {
                     e.preventDefault();
