@@ -1,6 +1,8 @@
 export const ENGINE_UPGRADE_MAX_RANK = 8;
 
-const ENGINE_UPGRADE_COSTS = [600, 800, 1050, 1350, 1750, 2250, 2850, 3600] as const;
+// Engine precision is valuable throughout the campaign, so the investment follows
+// the mid-campaign economy instead of being fully purchased in the opening sectors.
+const ENGINE_UPGRADE_COSTS = [2000, 3000, 4500, 6500, 9000, 12500, 17000, 23000] as const;
 const BONUS_PERCENT_PER_RANK = 2;
 
 /**

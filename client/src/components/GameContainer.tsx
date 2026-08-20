@@ -710,10 +710,9 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     + tacticalAbilitySystem.getTotalInvestment()
                     + shieldInvestment
                     + engineUpgradeSystem.getTotalInvestment();
-                // The escort has a late-campaign Battleship frame. The pilot's total
-                // investment determines how close her laser is to the absolute cap,
-                // without copying the weapon currently selected by the pilot.
-                const laserLevel = Math.min(14, Math.max(12, 12 + Math.floor(Math.log10(Math.max(1, pilotInvestmentBudget)) - 5)));
+                // Sera enters only in stages 81–90. Her assault laser advances through
+                // the late-game ranks with the chapter instead of using the old rank-12–14 escort loadout.
+                const laserLevel = Math.min(22, 18 + Math.floor(Math.max(0, gameState.level - 81) / 2));
                 const laserStats = weaponSystem.getWeaponLevels(WeaponType.LASER)[laserLevel];
                 return {
                     shipTier: 3,
@@ -722,15 +721,14 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     weaponLevel: laserLevel,
                     weaponDamage: laserStats?.damage ?? 44,
                     weaponFireRate: laserStats?.fireRate ?? 10,
-                    // Sera's escort reactor is tuned for sustained support fire. Her laser remains
-                    // high-level, but its dedicated power draw is reduced to 25% of the pilot's
-                    // economy cost so the max generator can sustain the beam between TIME LOCK bursts.
-                    weaponCost: Math.max(4, Math.round(powerSystem.getWeaponCost(WeaponType.LASER, laserLevel) * 0.25 * 10) / 10),
+                    // Her reactor is tuned for an aggressive support beam, but not unlimited fire.
+                    // OVER POWER creates the short sustained spike; normal fire still consumes power.
+                    weaponCost: Math.max(7, Math.round(powerSystem.getWeaponCost(WeaponType.LASER, laserLevel) * 0.4 * 10) / 10),
                     maxShield: 50 + (10 - 1) * 30,
                     shieldRegenRate: 5 + (10 - 1) * 2,
-                    generatorLevel: 28,
-                    generatorOutput: 15 + 28 * 8.5,
-                    maxPower: powerSystem.getMaxPower(),
+                    generatorLevel: 36,
+                    generatorOutput: 15 + 36 * 8.5,
+                    maxPower: Math.round(200 + 36 * 13.25),
                     ability: 'over_power',
                     abilityLevel: 5,
                     abilityDuration: 5.2,
@@ -1974,8 +1972,12 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     let jumpsLeft = bolt.chainJumps;
 
                     while (currentTarget && damage >= 1) {
-                        bolt.registerStrike(sourceX, sourceY, currentTarget, damage);
-                        currentTarget.takeDamage(damage);
+                        // Chain Lightning is a fixed electric weapon. Boss armour disperses
+                        // ordinary chain arcs too easily, so the first-class boss hit receives
+                        // a controlled 35% conductivity bonus while each jump still decays by 50%.
+                        const resolvedDamage = currentTarget instanceof Boss ? damage * 1.35 : damage;
+                        bolt.registerStrike(sourceX, sourceY, currentTarget, resolvedDamage);
+                        currentTarget.takeDamage(resolvedDamage);
                         if (currentTarget instanceof Enemy || currentTarget instanceof EnemyAdvanced) registerEnemyDefeat(currentTarget);
                         else registerBossDefeat(currentTarget);
 

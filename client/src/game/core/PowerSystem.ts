@@ -1,6 +1,6 @@
 export class PowerSystem {
-    public maxPower: number = 200; // Total power capacity (doubled)
-    public currentPower: number = 200; // Current power level (doubled)
+    public maxPower: number = 200; // Base capacitor capacity before generator storage upgrades
+    public currentPower: number = 200;
     public generatorLevel: number = 0; // Generator upgrade level (0-14)
     public generatorOutput: number = 15; // Power generated per second at level 0
     private reactorRecovering: boolean = false;
@@ -15,7 +15,9 @@ export class PowerSystem {
         ['spread', [0, 0.7, 1.4, 2.1, 2.8, 3.5, 4.3, 5, 5.7, 6.4, 7.1, 7.8, 8.5, 9.2, 9.9, 10.6, 11.3, 12, 12.8, 13.5, 14.2, 14.9, 15.6, 16.3, 17]],
         ['homing', [0, 1.1, 2.2, 3.3, 4.3, 5.4, 6.5, 7.6, 8.7, 9.8, 10.8, 11.9, 13, 14.1, 15.2, 16.3, 17.3, 18.4, 19.5, 20.6, 21.7, 22.8, 23.8, 24.9, 26]],
         ['heavy', [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 25, 28, 31, 34, 37, 40, 43, 45, 47, 48.5, 49.5, 50.3, 51]],
-        ['laser', [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18.5, 20, 21.5, 23, 24, 25, 25.5, 26, 26.5, 27]],
+        // The final laser ranks are deliberately power-hungry: a Rank-50 generator
+        // sustains the mid ranks, while ranks 21–25 create a controlled 2.5s burst window.
+        ['laser', [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 21, 23, 25, 27, 30, 32, 35, 38, 40]],
         ['arc', [4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5, 21.5, 22.5, 23.5, 24.5, 25.5, 26.5, 27.5, 28.5]],
         ['void_lance', [8, 10.5, 13, 15.5, 18, 20.5, 23, 25.5, 28, 30.5, 33, 35.5, 38, 40.5, 43, 46, 49, 52, 55, 58, 61, 64, 67, 70, 73]]
     ]);
@@ -37,7 +39,10 @@ export class PowerSystem {
     }
 
     public getMaxPower(): number {
-        return Math.round(this.maxPower * this.capacitorMultiplier);
+        // Higher generators also carry a larger power reserve. At rank 49 this yields
+        // roughly 850 power: enough for an intentional high-rank burst, not endless laser fire.
+        const generatorStorage = this.generatorLevel * 13.25;
+        return Math.round((this.maxPower + generatorStorage) * this.capacitorMultiplier);
     }
 
     public getWeaponCost(weaponType: string, level: number): number {

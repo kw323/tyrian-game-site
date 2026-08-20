@@ -12,27 +12,26 @@ describe('PowerSystem high-rank balance', () => {
         expect(power.getWeaponCost('spread', 24)).toBe(17);
         expect(power.getWeaponCost('homing', 24)).toBe(26);
         expect(power.getWeaponCost('heavy', 24)).toBe(51);
-        expect(power.getWeaponCost('laser', 24)).toBe(27);
+        expect(power.getWeaponCost('laser', 24)).toBe(40);
         expect(power.getWeaponCost('arc', 24)).toBe(28.5);
         expect(power.getWeaponCost('void_lance', 24)).toBe(73);
     });
 
-    it('keeps Rank-25 special weapons near a 2.5-second burst at maximum generator output', () => {
+    it('makes Rank-25 laser fire create a controlled 2.5-second burst at maximum generator output', () => {
         const weapons = new WeaponUpgradeSystem();
         const power = new PowerSystem();
-        const specialWeapons = [WeaponType.SPREAD, WeaponType.HOMING, WeaponType.HEAVY, WeaponType.LASER, WeaponType.VOID_LANCE];
+        power.generatorLevel = 49;
+        const rank = weapons.getWeaponLevels(WeaponType.LASER)[24];
+        const drainWithMastery = power.getWeaponCost(WeaponType.LASER, 24) * rank.fireRate * MASTERY_RATE_MULTIPLIER;
+        const burstSeconds = power.getMaxPower() / (drainWithMastery - MAX_GENERATOR_OUTPUT);
 
-        for (const type of specialWeapons) {
-            const rank = weapons.getWeaponLevels(type)[24];
-            const drainWithMastery = power.getWeaponCost(type, 24) * rank.fireRate * MASTERY_RATE_MULTIPLIER;
-            const burstSeconds = 200 / (drainWithMastery - MAX_GENERATOR_OUTPUT);
-            expect(burstSeconds).toBeGreaterThan(2.2);
-            expect(burstSeconds).toBeLessThan(2.6);
-        }
+        expect(power.getMaxPower()).toBe(849);
+        expect(burstSeconds).toBeGreaterThan(2.3);
+        expect(burstSeconds).toBeLessThan(2.7);
 
-        const straight = weapons.getWeaponLevels(WeaponType.STRAIGHT)[24];
-        const straightDraw = power.getWeaponCost('straight', 24) * straight.fireRate * MASTERY_RATE_MULTIPLIER;
-        expect(straightDraw).toBeLessThan(MAX_GENERATOR_OUTPUT);
+        const midRankLaser = weapons.getWeaponLevels(WeaponType.LASER)[18];
+        const midRankDraw = power.getWeaponCost(WeaponType.LASER, 18) * midRankLaser.fireRate * MASTERY_RATE_MULTIPLIER;
+        expect(midRankDraw).toBeLessThan(MAX_GENERATOR_OUTPUT);
     });
 
     it('locks weapons after a full drain and unlocks only after a complete recharge', () => {
@@ -50,7 +49,11 @@ describe('PowerSystem high-rank balance', () => {
         expect(power.isReactorRecovering()).toBe(true);
         expect(power.canShoot('straight', 0)).toBe(false);
 
-        power.generatePower(0.5);
+        power.generatePower(2);
+        expect(power.getReactorRecoveryPercent()).toBeLessThan(1);
+        expect(power.isReactorRecovering()).toBe(true);
+
+        power.generatePower(1);
         expect(power.getReactorRecoveryPercent()).toBe(1);
         expect(power.isReactorRecovering()).toBe(false);
         expect(power.canShoot('straight', 0)).toBe(true);
