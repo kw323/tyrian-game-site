@@ -122,6 +122,10 @@ export default function Home() {
             shipId: data.shipId,
             generatorLevel: data.generatorLevel,
             shieldLevel: data.shieldLevel,
+            engineUpgradeLevel: data.engineUpgradeLevel,
+            elementalCoreState: data.elementalCoreState,
+            pilotSkillsState: data.pilotSkillsState,
+            equipmentState: data.equipmentState,
             weaponState: {
                 weaponLevels: data.weaponLevels,
                 currentWeapon: data.currentWeapon,

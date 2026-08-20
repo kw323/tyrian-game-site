@@ -15,6 +15,8 @@ export interface SaveData {
     tacticalAbilityLevels?: Record<string, number>;
     selectedTacticalAbility?: string;
     elementalCoreState?: ElementalCoreSaveState;
+    pilotSkillsState?: unknown;
+    equipmentState?: unknown;
     tacticalAbilityState?: {
         levels: Record<string, number>;
         selectedAbility: string;

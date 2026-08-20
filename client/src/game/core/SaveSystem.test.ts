@@ -67,3 +67,34 @@ describe('SaveSystem paginated slots', () => {
         expect(SaveSystem.getHighestUsedPage()).toBe(0);
     });
 });
+
+
+describe('SaveSystem full progression persistence', () => {
+    beforeEach(() => {
+        Object.defineProperty(globalThis, 'localStorage', {
+            configurable: true,
+            value: new MemoryStorage()
+        });
+    });
+
+    it('preserves engine progression, elemental cores, equipment, and pilot skills', () => {
+        const payload: Omit<SaveData, 'timestamp'> = {
+            ...savePayload(8, 44),
+            engineUpgradeLevel: 5,
+            elementalCoreState: {
+                activeCore: 'plasma',
+                ranks: { cryo: 1, fire: 2, corrosion: 3, kinetic: 4, plasma: 5 }
+            },
+            pilotSkillsState: { rank: 19, skills: { hull_integrity: 4 } },
+            equipmentState: { equipped: { engine: { id: 'engine-1', level: 4, tier: 2 } } }
+        };
+
+        SaveSystem.saveGame(8, payload);
+        const restored = SaveSystem.loadGame(8);
+
+        expect(restored?.engineUpgradeLevel).toBe(5);
+        expect(restored?.elementalCoreState?.activeCore).toBe('plasma');
+        expect(restored?.pilotSkillsState).toEqual(payload.pilotSkillsState);
+        expect(restored?.equipmentState).toEqual(payload.equipmentState);
+    });
+});

@@ -835,6 +835,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     weaponLevels: weaponState.weaponLevels ?? {},
                     currentWeapon: weaponState.currentWeapon ?? 'straight',
                     elementalCoreState: checkpoint.elementalCoreState,
+                    pilotSkillsState: checkpoint.pilotSkillsState,
+                    equipmentState: checkpoint.equipmentState,
                     tacticalAbilityState: checkpoint.tacticalAbilityState,
                     maxUnlockedLevel: Math.max(maxUnlockedLevel, checkpoint.level)
                 });
