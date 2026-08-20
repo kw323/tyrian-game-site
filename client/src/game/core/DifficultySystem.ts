@@ -34,12 +34,12 @@ export class DifficultySystem {
         {
             id: 'pilot',
             label: 'PILOT',
-            description: 'The standard campaign balance with slightly increased enemy fire frequency.',
+            description: 'The standard campaign balance for the intended first playthrough.',
             healthMultiplier: 1,
             shieldMultiplier: 1,
             damageMultiplier: 1,
             speedMultiplier: 1,
-            fireRateMultiplier: 1.18,
+            fireRateMultiplier: 1,
             rewardMultiplier: 1,
             bossMultiplier: 1
         },
@@ -51,7 +51,7 @@ export class DifficultySystem {
             shieldMultiplier: 1.15,
             damageMultiplier: 1.15,
             speedMultiplier: 1.08,
-            fireRateMultiplier: 1.12,
+            fireRateMultiplier: 1.16,
             rewardMultiplier: 1.1,
             bossMultiplier: 1.2
         },
@@ -63,7 +63,7 @@ export class DifficultySystem {
             shieldMultiplier: 1.35,
             damageMultiplier: 1.35,
             speedMultiplier: 1.18,
-            fireRateMultiplier: 1.3,
+            fireRateMultiplier: 1.32,
             rewardMultiplier: 1.25,
             bossMultiplier: 1.45
         },
