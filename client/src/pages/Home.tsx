@@ -135,6 +135,8 @@ export default function Home() {
             weaponState: {
                 weaponLevels: data.weaponLevels,
                 currentWeapon: data.currentWeapon,
+                secretWeaponUnlocked: data.secretWeaponUnlocked ?? false,
+                secretWeaponFragments: data.secretWeaponFragments ?? 0,
             },
             tacticalAbilityState: data.tacticalAbilityState,
         }));

@@ -240,6 +240,12 @@ export class EnemyAdvanced extends Entity {
     public update(deltaTime: number): void {
         if (this.isTimeFrozen) return;
         this.timeAlive += deltaTime;
+        // Research couriers exposing a singularity fragment flee after five seconds.
+        // They are deliberately active only long enough to reward rapid interception.
+        if (this.isSpecial && this.timeAlive >= 5) {
+            this.isActive = false;
+            return;
+        }
         if (this.difficultyProfile) {
             this.speed = this.slowTimer > 0
                 ? this.speed

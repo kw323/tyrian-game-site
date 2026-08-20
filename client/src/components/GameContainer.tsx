@@ -73,6 +73,7 @@ interface ResumeCheckpoint {
         weaponLevels?: Record<string, number>;
         currentWeapon?: string;
         secretWeaponUnlocked?: boolean;
+        secretWeaponFragments?: number;
     };
     pilotSkillsState?: any;
     tacticalAbilityState?: TacticalAbilitySaveState;
@@ -870,6 +871,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     engineUpgradeLevel: checkpoint.engineUpgradeLevel ?? 0,
                     weaponLevels: weaponState.weaponLevels ?? {},
                     currentWeapon: weaponState.currentWeapon ?? 'straight',
+                    secretWeaponUnlocked: weaponState.secretWeaponUnlocked ?? false,
+                    secretWeaponFragments: weaponState.secretWeaponFragments ?? 0,
                     elementalCoreState: checkpoint.elementalCoreState,
                     pilotSkillsState: checkpoint.pilotSkillsState,
                     equipmentState: checkpoint.equipmentState,
@@ -895,6 +898,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     engineUpgradeLevel: checkpoint.engineUpgradeLevel ?? 0,
                     weaponLevels: weaponState.weaponLevels ?? {},
                     currentWeapon: weaponState.currentWeapon ?? 'straight',
+                    secretWeaponUnlocked: weaponState.secretWeaponUnlocked ?? false,
+                    secretWeaponFragments: weaponState.secretWeaponFragments ?? 0,
                     elementalCoreState: checkpoint.elementalCoreState,
                     pilotSkillsState: checkpoint.pilotSkillsState,
                     equipmentState: checkpoint.equipmentState,
@@ -1391,11 +1396,20 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     const enemyXp = Math.max(1, Math.floor((enemy.points ?? 100) * 0.03));
                     awardPilotXp(enemyXp, 'COMBAT XP');
                     const isSpecialEnemy = enemy instanceof EnemyAdvanced && enemy.isSpecial;
-                    if (isSpecialEnemy && weaponSystem.unlockSecretWeapon()) {
-                        upgradeBriefing = CampaignSystem.getUpgradeBriefing('weapon', 'Black Hole Projectile', 1);
-                        localStorage.setItem('tyrian_secret_weapon_unlocked', 'true');
-                        window.dispatchEvent(new CustomEvent('tyrian:secret-weapon-unlocked'));
-                        SoundSystem.playUpgrade();
+                    if (isSpecialEnemy) {
+                        const recovery = weaponSystem.collectSecretWeaponFragment();
+                        if (recovery.unlocked) {
+                            upgradeBriefing = CampaignSystem.getUpgradeBriefing('weapon', 'Black Hole Projectile', 1);
+                            localStorage.setItem('tyrian_secret_weapon_unlocked', 'true');
+                            window.dispatchEvent(new CustomEvent('tyrian:secret-weapon-unlocked'));
+                            testNoticeText = 'SINGULARITY CORE ASSEMBLED // BLACK HOLE PROJECTILE UNLOCKED';
+                            testNoticeUntil = performance.now() + 6000;
+                            SoundSystem.playUpgrade();
+                        } else {
+                            testNoticeText = `RESEARCH FRAGMENT RECOVERED // ${recovery.fragments}/${WeaponUpgradeSystem.SECRET_WEAPON_FRAGMENT_REQUIREMENT}`;
+                            testNoticeUntil = performance.now() + 5200;
+                            SoundSystem.playUpgrade();
+                        }
                     }
 
                     // Equipment Drop System: Spawn physical EquipmentDropEntity in the battlefield (Always Tier 1)
@@ -1657,7 +1671,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         ? Math.round(player.weaponDamage * player.criticalDamageMultiplier)
                         : player.weaponDamage;
                     const weaponCost = powerSystem.getWeaponCost(player.weaponType, player.weaponLevel);
-                    if (!hasUnlimitedPower) powerSystem.consumePower(weaponCost);
+                    if (!hasUnlimitedPower) powerSystem.consumeWeaponPower(weaponCost);
                     
                     bulletPositions.forEach((bulletData: any) => {
                         const cloaked = tacticalAbilitySystem.isPhaseCloaked();
@@ -1788,7 +1802,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 // The player clears the remaining escorts, then the stage resolves immediately.
                 const newEnemies = bossDefeatedAt !== null || gameState.level === 31 || !waveWindowOpen
                     ? []
-                    : enemySpawner.update(deltaTime, game['entities'], gameState.level);
+                    : enemySpawner.update(deltaTime, game['entities'], gameState.level, gameState.levelTimeElapsed);
                 stageMasterySystem.recordEnemySpawn(newEnemies.length);
                 newEnemies.forEach(enemy => game.addEntity(enemy));
 
@@ -2094,8 +2108,9 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     game['entities'].forEach((target: any) => {
                         const isEnemy = target instanceof Enemy || target instanceof EnemyAdvanced;
                         const isHostileShot = target instanceof EnemyBullet && !target.isFriendly;
-                        if ((!isEnemy && !isHostileShot) || !target.isActive) return;
-                        if (!bullet.isWithinField(target) || !bullet.canSuctionTarget(target)) return;
+                        const isAsteroid = target instanceof AsteroidBeltEntity;
+                        if ((!isEnemy && !isHostileShot && !isAsteroid) || !target.isActive) return;
+                        if (!bullet.isWithinField(target) || (!isAsteroid && !bullet.canSuctionTarget(target))) return;
 
                         const center = bullet.getFieldCenter();
                         const targetCenterX = target.x + target.width / 2;
@@ -2107,6 +2122,14 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         const falloff = Math.max(0.35, 1 - distance / fieldRadius);
                         const suction = bullet.getSuctionStrength() * (0.65 + falloff * 0.75);
                         bullet.registerSuction(target, isHostileShot ? 0.025 : 0.09);
+
+                        if (target instanceof AsteroidBeltEntity) {
+                            // A massive asteroid cannot be destroyed, but a singularity still
+                            // bends its flight path. Fragile debris uses the same pull and can
+                            // then be shattered by ordinary weapon impacts.
+                            target.applyGravityToward(center.x, center.y, suction, deltaTime);
+                            return;
+                        }
 
                         if (target instanceof EnemyBullet && !target.isFriendly) {
                             // Bend hostile fire toward the event horizon. Repeated pulls make
@@ -2471,6 +2494,24 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     spawnMissionTarget();
                 }
                 const bossStage = gameState.level % 3 === 0 || gameState.level === 31 || gameState.level === 101;
+                // A sealed regular sector should never soft-lock because one enemy has been
+                // displaced or stranded by a fragmentation blast. After a generous clearance
+                // window, remaining ordinary enemies retreat; bosses and bounty objectives are
+                // deliberately excluded from this failsafe.
+                const sealedClearanceTimeout = !bossStage && sectorSealed && gameState.levelTimeElapsed >= gameState.levelDuration + 12;
+                if (sealedClearanceTimeout) {
+                    let retreatedEnemy = false;
+                    game['entities'].forEach((entity: any) => {
+                        if (entity.isActive && (entity instanceof Enemy || entity instanceof EnemyAdvanced)) {
+                            entity.isActive = false;
+                            retreatedEnemy = true;
+                        }
+                    });
+                    if (retreatedEnemy) {
+                        testNoticeText = 'SECTOR EVACUATION // STRANDED HOSTILES WITHDRAWN';
+                        testNoticeUntil = performance.now() + 3500;
+                    }
+                }
                 const activeHostiles = game['entities'].filter((entity: any) => entity.isActive && (
                     entity instanceof Enemy || entity instanceof EnemyAdvanced || entity instanceof Boss ||
                     (entity instanceof MissionTargetEntity && entity.missionType === 'bounty')
@@ -3195,6 +3236,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     ctx.fillText(`Available Credits: ${gameState.score}`, 28, 72);
 
                     const secretWeaponUnlocked = weaponSystem.isSecretWeaponUnlocked();
+                    const secretWeaponFragments = weaponSystem.getSecretWeaponFragments();
                     const drawShopNav = (active: ShopScreen): void => {
                         const navY = 96;
                         const navWidth = 142;
@@ -3799,15 +3841,17 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                             const isSelected = !isLocked && weaponSystem.getCurrentWeapon() === weapon.type;
                             const nextLevel = isLocked ? null : (currentLevel < 0 ? levels[0] : levels[currentLevel + 1]);
                             const nextPowerCost = nextLevel ? powerSystem.getWeaponCost(weapon.type, currentLevel < 0 ? 0 : currentLevel + 1) : 0;
-                            const canAfford = Boolean(nextLevel && gameState.score >= nextLevel.cost);
+                            const hullWeaponCap = shipSystem.getCurrentShip().weaponCapacity;
+                            const hullSupportsNext = Boolean(nextLevel && weaponSystem.canShipSupportWeaponLevel(shipSystem.getCurrentShipId(), nextLevel.level));
+                            const canAfford = Boolean(nextLevel && hullSupportsNext && gameState.score >= nextLevel.cost);
                             ctx.textAlign = 'left';
                             ctx.fillStyle = isSelected ? '#00FF88' : '#e6f1f5';
                             ctx.font = 'bold 18px Arial';
                             ctx.fillText(`${isSelected ? '▶ ' : ''}${weapon.key}. ${weapon.name}`, 48, rowY + 20);
                             ctx.fillStyle = '#8ea6b2';
                             ctx.font = '14px Arial';
-                            ctx.fillText(isLocked ? 'CLASSIFIED • DEFEAT EVASIVE HUNTER' : (currentLevel < 0 ? 'NOT OWNED' : `LEVEL ${currentLevel + 1}/25`), 48, rowY + 43);
-                            ctx.fillText(isLocked ? 'SIGNAL SEALED • HUNT THE SPECIAL TARGET' : (nextLevel ? `${nextLevel.description} • ${nextLevel.cost} pts` : 'MAXIMUM LEVEL'), 48, rowY + 64);
+                            ctx.fillText(isLocked ? `CLASSIFIED • RESEARCH FRAGMENTS ${secretWeaponFragments}/3` : (currentLevel < 0 ? 'NOT OWNED' : `LEVEL ${currentLevel + 1}/25`), 48, rowY + 43);
+                            ctx.fillText(isLocked ? 'SIGNAL SEALED • RECOVER 3 RESEARCH FRAGMENTS' : (nextLevel ? (hullSupportsNext ? `${nextLevel.description} • ${nextLevel.cost} pts` : `HULL CAP LEVEL ${hullWeaponCap} • UPGRADE SHIP REQUIRED`) : 'MAXIMUM LEVEL'), 48, rowY + 64);
                             if (!isLocked && nextLevel) {
                                 ctx.fillStyle = '#ffd166';
                                 ctx.font = '12px Arial';
@@ -3815,7 +3859,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                             }
                             if (!isLocked) addButton(`weapon-select-${weapon.type}`, 38, rowY + 2, 540, 72, () => selectWeapon(weapon.type));
                             if (isLocked) drawButton(`weapon-locked-${weapon.type}`, 'LOCKED', 628, rowY + 16, 120, 42, '#7c5abf', () => undefined);
-                            else if (nextLevel) drawButton(`weapon-upgrade-${weapon.type}`, currentLevel < 0 ? 'BUY' : 'UPGRADE', 628, rowY + 16, 130, 42, canAfford ? '#00FF88' : '#ff6666', () => upgradeWeapon(weapon.type));
+                            else if (nextLevel) drawButton(`weapon-upgrade-${weapon.type}`, hullSupportsNext ? (currentLevel < 0 ? 'BUY' : 'UPGRADE') : 'HULL LOCK', 628, rowY + 16, 130, 42, canAfford ? '#00FF88' : '#ff6666', () => upgradeWeapon(weapon.type));
                             else {
                                 ctx.fillStyle = '#526874';
                                 ctx.font = 'bold 13px Arial';
@@ -3977,6 +4021,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     drawCard(rightX, cardTop, cardWidth, 500, stageMasterySystem.hasAegisMastery() ? 'SYSTEMS & SHIPS // AEGIS MATRIX' : 'SYSTEMS & SHIPS', '#FFD700');
 
                     const secretWeaponUnlocked = weaponSystem.isSecretWeaponUnlocked();
+                    const secretWeaponFragments = weaponSystem.getSecretWeaponFragments();
                     const weaponOptions = [
                         { key: '1', name: 'Straight Shot', type: WeaponType.STRAIGHT, accent: '#8ee7ff', locked: false },
                         { key: '2', name: 'Spread Shot', type: WeaponType.SPREAD, accent: '#00FF88', locked: false },
@@ -3996,7 +4041,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         const nextLevel = isLocked ? null : (currentLevel < 0 ? levels[0] : levels[currentLevel + 1]);
                         const canAfford = Boolean(nextLevel && gameState.score >= nextLevel.cost);
                         const title = `${weapon.key}. ${weapon.name}`;
-                        const status = isLocked ? 'CLASSIFIED • DEFEAT EVASIVE HUNTER' : (currentLevel < 0 ? 'NOT OWNED' : `LEVEL ${currentLevel + 1}/15`);
+                        const status = isLocked ? `CLASSIFIED • FRAGMENTS ${secretWeaponFragments}/3` : (currentLevel < 0 ? 'NOT OWNED' : `LEVEL ${currentLevel + 1}/15`);
                         ctx.textAlign = 'left';
                         ctx.fillStyle = isSelected ? '#00FF88' : '#e6f1f5';
                         ctx.font = 'bold 16px Arial';

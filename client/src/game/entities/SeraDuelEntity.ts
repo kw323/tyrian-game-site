@@ -59,12 +59,18 @@ export class SeraDuelEntity extends Boss {
 
     public setMirrorLoadout(loadout: SeraMirrorLoadout): void {
         this.mirrorLoadout = { ...loadout };
-        this.maxShield = loadout.maxShield;
+        // The duel must remain readable even when the pilot arrives with a fully upgraded
+        // weapon. Sera scales from the pilot's actual volley pressure, then receives a
+        // substantial shield buffer and a reinforced hull rather than a one-hit script.
+        const volleyPressure = Math.max(10, loadout.weaponDamage * Math.max(1, loadout.weaponFireRate) * 2.1);
+        this.maxHealth = Math.max(this.maxHealth, Math.round(4200 + volleyPressure * 28 + loadout.maxShield * 3));
+        this.health = this.maxHealth;
+        this.maxShield = Math.max(1400, Math.round(loadout.maxShield * 4.8 + loadout.weaponDamage * 16));
         this.shield = this.maxShield;
-        this.shieldRegenRate = loadout.shieldRegenRate;
-        this.currentPower = loadout.maxPower;
-        this.powerMax = loadout.maxPower;
-        this.powerOutput = loadout.generatorOutput;
+        this.shieldRegenRate = Math.max(20, loadout.shieldRegenRate * 2.2);
+        this.currentPower = Math.max(900, loadout.maxPower * 1.2);
+        this.powerMax = this.currentPower;
+        this.powerOutput = Math.max(120, loadout.generatorOutput);
         this.shootInterval = Math.max(0.07, 1 / Math.max(1, loadout.weaponFireRate));
         this.abilityCooldown = 4.5;
     }

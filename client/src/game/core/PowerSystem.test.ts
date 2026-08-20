@@ -59,6 +59,16 @@ describe('PowerSystem high-rank balance', () => {
         expect(power.canShoot('straight', 0)).toBe(true);
     });
 
+    it('drains the final usable weapon reserve and starts full-reactor recovery', () => {
+        const power = new PowerSystem();
+        power.currentPower = 11;
+        power.consumeWeaponPower(6);
+
+        expect(power.currentPower).toBe(0);
+        expect(power.isReactorRecovering()).toBe(true);
+        expect(power.canShoot('laser', 1)).toBe(false);
+    });
+
     it('bypasses the recovery lock when an unlimited-power effect forces the reactor online', () => {
         const power = new PowerSystem();
         power.currentPower = 5;

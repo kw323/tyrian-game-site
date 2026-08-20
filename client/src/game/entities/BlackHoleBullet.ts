@@ -14,7 +14,7 @@ export class BlackHoleBullet extends Bullet {
     private impactPoint: { x: number; y: number } | null = null;
 
     constructor(x: number, y: number, damage: number, level: number, angle = 0) {
-        super(x, y, 14, 20, 7.4, damage, '#8b5cf6', angle);
+        super(x, y, 10, 16, 7.4, damage, '#8b5cf6', angle);
         this.level = level;
         const profile = getWeaponRuntimeProfile('void_lance', level);
         this.speed = profile.voidProjectileSpeed ?? 7.4;
@@ -96,17 +96,17 @@ export class BlackHoleBullet extends Bullet {
         const pulse = 1 + Math.sin(performance.now() / 80) * 0.08;
         const center = this.getFieldCenter();
         const fieldRadius = this.getFieldRadius();
-        const coreRadius = 7 * pulse;
+        const coreRadius = 4.8 * pulse;
 
         ctx.save();
         ctx.globalCompositeOperation = 'lighter';
-        ctx.strokeStyle = 'rgba(151, 91, 255, 0.18)';
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = 'rgba(151, 91, 255, 0.16)';
+        ctx.lineWidth = 1.4;
         ctx.beginPath();
         ctx.arc(center.x, center.y, fieldRadius, 0, Math.PI * 2);
         ctx.stroke();
         ctx.strokeStyle = 'rgba(235, 181, 255, 0.42)';
-        ctx.lineWidth = 2.5;
+        ctx.lineWidth = 1.8;
         ctx.beginPath();
         ctx.ellipse(center.x, center.y, fieldRadius * 0.92, fieldRadius * 0.25, performance.now() / 900, 0, Math.PI * 2);
         ctx.stroke();
@@ -114,7 +114,7 @@ export class BlackHoleBullet extends Bullet {
         ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
         ctx.rotate(this.angle);
         ctx.shadowColor = '#9b5cff';
-        ctx.shadowBlur = 24;
+        ctx.shadowBlur = 17;
         const trail = ctx.createLinearGradient(0, 24, 0, -16);
         trail.addColorStop(0, 'rgba(41, 12, 89, 0)');
         trail.addColorStop(0.55, 'rgba(148, 78, 255, 0.72)');

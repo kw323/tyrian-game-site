@@ -68,11 +68,13 @@ export class SeraAllyShipEntity extends Entity {
     constructor(x: number, y: number, loadout: SeraAllyLoadout) {
         super(x, y, 60, 80);
         this.loadout = { ...loadout };
-        this.health = 7 + loadout.shipTier * 2;
-        this.maxHealth = this.health;
-        this.maxShield = loadout.maxShield;
+        // Sera is an assault ally in the late campaign, not a disposable escort. Her
+        // protection scales with the high-rank laser she brings into stages 81–90.
+        this.maxHealth = Math.round(420 + loadout.shipTier * 120 + loadout.weaponLevel * 34);
+        this.health = this.maxHealth;
+        this.maxShield = Math.round(Math.max(620, loadout.maxShield * 2.2));
         this.shield = this.maxShield;
-        this.shieldRegenRate = loadout.shieldRegenRate;
+        this.shieldRegenRate = Math.max(24, loadout.shieldRegenRate * 1.65);
         this.currentPower = loadout.maxPower;
     }
 

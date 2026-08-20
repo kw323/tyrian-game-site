@@ -20,10 +20,15 @@ export interface WeaponLevel {
 }
 
 export class WeaponUpgradeSystem {
+    // These caps mirror ShipUpgradeSystem. Keeping the check here makes it impossible
+    // to purchase an unsupported rank through a keyboard shortcut or a stale UI button.
+    private static readonly SHIP_WEAPON_CAPACITIES = [4, 8, 12, 16, 20, 25] as const;
     private weaponLevels: Map<WeaponType, WeaponLevel[]> = new Map();
     private currentWeapon: WeaponType = WeaponType.STRAIGHT;
     private currentLevel: Map<WeaponType, number> = new Map();
     private secretWeaponUnlocked = false;
+    private secretWeaponFragments = 0;
+    public static readonly SECRET_WEAPON_FRAGMENT_REQUIREMENT = 3;
 
     constructor() {
         this.initializeWeapons();
@@ -297,6 +302,15 @@ export class WeaponUpgradeSystem {
         return levels[level] || null;
     }
 
+    public getShipWeaponCapacity(shipId: number): number {
+        const safeShipId = Math.max(0, Math.min(WeaponUpgradeSystem.SHIP_WEAPON_CAPACITIES.length - 1, Math.floor(shipId)));
+        return WeaponUpgradeSystem.SHIP_WEAPON_CAPACITIES[safeShipId];
+    }
+
+    public canShipSupportWeaponLevel(shipId: number, weaponLevel: number): boolean {
+        return weaponLevel <= this.getShipWeaponCapacity(shipId);
+    }
+
     public upgradeWeapon(type: WeaponType, score: number, currentShip: number = 0): { cost: number; refund: number } | null {
         if (type === WeaponType.VOID_LANCE && !this.secretWeaponUnlocked) return null;
         const currentLevel = this.currentLevel.get(type);
@@ -309,9 +323,12 @@ export class WeaponUpgradeSystem {
         if (actualLevel === -1) {
             const nextLevel = levels[0];
             if (nextLevel && score >= nextLevel.cost) {
-                // Check ship requirement
-                if (nextLevel.requiredShip && currentShip < nextLevel.requiredShip) {
-                    return null; // Need better ship
+                // Both authored tier requirements and the actual hull weapon-capacity
+                // are enforced. Earlier ranks without an explicit requiredShip must not
+                // bypass the active hull limit.
+                if (!this.canShipSupportWeaponLevel(currentShip, nextLevel.level)
+                    || (nextLevel.requiredShip && currentShip < nextLevel.requiredShip)) {
+                    return null;
                 }
                 this.currentLevel.set(type, 0);
                 return { cost: nextLevel.cost, refund: 0 };
@@ -324,9 +341,11 @@ export class WeaponUpgradeSystem {
             const nextLevel = levels[actualLevel + 1];
             const currentLevelData = levels[actualLevel];
             if (nextLevel && score >= nextLevel.cost) {
-                // Check ship requirement
-                if (nextLevel.requiredShip && currentShip < nextLevel.requiredShip) {
-                    return null; // Need better ship
+                // Both authored tier requirements and the actual hull weapon-capacity
+                // are enforced for every purchased rank.
+                if (!this.canShipSupportWeaponLevel(currentShip, nextLevel.level)
+                    || (nextLevel.requiredShip && currentShip < nextLevel.requiredShip)) {
+                    return null;
                 }
                 this.currentLevel.set(type, actualLevel + 1);
                 const refund = Math.floor(currentLevelData.cost * 0.5);
@@ -351,7 +370,7 @@ export class WeaponUpgradeSystem {
         return { refund: currentLevelData.cost, newLevel: currentLevel - 1 };
     }
 
-    public getSaveState(): { weaponLevels: Record<string, number>; currentWeapon: string; secretWeaponUnlocked: boolean } {
+    public getSaveState(): { weaponLevels: Record<string, number>; currentWeapon: string; secretWeaponUnlocked: boolean; secretWeaponFragments: number } {
         const weaponLevels: Record<string, number> = {};
         this.currentLevel.forEach((level, type) => {
             weaponLevels[type] = level;
@@ -359,11 +378,12 @@ export class WeaponUpgradeSystem {
         return {
             weaponLevels,
             currentWeapon: this.currentWeapon,
-            secretWeaponUnlocked: this.secretWeaponUnlocked
+            secretWeaponUnlocked: this.secretWeaponUnlocked,
+            secretWeaponFragments: this.secretWeaponFragments
         };
     }
 
-    public loadSaveState(state: { weaponLevels?: Record<string, number>; currentWeapon?: string; secretWeaponUnlocked?: boolean }): void {
+    public loadSaveState(state: { weaponLevels?: Record<string, number>; currentWeapon?: string; secretWeaponUnlocked?: boolean; secretWeaponFragments?: number }): void {
         Object.values(WeaponType).forEach((type) => {
             const savedLevel = state.weaponLevels?.[type];
             if (typeof savedLevel === 'number') {
@@ -371,7 +391,12 @@ export class WeaponUpgradeSystem {
                 this.currentLevel.set(type, Math.max(-1, Math.min(maxLevel, Math.floor(savedLevel))));
             }
         });
-        this.secretWeaponUnlocked = Boolean(state.secretWeaponUnlocked);
+        const legacyVoidLanceOwned = typeof state.weaponLevels?.[WeaponType.VOID_LANCE] === 'number'
+            && (state.weaponLevels?.[WeaponType.VOID_LANCE] ?? -1) >= 0;
+        this.secretWeaponUnlocked = Boolean(state.secretWeaponUnlocked || legacyVoidLanceOwned);
+        this.secretWeaponFragments = this.secretWeaponUnlocked
+            ? WeaponUpgradeSystem.SECRET_WEAPON_FRAGMENT_REQUIREMENT
+            : Math.max(0, Math.min(WeaponUpgradeSystem.SECRET_WEAPON_FRAGMENT_REQUIREMENT, Math.floor(state.secretWeaponFragments ?? 0)));
         if (this.secretWeaponUnlocked && this.getCurrentLevel(WeaponType.VOID_LANCE) < 0) {
             this.currentLevel.set(WeaponType.VOID_LANCE, 0);
         }
@@ -381,11 +406,33 @@ export class WeaponUpgradeSystem {
         }
     }
 
+    public collectSecretWeaponFragment(): { fragments: number; unlocked: boolean } {
+        if (this.secretWeaponUnlocked) {
+            return { fragments: WeaponUpgradeSystem.SECRET_WEAPON_FRAGMENT_REQUIREMENT, unlocked: false };
+        }
+        this.secretWeaponFragments = Math.min(
+            WeaponUpgradeSystem.SECRET_WEAPON_FRAGMENT_REQUIREMENT,
+            this.secretWeaponFragments + 1
+        );
+        if (this.secretWeaponFragments < WeaponUpgradeSystem.SECRET_WEAPON_FRAGMENT_REQUIREMENT) {
+            return { fragments: this.secretWeaponFragments, unlocked: false };
+        }
+        this.secretWeaponUnlocked = true;
+        this.currentLevel.set(WeaponType.VOID_LANCE, 0);
+        return { fragments: this.secretWeaponFragments, unlocked: true };
+    }
+
+    /** Legacy compatibility for saves or developer tools that already unlock the weapon. */
     public unlockSecretWeapon(): boolean {
         if (this.secretWeaponUnlocked) return false;
+        this.secretWeaponFragments = WeaponUpgradeSystem.SECRET_WEAPON_FRAGMENT_REQUIREMENT;
         this.secretWeaponUnlocked = true;
         this.currentLevel.set(WeaponType.VOID_LANCE, 0);
         return true;
+    }
+
+    public getSecretWeaponFragments(): number {
+        return this.secretWeaponFragments;
     }
 
     public isSecretWeaponUnlocked(): boolean {
@@ -402,6 +449,7 @@ export class WeaponUpgradeSystem {
         this.currentLevel.set(WeaponType.ARC, -1);
         this.currentLevel.set(WeaponType.VOID_LANCE, -1);
         this.secretWeaponUnlocked = false;
+        this.secretWeaponFragments = 0;
     }
 
     public getWeaponRequiredShip(type: WeaponType, level: number): number {

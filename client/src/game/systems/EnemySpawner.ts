@@ -48,7 +48,7 @@ export class EnemySpawner {
         return 'aliens';
     }
 
-    public update(_deltaTime: number, _entities: any[], level: number): EnemyAdvanced[] {
+    public update(_deltaTime: number, _entities: any[], level: number, stageElapsed = 0): EnemyAdvanced[] {
         const newEnemies: EnemyAdvanced[] = [];
         const currentTime = performance.now() / 1000;
         const faction = this.getFactionForStage(level);
@@ -59,14 +59,18 @@ export class EnemySpawner {
         this.lastSpawnTime = currentTime;
         this.waveCount++;
 
-        if (level % 9 === 0 && !this.specialSpawnedForLevel) {
+        // The singularity weapon is recovered from three rare alien research ships. They
+        // appear only midway through selected non-boss missions and stay exposed for a short
+        // five-second capture window, instead of being granted by every ninth-stage elite.
+        const isResearchOpportunity = level >= 17 && level % 10 === 7 && level % 3 !== 0;
+        if (isResearchOpportunity && stageElapsed >= 28 && !this.specialSpawnedForLevel) {
             this.specialSpawnedForLevel = true;
-            const blueprint = this.getBlueprint(EnemyType.EVASIVE_HUNTER, level, faction);
+            const blueprint = this.getBlueprint(EnemyType.EVASIVE_HUNTER, level, 'aliens');
             const difficultyTier = Math.floor(Math.max(0, level - 1) / 10);
-            const health = blueprint.baseHealth + Math.floor(level * blueprint.healthPerLevel);
+            const health = Math.round((blueprint.baseHealth + Math.floor(level * blueprint.healthPerLevel)) * 1.35);
             const special = new EnemyAdvanced(
                 520,
-                -52,
+                72,
                 blueprint.width,
                 blueprint.height,
                 blueprint.speed + difficultyTier * 0.12,
@@ -79,7 +83,7 @@ export class EnemySpawner {
                 0,
                 1,
                 true,
-                faction
+                'aliens'
             );
             special.applyDifficulty(this.difficultyProfile);
             special.points = Math.round(special.points * this.difficultyProfile.rewardMultiplier);

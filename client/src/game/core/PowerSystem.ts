@@ -72,6 +72,24 @@ export class PowerSystem {
         }
     }
 
+    /**
+     * Weapon fire deliberately consumes the last usable reserve. Without this rule, a
+     * weapon is blocked one fraction of a shot before zero and the intended full-reactor
+     * recovery state never begins. The final legal shot therefore drains the capacitor
+     * whenever it would leave less than one more full shot in reserve.
+     */
+    public consumeWeaponPower(amount: number): void {
+        if (this.reactorRecovering || amount <= 0) return;
+        const safeAmount = Math.max(0, amount);
+        const remaining = this.currentPower - safeAmount;
+        if (remaining <= safeAmount) {
+            this.currentPower = 0;
+            this.reactorRecovering = true;
+            return;
+        }
+        this.currentPower = remaining;
+    }
+
     public generatePower(deltaTime: number, bonusMultiplier: number = 1.0): void {
         const recoveryMultiplier = this.reactorRecovering ? this.reactorRecoveryOutputMultiplier : 1;
         const output = this.getGeneratorOutput(bonusMultiplier) * recoveryMultiplier * deltaTime;

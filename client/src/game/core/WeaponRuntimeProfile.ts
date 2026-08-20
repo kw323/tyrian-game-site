@@ -98,11 +98,11 @@ export function getWeaponRuntimeProfile(type: RuntimeWeaponType, requestedLevel:
                 // Void Lance trades its former oversized field for a tighter, far more
                 // dangerous singularity. Rank improves control intensity, damage uptime and
                 // interception rather than letting the visual event horizon fill the arena.
-                voidProjectileSpeed: 7.1 - level * 0.04,
-                voidFieldRadius: 30 + level * 2.2,
-                voidFieldDuration: 1.8 + level * 0.055,
-                voidSuctionStrength: 2.3 + level * 0.18,
-                voidProjectileCaptureRadius: 18 + level * 0.55
+                voidProjectileSpeed: 6.9 - level * 0.035,
+                voidFieldRadius: 22 + level * 1.2,
+                voidFieldDuration: 1.65 + level * 0.045,
+                voidSuctionStrength: 3.6 + level * 0.24,
+                voidProjectileCaptureRadius: 14 + level * 0.35
             };
     }
 }

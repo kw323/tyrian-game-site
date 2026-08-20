@@ -43,8 +43,25 @@ export class AsteroidBeltEntity extends Entity {
         }
     }
 
+    public isDestructible(): boolean {
+        return this.kind !== 'massive';
+    }
+
+    /** A singularity bends even an indestructible asteroid without destroying it. */
+    public applyGravityToward(centerX: number, centerY: number, strength: number, deltaTime: number): void {
+        const asteroidCenterX = this.x + this.width / 2;
+        const asteroidCenterY = this.y + this.height / 2;
+        const distance = Math.max(1, Math.hypot(centerX - asteroidCenterX, centerY - asteroidCenterY));
+        const pullX = (centerX - asteroidCenterX) / distance;
+        const pullY = (centerY - asteroidCenterY) / distance;
+        const inertia = this.kind === 'massive' ? 0.32 : this.kind === 'fragile' ? 0.78 : 1;
+        const impulse = Math.min(0.68, strength * deltaTime * 4.2 * inertia);
+        this.vx = Math.max(-8, Math.min(8, this.vx + pullX * impulse));
+        this.vy = Math.max(-8, Math.min(8, this.vy + pullY * impulse));
+    }
+
     public takeDamage(amount: number): boolean {
-        if (this.kind === 'massive') return false;
+        if (!this.isDestructible()) return false;
         this.health -= amount;
         if (this.health <= 0) {
             this.isActive = false;
@@ -78,20 +95,45 @@ export class AsteroidBeltEntity extends Entity {
         ctx.closePath();
 
         if (this.kind === 'massive') {
-            ctx.fillStyle = '#4a5568';
-            ctx.strokeStyle = '#a0aec0';
+            // Dark body + red structural bands = solid, indestructible obstacle.
+            ctx.fillStyle = '#26313f';
+            ctx.strokeStyle = '#ff667e';
             ctx.lineWidth = 3;
         } else if (this.kind === 'fragile') {
-            ctx.fillStyle = '#718096';
-            ctx.strokeStyle = '#cbd5e0';
+            // Warm fracture seams = destructible asteroid that splits into debris.
+            ctx.fillStyle = '#716274';
+            ctx.strokeStyle = '#ffd166';
             ctx.lineWidth = 2;
         } else {
-            ctx.fillStyle = '#a0aec0';
-            ctx.strokeStyle = '#e2e8f0';
+            ctx.fillStyle = '#9aa7b5';
+            ctx.strokeStyle = '#dce9f4';
             ctx.lineWidth = 1.5;
         }
         ctx.fill();
         ctx.stroke();
+
+        if (this.kind === 'massive') {
+            ctx.strokeStyle = '#ff667e';
+            ctx.lineWidth = 1.6;
+            ctx.setLineDash([5, 4]);
+            ctx.beginPath();
+            ctx.arc(0, 0, this.radius * 0.56, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = '#ff9aad';
+            ctx.font = `bold ${Math.max(10, this.radius * 0.32)}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.fillText('X', 0, this.radius * 0.12);
+        } else if (this.kind === 'fragile') {
+            ctx.strokeStyle = '#fff1b5';
+            ctx.lineWidth = 1.2;
+            ctx.beginPath();
+            ctx.moveTo(-this.radius * 0.42, -this.radius * 0.18);
+            ctx.lineTo(-this.radius * 0.08, this.radius * 0.05);
+            ctx.lineTo(this.radius * 0.14, -this.radius * 0.14);
+            ctx.lineTo(this.radius * 0.42, this.radius * 0.22);
+            ctx.stroke();
+        }
 
         ctx.restore();
     }

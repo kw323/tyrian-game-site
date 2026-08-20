@@ -103,11 +103,27 @@ describe('Weapon runtime profile', () => {
         const rankTwentyFive = getWeaponRuntimeProfile('void_lance', 24);
         const rankTwentyFiveSingularity = new BlackHoleBullet(500, 700, 10, 24);
 
-        expect(rankTwentyFive.voidFieldRadius).toBeLessThan(90);
+        expect(rankTwentyFive.voidFieldRadius).toBeLessThan(55);
         expect(rankTwentyFive.voidFieldRadius).toBeGreaterThan(rankOne.voidFieldRadius ?? 0);
         expect(rankTwentyFive.voidSuctionStrength).toBeGreaterThan(6);
         expect(rankTwentyFiveSingularity.getDamageForTarget()).toBeGreaterThan(13);
         expect(rankTwentyFiveSingularity.getSuctionDamage()).toBeGreaterThan(4);
+    });
+
+    it('enforces hull weapon caps and unlocks the singularity only after three research fragments', () => {
+        const system = new WeaponUpgradeSystem();
+        for (let level = 1; level <= 4; level++) {
+            expect(system.upgradeWeapon(WeaponType.STRAIGHT, Number.MAX_SAFE_INTEGER, 0)).not.toBeNull();
+        }
+        expect(system.getCurrentLevel(WeaponType.STRAIGHT)).toBe(4);
+        expect(system.upgradeWeapon(WeaponType.STRAIGHT, Number.MAX_SAFE_INTEGER, 0)).toBeNull();
+        expect(system.upgradeWeapon(WeaponType.STRAIGHT, Number.MAX_SAFE_INTEGER, 1)).not.toBeNull();
+
+        expect(system.collectSecretWeaponFragment()).toEqual({ fragments: 1, unlocked: false });
+        expect(system.collectSecretWeaponFragment()).toEqual({ fragments: 2, unlocked: false });
+        expect(system.collectSecretWeaponFragment()).toEqual({ fragments: 3, unlocked: true });
+        expect(system.isSecretWeaponUnlocked()).toBe(true);
+        expect(system.getCurrentLevel(WeaponType.VOID_LANCE)).toBe(0);
     });
 
     it('keeps rank-25 advanced weapons in a campaign-scale credit range', () => {

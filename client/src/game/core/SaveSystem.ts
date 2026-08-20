@@ -12,6 +12,8 @@ export interface SaveData {
     engineUpgradeLevel?: number;
     weaponLevels: Record<string, number>;
     currentWeapon: string;
+    secretWeaponUnlocked?: boolean;
+    secretWeaponFragments?: number;
     tacticalAbilityLevels?: Record<string, number>;
     selectedTacticalAbility?: string;
     elementalCoreState?: ElementalCoreSaveState;
