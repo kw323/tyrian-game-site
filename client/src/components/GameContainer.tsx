@@ -48,7 +48,8 @@ import { DifficultySystem, DifficultyId, DifficultyProfile } from '@/game/core/D
 import { FinalBossAssembly, FinalBossPart } from '@/game/entities/FinalBossPart';
 import { VoicePlaybackManager } from '@/game/core/VoicePlaybackManager';
 import { StageSelectModal } from '@/components/StageSelectModal';
-import { SaveSystem } from '@/game/core/SaveSystem';
+import { SaveLoadModal } from '@/components/SaveLoadModal';
+import { SaveData, SaveSystem } from '@/game/core/SaveSystem';
 import { Capacitor } from '@capacitor/core';
 
 interface ResumeCheckpoint {
@@ -154,6 +155,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
         return stored ? Math.max(1, parseInt(stored, 10)) : 1;
     });
     const [showStageMapModal, setShowStageMapModal] = useState<boolean>(false);
+    const [showManualSaveModal, setShowManualSaveModal] = useState<boolean>(false);
+    const [manualSaveState, setManualSaveState] = useState<Omit<SaveData, 'slotId' | 'slotName' | 'timestamp'> | undefined>(undefined);
     const [resumeCheckpoint, setResumeCheckpoint] = useState<ResumeCheckpoint | null>(() => {
         const raw = localStorage.getItem(RESUME_CHECKPOINT_KEY);
         if (!raw) return null;
@@ -843,6 +846,34 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
                 return checkpoint;
             };
+
+            const openManualSave = (): void => {
+                if (isTestSession || gameState.gameOver || gameState.showLevelScreen) return;
+                const checkpoint = buildResumeCheckpoint('MANUAL SAVE // SELECT A SLOT');
+                const weaponState = checkpoint.weaponState ?? {};
+                setManualSaveState({
+                    score: checkpoint.score,
+                    level: checkpoint.level,
+                    shipId: checkpoint.shipId ?? 0,
+                    generatorLevel: checkpoint.generatorLevel ?? 1,
+                    shieldLevel: checkpoint.shieldLevel ?? 1,
+                    engineUpgradeLevel: checkpoint.engineUpgradeLevel ?? 0,
+                    weaponLevels: weaponState.weaponLevels ?? {},
+                    currentWeapon: weaponState.currentWeapon ?? 'straight',
+                    elementalCoreState: checkpoint.elementalCoreState,
+                    pilotSkillsState: checkpoint.pilotSkillsState,
+                    equipmentState: checkpoint.equipmentState,
+                    tacticalAbilityState: checkpoint.tacticalAbilityState,
+                    maxUnlockedLevel: Math.max(maxUnlockedLevel, checkpoint.level),
+                });
+                gameState.isPaused = true;
+                setShowManualSaveModal(true);
+            };
+
+            const handleManualSaveClosed = (): void => {
+                gameState.isPaused = false;
+            };
+            window.addEventListener('tyrian:manual-save-closed', handleManualSaveClosed);
 
             const saveResumeCheckpoint = (reason: string): void => {
                 persistAutosave(reason);
@@ -4033,6 +4064,11 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     testNoticeUntil = performance.now() + 2400;
                     return;
                 }
+                if (e.key === 'F5') {
+                    e.preventDefault();
+                    openManualSave();
+                    return;
+                }
                     if (showAfterActionModal) {
                         e.preventDefault();
                         showAfterActionModal = false;
@@ -4350,6 +4386,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 canvas.style.cursor = 'default';
                 if (initialStageTimer !== null) window.clearTimeout(initialStageTimer);
                 window.removeEventListener('tyrian:jump-to-stage', handleStageJumpEvent as EventListener);
+                window.removeEventListener('tyrian:manual-save-closed', handleManualSaveClosed);
             };
         } catch (error) {
             console.error('Failed to initialize game:', error);
@@ -4476,6 +4513,17 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
     return (
         <div className="flex flex-col items-center justify-center gap-6 w-full">
+            {showManualSaveModal && manualSaveState && (
+                <SaveLoadModal
+                    isOpen={showManualSaveModal}
+                    mode="save"
+                    currentState={manualSaveState}
+                    onClose={() => {
+                        setShowManualSaveModal(false);
+                        window.dispatchEvent(new Event('tyrian:manual-save-closed'));
+                    }}
+                />
+            )}
             {showStageMapModal && (
                 <StageSelectModal
                     maxUnlockedLevel={maxUnlockedLevel}
@@ -4618,7 +4666,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 )}
             </div>
             <div className="text-center text-sm text-gray-400">
-                <p><span className="text-green-400 font-semibold">{movementKeysLabel}</span> move · <span className="text-green-400 font-semibold">{formatControlCode(activeControlBindings.fire)}</span> fires · <span className="text-green-400 font-semibold">{formatControlCode(activeControlBindings.tacticalAbility)}</span> toggles tactical {mouseControlsEnabled && <>· <span className="text-cyan-300 font-semibold">MOUSE</span> flies / left click fires</>}</p>
+                <p><span className="text-green-400 font-semibold">{movementKeysLabel}</span> move · <span className="text-green-400 font-semibold">{formatControlCode(activeControlBindings.fire)}</span> fires · <span className="text-green-400 font-semibold">{formatControlCode(activeControlBindings.tacticalAbility)}</span> toggles tactical · <span className="text-cyan-300 font-semibold">F5</span> manual save {mouseControlsEnabled && <>· <span className="text-cyan-300 font-semibold">MOUSE</span> flies / left click fires</>}</p>
                 {showTouchControls && <p className="mobile-input-hint">{showDirectTouchFlight ? 'Android: drag anywhere on the battle field to fly. Hold FIRE and tap TACTICAL.' : 'On mobile: drag the left joystick, hold FIRE, and tap TACTICAL to start or stop the ability.'}</p>}
             </div>
         </div>
