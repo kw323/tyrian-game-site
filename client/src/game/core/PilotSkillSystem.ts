@@ -171,15 +171,15 @@ export class PilotSkillSystem {
         const percent = (value: number): string => `${(value * 100).toFixed(value * 100 % 1 === 0 ? 0 : 1)}%`;
         const total = node.level * node.bonusPerPoint + this.getCompletionBonus(node);
         switch (id) {
-            case 'hull_integrity': return `MAX HULL: +${percent(total)}`;
-            case 'collision_resist': return `COLLISION DAMAGE: -${percent(total)}`;
-            case 'aegis_protocol': return `SHIELD CAPACITY & REGEN: +${percent(total)}`;
-            case 'generator_output': return `GENERATOR OUTPUT: +${percent(total)}`;
-            case 'capacitor_reserve': return `MAX REACTOR ENERGY: +${percent(total)}`;
-            case 'weapon_efficiency': return `WEAPON ENERGY EFFICIENCY: +${percent(total)}`;
-            case 'weapon_damage': return `WEAPON DAMAGE: +${percent(total)}`;
-            case 'fire_rate': return `FIRE RATE: +${percent(total)}`;
-            case 'critical_targeting': return `CRITICAL VOLLEY CHANCE: +${percent(this.getCriticalChance())}  // CRITS DEAL 1.75×`;
+            case 'hull_integrity': return `MAX HULL  +${percent(total)}`;
+            case 'collision_resist': return `COLLISION DAMAGE  -${percent(total)}`;
+            case 'aegis_protocol': return `SHIELD + REGEN  +${percent(total)}`;
+            case 'generator_output': return `GENERATOR OUTPUT  +${percent(total)}`;
+            case 'capacitor_reserve': return `ENERGY CAPACITY  +${percent(total)}`;
+            case 'weapon_efficiency': return `WEAPON EFFICIENCY  +${percent(total)}`;
+            case 'weapon_damage': return `WEAPON DAMAGE  +${percent(total)}`;
+            case 'fire_rate': return `FIRE RATE  +${percent(total)}`;
+            case 'critical_targeting': return `CRIT VOLLEY  +${percent(this.getCriticalChance())} // 1.75×`;
         }
     }
 

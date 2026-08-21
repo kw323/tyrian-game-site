@@ -98,14 +98,16 @@ describe('Weapon runtime profile', () => {
         }
     });
 
-    it('keeps Void Lance compact while making its high-rank pull more dangerous', () => {
+    it('uses a wide gravity field with a compact capture core for Void Lance', () => {
         const rankOne = getWeaponRuntimeProfile('void_lance', 0);
         const rankTwentyFive = getWeaponRuntimeProfile('void_lance', 24);
         const rankTwentyFiveSingularity = new BlackHoleBullet(500, 700, 10, 24);
 
-        expect(rankTwentyFive.voidFieldRadius).toBeLessThan(55);
+        expect(rankOne.voidFieldRadius).toBe(150);
+        expect(rankTwentyFive.voidFieldRadius).toBe(200);
         expect(rankTwentyFive.voidFieldRadius).toBeGreaterThan(rankOne.voidFieldRadius ?? 0);
-        expect(rankTwentyFive.voidSuctionStrength).toBeGreaterThan(6);
+        expect(rankTwentyFive.voidProjectileCaptureRadius).toBeLessThan(13);
+        expect(rankTwentyFive.voidSuctionStrength).toBeGreaterThan(13);
         expect(rankTwentyFiveSingularity.getDamageForTarget()).toBeGreaterThan(13);
         expect(rankTwentyFiveSingularity.getSuctionDamage()).toBeGreaterThan(4);
     });

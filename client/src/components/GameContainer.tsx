@@ -1948,7 +1948,10 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 // Time Field changes only hostile projectile velocity, not enemy movement,
                 // spawn timing, or the tactical ability. At tier 5, speed stays at 80%.
                 game['entities'].forEach((entity: any) => {
-                    if (entity instanceof EnemyBullet) entity.setSpeedMultiplier(activeRuneProfile.enemyBulletSpeedMultiplier);
+                    if (entity instanceof EnemyBullet) {
+                        entity.setSpeedMultiplier(activeRuneProfile.enemyBulletSpeedMultiplier);
+                        entity.setGravitySpeedMultiplier(1);
+                    }
                 });
 
                 // Call original update
@@ -2168,8 +2171,12 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         const deltaY = center.y - targetCenterY;
                         const distance = Math.max(1, Math.hypot(deltaX, deltaY));
                         const fieldRadius = bullet.getFieldRadius();
-                        const falloff = Math.max(0.35, 1 - distance / fieldRadius);
-                        const suction = bullet.getSuctionStrength() * (0.65 + falloff * 0.75);
+                        // Gravity reaches the full field, but rises sharply near the compact
+                        // event horizon. At the rim a shot only bends slightly; near the core
+                        // it curves, slows, and may be consumed if it crosses the tiny core.
+                        const normalizedDistance = Math.max(0, Math.min(1, distance / fieldRadius));
+                        const falloff = Math.pow(1 - normalizedDistance, 1.55);
+                        const suction = bullet.getSuctionStrength() * (0.12 + falloff * 0.88);
                         bullet.registerSuction(target, isHostileShot ? 0.025 : 0.09);
 
                         if (target instanceof AsteroidBeltEntity) {
@@ -2191,6 +2198,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                             const magnitude = Math.max(0.001, Math.hypot(nextX, nextY));
                             target.dirX = nextX / magnitude;
                             target.dirY = nextY / magnitude;
+                            target.setGravitySpeedMultiplier(1 - (0.05 + falloff * 0.25));
                             target.x += pullX * suction * deltaTime * 22;
                             target.y += pullY * suction * deltaTime * 22;
                             if (distance <= bullet.getProjectileCaptureRadius()) target.isActive = false;
@@ -3545,85 +3553,90 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         const xpRatio = Math.min(1.0, xp / nextXp);
                         ctx.fillRect(54, 238, Math.floor(1092 * xpRatio), 8);
 
-                        const nodes = pilotSkillSystem.getAllNodes();
                         const branchHeaders = [
-                            { id: 'survival' as const, label: 'SURVIVAL // HULL & AEGIS', color: '#42e8bf' },
-                            { id: 'reactor' as const, label: 'REACTOR // POWER MANAGEMENT', color: '#75d8e7' },
-                            { id: 'combat' as const, label: 'COMBAT // WEAPON CONTROL', color: '#ffd166' }
+                            { id: 'survival' as const, label: 'SURVIVAL SYSTEMS', subtitle: 'HULL • COLLISION • SHIELD', color: '#42e8bf' },
+                            { id: 'reactor' as const, label: 'REACTOR SYSTEMS', subtitle: 'OUTPUT • RESERVE • EFFICIENCY', color: '#75d8e7' },
+                            { id: 'combat' as const, label: 'COMBAT SYSTEMS', subtitle: 'DAMAGE • FIRE RATE • CRITICALS', color: '#ffd166' }
                         ];
-                        let hoveredSkillNode: any = null;
 
-                        branchHeaders.forEach((branch, index) => {
-                            const branchY = 265 + index * 150;
+                        branchHeaders.forEach((branch, row) => {
+                            const branchY = 265 + row * 210;
+                            const branchNodes = pilotSkillSystem.getNodesByBranch(branch.id);
+                            const invested = branchNodes.reduce((total, node) => total + node.level, 0);
                             const complete = pilotSkillSystem.isBranchComplete(branch.id);
-                            ctx.fillStyle = complete ? '#00FF88' : branch.color;
-                            ctx.font = 'bold 13px Arial';
-                            const completionLabel = complete
-                                ? ` // ${pilotSkillSystem.getBranchCompletionLabel(branch.id)} +${(PilotSkillSystem.BRANCH_COMPLETION_BONUS * 100).toFixed(0)}% ACTIVE`
-                                : ` // COMPLETE ALL 3 FOR +${(PilotSkillSystem.BRANCH_COMPLETION_BONUS * 100).toFixed(0)}%`;
-                            ctx.fillText(`${branch.label}${completionLabel}`, 52, branchY);
-                        });
+                            const panelColor = complete ? '#00FF88' : branch.color;
 
-                        nodes.forEach((node, index) => {
-                            const col = index % 3;
-                            const row = Math.floor(index / 3);
-                            const cardX = 52 + col * 372;
-                            const cardY = 277 + row * 150;
-                            const branchColor = branchHeaders[row]?.color ?? '#38bdf8';
-                            const isCardHovered = hoveredShopItem === `skill-card-${node.id}`;
-                            ctx.fillStyle = isCardHovered ? '#102b3b' : '#0b1e2d';
-                            ctx.fillRect(cardX, cardY, 350, 126);
-                            ctx.strokeStyle = isCardHovered ? '#ffffff' : branchColor;
-                            ctx.strokeRect(cardX, cardY, 350, 126);
-                            ctx.fillStyle = '#dbe9ee';
-                            ctx.font = 'bold 13px Arial';
-                            ctx.fillText(node.name, cardX + 14, cardY + 24);
-                            ctx.fillStyle = branchColor;
-                            ctx.font = '12px Arial';
-                            ctx.fillText(`LEVEL ${node.level}/${node.maxLevel}`, cardX + 14, cardY + 46);
+                            ctx.fillStyle = '#071a29';
+                            ctx.fillRect(52, branchY, 1096, 194);
+                            ctx.strokeStyle = panelColor;
+                            ctx.lineWidth = 1.5;
+                            ctx.strokeRect(52, branchY, 1096, 194);
+                            ctx.lineWidth = 1;
+
+                            ctx.fillStyle = panelColor;
+                            ctx.font = 'bold 14px Arial';
+                            ctx.fillText(branch.label, 68, branchY + 24);
                             ctx.fillStyle = '#8ea6b2';
                             ctx.font = '11px Arial';
-                            drawWrappedText(ctx, node.description, cardX + 14, cardY + 64, 320, 12, 2);
-                            ctx.fillStyle = node.level >= node.maxLevel ? '#00FF88' : '#ffffff';
-                            ctx.font = 'bold 12px Arial';
-                            ctx.fillText(`CURRENT EFFECT: ${pilotSkillSystem.getCurrentEffectSummary(node.id)}`, cardX + 14, cardY + 102);
-                            const canInvest = points > 0 && node.level < node.maxLevel;
-                            drawButton(`invest-${node.id}`, node.level >= node.maxLevel ? 'MAXED' : 'INVEST', cardX + 224, cardY + 84, 108, 28, canInvest ? branchColor : '#526874', () => {
-                                if (pilotSkillSystem.investPoint(node.id)) {
-                                    if (node.branch === 'survival') applyPlayerDefenseProfile(false, false);
-                                    if (node.id === 'generator_output' || node.id === 'capacitor_reserve' || node.id === 'weapon_efficiency') {
-                                        powerSystem.setPilotModifiers(
-                                            pilotSkillSystem.getBonusMultiplier('capacitor_reserve') * pilotSkillSystem.getBranchCompletionMultiplier('reactor'),
-                                            pilotSkillSystem.getBonusMultiplier('weapon_efficiency') * pilotSkillSystem.getBranchCompletionMultiplier('reactor')
-                                        );
+                            ctx.fillText(branch.subtitle, 68, branchY + 42);
+                            ctx.fillStyle = complete ? '#00FF88' : '#dbe9ee';
+                            ctx.font = 'bold 11px Arial';
+                            ctx.fillText(complete
+                                ? `${pilotSkillSystem.getBranchCompletionLabel(branch.id)} // +${(PilotSkillSystem.BRANCH_COMPLETION_BONUS * 100).toFixed(0)}% SPECIALTY ACTIVE`
+                                : `BRANCH PROGRESS ${invested}/60 // COMPLETE ALL 3 SKILLS FOR +${(PilotSkillSystem.BRANCH_COMPLETION_BONUS * 100).toFixed(0)}%`, 68, branchY + 61);
+
+                            branchNodes.forEach((node, col) => {
+                                const cardX = 68 + col * 360;
+                                const cardY = branchY + 78;
+                                const isCardHovered = hoveredShopItem === `skill-card-${node.id}`;
+                                ctx.fillStyle = isCardHovered ? '#12364a' : '#0b2433';
+                                ctx.fillRect(cardX, cardY, 340, 100);
+                                ctx.strokeStyle = isCardHovered ? '#ffffff' : panelColor;
+                                ctx.strokeRect(cardX, cardY, 340, 100);
+
+                                ctx.fillStyle = '#ffffff';
+                                ctx.font = 'bold 13px Arial';
+                                ctx.fillText(node.name, cardX + 12, cardY + 21);
+                                ctx.fillStyle = panelColor;
+                                ctx.font = 'bold 11px Arial';
+                                ctx.fillText(`LEVEL ${node.level}/${node.maxLevel}`, cardX + 12, cardY + 39);
+                                ctx.fillStyle = node.level >= node.maxLevel ? '#00FF88' : '#ffffff';
+                                ctx.font = 'bold 11px Arial';
+                                ctx.fillText(pilotSkillSystem.getCurrentEffectSummary(node.id), cardX + 12, cardY + 57);
+                                ctx.fillStyle = '#9eb2bd';
+                                ctx.font = '10px Arial';
+                                drawWrappedText(ctx, node.description, cardX + 12, cardY + 74, 230, 11, 2);
+
+                                const canInvest = points > 0 && node.level < node.maxLevel;
+                                drawButton(`invest-${node.id}`, node.level >= node.maxLevel ? 'MAXED' : 'INVEST', cardX + 246, cardY + 58, 82, 27, canInvest ? panelColor : '#526874', () => {
+                                    if (pilotSkillSystem.investPoint(node.id)) {
+                                        if (node.branch === 'survival') applyPlayerDefenseProfile(false, false);
+                                        if (node.id === 'generator_output' || node.id === 'capacitor_reserve' || node.id === 'weapon_efficiency') {
+                                            powerSystem.setPilotModifiers(
+                                                pilotSkillSystem.getBonusMultiplier('capacitor_reserve') * pilotSkillSystem.getBranchCompletionMultiplier('reactor'),
+                                                pilotSkillSystem.getBonusMultiplier('weapon_efficiency') * pilotSkillSystem.getBranchCompletionMultiplier('reactor')
+                                            );
+                                        }
+                                        if (node.id === 'weapon_damage' || node.id === 'fire_rate' || node.id === 'critical_targeting') {
+                                            syncPlayerWeapon(weaponSystem.getCurrentWeapon());
+                                        }
+                                        SoundSystem.playUpgrade();
                                     }
-                                    if (node.id === 'weapon_damage' || node.id === 'fire_rate' || node.id === 'critical_targeting') {
-                                        syncPlayerWeapon(weaponSystem.getCurrentWeapon());
-                                    }
-                                    SoundSystem.playUpgrade();
-                                }
+                                });
+                                shopHitboxes.push({ id: `skill-card-${node.id}`, x: cardX, y: cardY, width: 340, height: 100, action: () => {} });
                             });
-                            shopHitboxes.push({ id: `skill-card-${node.id}`, x: cardX, y: cardY, width: 350, height: 126, action: () => {} });
-                            if (hoveredShopItem === `skill-card-${node.id}`) hoveredSkillNode = node;
                         });
 
-                        // Hover Inspector Panel for Skills at bottom
-                        if (hoveredSkillNode) {
-                            ctx.fillStyle = 'rgba(3, 10, 24, 0.95)';
-                            ctx.fillRect(52, 790, 1096, 95);
-                            ctx.strokeStyle = '#38bdf8';
-                            ctx.strokeRect(52, 790, 1096, 95);
-
-                            ctx.textAlign = 'left';
-                            ctx.fillStyle = '#38bdf8';
-                            ctx.font = 'bold 14px Arial';
-                            ctx.fillText(`SKILL INSPECT: ${hoveredSkillNode.name} (Lvl ${hoveredSkillNode.level}/${hoveredSkillNode.maxLevel})`, 72, 818);
-
-                            ctx.fillStyle = '#dbe9ee';
-                            ctx.font = '13px Arial';
-                            ctx.fillText(`CURRENT EFFECT: ${pilotSkillSystem.getCurrentEffectSummary(hoveredSkillNode.id)}`, 72, 846);
-                            ctx.fillText(`ROLE: ${hoveredSkillNode.description}  •  Complete all 3 skills in this branch for an additional +3% specialty bonus.`, 72, 870);
-                        }
+                        ctx.fillStyle = '#0b1e2d';
+                        ctx.fillRect(52, 907, 1096, 74);
+                        ctx.strokeStyle = '#284b5d';
+                        ctx.strokeRect(52, 907, 1096, 74);
+                        ctx.fillStyle = '#38bdf8';
+                        ctx.font = 'bold 12px Arial';
+                        ctx.fillText('PILOT SKILL GUIDE', 70, 932);
+                        ctx.fillStyle = '#dbe9ee';
+                        ctx.font = '11px Arial';
+                        ctx.fillText('Each card shows its current cumulative bonus. Invest points to improve it; complete all three cards in a branch to activate its additional 3% specialty bonus.', 70, 955);
                         return;
                     }
 

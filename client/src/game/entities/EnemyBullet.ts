@@ -9,6 +9,7 @@ export class EnemyBullet extends Entity {
     public style: string;
     public isFriendly = false;
     private speedMultiplier = 1;
+    private gravitySpeedMultiplier = 1;
 
     constructor(x: number, y: number, width: number, height: number, speed: number, damage: number, dirX: number = 0, dirY: number = 1, color: string = '#FF6666', style: string = 'orb') {
         super(x, y, width, height);
@@ -24,10 +25,16 @@ export class EnemyBullet extends Entity {
         this.speedMultiplier = Math.max(0.1, Math.min(1, multiplier));
     }
 
+    /** Applied only while a projectile crosses a Void Lance gravity field. */
+    public setGravitySpeedMultiplier(multiplier: number): void {
+        this.gravitySpeedMultiplier = Math.max(0.55, Math.min(1, multiplier));
+    }
+
     public update(deltaTime: number): void {
         if (this.isTimeFrozen) return;
-        this.x += this.dirX * this.speed * this.speedMultiplier * deltaTime * 60;
-        this.y += this.dirY * this.speed * this.speedMultiplier * deltaTime * 60;
+        const effectiveSpeed = this.speed * this.speedMultiplier * this.gravitySpeedMultiplier;
+        this.x += this.dirX * effectiveSpeed * deltaTime * 60;
+        this.y += this.dirY * effectiveSpeed * deltaTime * 60;
 
         // The combat canvas is 1200px wide; keeping the projectile alive through 1250px
         // prevents shots fired on the right flank from vanishing before they leave the arena.

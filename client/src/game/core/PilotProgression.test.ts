@@ -141,7 +141,7 @@ describe('Long-form skill progression', () => {
 
         expect(system.isBranchComplete('survival')).toBe(true);
         expect(system.getBranchCompletionMultiplier('survival')).toBeCloseTo(1.03, 5);
-        expect(system.getCurrentEffectSummary('hull_integrity')).toBe('MAX HULL: +22%');
+        expect(system.getCurrentEffectSummary('hull_integrity')).toBe('MAX HULL  +22%');
         expect(system.isBranchComplete('combat')).toBe(false);
     });
 });

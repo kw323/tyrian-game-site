@@ -95,14 +95,14 @@ export function getWeaponRuntimeProfile(type: RuntimeWeaponType, requestedLevel:
         case 'void_lance':
             return {
                 projectileCount: rank >= 22 ? 4 : rank >= 14 ? 3 : rank >= 7 ? 2 : 1,
-                // Void Lance trades its former oversized field for a tighter, far more
-                // dangerous singularity. Rank improves control intensity, damage uptime and
-                // interception rather than letting the visual event horizon fill the arena.
+                // The visible core remains compact, but its gravitational influence extends
+                // across a meaningful part of the arena. Rank chiefly improves the pull near
+                // the event horizon; shots at the outer edge are bent rather than swallowed.
                 voidProjectileSpeed: 6.9 - level * 0.035,
-                voidFieldRadius: 22 + level * 1.2,
+                voidFieldRadius: 150 + level * (50 / 24),
                 voidFieldDuration: 1.65 + level * 0.045,
-                voidSuctionStrength: 3.6 + level * 0.24,
-                voidProjectileCaptureRadius: 14 + level * 0.35
+                voidSuctionStrength: 7 + level * (7 / 24),
+                voidProjectileCaptureRadius: 8 + level * (4 / 24)
             };
     }
 }
@@ -132,6 +132,6 @@ export function getWeaponUpgradeDescription(
         case 'arc':
             return `Rank ${rank}: fixed lightning • ${profile.arcChainJumps} jumps • each jump deals 50% less • range ${profile.arcChainRange} • ${baseStats}`;
         case 'void_lance':
-            return `Rank ${rank}: ${profile.projectileCount} slow singularit${profile.projectileCount === 1 ? 'y' : 'ies'} • radius ${profile.voidFieldRadius} • ${profile.voidFieldDuration?.toFixed(2)}s • pull ${profile.voidSuctionStrength?.toFixed(2)} • ${baseStats}`;
+            return `Rank ${rank}: ${profile.projectileCount} slow singularit${profile.projectileCount === 1 ? 'y' : 'ies'} • gravity ${Math.round(profile.voidFieldRadius ?? 0)}px • core ${Math.round(profile.voidProjectileCaptureRadius ?? 0)}px • ${profile.voidFieldDuration?.toFixed(2)}s • ${baseStats}`;
     }
 }
