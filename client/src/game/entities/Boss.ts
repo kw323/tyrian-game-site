@@ -194,13 +194,14 @@ export class Boss extends Entity {
     }
 
     public applySlow(multiplier: number, duration: number): void {
-        this.movementScale = Math.min(this.movementScale, Math.max(0.72, multiplier));
-        this.slowTimer = Math.max(this.slowTimer, duration * 0.55);
+        // Bosses resist control effects, but cryo must still be obvious at high rank.
+        this.movementScale = Math.min(this.movementScale, Math.max(0.62, multiplier));
+        this.slowTimer = Math.max(this.slowTimer, duration * 0.7);
     }
 
     public applyKnockback(forceX: number, forceY: number, resistance = 0.18): void {
-        this.knockbackX = Math.max(-2.5, Math.min(2.5, this.knockbackX + forceX * 0.04 * resistance));
-        this.knockbackY = Math.max(-1.5, Math.min(1.5, this.knockbackY + forceY * 0.04 * resistance));
+        this.knockbackX = Math.max(-2.5, Math.min(2.5, this.knockbackX + forceX * 0.065 * resistance));
+        this.knockbackY = Math.max(-1.5, Math.min(1.5, this.knockbackY + forceY * 0.065 * resistance));
     }
 
     public takeDamage(damage: number): void {

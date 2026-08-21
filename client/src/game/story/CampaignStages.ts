@@ -24,18 +24,23 @@ export class CampaignStages {
             'Automated Dreadnought Shipyard',
             'Command Nexus Alpha Centauri',
             'Program Zero Core Horizon',
-            'The Final Singularity Gate'
+            'The Final Singularity Gate',
+            'Archon Singularity Gate'
         ];
 
-        for (let i = 1; i <= 100; i++) {
-            const chapter = Math.floor((i - 1) / 10) + 1;
-            const isBoss = i % 3 === 0;
+        for (let i = 1; i <= 101; i++) {
+            const chapter = i === 101 ? 11 : Math.floor((i - 1) / 10) + 1;
+            const isBoss = i === 101 || i % 3 === 0;
             const region = regions[chapter - 1] ?? 'Unknown Sector';
             let title = `Stage ${i}: Sector Patrol`;
             let desc = `Defend transport routes and eliminate rogue automated units in sector ${i}.`;
             let obj = 'Survive for 60 seconds and eliminate hostile forces.';
 
-            if (isBoss) {
+            if (i === 101) {
+                title = 'Stage 101: Archon Supreme // Final Singularity';
+                desc = 'Destroy the Archon defense grid, expose the void reactor, and survive its final meltdown.';
+                obj = 'Defeat Archon Supreme by surviving the reactor meltdown.';
+            } else if (isBoss) {
                 title = `Stage ${i}: Sector Commander Dreadnought`;
                 desc = `Heavy capital ship threat detected. Engage and neutralize regional flagship.`;
                 obj = 'Defeat the Sector Boss or survive the onslaught.';

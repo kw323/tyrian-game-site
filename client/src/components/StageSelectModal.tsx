@@ -12,6 +12,7 @@ export function StageSelectModal({ maxUnlockedLevel, allowAllStages = false, onS
     const [selectedChapter, setSelectedChapter] = useState(1);
     const stages = CampaignStages.getAllStages();
     const chapterStages = stages.filter((s) => s.chapter === selectedChapter);
+    const chapters = Array.from(new Set(stages.map((stage) => stage.chapter)));
 
     return (
         <div className="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-50 p-4">
@@ -30,7 +31,7 @@ export function StageSelectModal({ maxUnlockedLevel, allowAllStages = false, onS
                 </div>
 
                 <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((ch) => (
+                    {chapters.map((ch) => (
                         <button
                             key={ch}
                             onClick={() => setSelectedChapter(ch)}
@@ -40,7 +41,7 @@ export function StageSelectModal({ maxUnlockedLevel, allowAllStages = false, onS
                                     : 'bg-slate-950 text-gray-400 border border-slate-800 hover:text-white'
                             }`}
                         >
-                            CHAPTER {ch}
+                            {ch === 11 ? 'FINAL STAGE' : `CHAPTER ${ch}`}
                         </button>
                     ))}
                 </div>

@@ -316,6 +316,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             let bossDefeatedAt: number | null = null;
             const defeatedBosses = new Set<Boss>();
             let finalBossAssembly: FinalBossAssembly | null = null;
+            // The finale can only open after the Stage-101 reactor meltdown has completed.
+            let finalCampaignVictoryConfirmed = false;
             let seraDuelOutcome: 'win' | 'loss' | null = null;
             let seraAlly: SeraAllyShipEntity | null = null;
             let lastStageMasteryResult: StageMasteryResult | null = null;
@@ -434,8 +436,9 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                                     : type === WeaponType.VOID_LANCE
                                         ? 'void_lance'
                                         : 'heavy';
-                const damageBonus = pilotSkillSystem.getBonusMultiplier('weapon_damage');
-                const fireRateBonus = pilotSkillSystem.getBonusMultiplier('fire_rate');
+                const combatCompletionBonus = pilotSkillSystem.getBranchCompletionMultiplier('combat');
+                const damageBonus = pilotSkillSystem.getBonusMultiplier('weapon_damage') * combatCompletionBonus;
+                const fireRateBonus = pilotSkillSystem.getBonusMultiplier('fire_rate') * combatCompletionBonus;
                 const finalDamage = Math.round(stats.damage * damageBonus);
                 const finalFireRate = Math.max(0.04, stats.fireRate * fireRateBonus);
                 player.setWeapon(playerWeapon, weaponSystem.getCurrentLevel(type), finalFireRate, finalDamage);
@@ -659,9 +662,10 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 const previousMaxShield = Math.max(1, player.maxShield);
                 const hullRatio = Math.max(0, Math.min(1, player.health / previousMaxHull));
                 const shieldRatio = Math.max(0, Math.min(1, player.shield / previousMaxShield));
-                const hullMultiplier = pilotSkillSystem.getBonusMultiplier('hull_integrity');
-                const shieldSkillMultiplier = pilotSkillSystem.getBonusMultiplier('aegis_protocol');
-                const shieldRegenMultiplier = pilotSkillSystem.getBonusMultiplier('aegis_protocol');
+                const survivalCompletionBonus = pilotSkillSystem.getBranchCompletionMultiplier('survival');
+                const hullMultiplier = pilotSkillSystem.getBonusMultiplier('hull_integrity') * survivalCompletionBonus;
+                const shieldSkillMultiplier = pilotSkillSystem.getBonusMultiplier('aegis_protocol') * survivalCompletionBonus;
+                const shieldRegenMultiplier = pilotSkillSystem.getBonusMultiplier('aegis_protocol') * survivalCompletionBonus;
                 const equipmentShieldMultiplier = 1 + (equipmentSystem.getActiveBonuses().shieldCap / 100);
                 const permanentShieldCapacity = Math.max(0, shieldLevel - 1) * SHIELD_UPGRADE_CAPACITY;
                 const permanentShieldRegen = Math.max(0, shieldLevel - 1) * SHIELD_UPGRADE_REGEN;
@@ -1010,8 +1014,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 const cWidth = game.getCanvas().width;
                 const b = stageBriefing;
 
-                // Stages 41-50: Escape chapter asteroid belt hazards
-                if (gameState.level >= 41 && gameState.level <= 50) {
+                // Stages 50-59: the story's escape chapter enters the asteroid belt here.
+                if (gameState.level >= 50 && gameState.level <= 59) {
                     stageHazardKind = 'asteroid';
                     return;
                 }
@@ -1035,7 +1039,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             };
 
             const spawnAsteroidBeltHazardIfNeeded = (currentTime: number, deltaTime: number): void => {
-                if (gameState.level < 41 || gameState.level > 50) return;
+                if (gameState.level < 50 || gameState.level > 59) return;
                 if (currentTime - lastAsteroidSpawnTime < 1.75) return;
                 lastAsteroidSpawnTime = currentTime;
 
@@ -1245,6 +1249,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
             const startStagePlay = (): void => {
                 VoicePlaybackManager.stop();
+                if (gameState.level === CampaignSystem.TOTAL_STAGES) finalCampaignVictoryConfirmed = false;
                 MissionArchiveSystem.recordBriefing(stageBriefing, true);
                 initialLaunchPending = false;
                 showCommsModal = false;
@@ -1287,7 +1292,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             };
 
             const advanceFromShop = (): void => {
-                if (gameState.level >= CampaignSystem.TOTAL_STAGES) {
+                if (gameState.level >= CampaignSystem.TOTAL_STAGES && finalCampaignVictoryConfirmed) {
                     finaleSceneIndex = 0;
                     shopScreen = 'finale_victory';
                     gameState.levelComplete = true;
@@ -1337,6 +1342,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 const targetStage = Math.max(1, Math.min(CampaignSystem.TOTAL_STAGES, Math.floor(requestedStage)));
                 isTestSession = markTestSession;
                 gameState.level = targetStage;
+                finalCampaignVictoryConfirmed = false;
                 initialLaunchPending = false;
                 shopScreen = 'hub';
                 gameState.levelComplete = false;
@@ -1459,8 +1465,10 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 combatVisualEffects.spawnElementImpact(targetX, targetY, core, rank);
 
                 if (core === 'cryo') {
-                    const multiplier = Math.max(0.5, 0.82 - rank * 0.055);
-                    const duration = 1.2 + rank * 0.45;
+                    // Rank I begins as a clearly visible 34% slow and high ranks keep
+                    // dangerous formations in the player's control for longer.
+                    const multiplier = Math.max(0.42, 0.72 - rank * 0.055);
+                    const duration = 1.55 + rank * 0.55;
                     if (target instanceof EnemyAdvanced) target.slowDown(multiplier, duration);
                     else target.applySlow(multiplier, duration);
                     return;
@@ -1469,9 +1477,9 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 if (core === 'fire') {
                     const existing = elementalBurns.get(target);
                     elementalBurns.set(target, {
-                        remaining: Math.max(existing?.remaining ?? 0, 2.4 + rank * 0.45),
-                        tick: Math.min(existing?.tick ?? 0.45, 0.45),
-                        damage: Math.max(existing?.damage ?? 0, baseDamage * (0.09 + rank * 0.025))
+                        remaining: Math.max(existing?.remaining ?? 0, 3.0 + rank * 0.65),
+                        tick: Math.min(existing?.tick ?? 0.35, 0.35),
+                        damage: Math.max(existing?.damage ?? 0, baseDamage * (0.16 + rank * 0.035))
                     });
                     return;
                 }
@@ -1479,12 +1487,12 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 if (core === 'corrosion') {
                     // Corrosion is a direct armor breach: it adds a small portion of the
                     // trigger damage, making sustained fire effective against tough targets.
-                    target.takeDamage(baseDamage * (0.08 + rank * 0.028));
+                    target.takeDamage(baseDamage * (0.16 + rank * 0.04));
                     return;
                 }
 
                 if (core === 'kinetic') {
-                    const force = 1.4 + rank * 0.7;
+                    const force = 4.0 + rank * 2.5;
                     const knockX = (deltaX / distance) * force;
                     const knockY = (deltaY / distance) * force;
                     if (target instanceof EnemyAdvanced) target.applyKnockback(knockX, knockY);
@@ -1494,8 +1502,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
                 // Plasma creates a short-range rupture around the struck target. It is
                 // intentionally burst-oriented rather than another damage-over-time effect.
-                const radius = 42 + rank * 11;
-                const splashDamage = baseDamage * (0.12 + rank * 0.025);
+                const radius = 65 + rank * 18;
+                const splashDamage = baseDamage * (0.20 + rank * 0.045);
                 game['entities'].forEach((nearby: any) => {
                     if (nearby === target || !(nearby instanceof Enemy || nearby instanceof EnemyAdvanced) || !nearby.isActive) return;
                     const nearX = nearby.x + nearby.width / 2;
@@ -1656,11 +1664,12 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 );
 
                 // Generate power; OVER POWER keeps the reactor at maximum output for its duration.
+                const reactorCompletionBonus = pilotSkillSystem.getBranchCompletionMultiplier('reactor');
                 powerSystem.setPilotModifiers(
-                    pilotSkillSystem.getBonusMultiplier('capacitor_reserve'),
-                    pilotSkillSystem.getBonusMultiplier('weapon_efficiency')
+                    pilotSkillSystem.getBonusMultiplier('capacitor_reserve') * reactorCompletionBonus,
+                    pilotSkillSystem.getBonusMultiplier('weapon_efficiency') * reactorCompletionBonus
                 );
-                powerSystem.generatePower(deltaTime, pilotSkillSystem.getBonusMultiplier('generator_output'));
+                powerSystem.generatePower(deltaTime, pilotSkillSystem.getBonusMultiplier('generator_output') * reactorCompletionBonus);
                 if (hasUnlimitedPower) powerSystem.forceReactorOnline();
 
                 // A depleted reactor keeps movement available, but with a small recovery penalty.
@@ -1973,6 +1982,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         });
                         const rewardBoss = finalBossAssembly.getParts()[0];
                         gameState.addScore(Math.floor((rewardBoss?.getReward() ?? 100000) * 2.5));
+                        finalCampaignVictoryConfirmed = true;
                         bossDefeatedAt = performance.now() / 1000;
                         testNoticeText = 'ARCHON SUPREME // REACTOR MELTDOWN COMPLETE // VICTORY CONFIRMED';
                         testNoticeUntil = performance.now() + 7000;
@@ -3079,7 +3089,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     ctx.fillStyle = 'rgba(2, 6, 20, 0.96)';
                     ctx.fillRect(0, 0, game.getCanvas().width, game.getCanvas().height);
 
-                    if (gameState.level === 101 && shopScreen === 'finale_victory') {
+                    if (gameState.level === 101 && shopScreen === 'finale_victory' && finalCampaignVictoryConfirmed) {
                         const canvasWidth = game.getCanvas().width;
                         const canvasHeight = game.getCanvas().height;
                         const addButton = (id: string, x: number, y: number, width: number, height: number, action: () => void): void => {
@@ -3184,26 +3194,32 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         ctx.restore();
 
                         ctx.fillStyle = '#06121e';
-                        ctx.fillRect(60, 626, canvasWidth - 120, 94);
+                        ctx.fillRect(60, 616, canvasWidth - 120, 126);
                         ctx.strokeStyle = '#c084fc';
-                        ctx.strokeRect(60, 626, canvasWidth - 120, 94);
+                        ctx.strokeRect(60, 616, canvasWidth - 120, 126);
                         ctx.fillStyle = '#c084fc';
                         ctx.font = 'bold 15px Arial';
                         ctx.textAlign = isHebrew ? 'right' : 'left';
                         ctx.direction = isHebrew ? 'rtl' : 'ltr';
-                        ctx.fillText(finaleCopy.credits, isHebrew ? canvasWidth - 85 : 85, 656);
+                        ctx.fillText(finaleCopy.credits, isHebrew ? canvasWidth - 85 : 85, 646);
                         ctx.fillStyle = '#dbe9ee';
-                        ctx.font = '13px Arial';
-                        ctx.fillText(finaleCopy.creditsLine, isHebrew ? canvasWidth - 85 : 85, 684);
-                        ctx.fillText(finaleCopy.closingLine, isHebrew ? canvasWidth - 85 : 85, 706);
+                        ctx.font = '12px Arial';
+                        ctx.fillText(finaleCopy.creditsLine, isHebrew ? canvasWidth - 85 : 85, 670);
+                        finaleCopy.creditsDetails.forEach((line, index) => {
+                            ctx.fillStyle = '#a9c6d5';
+                            ctx.fillText(line, isHebrew ? canvasWidth - 85 : 85, 691 + index * 17);
+                        });
+                        ctx.fillStyle = '#f4c66a';
+                        ctx.font = 'italic 12px Arial';
+                        ctx.fillText(finaleCopy.closingLine, isHebrew ? canvasWidth - 85 : 85, 731);
 
-                        drawButton('finale-previous', finaleCopy.previous, 90, 750, 180, 52, '#75d8e7', () => {
+                        drawButton('finale-previous', finaleCopy.previous, 90, 770, 180, 52, '#75d8e7', () => {
                             finaleSceneIndex = (finaleSceneIndex + epilogueScenes.length - 1) % epilogueScenes.length;
                         });
-                        drawButton('finale-next', finaleCopy.next, canvasWidth - 270, 750, 180, 52, '#75d8e7', () => {
+                        drawButton('finale-next', finaleCopy.next, canvasWidth - 270, 770, 180, 52, '#75d8e7', () => {
                             finaleSceneIndex = (finaleSceneIndex + 1) % epilogueScenes.length;
                         });
-                        drawButton('finale-return', finaleCopy.returnToTitle, canvasWidth / 2 - 190, 750, 380, 52, '#00FF88', () => {
+                        drawButton('finale-return', finaleCopy.returnToTitle, canvasWidth / 2 - 190, 770, 380, 52, '#00FF88', () => {
                             returnToTitle();
                             shopScreen = 'hub';
                         });
@@ -3394,7 +3410,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         ctx.font = 'bold 16px Arial';
                         ctx.fillText(`AVAILABLE CREDITS  ${gameState.score}`, 680, 684);
                         drawButton('hub-continue', stageFailureReason ? 'RETRY MISSION  [ENTER]' : 'CONTINUE TO NEXT LEVEL  [ENTER]', 290, 752, 280, 56, stageFailureReason ? '#ff9b9b' : '#00FF88', advanceFromShop);
-                        drawButton('hub-stagemap', 'STAGE MAP 01-100', 585, 752, 180, 56, '#38bdf8', () => {
+                        drawButton('hub-stagemap', 'STAGE MAP 01-101', 585, 752, 180, 56, '#38bdf8', () => {
                             setShowStageMapModal(true);
                         });
                         drawButton('hub-main-menu', 'MAIN MENU', 780, 752, 172, 56, '#c59cff', returnToTitle);
@@ -3409,12 +3425,15 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
                     if (shopScreen === 'elements') {
                         drawCard(28, 156, 1144, 650, 'ELEMENT CORE BAY // SWITCH IN FLIGHT WITH 1–5', '#b5f58a');
-                        const descriptions: Record<ElementalCoreType, string> = {
-                            cryo: 'Slow movement; bosses receive a reduced slow.',
-                            fire: 'Refreshes a burning damage-over-time effect.',
-                            corrosion: 'Breaches armor with bonus impact damage.',
-                            kinetic: 'Pushes targets away from the impact lane.',
-                            plasma: 'Creates a short-range rupture around the target.'
+                        const describeCoreEffect = (core: ElementalCoreType, rank: number): string => {
+                            if (core === 'cryo') {
+                                const slowPercent = Math.round((1 - Math.max(0.42, 0.72 - rank * 0.055)) * 100);
+                                return `SLOWS HOSTILES BY ${slowPercent}% FOR ${(1.55 + rank * 0.55).toFixed(1)}s // BOSSES RESIST PARTIALLY`;
+                            }
+                            if (core === 'fire') return `BURN: ${(16 + rank * 3.5).toFixed(1)}% SHOT DAMAGE EVERY 0.35s FOR ${(3 + rank * 0.65).toFixed(1)}s`;
+                            if (core === 'corrosion') return `ARMOR BREACH: +${(16 + rank * 4).toFixed(0)}% IMMEDIATE BONUS DAMAGE`;
+                            if (core === 'kinetic') return `IMPACT FORCE: ${(4 + rank * 2.5).toFixed(1)} // SHOVES HOSTILES OUT OF THEIR LANE`;
+                            return `PLASMA RUPTURE: ${(65 + rank * 18).toFixed(0)}px RADIUS // ${(20 + rank * 4.5).toFixed(1)}% SPLASH DAMAGE`;
                         };
                         elementalCoreSystem.getAllProfiles().forEach((profile, index) => {
                             const y = 206 + index * 108;
@@ -3423,7 +3442,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                             ctx.fillStyle = '#dbe9ee';
                             ctx.font = '14px Arial';
                             ctx.textAlign = 'left';
-                            ctx.fillText(descriptions[profile.id], 72, y + 54);
+                            ctx.fillText(describeCoreEffect(profile.id, profile.rank), 72, y + 54);
                             const nextLabel = profile.nextCost === null ? 'MAX RANK' : `UPGRADE  ${profile.nextCost} CREDITS`;
                             const canUpgrade = profile.nextCost !== null && gameState.score >= profile.nextCost;
                             drawButton(`element-select-${profile.id}`, active ? 'ACTIVE' : 'SET ACTIVE', 760, y + 24, 128, 38, active ? '#ffffff' : profile.color, () => elementalCoreSystem.selectCore(profile.id));
@@ -3448,7 +3467,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         ctx.fillText(`PILOT RANK ${rank}/${PilotSkillSystem.MAX_RANK}  •  AVAILABLE SKILL POINTS: ${points}`, 52, 202);
                         ctx.fillStyle = '#8ea4b2';
                         ctx.font = '12px Arial';
-                        ctx.fillText(pilotSkillSystem.isMaxRank() ? 'MAXIMUM PILOT RANK // SPECIALIZE YOUR BUILD' : `Experience: ${xp} / ${nextXp} XP to next rank. One rank earns one skill point.`, 52, 224);
+                        ctx.fillText(pilotSkillSystem.isMaxRank() ? 'MAXIMUM PILOT RANK // ALL SKILL POINTS EARNED' : `Experience: ${xp} / ${nextXp} XP to next rank.`, 52, 224);
 
                         drawButton('pilot-respec', 'RESET BUILD // REFUND POINTS', 920, 185, 228, 36, '#ff6666', () => {
                             pilotSkillSystem.resetSkills();
@@ -3471,17 +3490,21 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
                         const nodes = pilotSkillSystem.getAllNodes();
                         const branchHeaders = [
-                            { label: 'SURVIVAL // HULL & AEGIS', color: '#42e8bf' },
-                            { label: 'REACTOR // POWER MANAGEMENT', color: '#75d8e7' },
-                            { label: 'COMBAT // WEAPON CONTROL', color: '#ffd166' }
+                            { id: 'survival' as const, label: 'SURVIVAL // HULL & AEGIS', color: '#42e8bf' },
+                            { id: 'reactor' as const, label: 'REACTOR // POWER MANAGEMENT', color: '#75d8e7' },
+                            { id: 'combat' as const, label: 'COMBAT // WEAPON CONTROL', color: '#ffd166' }
                         ];
                         let hoveredSkillNode: any = null;
 
                         branchHeaders.forEach((branch, index) => {
                             const branchY = 265 + index * 150;
-                            ctx.fillStyle = branch.color;
+                            const complete = pilotSkillSystem.isBranchComplete(branch.id);
+                            ctx.fillStyle = complete ? '#00FF88' : branch.color;
                             ctx.font = 'bold 13px Arial';
-                            ctx.fillText(branch.label, 52, branchY);
+                            const completionLabel = complete
+                                ? ` // ${pilotSkillSystem.getBranchCompletionLabel(branch.id)} +${(PilotSkillSystem.BRANCH_COMPLETION_BONUS * 100).toFixed(0)}% ACTIVE`
+                                : ` // COMPLETE ALL 3 FOR +${(PilotSkillSystem.BRANCH_COMPLETION_BONUS * 100).toFixed(0)}%`;
+                            ctx.fillText(`${branch.label}${completionLabel}`, 52, branchY);
                         });
 
                         nodes.forEach((node, index) => {
@@ -3501,17 +3524,17 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                             ctx.fillStyle = branchColor;
                             ctx.font = '12px Arial';
                             ctx.fillText(`LEVEL ${node.level}/${node.maxLevel}`, cardX + 14, cardY + 46);
-                            ctx.fillStyle = '#8ea4b2';
-                            ctx.font = '12px Arial';
-                            drawWrappedText(ctx, node.description, cardX + 14, cardY + 66, 320, 14, 2);
+                            ctx.fillStyle = node.level >= node.maxLevel ? '#00FF88' : '#dbe9ee';
+                            ctx.font = 'bold 12px Arial';
+                            drawWrappedText(ctx, pilotSkillSystem.getCurrentEffectSummary(node.id), cardX + 14, cardY + 66, 320, 14, 2);
                             const canInvest = points > 0 && node.level < node.maxLevel;
                             drawButton(`invest-${node.id}`, 'INVEST +1', cardX + 214, cardY + 84, 118, 28, canInvest ? branchColor : '#526874', () => {
                                 if (pilotSkillSystem.investPoint(node.id)) {
-                                    if (node.id === 'hull_integrity' || node.id === 'aegis_protocol') applyPlayerDefenseProfile(false, false);
+                                    if (node.branch === 'survival') applyPlayerDefenseProfile(false, false);
                                     if (node.id === 'generator_output' || node.id === 'capacitor_reserve' || node.id === 'weapon_efficiency') {
                                         powerSystem.setPilotModifiers(
-                                            pilotSkillSystem.getBonusMultiplier('capacitor_reserve'),
-                                            pilotSkillSystem.getBonusMultiplier('weapon_efficiency')
+                                            pilotSkillSystem.getBonusMultiplier('capacitor_reserve') * pilotSkillSystem.getBranchCompletionMultiplier('reactor'),
+                                            pilotSkillSystem.getBonusMultiplier('weapon_efficiency') * pilotSkillSystem.getBranchCompletionMultiplier('reactor')
                                         );
                                     }
                                     if (node.id === 'weapon_damage' || node.id === 'fire_rate' || node.id === 'critical_targeting') {
@@ -3538,8 +3561,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
                             ctx.fillStyle = '#dbe9ee';
                             ctx.font = '13px Arial';
-                            ctx.fillText(`• Description: ${hoveredSkillNode.description}`, 72, 846);
-                            ctx.fillText(`• Branch: ${hoveredSkillNode.branch.toUpperCase()}  •  Every rank costs one skill point.`, 72, 870);
+                            ctx.fillText(`• Current total: ${pilotSkillSystem.getCurrentEffectSummary(hoveredSkillNode.id)}`, 72, 846);
+                            ctx.fillText(`• Branch: ${hoveredSkillNode.branch.toUpperCase()}  •  Complete all 3 skills for a further +3% specialty bonus.`, 72, 870);
                         }
                         return;
                     }
@@ -4278,7 +4301,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     e.preventDefault();
                     if (!e.repeat) {
                         gameState.isPaused = false;
-                        returnToTitle();
+                        saveResumeCheckpoint('MISSION ABANDONED // RETURNED TO READY ROOM');
                     }
                     return;
                 }
@@ -4317,7 +4340,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 }
 
                 if (gameState.showLevelScreen) {
-                    if (shopScreen === 'finale_victory') {
+                    if (shopScreen === 'finale_victory' && finalCampaignVictoryConfirmed) {
                         e.preventDefault();
                         if (e.code === 'Enter' || e.code === 'Space' || e.code === 'Escape') returnToTitle();
                         return;
@@ -4397,6 +4420,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         upgradeBriefing = CampaignSystem.getUpgradeBriefing('weapon', 'Straight Shot', 1);
                         bossSpawnedForLevel = false;
                         bossDefeatedAt = null;
+                        finalCampaignVictoryConfirmed = false;
                         enemySpawner.reset();
                         weaponSystem.reset();
                         elementalCoreSystem.reset();

@@ -124,4 +124,24 @@ describe('Long-form skill progression', () => {
         expect(system.getBonusMultiplier('hull_integrity')).toBeCloseTo(1.22, 5);
         expect(system.getDamageReduction('collision_resist')).toBe(0);
     });
+
+    it('activates the modest specialty bonus only after every skill in a branch is complete', () => {
+        const system = new PilotSkillSystem();
+        system.loadSaveState({
+            version: 2,
+            rank: 1,
+            xp: 0,
+            skillPoints: 0,
+            nodes: {
+                hull_integrity: { level: PilotSkillSystem.SKILL_MAX_LEVEL },
+                collision_resist: { level: PilotSkillSystem.SKILL_MAX_LEVEL },
+                aegis_protocol: { level: PilotSkillSystem.SKILL_MAX_LEVEL }
+            }
+        });
+
+        expect(system.isBranchComplete('survival')).toBe(true);
+        expect(system.getBranchCompletionMultiplier('survival')).toBeCloseTo(1.03, 5);
+        expect(system.getCurrentEffectSummary('hull_integrity')).toBe('MAX HULL: +22%');
+        expect(system.isBranchComplete('combat')).toBe(false);
+    });
 });

@@ -16,6 +16,7 @@ export interface EpilogueInterfaceCopy {
     archive: string;
     credits: string;
     creditsLine: string;
+    creditsDetails: string[];
     closingLine: string;
     previous: string;
     next: string;
@@ -28,7 +29,12 @@ const EPILOGUE_INTERFACE_COPY: Record<GameplayLanguage, EpilogueInterfaceCopy> =
         lead: 'המלחמה הסתיימה. עכשיו מתחיל הדבר הקשה יותר: לשמור על מה שהצלחנו להציל.',
         archive: 'יומן אפילוג // אחרי הניצחון',
         credits: 'קרדיטים // PROTECT THE STARSHIP',
-        creditsLine: 'עיצוב ופיתוח: Manus AI והטייס  •  סיפור אפילוג: צוות פרויקט Zero',
+        creditsLine: 'חזון, כיוון ובדיקות משחק: הטייס  •  עיצוב ופיתוח: Manus AI',
+        creditsDetails: [
+            'עלילה, דיאלוגים ואפילוג: צוות Project Zero',
+            'מערכות קרב, איזון ומסע הקמפיין: צוות PROTECT THE STARSHIP',
+            'איורים, קול ומוזיקה: הפקה דיגיטלית בסיוע כלי יצירה'
+        ],
         closingLine: 'הגלקסיה אינה מושלמת — אבל היא בידיים של מי שמנסים לשמור עליה.',
         previous: 'הקודם',
         next: 'הבא',
@@ -39,7 +45,12 @@ const EPILOGUE_INTERFACE_COPY: Record<GameplayLanguage, EpilogueInterfaceCopy> =
         lead: 'The war is over. Now begins the harder task: protecting what was saved.',
         archive: 'EPILOGUE ARCHIVE // AFTER THE VICTORY',
         credits: 'CREDITS // PROTECT THE STARSHIP',
-        creditsLine: 'Design & Development: Manus AI and the Pilot  •  Epilogue Story: Project Zero Team',
+        creditsLine: 'Vision, Direction & Playtesting: The Pilot  •  Design & Development: Manus AI',
+        creditsDetails: [
+            'Story, Dialogue & Epilogue: Project Zero Team',
+            'Combat Systems, Balancing & Campaign Operations: PROTECT THE STARSHIP Team',
+            'Artwork, Voice & Music: Digital Production with Creative Tools'
+        ],
         closingLine: 'The galaxy is not perfect — but it is in the hands of those trying to protect it.',
         previous: 'PREVIOUS',
         next: 'NEXT',
@@ -50,7 +61,12 @@ const EPILOGUE_INTERFACE_COPY: Record<GameplayLanguage, EpilogueInterfaceCopy> =
         lead: '戦いは終わった。これからは、守り抜いたものを守り続ける時だ。',
         archive: 'エピローグ記録 // 勝利のあと',
         credits: 'クレジット // PROTECT THE STARSHIP',
-        creditsLine: 'デザインと開発：Manus AI とパイロット  •  エピローグ：Project Zero チーム',
+        creditsLine: '構想・監修・プレイテスト：パイロット  •  デザインと開発：Manus AI',
+        creditsDetails: [
+            '物語・台詞・エピローグ：Project Zero チーム',
+            '戦闘システム・バランス・キャンペーン運用：PROTECT THE STARSHIP チーム',
+            'アート・音声・音楽：創作ツールを活用したデジタル制作'
+        ],
         closingLine: '銀河は完璧ではない。それでも、守ろうとする者たちの手にある。',
         previous: '前へ',
         next: '次へ',
@@ -61,7 +77,12 @@ const EPILOGUE_INTERFACE_COPY: Record<GameplayLanguage, EpilogueInterfaceCopy> =
         lead: '战争结束了。现在，更困难的任务才刚开始：守护我们所拯救的一切。',
         archive: '尾声档案 // 胜利之后',
         credits: '制作名单 // PROTECT THE STARSHIP',
-        creditsLine: '设计与开发：Manus AI 与飞行员  •  尾声故事：Project Zero 团队',
+        creditsLine: '创意、指导与试玩：飞行员  •  设计与开发：Manus AI',
+        creditsDetails: [
+            '故事、对白与尾声：Project Zero 团队',
+            '战斗系统、平衡与战役运营：PROTECT THE STARSHIP 团队',
+            '美术、配音与音乐：借助创作工具完成的数字制作'
+        ],
         closingLine: '银河并不完美，但它掌握在努力守护它的人手中。',
         previous: '上一页',
         next: '下一页',

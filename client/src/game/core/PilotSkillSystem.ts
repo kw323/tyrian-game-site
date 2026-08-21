@@ -42,6 +42,8 @@ export class PilotSkillSystem {
     public static readonly XP_REQUIREMENT_CAP = 750;
     public static readonly SKILL_MAX_LEVEL = 20;
     public static readonly COMPLETION_BONUS = 0.02;
+    // Completing all three skills in one specialty is an additional, modest reward.
+    public static readonly BRANCH_COMPLETION_BONUS = 0.03;
 
     private xp = 0;
     private rank = 1;
@@ -143,6 +145,42 @@ export class PilotSkillSystem {
     public getDamageReduction(id: 'collision_resist'): number {
         const node = this.nodes.get(id);
         return node ? node.level * node.bonusPerPoint + this.getCompletionBonus(node) : 0;
+    }
+
+    public isBranchComplete(branch: PilotSkillBranch): boolean {
+        const branchNodes = this.getNodesByBranch(branch);
+        return branchNodes.length > 0 && branchNodes.every((node) => node.level >= node.maxLevel);
+    }
+
+    public getBranchCompletionMultiplier(branch: PilotSkillBranch): number {
+        return this.isBranchComplete(branch) ? 1 + PilotSkillSystem.BRANCH_COMPLETION_BONUS : 1;
+    }
+
+    public getBranchCompletionLabel(branch: PilotSkillBranch): string {
+        const labels: Record<PilotSkillBranch, string> = {
+            survival: 'AEGIS ACE',
+            reactor: 'REACTOR ACE',
+            combat: 'COMBAT ACE'
+        };
+        return labels[branch];
+    }
+
+    public getCurrentEffectSummary(id: PilotSkillId): string {
+        const node = this.nodes.get(id);
+        if (!node) return '';
+        const percent = (value: number): string => `${(value * 100).toFixed(value * 100 % 1 === 0 ? 0 : 1)}%`;
+        const total = node.level * node.bonusPerPoint + this.getCompletionBonus(node);
+        switch (id) {
+            case 'hull_integrity': return `MAX HULL: +${percent(total)}`;
+            case 'collision_resist': return `COLLISION DAMAGE: -${percent(total)}`;
+            case 'aegis_protocol': return `SHIELD CAPACITY & REGEN: +${percent(total)}`;
+            case 'generator_output': return `GENERATOR OUTPUT: +${percent(total)}`;
+            case 'capacitor_reserve': return `MAX REACTOR ENERGY: +${percent(total)}`;
+            case 'weapon_efficiency': return `WEAPON ENERGY EFFICIENCY: +${percent(total)}`;
+            case 'weapon_damage': return `WEAPON DAMAGE: +${percent(total)}`;
+            case 'fire_rate': return `FIRE RATE: +${percent(total)}`;
+            case 'critical_targeting': return `CRITICAL VOLLEY CHANCE: +${percent(this.getCriticalChance())}  // CRITS DEAL 1.75×`;
+        }
     }
 
     public getCriticalChance(): number {

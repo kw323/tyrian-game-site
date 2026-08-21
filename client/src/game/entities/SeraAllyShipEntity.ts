@@ -64,6 +64,9 @@ export class SeraAllyShipEntity extends Entity {
     private combatTarget: SeraCombatTarget | null = null;
     private threats: SeraThreatSnapshot[] = [];
     private combatState: SeraCombatState = 'HUNT';
+    // The hull artwork faces upward at rest. This is a small visual bank in radians,
+    // updated from her actual maneuvering vector so an assault run has readable intent.
+    private visualRotation = 0;
 
     constructor(x: number, y: number, loadout: SeraAllyLoadout) {
         super(x, y, 60, 80);
@@ -165,9 +168,18 @@ export class SeraAllyShipEntity extends Entity {
 
         targetX = Math.max(42, Math.min(736, targetX + dodgeX));
         targetY = Math.max(340, Math.min(760, targetY + dodgeY));
+        const deltaToLaneX = targetX - this.x;
+        const deltaToLaneY = targetY - this.y;
         const steering = Math.min(1, deltaTime * (this.combatState === 'BOSS FOCUS' ? 5.8 : 4.6));
-        this.x += (targetX - this.x) * steering;
-        this.y += (targetY - this.y) * steering;
+        this.x += deltaToLaneX * steering;
+        this.y += deltaToLaneY * steering;
+
+        // The laser may aim independently at a target, but the hull banks into the
+        // direction of travel. Horizontal strafes are visible without letting the craft
+        // roll upside-down during vertical corrections.
+        const desiredRotation = Math.max(-0.52, Math.min(0.52, Math.atan2(deltaToLaneX, Math.max(95, Math.abs(deltaToLaneY) + 72))));
+        const rotationSteering = Math.min(1, deltaTime * 6.5);
+        this.visualRotation += (desiredRotation - this.visualRotation) * rotationSteering;
     }
 
     public canShoot(): boolean {
@@ -233,6 +245,12 @@ export class SeraAllyShipEntity extends Entity {
         const centerX = x + w / 2;
         const pulse = Math.sin(this.combatTime * 5) * 0.5 + 0.5;
         ctx.save();
+        // Only the ship artwork rotates. Shield indicators and tactical labels remain
+        // screen-aligned so the player can read Sera's status while she banks.
+        ctx.save();
+        ctx.translate(centerX, y + h / 2);
+        ctx.rotate(this.visualRotation);
+        ctx.translate(-centerX, -(y + h / 2));
         ctx.shadowColor = this.abilityActive ? '#ffcf5c' : '#ff4fbc';
         ctx.shadowBlur = this.abilityActive ? 30 : 20;
         const hull = ctx.createLinearGradient(x, y, x + w, y + h);
@@ -293,6 +311,7 @@ export class SeraAllyShipEntity extends Entity {
             ctx.closePath();
             ctx.fill();
         }
+        ctx.restore();
 
         if (this.shield > 0) {
             const shieldAlpha = Math.min(this.shield / this.maxShield, 1);
