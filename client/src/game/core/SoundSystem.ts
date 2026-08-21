@@ -1,6 +1,7 @@
 export class SoundSystem {
     private static ctx: AudioContext | null = null;
     private static musicGain: GainNode | null = null;
+    private static musicTrack: HTMLAudioElement | null = null;
     private static musicVoices: OscillatorNode[] = [];
     private static musicTimer: number | null = null;
     private static musicStep = 0;
@@ -210,27 +211,30 @@ export class SoundSystem {
         }
 
         try {
-            this.musicGain = this.ctx.createGain();
-            this.musicGain.gain.setValueAtTime(0.0001, this.ctx.currentTime);
-            this.musicGain.gain.linearRampToValueAtTime(this.musicBaseVolume, this.ctx.currentTime + 0.35);
-            this.musicGain.connect(this.ctx.destination);
-            this.musicStep = 0;
+            if (!this.musicTrack) {
+                this.musicTrack = new Audio('/audio/music/protect_starship_combat_rune_assault.mp3');
+                this.musicTrack.loop = true;
+                this.musicTrack.preload = 'auto';
+            }
+            this.musicTrack.volume = this.musicBaseVolume;
             this.isMusicPlaying = true;
-            this.playMusicStep();
-            const beatMs = 60000 / this.musicBpm / 2;
-            this.musicTimer = window.setInterval(() => this.playMusicStep(), beatMs);
+            void this.musicTrack.play().catch(() => {
+                // A browser may reject the first attempt before a gesture. The next user
+                // key or click invokes startMusic again and retries the same track.
+                this.isMusicPlaying = false;
+            });
         } catch {
             this.isMusicPlaying = false;
-            this.musicGain = null;
         }
     }
 
     public static duckMusic(duck: boolean): void {
-        if (!this.musicGain || !this.ctx) return;
         const target = duck ? this.musicBaseVolume * this.musicDuckAmount : this.musicBaseVolume;
+        if (this.musicTrack) this.musicTrack.volume = target;
+        if (!this.musicGain || !this.ctx) return;
         try {
             this.musicGain.gain.setValueAtTime(target, this.ctx.currentTime);
-        } catch (e) {
+        } catch {
             // Ignore audio context timing conflicts
         }
     }
@@ -246,6 +250,10 @@ export class SoundSystem {
     }
 
     public static stopMusic(): void {
+        if (this.musicTrack) {
+            this.musicTrack.pause();
+            this.musicTrack.currentTime = 0;
+        }
         if (this.musicTimer !== null) {
             window.clearInterval(this.musicTimer);
             this.musicTimer = null;
@@ -264,9 +272,11 @@ export class SoundSystem {
     }
 
     public static setMusicDucked(ducked: boolean): void {
-        if (!this.musicGain || !this.ctx || !this.isMusicPlaying) return;
-        const now2 = this.ctx.currentTime;
+        if (!this.isMusicPlaying) return;
         const target = ducked ? this.musicBaseVolume * this.musicDuckAmount : this.musicBaseVolume;
+        if (this.musicTrack) this.musicTrack.volume = target;
+        if (!this.musicGain || !this.ctx) return;
+        const now2 = this.ctx.currentTime;
         this.musicGain.gain.cancelScheduledValues(now2);
         this.musicGain.gain.setTargetAtTime(target, now2, ducked ? 0.04 : 0.18);
     }

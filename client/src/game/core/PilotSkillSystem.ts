@@ -53,39 +53,39 @@ export class PilotSkillSystem {
     private nodes: Map<PilotSkillId, PilotSkillNode> = new Map([
         ['hull_integrity', {
             id: 'hull_integrity', branch: 'survival', name: 'Hull Integrity',
-            description: '+1% maximum hull strength per rank. Full calibration grants +2% more.', level: 0, maxLevel: PilotSkillSystem.SKILL_MAX_LEVEL, bonusPerPoint: 0.01
+            description: 'Raises maximum hull strength. At full rank, receives an extra +2% hull bonus.', level: 0, maxLevel: PilotSkillSystem.SKILL_MAX_LEVEL, bonusPerPoint: 0.01
         }],
         ['collision_resist', {
             id: 'collision_resist', branch: 'survival', name: 'Impact Dampeners',
-            description: '-1% collision damage per rank. Full calibration grants -2% more.', level: 0, maxLevel: PilotSkillSystem.SKILL_MAX_LEVEL, bonusPerPoint: 0.01
+            description: 'Reduces damage taken when the ship collides with enemies or asteroids. Full rank adds another 2% reduction.', level: 0, maxLevel: PilotSkillSystem.SKILL_MAX_LEVEL, bonusPerPoint: 0.01
         }],
         ['aegis_protocol', {
             id: 'aegis_protocol', branch: 'survival', name: 'Aegis Protocol',
-            description: '+0.85% shield capacity and recharge per rank. Full calibration grants +2% more.', level: 0, maxLevel: PilotSkillSystem.SKILL_MAX_LEVEL, bonusPerPoint: 0.0085
+            description: 'Increases both shield capacity and shield recharge. Full rank adds another +2% to both.', level: 0, maxLevel: PilotSkillSystem.SKILL_MAX_LEVEL, bonusPerPoint: 0.0085
         }],
         ['generator_output', {
             id: 'generator_output', branch: 'reactor', name: 'Reactor Flux',
-            description: '+1% reactor output per rank. Full calibration grants +2% more.', level: 0, maxLevel: PilotSkillSystem.SKILL_MAX_LEVEL, bonusPerPoint: 0.01
+            description: 'Makes the generator produce energy faster. Full rank adds another +2% output.', level: 0, maxLevel: PilotSkillSystem.SKILL_MAX_LEVEL, bonusPerPoint: 0.01
         }],
         ['capacitor_reserve', {
             id: 'capacitor_reserve', branch: 'reactor', name: 'Capacitor Reserve',
-            description: '+1.5% maximum reactor energy per rank. Full calibration grants +2% more.', level: 0, maxLevel: PilotSkillSystem.SKILL_MAX_LEVEL, bonusPerPoint: 0.015
+            description: 'Increases the maximum energy stored by the generator. Full rank adds another +2% capacity.', level: 0, maxLevel: PilotSkillSystem.SKILL_MAX_LEVEL, bonusPerPoint: 0.015
         }],
         ['weapon_efficiency', {
             id: 'weapon_efficiency', branch: 'reactor', name: 'Thermal Cycling',
-            description: '+1% weapon-energy efficiency per rank. Full calibration grants +2% more.', level: 0, maxLevel: PilotSkillSystem.SKILL_MAX_LEVEL, bonusPerPoint: 0.01
+            description: 'Reduces effective weapon energy drain, letting heavy weapons fire longer. Full rank adds another +2% efficiency.', level: 0, maxLevel: PilotSkillSystem.SKILL_MAX_LEVEL, bonusPerPoint: 0.01
         }],
         ['weapon_damage', {
             id: 'weapon_damage', branch: 'combat', name: 'Weapons Calibration',
-            description: '+0.75% weapon damage per rank. Full calibration grants +2% more.', level: 0, maxLevel: PilotSkillSystem.SKILL_MAX_LEVEL, bonusPerPoint: 0.0075
+            description: 'Increases damage dealt by every weapon. Full rank adds another +2% damage.', level: 0, maxLevel: PilotSkillSystem.SKILL_MAX_LEVEL, bonusPerPoint: 0.0075
         }],
         ['fire_rate', {
             id: 'fire_rate', branch: 'combat', name: 'Fire Relays',
-            description: '+0.5% firing rate per rank. Full calibration grants +2% more.', level: 0, maxLevel: PilotSkillSystem.SKILL_MAX_LEVEL, bonusPerPoint: 0.005
+            description: 'Shortens the delay between shots, increasing sustained fire. Full rank adds another +2% fire rate.', level: 0, maxLevel: PilotSkillSystem.SKILL_MAX_LEVEL, bonusPerPoint: 0.005
         }],
         ['critical_targeting', {
             id: 'critical_targeting', branch: 'combat', name: 'Critical Targeting',
-            description: '+0.75% critical-salvo chance per rank. Full calibration grants +1% critical chance; critical salvos deal 1.75× damage.', level: 0, maxLevel: PilotSkillSystem.SKILL_MAX_LEVEL, bonusPerPoint: 0.0075
+            description: 'Raises the chance that an entire salvo deals 1.75× damage. Full rank adds another +1% critical chance.', level: 0, maxLevel: PilotSkillSystem.SKILL_MAX_LEVEL, bonusPerPoint: 0.0075
         }]
     ]);
 

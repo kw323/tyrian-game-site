@@ -327,6 +327,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             let sectorSealed = false;
             let isTestSession = testMode;
             let activeRuneSlot = 0;
+            let runeInventoryPage = 0;
+            let equipmentInventoryPage = 0;
             let selectedRuneFusionIds: string[] = [];
             let runeSwapLockUntil = 0;
             let runeCalibrationUntil = 0;
@@ -3463,12 +3465,18 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                             if (rune) drawButton(`rune-clear-${slot}`, 'CLEAR', x + 232, 276, 92, 22, '#ff6666', () => runeSystem.setLoadoutSlot(slot, null));
                         });
 
-                        const inventory = runeSystem.getInventory().slice(0, 15);
+                        const allRunes = runeSystem.getInventory();
+                        const runesPerPage = 15;
+                        const runePageCount = Math.max(1, Math.ceil(allRunes.length / runesPerPage));
+                        runeInventoryPage = Math.max(0, Math.min(runeInventoryPage, runePageCount - 1));
+                        const inventory = allRunes.slice(runeInventoryPage * runesPerPage, (runeInventoryPage + 1) * runesPerPage);
                         const fusionFirst = runeSystem.getRune(selectedRuneFusionIds[0]);
                         const fusionCost = fusionFirst ? runeSystem.getFusionCost(fusionFirst) : null;
                         ctx.fillStyle = '#75d8e7';
                         ctx.font = 'bold 13px monospace';
-                        ctx.fillText(`COLLECTION // ${runeSystem.getInventory().length} RECOVERED // FUSION ${selectedRuneFusionIds.length}/3`, 52, 340);
+                        ctx.fillText(`COLLECTION // ${allRunes.length} RECOVERED // FUSION ${selectedRuneFusionIds.length}/3 // PAGE ${runeInventoryPage + 1}/${runePageCount}`, 52, 340);
+                        drawButton('rune-page-prev', '◀ PREV', 650, 318, 94, 34, runeInventoryPage > 0 ? '#75d8e7' : '#526874', () => { runeInventoryPage = Math.max(0, runeInventoryPage - 1); });
+                        drawButton('rune-page-next', 'NEXT ▶', 750, 318, 94, 34, runeInventoryPage < runePageCount - 1 ? '#75d8e7' : '#526874', () => { runeInventoryPage = Math.min(runePageCount - 1, runeInventoryPage + 1); });
                         drawButton('rune-fuse', fusionCost === null ? 'FUSE 3 MATCHING RUNES' : `FUSE // ${fusionCost} CREDITS`, 860, 318, 284, 34, fusionCost !== null && gameState.score >= fusionCost && selectedRuneFusionIds.length === 3 ? '#00FF88' : '#526874', fuseSelectedRunes);
 
                         if (inventory.length === 0) {
@@ -3573,11 +3581,14 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                             ctx.fillStyle = branchColor;
                             ctx.font = '12px Arial';
                             ctx.fillText(`LEVEL ${node.level}/${node.maxLevel}`, cardX + 14, cardY + 46);
-                            ctx.fillStyle = node.level >= node.maxLevel ? '#00FF88' : '#dbe9ee';
+                            ctx.fillStyle = '#8ea6b2';
+                            ctx.font = '11px Arial';
+                            drawWrappedText(ctx, node.description, cardX + 14, cardY + 64, 320, 12, 2);
+                            ctx.fillStyle = node.level >= node.maxLevel ? '#00FF88' : '#ffffff';
                             ctx.font = 'bold 12px Arial';
-                            drawWrappedText(ctx, pilotSkillSystem.getCurrentEffectSummary(node.id), cardX + 14, cardY + 66, 320, 14, 2);
+                            ctx.fillText(`CURRENT EFFECT: ${pilotSkillSystem.getCurrentEffectSummary(node.id)}`, cardX + 14, cardY + 102);
                             const canInvest = points > 0 && node.level < node.maxLevel;
-                            drawButton(`invest-${node.id}`, 'INVEST +1', cardX + 214, cardY + 84, 118, 28, canInvest ? branchColor : '#526874', () => {
+                            drawButton(`invest-${node.id}`, node.level >= node.maxLevel ? 'MAXED' : 'INVEST', cardX + 224, cardY + 84, 108, 28, canInvest ? branchColor : '#526874', () => {
                                 if (pilotSkillSystem.investPoint(node.id)) {
                                     if (node.branch === 'survival') applyPlayerDefenseProfile(false, false);
                                     if (node.id === 'generator_output' || node.id === 'capacitor_reserve' || node.id === 'weapon_efficiency') {
@@ -3610,8 +3621,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
                             ctx.fillStyle = '#dbe9ee';
                             ctx.font = '13px Arial';
-                            ctx.fillText(`• Current total: ${pilotSkillSystem.getCurrentEffectSummary(hoveredSkillNode.id)}`, 72, 846);
-                            ctx.fillText(`• Branch: ${hoveredSkillNode.branch.toUpperCase()}  •  Complete all 3 skills for a further +3% specialty bonus.`, 72, 870);
+                            ctx.fillText(`CURRENT EFFECT: ${pilotSkillSystem.getCurrentEffectSummary(hoveredSkillNode.id)}`, 72, 846);
+                            ctx.fillText(`ROLE: ${hoveredSkillNode.description}  •  Complete all 3 skills in this branch for an additional +3% specialty bonus.`, 72, 870);
                         }
                         return;
                     }
@@ -3706,7 +3717,13 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         ctx.textAlign = 'left';
                         ctx.fillStyle = '#38bdf8';
                         ctx.font = 'bold 15px Arial';
-                        ctx.fillText(`SALVAGED INVENTORY (${equipmentSystem.getInventory().length} PARTS)`, 512, 280);
+                        const allEquipmentInventory = equipmentSystem.getInventory();
+                        const equipmentPerPage = 16;
+                        const equipmentPageCount = Math.max(1, Math.ceil(allEquipmentInventory.length / equipmentPerPage));
+                        equipmentInventoryPage = Math.max(0, Math.min(equipmentInventoryPage, equipmentPageCount - 1));
+                        ctx.fillText(`SALVAGED INVENTORY (${allEquipmentInventory.length} PARTS) // PAGE ${equipmentInventoryPage + 1}/${equipmentPageCount}`, 512, 280);
+                        drawButton('equipment-page-prev', '◀ PREV', 930, 258, 96, 26, equipmentInventoryPage > 0 ? '#75d8e7' : '#526874', () => { equipmentInventoryPage = Math.max(0, equipmentInventoryPage - 1); });
+                        drawButton('equipment-page-next', 'NEXT ▶', 1032, 258, 108, 26, equipmentInventoryPage < equipmentPageCount - 1 ? '#75d8e7' : '#526874', () => { equipmentInventoryPage = Math.min(equipmentPageCount - 1, equipmentInventoryPage + 1); });
 
                         const drawPartIcon = (type: EquipmentPartType, cx: number, cy: number, tier: number) => {
                             ctx.save();
@@ -3757,7 +3774,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                             ctx.restore();
                         };
 
-                        const inventory = equipmentSystem.getInventory();
+                        const inventory = allEquipmentInventory.slice(equipmentInventoryPage * equipmentPerPage, (equipmentInventoryPage + 1) * equipmentPerPage);
                         let hoveredPartData: any = null;
 
                         inventory.forEach((part, index) => {
@@ -3861,8 +3878,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         ctx.fillText('Click any 3 matching parts from inventory to fuse them into a higher Tier part.', 532, 792);
 
                         // Simple Fusion helper button for matching triplets
-                        const matchingGroups: Record<string, typeof inventory> = {};
-                        inventory.forEach(p => {
+                        const matchingGroups: Record<string, typeof allEquipmentInventory> = {};
+                        allEquipmentInventory.forEach(p => {
                             if (!p.equippedSlot) {
                                 const key = `${p.type}_T${p.tier}`;
                                 if (!matchingGroups[key]) matchingGroups[key] = [];

@@ -1,6 +1,6 @@
 {
   "name": "tyrian-game-site",
-  "version": "1.1.22",
+  "version": "1.1.23",
   "type": "module",
   "description": "Protect The Starship — full 101-stage campaign build with story briefings, voice-over, upgrades, bosses, and offline Windows support.",
   "license": "MIT",
