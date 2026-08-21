@@ -47,6 +47,7 @@ import { RuneDropEntity } from '@/game/entities/RuneDropEntity';
 import { AsteroidBeltEntity } from '@/game/entities/AsteroidBeltEntity';
 import { StageHazard, StageHazardKind } from '@/game/entities/StageHazard';
 import { MissionArchiveSystem } from '@/game/story/MissionArchiveSystem';
+import { usesEnvironmentalSingularity } from '@/game/story/EnvironmentalHazardSystem';
 import { DifficultySystem, DifficultyId, DifficultyProfile } from '@/game/core/DifficultySystem';
 import { FinalBossAssembly, FinalBossPart } from '@/game/entities/FinalBossPart';
 import { VoicePlaybackManager } from '@/game/core/VoicePlaybackManager';
@@ -302,6 +303,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             let bossSpawnedForLevel = false;
             let currentMissionTarget: MissionTargetEntity | null = null;
             let gravityWell: GravityWell | null = null;
+            let environmentalSingularitySpawned = false;
             let stageHazards: StageHazard[] = [];
             let stageHazardKind: StageHazardKind | 'singularity' | null = null;
             let missionEventSpawned = false;
@@ -1053,12 +1055,28 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             // Stage resources are runtime state; upgrades remain on their dedicated systems.
             let lastAsteroidSpawnTime = 0;
 
+            const stageUsesEnvironmentalSingularity = (): boolean =>
+                usesEnvironmentalSingularity(gameState.level, stageBriefing.missionType);
+
+            const deployEnvironmentalSingularity = (announce = false): void => {
+                if (!stageUsesEnvironmentalSingularity() || gravityWell?.isActive) return;
+                const cWidth = game.getCanvas().width;
+                // This is a guaranteed environment entity, separate from delayed mission
+                // objectives. The retry guard below re-creates it if any stage reset removes it.
+                gravityWell = new GravityWell(cWidth / 2, 390, 54, 4.2);
+                stageHazardKind = 'singularity';
+                environmentalSingularitySpawned = true;
+                game.addEntity(gravityWell);
+                if (announce) {
+                    testNoticeText = 'SINGULARITY DISTORTION DETECTED // GRAVITY FIELD ACTIVE';
+                    testNoticeUntil = performance.now() + 4200;
+                }
+            };
+
             const deployStageHazards = (): void => {
                 stageHazards = [];
                 stageHazardKind = null;
                 lastAsteroidSpawnTime = 0;
-                const cWidth = game.getCanvas().width;
-                const b = stageBriefing;
 
                 // Stages 50-59: the story's escape chapter enters the asteroid belt here.
                 if (gameState.level >= 50 && gameState.level <= 59) {
@@ -1067,13 +1085,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 }
 
                 if (gameState.level < 70) return;
-                if (gameState.level % 5 === 0 || b.missionType === 'singularity') {
-                    stageHazardKind = 'singularity';
-                    // A compact singularity with a serious pull: it creates an escape
-                    // challenge without dominating the visual playfield.
-                    gravityWell = new GravityWell(cWidth / 2, 390, 32, 3.8);
-                    missionEventSpawned = true;
-                    game.addEntity(gravityWell);
+                if (stageUsesEnvironmentalSingularity()) {
+                    deployEnvironmentalSingularity(true);
                     return;
                 }
                 stageHazardKind = gameState.level % 2 === 0 ? 'asteroid' : 'wreck';
@@ -1239,6 +1252,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             const resetStageRuntime = (): void => {
                 currentMissionTarget = null;
                 gravityWell = null;
+                environmentalSingularitySpawned = false;
                 stageHazards = [];
                 stageHazardKind = null;
                 missionEventSpawned = false;
@@ -1933,6 +1947,13 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         entity instanceof MissionTargetEntity
                     );
                 });
+
+                // Defensive spawn check: legacy stage flow can reset the entity collection
+                // after hazards were deployed, so a required singularity is re-added early in
+                // the mission rather than silently leaving the stage empty.
+                if (stageUsesEnvironmentalSingularity() && gameState.levelTimeElapsed >= 2.5 && !gravityWell?.isActive) {
+                    deployEnvironmentalSingularity(!environmentalSingularitySpawned);
+                }
 
                 if (gravityWell?.isActive) {
                     game['entities'].forEach((entity: any) => {
