@@ -8,6 +8,7 @@ export class EnemyBullet extends Entity {
     public dirY: number;
     public style: string;
     public isFriendly = false;
+    private speedMultiplier = 1;
 
     constructor(x: number, y: number, width: number, height: number, speed: number, damage: number, dirX: number = 0, dirY: number = 1, color: string = '#FF6666', style: string = 'orb') {
         super(x, y, width, height);
@@ -19,10 +20,14 @@ export class EnemyBullet extends Entity {
         this.style = style;
     }
 
+    public setSpeedMultiplier(multiplier: number): void {
+        this.speedMultiplier = Math.max(0.1, Math.min(1, multiplier));
+    }
+
     public update(deltaTime: number): void {
         if (this.isTimeFrozen) return;
-        this.x += this.dirX * this.speed * deltaTime * 60;
-        this.y += this.dirY * this.speed * deltaTime * 60;
+        this.x += this.dirX * this.speed * this.speedMultiplier * deltaTime * 60;
+        this.y += this.dirY * this.speed * this.speedMultiplier * deltaTime * 60;
 
         // The combat canvas is 1200px wide; keeping the projectile alive through 1250px
         // prevents shots fired on the right flank from vanishing before they leave the arena.

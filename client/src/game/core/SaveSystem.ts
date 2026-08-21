@@ -1,4 +1,4 @@
-import type { ElementalCoreSaveState } from './ElementalCoreSystem';
+import type { RuneSaveState } from './RuneSystem';
 
 export interface SaveData {
     slotId: string;
@@ -16,7 +16,7 @@ export interface SaveData {
     secretWeaponFragments?: number;
     tacticalAbilityLevels?: Record<string, number>;
     selectedTacticalAbility?: string;
-    elementalCoreState?: ElementalCoreSaveState;
+    runeState?: RuneSaveState;
     pilotSkillsState?: unknown;
     equipmentState?: unknown;
     tacticalAbilityState?: {

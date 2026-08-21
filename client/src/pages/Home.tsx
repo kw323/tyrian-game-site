@@ -160,7 +160,7 @@ export default function Home() {
             generatorLevel: data.generatorLevel,
             shieldLevel: data.shieldLevel,
             engineUpgradeLevel: data.engineUpgradeLevel,
-            elementalCoreState: data.elementalCoreState,
+            runeState: data.runeState,
             pilotSkillsState: data.pilotSkillsState,
             equipmentState: data.equipmentState,
             weaponState: {

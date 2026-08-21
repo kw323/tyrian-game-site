@@ -77,13 +77,17 @@ describe('SaveSystem full progression persistence', () => {
         });
     });
 
-    it('preserves engine progression, elemental cores, equipment, and pilot skills', () => {
+    it('preserves engine progression, rune collection, equipment, and pilot skills', () => {
         const payload: Omit<SaveData, 'timestamp'> = {
             ...savePayload(8, 44),
             engineUpgradeLevel: 5,
-            elementalCoreState: {
-                activeCore: 'plasma',
-                ranks: { cryo: 1, fire: 2, corrosion: 3, kinetic: 4, plasma: 5 }
+            runeState: {
+                version: 1,
+                inventory: [
+                    { id: 'rune-1', runeId: 'assault', tier: 2 },
+                    { id: 'rune-2', runeId: 'guard', tier: 1 }
+                ],
+                loadout: ['rune-1', 'rune-2', null]
             },
             pilotSkillsState: { rank: 19, skills: { hull_integrity: 4 } },
             equipmentState: { equipped: { engine: { id: 'engine-1', level: 4, tier: 2 } } }
@@ -93,7 +97,7 @@ describe('SaveSystem full progression persistence', () => {
         const restored = SaveSystem.loadGame(8);
 
         expect(restored?.engineUpgradeLevel).toBe(5);
-        expect(restored?.elementalCoreState?.activeCore).toBe('plasma');
+        expect(restored?.runeState?.loadout).toEqual(['rune-1', 'rune-2', null]);
         expect(restored?.pilotSkillsState).toEqual(payload.pilotSkillsState);
         expect(restored?.equipmentState).toEqual(payload.equipmentState);
     });

@@ -182,8 +182,8 @@ export class Player extends Entity {
     }
 
     public setCombatMultipliers(fireMultiplier: number, shieldRegenMultiplier: number): void {
-        const safeFireMultiplier = Math.max(1, fireMultiplier);
-        const safeShieldMultiplier = Math.max(1, shieldRegenMultiplier);
+        const safeFireMultiplier = Math.max(0.5, fireMultiplier);
+        const safeShieldMultiplier = Math.max(0.5, shieldRegenMultiplier);
         this.gunCooldown = this.baseGunCooldown / safeFireMultiplier;
         this.shieldRegenRate = this.baseShieldRegenRate * safeShieldMultiplier;
     }

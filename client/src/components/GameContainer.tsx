@@ -14,7 +14,7 @@ import { EnemyAdvanced, EnemyShot } from '@/game/entities/EnemyAdvanced';
 import { EnemyBullet } from '@/game/entities/EnemyBullet';
 import { Explosion } from '@/game/entities/Explosion';
 import { WeaponUpgradeSystem, WeaponType } from '@/game/core/WeaponUpgradeSystem';
-import { ElementalCoreSystem, ElementalCoreSaveState, ElementalCoreType, ELEMENTAL_CORE_ORDER } from '@/game/core/ElementalCoreSystem';
+import { RuneId, RuneInstance, RuneSaveState, RuneSystem } from '@/game/core/RuneSystem';
 import { CombatVisualEffects, VisualFaction } from '@/game/core/CombatVisualEffects';
 import { getHeavyFragmentAngles, getWeaponRuntimeProfile } from '@/game/core/WeaponRuntimeProfile';
 import { StarField } from '@/game/systems/StarField';
@@ -43,6 +43,7 @@ import { calculateStagePerformanceXP, StagePerformanceXPResult } from '@/game/co
 import { MissionTargetEntity } from '@/game/entities/MissionTargetEntity';
 import { GravityWell } from '@/game/entities/GravityWell';
 import { EquipmentDropEntity } from '@/game/entities/EquipmentDropEntity';
+import { RuneDropEntity } from '@/game/entities/RuneDropEntity';
 import { AsteroidBeltEntity } from '@/game/entities/AsteroidBeltEntity';
 import { StageHazard, StageHazardKind } from '@/game/entities/StageHazard';
 import { MissionArchiveSystem } from '@/game/story/MissionArchiveSystem';
@@ -78,14 +79,14 @@ interface ResumeCheckpoint {
     pilotSkillsState?: any;
     tacticalAbilityState?: TacticalAbilitySaveState;
     equipmentState?: any;
-    elementalCoreState?: ElementalCoreSaveState;
+    runeState?: RuneSaveState;
 }
 
 const RESUME_CHECKPOINT_KEY = 'tyrian_resume_checkpoint';
 const GAME_CANVAS_HEIGHT = 900;
 const SHOP_CANVAS_HEIGHT = 1150;
 const COMBAT_REWARD_MULTIPLIER = 0.75;
-type ShopScreen = 'hub' | 'weapons' | 'elements' | 'systems' | 'abilities' | 'pilot_skills' | 'equipment' | 'finale_victory';
+type ShopScreen = 'hub' | 'weapons' | 'runes' | 'systems' | 'abilities' | 'pilot_skills' | 'equipment' | 'finale_victory';
 
 const LANGUAGE_OPTIONS: Array<{ id: GameplayLanguage; label: string; menuLabel: string }> = [
     { id: 'he', label: 'עברית', menuLabel: 'עברית / Hebrew' },
@@ -212,12 +213,12 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             let difficultyProfile: DifficultyProfile = DifficultySystem.get(difficultyId);
             enemySpawner.setDifficultyProfile(difficultyProfile);
             const weaponSystem = new WeaponUpgradeSystem();
-            const elementalCoreSystem = new ElementalCoreSystem();
+            const runeSystem = new RuneSystem();
             const powerSystem = new PowerSystem();
             const engineUpgradeSystem = new EngineUpgradeSystem();
             const shipSystem = new ShipUpgradeSystem();
             if (resumeData?.weaponState) weaponSystem.loadSaveState(resumeData.weaponState);
-            if (resumeData?.elementalCoreState) elementalCoreSystem.loadSaveState(resumeData.elementalCoreState);
+            if (resumeData?.runeState) runeSystem.loadSaveState(resumeData.runeState);
             if (typeof resumeData?.generatorLevel === 'number') powerSystem.loadSaveState(resumeData.generatorLevel);
             engineUpgradeSystem.loadSaveState(resumeData?.engineUpgradeLevel);
             if (typeof resumeData?.shipId === 'number') shipSystem.loadSaveState(resumeData.shipId);
@@ -325,6 +326,10 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
             let lastStagePerformanceXp: StagePerformanceXPResult | null = null;
             let sectorSealed = false;
             let isTestSession = testMode;
+            let activeRuneSlot = 0;
+            let selectedRuneFusionIds: string[] = [];
+            let runeSwapLockUntil = 0;
+            let runeCalibrationUntil = 0;
             let pendingResearchCourierTutorial = false;
             let mCheatStartedAt: number | null = null;
             let mCheatLastGrantAt: number | null = null;
@@ -523,16 +528,39 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 showNaomiUpgradeTutorial('weapon');
             };
 
-            const upgradeElementalCore = (core: ElementalCoreType): void => {
-                const cost = elementalCoreSystem.upgrade(core, gameState.score);
-                if (cost === null) return;
-                gameState.score -= cost;
-                elementalCoreSystem.selectCore(core);
-                const profile = elementalCoreSystem.getProfile(core);
-                testNoticeText = `ELEMENT CORE // ${profile.name} // RANK ${profile.rank}`;
-                testNoticeUntil = performance.now() + 3000;
+            const toggleRuneFusionSelection = (runeId: string): void => {
+                if (selectedRuneFusionIds.includes(runeId)) {
+                    selectedRuneFusionIds = selectedRuneFusionIds.filter((id) => id !== runeId);
+                    return;
+                }
+                if (selectedRuneFusionIds.length >= 3) return;
+                const candidate = runeSystem.getRune(runeId);
+                const first = runeSystem.getRune(selectedRuneFusionIds[0]);
+                if (first && candidate && (candidate.runeId !== first.runeId || candidate.tier !== first.tier)) {
+                    testNoticeText = 'RUNE FUSION // SELECT 3 COPIES OF THE SAME RUNE AND TIER';
+                    testNoticeUntil = performance.now() + 3200;
+                    return;
+                }
+                selectedRuneFusionIds.push(runeId);
+            };
+
+            const fuseSelectedRunes = (): void => {
+                const result = runeSystem.fuseRunes(selectedRuneFusionIds, gameState.score);
+                if (!result.success) {
+                    testNoticeText = result.reason === 'credits'
+                        ? `RUNE FUSION // ${result.cost} CREDITS REQUIRED`
+                        : result.reason === 'max_tier'
+                            ? 'RUNE FUSION // MAXIMUM TIER REACHED'
+                            : 'RUNE FUSION // SELECT 3 MATCHING RUNES';
+                    testNoticeUntil = performance.now() + 3200;
+                    return;
+                }
+                gameState.score -= result.cost;
+                selectedRuneFusionIds = [];
+                const definition = runeSystem.getDefinition(result.rune!.runeId);
+                testNoticeText = `RUNE FUSED // ${definition.shortName} T${result.rune!.tier} // -${result.cost} CREDITS`;
+                testNoticeUntil = performance.now() + 4200;
                 SoundSystem.playUpgrade();
-                showNaomiUpgradeTutorial('elemental_core');
             };
 
             const downgradeWeapon = (type: WeaponType): void => {
@@ -836,11 +864,27 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 });
             };
 
+            const getActiveRune = (): RuneInstance | null => runeSystem.getLoadout()[activeRuneSlot] ?? null;
+
+            const selectRuneSlot = (slotIndex: number): void => {
+                const rune = runeSystem.getLoadout()[slotIndex];
+                const now = performance.now();
+                if (!rune || slotIndex === activeRuneSlot || now < runeSwapLockUntil) return;
+                activeRuneSlot = slotIndex;
+                runeCalibrationUntil = now + 450;
+                runeSwapLockUntil = now + 1_200;
+                const definition = runeSystem.getDefinition(rune.runeId);
+                testNoticeText = `RUNE CALIBRATION // ${definition.shortName} T${rune.tier} // WEAPONS LOCKED 0.45s`;
+                testNoticeUntil = now + 1_700;
+                SoundSystem.playUpgrade();
+            };
+
             const applyPlayerDamage = (damage: number, isCollision = false): boolean => {
                 const collisionMultiplier = isCollision
                     ? Math.max(0.5, 1 - pilotSkillSystem.getDamageReduction('collision_resist'))
                     : 1;
-                const adjustedDamage = Math.max(0, damage * collisionMultiplier);
+                const runeProfile = runeSystem.getCombatProfile(getActiveRune());
+                const adjustedDamage = Math.max(0, damage * collisionMultiplier * runeProfile.damageTakenMultiplier);
                 const shieldBefore = player.shield;
                 const isDead = player.takeDamage(adjustedDamage);
                 const absorbed = Math.min(shieldBefore, adjustedDamage);
@@ -858,7 +902,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 shieldLevel,
                 engineUpgradeLevel: engineUpgradeSystem.getRank(),
                 weaponState: weaponSystem.getSaveState(),
-                elementalCoreState: elementalCoreSystem.getSaveState(),
+                runeState: runeSystem.getSaveState(),
                 tacticalAbilityState: tacticalAbilitySystem.getSaveState(),
                 pilotSkillsState: pilotSkillSystem.getSaveState(),
                 equipmentState: equipmentSystem.getState()
@@ -886,7 +930,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     currentWeapon: weaponState.currentWeapon ?? 'straight',
                     secretWeaponUnlocked: weaponState.secretWeaponUnlocked ?? false,
                     secretWeaponFragments: weaponState.secretWeaponFragments ?? 0,
-                    elementalCoreState: checkpoint.elementalCoreState,
+                    runeState: checkpoint.runeState,
                     pilotSkillsState: checkpoint.pilotSkillsState,
                     equipmentState: checkpoint.equipmentState,
                     tacticalAbilityState: checkpoint.tacticalAbilityState,
@@ -913,7 +957,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     currentWeapon: weaponState.currentWeapon ?? 'straight',
                     secretWeaponUnlocked: weaponState.secretWeaponUnlocked ?? false,
                     secretWeaponFragments: weaponState.secretWeaponFragments ?? 0,
-                    elementalCoreState: checkpoint.elementalCoreState,
+                    runeState: checkpoint.runeState,
                     pilotSkillsState: checkpoint.pilotSkillsState,
                     equipmentState: checkpoint.equipmentState,
                     tacticalAbilityState: checkpoint.tacticalAbilityState,
@@ -1249,6 +1293,10 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
             const startStagePlay = (): void => {
                 VoicePlaybackManager.stop();
+                if (!getActiveRune()) {
+                    const firstLoadedSlot = runeSystem.getLoadout().findIndex((rune) => rune !== null);
+                    if (firstLoadedSlot >= 0) activeRuneSlot = firstLoadedSlot;
+                }
                 if (gameState.level === CampaignSystem.TOTAL_STAGES) finalCampaignVictoryConfirmed = false;
                 MissionArchiveSystem.recordBriefing(stageBriefing, true);
                 initialLaunchPending = false;
@@ -1410,6 +1458,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     // Kills give only a small XP contribution; the main reward is stage performance.
                     const enemyXp = Math.max(1, Math.floor((enemy.points ?? 100) * 0.03));
                     awardPilotXp(enemyXp, 'COMBAT XP');
+                    const explosionX = enemy.x + enemy.width / 2;
+                    const explosionY = enemy.y + enemy.height / 2;
                     const isSpecialEnemy = enemy instanceof EnemyAdvanced && enemy.isSpecial;
                     if (isSpecialEnemy) {
                         const recovery = weaponSystem.collectSecretWeaponFragment();
@@ -1442,96 +1492,26 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         testNoticeText = `COMPONENT COMPASS // SALVAGE DROP DETECTED`;
                         testNoticeUntil = performance.now() + 3000;
                     }
-                    const explosionX = enemy.x + enemy.width / 2;
-                    const explosionY = enemy.y + enemy.height / 2;
+
+                    // Runes are more common than equipment, but every drop remains tier 1.
+                    const runeDropChance = isSpecialEnemy ? 0.14 : 0.0115;
+                    if (Math.random() < runeDropChance) {
+                        const definitions = runeSystem.getDefinitions();
+                        const runeDefinition = definitions[Math.floor(Math.random() * definitions.length)];
+                        game.addEntity(new RuneDropEntity(explosionX, explosionY, runeDefinition.id));
+                        testNoticeText = `RUNE SIGNAL // ${runeDefinition.shortName} T1 DETECTED`;
+                        testNoticeUntil = performance.now() + 3600;
+                    }
                     const faction: VisualFaction = enemy instanceof EnemyAdvanced ? enemy.faction : 'raiders';
                     combatVisualEffects.spawnFactionExplosion(explosionX, explosionY, faction, isSpecialEnemy ? 32 : 20);
                     game.addEntity(new Explosion(explosionX, explosionY, isSpecialEnemy ? 32 : 20));
                 }
             };
 
-            const elementalBurns = new Map<Enemy | EnemyAdvanced | Boss, { remaining: number; tick: number; damage: number }>();
-
-            const applyElementalCore = (target: Enemy | EnemyAdvanced | Boss, baseDamage: number, sourceX: number, sourceY: number): void => {
-                // The two fixed-identity weapons deliberately ignore switchable cores.
-                if (player.weaponType === 'arc' || player.weaponType === 'void_lance') return;
-                const core = elementalCoreSystem.getActiveCore();
-                const rank = elementalCoreSystem.getRank(core);
-                const targetX = target.x + target.width / 2;
-                const targetY = target.y + target.height / 2;
-                const deltaX = targetX - sourceX;
-                const deltaY = targetY - sourceY;
-                const distance = Math.max(1, Math.hypot(deltaX, deltaY));
-                combatVisualEffects.spawnElementImpact(targetX, targetY, core, rank);
-
-                if (core === 'cryo') {
-                    // Rank I begins as a clearly visible 34% slow and high ranks keep
-                    // dangerous formations in the player's control for longer.
-                    const multiplier = Math.max(0.42, 0.72 - rank * 0.055);
-                    const duration = 1.55 + rank * 0.55;
-                    if (target instanceof EnemyAdvanced) target.slowDown(multiplier, duration);
-                    else target.applySlow(multiplier, duration);
-                    return;
-                }
-
-                if (core === 'fire') {
-                    const existing = elementalBurns.get(target);
-                    elementalBurns.set(target, {
-                        remaining: Math.max(existing?.remaining ?? 0, 3.0 + rank * 0.65),
-                        tick: Math.min(existing?.tick ?? 0.35, 0.35),
-                        damage: Math.max(existing?.damage ?? 0, baseDamage * (0.16 + rank * 0.035))
-                    });
-                    return;
-                }
-
-                if (core === 'corrosion') {
-                    // Corrosion is a direct armor breach: it adds a small portion of the
-                    // trigger damage, making sustained fire effective against tough targets.
-                    target.takeDamage(baseDamage * (0.16 + rank * 0.04));
-                    return;
-                }
-
-                if (core === 'kinetic') {
-                    const force = 4.0 + rank * 2.5;
-                    const knockX = (deltaX / distance) * force;
-                    const knockY = (deltaY / distance) * force;
-                    if (target instanceof EnemyAdvanced) target.applyKnockback(knockX, knockY);
-                    else target.applyKnockback(knockX, knockY, target instanceof Boss ? 0.18 : 1);
-                    return;
-                }
-
-                // Plasma creates a short-range rupture around the struck target. It is
-                // intentionally burst-oriented rather than another damage-over-time effect.
-                const radius = 65 + rank * 18;
-                const splashDamage = baseDamage * (0.20 + rank * 0.045);
-                game['entities'].forEach((nearby: any) => {
-                    if (nearby === target || !(nearby instanceof Enemy || nearby instanceof EnemyAdvanced) || !nearby.isActive) return;
-                    const nearX = nearby.x + nearby.width / 2;
-                    const nearY = nearby.y + nearby.height / 2;
-                    if (Math.hypot(nearX - targetX, nearY - targetY) <= radius) {
-                        nearby.takeDamage(splashDamage);
-                        registerEnemyDefeat(nearby);
-                    }
-                });
-            };
-
-            const updateElementalBurns = (deltaTime: number): void => {
-                elementalBurns.forEach((burn, target) => {
-                    if (!target.isActive) {
-                        elementalBurns.delete(target);
-                        return;
-                    }
-                    burn.remaining -= deltaTime;
-                    burn.tick -= deltaTime;
-                    if (burn.tick <= 0 && burn.remaining > 0) {
-                        target.takeDamage(burn.damage);
-                        burn.tick += 0.45;
-                        if (target instanceof Enemy || target instanceof EnemyAdvanced) registerEnemyDefeat(target);
-                        else registerBossDefeat(target);
-                    }
-                    if (burn.remaining <= 0) elementalBurns.delete(target);
-                });
-            };
+            // Former elemental hit hooks are intentionally inert. Rune effects are applied
+            // at launch, movement, defense, reactor, and hostile-projectile layers instead.
+            const applyElementalCore = (_target: Enemy | EnemyAdvanced | Boss, _baseDamage: number, _sourceX: number, _sourceY: number): void => undefined;
+            const updateElementalBurns = (_deltaTime: number): void => undefined;
 
             const registerBossDefeat = (boss: Boss): void => {
                 // Every damage path (including Chain Lightning and elemental burn) reaches
@@ -1611,12 +1591,14 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 SoundSystem.setMusicDucked(gameState.isPaused || now < commVisibleUntil);
                 if (gameState.isPaused) return;
 
-                tacticalAbilitySystem.update(deltaTime);
+                const activeRune = getActiveRune();
+                const activeRuneProfile = runeSystem.getCombatProfile(activeRune);
+                tacticalAbilitySystem.update(deltaTime * activeRuneProfile.tacticalChargeMultiplier);
                 const isTimeLocked = tacticalAbilitySystem.isTimeLocked();
                 const hasUnlimitedPower = tacticalAbilitySystem.hasUnlimitedPower();
                 player.setCombatMultipliers(
-                    tacticalAbilitySystem.getFireMultiplier(),
-                    tacticalAbilitySystem.getShieldRegenMultiplier()
+                    tacticalAbilitySystem.getFireMultiplier() * activeRuneProfile.fireRateMultiplier,
+                    tacticalAbilitySystem.getShieldRegenMultiplier() * activeRuneProfile.shieldRegenMultiplier
                 );
 
                 const keys = inputManager.getKeys();
@@ -1657,7 +1639,14 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     player.y,
                     player.width,
                     player.height,
-                    elementalCoreSystem.getActiveCore(),
+                    activeRune?.runeId === 'assault' ? 'fire'
+                        : activeRune?.runeId === 'guard' ? 'cryo'
+                            : activeRune?.runeId === 'radius' ? 'kinetic'
+                                : activeRune?.runeId === 'thrust' ? 'plasma'
+                                    : activeRune?.runeId === 'time_field' ? 'cryo'
+                                        : activeRune?.runeId === 'guidance' ? 'plasma'
+                                            : activeRune?.runeId === 'reactor' ? 'fire'
+                                                : 'corrosion',
                     visualMoveX,
                     visualMoveY,
                     powerSystem.currentPower < 20 ? 0.72 : 1,
@@ -1669,12 +1658,12 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     pilotSkillSystem.getBonusMultiplier('capacitor_reserve') * reactorCompletionBonus,
                     pilotSkillSystem.getBonusMultiplier('weapon_efficiency') * reactorCompletionBonus
                 );
-                powerSystem.generatePower(deltaTime, pilotSkillSystem.getBonusMultiplier('generator_output') * reactorCompletionBonus);
+                powerSystem.generatePower(deltaTime, pilotSkillSystem.getBonusMultiplier('generator_output') * reactorCompletionBonus * activeRuneProfile.generatorMultiplier);
                 if (hasUnlimitedPower) powerSystem.forceReactorOnline();
 
                 // A depleted reactor keeps movement available, but with a small recovery penalty.
                 const engineEquipmentMultiplier = 1 + (equipmentSystem.getActiveBonuses().moveSpeed / 100);
-                const propulsionSpeed = 7.5 * engineUpgradeSystem.getSpeedMultiplier() * engineEquipmentMultiplier;
+                const propulsionSpeed = 7.5 * engineUpgradeSystem.getSpeedMultiplier() * engineEquipmentMultiplier * activeRuneProfile.movementMultiplier;
                 if (powerSystem.isReactorRecovering()) {
                     player.speed = propulsionSpeed * 0.8;
                 } else if (powerSystem.currentPower < 20) {
@@ -1685,23 +1674,39 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
                 // Flight mode also controls firing: Space for keyboard mode, left click for mouse mode.
                 const flightFireActive = mouseControlsEnabled ? mouseInput.fire : keys.Space;
-                if ((flightFireActive || touchInput.fire) && player.canShoot(performance.now() / 1000) && (hasUnlimitedPower || powerSystem.canShoot(player.weaponType, player.weaponLevel))) {
+                const weaponCalibrationComplete = performance.now() >= runeCalibrationUntil;
+                if (weaponCalibrationComplete && (flightFireActive || touchInput.fire) && player.canShoot(performance.now() / 1000) && (hasUnlimitedPower || powerSystem.canShoot(player.weaponType, player.weaponLevel))) {
                     const bulletPositions = player.shoot(performance.now() / 1000);
                     const criticalSalvo = player.rollCriticalSalvo();
+                    const baseShotDamage = Math.round(player.weaponDamage * activeRuneProfile.damageMultiplier);
                     const shotDamage = criticalSalvo
-                        ? Math.round(player.weaponDamage * player.criticalDamageMultiplier)
-                        : player.weaponDamage;
-                    const weaponCost = powerSystem.getWeaponCost(player.weaponType, player.weaponLevel);
+                        ? Math.round(baseShotDamage * player.criticalDamageMultiplier)
+                        : baseShotDamage;
+                    const weaponCost = powerSystem.getWeaponCost(player.weaponType, player.weaponLevel) * activeRuneProfile.weaponCostMultiplier;
                     if (!hasUnlimitedPower) powerSystem.consumeWeaponPower(weaponCost);
                     
                     bulletPositions.forEach((bulletData: any) => {
                         const cloaked = tacticalAbilitySystem.isPhaseCloaked();
+                        const projectileScale = activeRuneProfile.projectileScale;
+                        let runeShotAngle = bulletData.angle ?? 0;
+                        // Guidance corrects only the launch vector. It never updates again,
+                        // so every weapon remains a manual-aim weapon rather than homing.
+                        if (activeRuneProfile.guidanceAngleRadians > 0 && bulletData.type !== 'homing') {
+                            const target = findNearestHomingTarget(bulletData.x, bulletData.y);
+                            if (target) {
+                                const targetX = target.x + target.width / 2;
+                                const targetY = target.y + target.height / 2;
+                                const desiredAngle = Math.atan2(targetX - bulletData.x, Math.max(1, bulletData.y - targetY));
+                                const rawDelta = Math.atan2(Math.sin(desiredAngle - runeShotAngle), Math.cos(desiredAngle - runeShotAngle));
+                                runeShotAngle += Math.max(-activeRuneProfile.guidanceAngleRadians, Math.min(activeRuneProfile.guidanceAngleRadians, rawDelta));
+                            }
+                        }
                         if (bulletData.type === 'straight') {
-                            const bullet = new Bullet(bulletData.x, bulletData.y, 8, 8, 25, shotDamage, criticalSalvo ? '#ff77e8' : '#FFD700', bulletData.angle || 0);
+                            const bullet = new Bullet(bulletData.x, bulletData.y, 8 * projectileScale, 8 * projectileScale, 25, shotDamage, criticalSalvo ? '#ff77e8' : '#FFD700', runeShotAngle);
                             (bullet as any).isCloaked = cloaked;
                             game.addEntity(bullet);
                         } else if (bulletData.type === 'spread') {
-                            const bullet = new Bullet(bulletData.x, bulletData.y, 8, 8, 25, shotDamage, criticalSalvo ? '#ff77e8' : '#FFD700', bulletData.angle || 0);
+                            const bullet = new Bullet(bulletData.x, bulletData.y, 8 * projectileScale, 8 * projectileScale, 25, shotDamage, criticalSalvo ? '#ff77e8' : '#FFD700', runeShotAngle);
                             (bullet as any).isCloaked = cloaked;
                             game.addEntity(bullet);
                         } else if (bulletData.type === 'homing') {
@@ -1712,8 +1717,8 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                             const bullet = new HomingBullet(
                                 bulletData.x,
                                 bulletData.y,
-                                6,
-                                6,
+                                6 * projectileScale,
+                                6 * projectileScale,
                                 bulletData.speed ?? 11,
                                 shotDamage,
                                 targetX,
@@ -1726,7 +1731,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         } else if (bulletData.type === 'heavy') {
                             const hLevel = player.weaponLevel;
                             const profile = getWeaponRuntimeProfile('heavy', hLevel);
-                            const hSize = profile.heavyShellSize ?? 14;
+                            const hSize = (profile.heavyShellSize ?? 14) * projectileScale;
                             const fragmentCount = profile.heavyFragmentCount ?? 4;
                             const fragmentSpeed = profile.heavyFragmentSpeed ?? 11;
                             const cascadePellets = profile.heavyCascadePellets ?? 0;
@@ -1737,11 +1742,11 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                                 hSize,
                                 14,
                                 shotDamage,
-                                bulletData.angle || 0,
+                                runeShotAngle,
                                 hLevel,
                                 (splitX, splitY, level, baseDamage) => {
                                     const subDmg = Math.max(5, baseDamage * (0.38 + level * 0.022));
-                                    const fragmentAngles = getHeavyFragmentAngles(fragmentCount, bulletData.angle || 0);
+                                    const fragmentAngles = getHeavyFragmentAngles(fragmentCount, runeShotAngle);
                                     for (const dAng of fragmentAngles) {
                                         const smallBombCallback = cascadePellets > 0 ? (sx: number, sy: number, _sl: number, sd: number) => {
                                             for (let pelletIndex = 0; pelletIndex < cascadePellets; pelletIndex++) {
@@ -1762,7 +1767,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                                 bulletData.y,
                                 shotDamage,
                                 player.weaponLevel,
-                                bulletData.angle || 0
+                                runeShotAngle
                             ));
                         } else if (bulletData.type === 'void_lance') {
                             const bullet = new BlackHoleBullet(
@@ -1770,7 +1775,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                                 bulletData.y,
                                 shotDamage,
                                 player.weaponLevel,
-                                bulletData.angle || 0
+                                runeShotAngle
                             );
                             game.addEntity(bullet);
                         } else if (bulletData.type === 'laser') {
@@ -1780,7 +1785,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                                 shotDamage,
                                 player.weaponLevel,
                                 true,
-                                bulletData.angle ?? 0,
+                                runeShotAngle,
                                 Boolean(bulletData.isSecondary)
                             );
                             game.addEntity(beam);
@@ -1938,6 +1943,12 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
                 spawnAsteroidBeltHazardIfNeeded(now / 1000, deltaTime);
 
+                // Time Field changes only hostile projectile velocity, not enemy movement,
+                // spawn timing, or the tactical ability. At tier 5, speed stays at 80%.
+                game['entities'].forEach((entity: any) => {
+                    if (entity instanceof EnemyBullet) entity.setSpeedMultiplier(activeRuneProfile.enemyBulletSpeedMultiplier);
+                });
+
                 // Call original update
                 originalUpdate(deltaTime);
                 combatVisualEffects.update(deltaTime);
@@ -1997,6 +2008,20 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         entity.isActive = false;
                         const addedPart = equipmentSystem.addDropPart(entity.equipmentType, entity.tier);
                         testNoticeText = `SALVAGE COLLECTED // ${addedPart.type.toUpperCase()} TIER ${addedPart.tier}`;
+                        testNoticeUntil = performance.now() + 4500;
+                        SoundSystem.playUpgrade();
+                    }
+                });
+
+                // Resolve Rune Drop pickups by player. All rune drops are tier one;
+                // higher tiers exist only through paid three-copy fusion in the Rune Bay.
+                game['entities'].forEach((entity: any) => {
+                    if (!(entity instanceof RuneDropEntity) || !entity.isActive) return;
+                    if (entity.collidesWith(player)) {
+                        entity.isActive = false;
+                        const rune = runeSystem.addDropRune(entity.runeId);
+                        const definition = runeSystem.getDefinition(rune.runeId);
+                        testNoticeText = `RUNE RECOVERED // ${definition.shortName} T${rune.tier}`;
                         testNoticeUntil = performance.now() + 4500;
                         SoundSystem.playUpgrade();
                     }
@@ -2693,29 +2718,27 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     : 'Power: ' + Math.floor(powerSystem.currentPower) + '/' + Math.floor(powerSystem.getMaxPower());
                 ctx.fillText(powerReadout, barX + 160, powerBarY + 10);
 
-                const activeCoreProfile = elementalCoreSystem.getProfile(elementalCoreSystem.getActiveCore());
-                const fixedElementWeapon = player.weaponType === 'arc' || player.weaponType === 'void_lance';
-                const coreHudX = 744;
-                const coreHudY = 38;
-                const coreHudWidth = 432;
-                const coreColor = fixedElementWeapon ? (player.weaponType === 'arc' ? '#f8ff79' : '#b06cff') : activeCoreProfile.color;
+                const activeRune = getActiveRune();
+                const activeRuneDefinition = activeRune ? runeSystem.getDefinition(activeRune.runeId) : null;
+                const runeHudX = 744;
+                const runeHudY = 38;
+                const runeHudWidth = 432;
+                const runeColor = activeRuneDefinition?.color ?? '#526874';
                 ctx.fillStyle = 'rgba(4, 18, 36, 0.9)';
-                ctx.fillRect(coreHudX, coreHudY, coreHudWidth, 48);
-                ctx.strokeStyle = coreColor;
+                ctx.fillRect(runeHudX, runeHudY, runeHudWidth, 48);
+                ctx.strokeStyle = runeColor;
                 ctx.lineWidth = 1;
-                ctx.strokeRect(coreHudX, coreHudY, coreHudWidth, 48);
-                ctx.fillStyle = coreColor;
+                ctx.strokeRect(runeHudX, runeHudY, runeHudWidth, 48);
+                ctx.fillStyle = runeColor;
                 ctx.font = 'bold 13px monospace';
                 ctx.fillText(
-                    fixedElementWeapon
-                        ? `FIXED IDENTITY // ${player.weaponType === 'arc' ? 'ELECTRIC // CHAIN LIGHTNING' : 'VOID // BLACK HOLE'}`
-                        : `ACTIVE CORE // ${activeCoreProfile.name.toUpperCase()} // RANK ${activeCoreProfile.rank}/5`,
-                    coreHudX + 12,
-                    coreHudY + 19
+                    activeRune ? `ACTIVE RUNE // ${activeRuneDefinition!.shortName} T${activeRune.tier}` : 'ACTIVE RUNE // NONE EQUIPPED',
+                    runeHudX + 12,
+                    runeHudY + 19
                 );
-                ctx.fillStyle = '#b8d4df';
+                ctx.fillStyle = performance.now() < runeCalibrationUntil ? '#ffd166' : '#b8d4df';
                 ctx.font = '11px monospace';
-                ctx.fillText(fixedElementWeapon ? '1–5 STORE YOUR NEXT SWITCHABLE CORE' : '1 CRYO   2 FIRE   3 CORROSION   4 KINETIC   5 PLASMA', coreHudX + 12, coreHudY + 37);
+                ctx.fillText(performance.now() < runeCalibrationUntil ? 'RUNE CALIBRATION // WEAPONS TEMPORARILY OFFLINE' : '1–3 SWITCH YOUR PREPARED RUNES // 0.45s WEAPON CALIBRATION', runeHudX + 12, runeHudY + 37);
 
                 // Tactical ability readout: only the selected module can be armed at once.
                 const abilityBarY = 250;
@@ -3275,7 +3298,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         const navItems: Array<{ id: ShopScreen; label: string; color: string }> = [
                             { id: 'hub', label: 'CONTROL DECK', color: '#00CCDD' },
                             { id: 'weapons', label: 'WEAPON BAY', color: '#00FF88' },
-                            { id: 'elements', label: 'ELEMENT CORES', color: '#b5f58a' },
+                            { id: 'runes', label: 'RUNE BAY', color: '#b5f58a' },
                             { id: 'systems', label: 'HULL SYSTEMS', color: '#FFD166' },
                             { id: 'abilities', label: 'TACTICAL OPS', color: '#c59cff' },
                             { id: 'pilot_skills', label: 'PILOT SKILLS', color: '#38bdf8' },
@@ -3423,34 +3446,60 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
 
                     drawShopNav(shopScreen);
 
-                    if (shopScreen === 'elements') {
-                        drawCard(28, 156, 1144, 650, 'ELEMENT CORE BAY // SWITCH IN FLIGHT WITH 1–5', '#b5f58a');
-                        const describeCoreEffect = (core: ElementalCoreType, rank: number): string => {
-                            if (core === 'cryo') {
-                                const slowPercent = Math.round((1 - Math.max(0.42, 0.72 - rank * 0.055)) * 100);
-                                return `SLOWS HOSTILES BY ${slowPercent}% FOR ${(1.55 + rank * 0.55).toFixed(1)}s // BOSSES RESIST PARTIALLY`;
-                            }
-                            if (core === 'fire') return `BURN: ${(16 + rank * 3.5).toFixed(1)}% SHOT DAMAGE EVERY 0.35s FOR ${(3 + rank * 0.65).toFixed(1)}s`;
-                            if (core === 'corrosion') return `ARMOR BREACH: +${(16 + rank * 4).toFixed(0)}% IMMEDIATE BONUS DAMAGE`;
-                            if (core === 'kinetic') return `IMPACT FORCE: ${(4 + rank * 2.5).toFixed(1)} // SHOVES HOSTILES OUT OF THEIR LANE`;
-                            return `PLASMA RUPTURE: ${(65 + rank * 18).toFixed(0)}px RADIUS // ${(20 + rank * 4.5).toFixed(1)}% SPLASH DAMAGE`;
-                        };
-                        elementalCoreSystem.getAllProfiles().forEach((profile, index) => {
-                            const y = 206 + index * 108;
-                            const active = elementalCoreSystem.getActiveCore() === profile.id;
-                            drawCard(52, y, 1092, 88, `${index + 1} // ${profile.name} CORE // RANK ${profile.rank}/5`, active ? '#ffffff' : profile.color);
-                            ctx.fillStyle = '#dbe9ee';
-                            ctx.font = '14px Arial';
+                    if (shopScreen === 'runes') {
+                        drawCard(28, 156, 1144, 650, 'RUNE BAY // EQUIP 3 BEFORE LAUNCH // SWITCH WITH 1–3 IN FLIGHT', '#b5f58a');
+                        const loadout = runeSystem.getLoadout();
+                        ctx.textAlign = 'left';
+                        ctx.fillStyle = '#b5f58a';
+                        ctx.font = 'bold 14px monospace';
+                        ctx.fillText('TACTICAL LOADOUT // SWITCHING CALIBRATES WEAPONS FOR 0.45s', 52, 202);
+                        loadout.forEach((rune, slot) => {
+                            const x = 52 + slot * 364;
+                            const definition = rune ? runeSystem.getDefinition(rune.runeId) : null;
+                            drawCard(x, 220, 342, 88, `SLOT ${slot + 1} // ${rune ? `${definition!.shortName} T${rune.tier}` : 'EMPTY'}`, rune ? definition!.color : '#526874');
+                            ctx.fillStyle = rune ? '#dbe9ee' : '#8ea6b2';
+                            ctx.font = '12px Arial';
+                            ctx.fillText(rune ? runeSystem.getEffectSummary(rune) : 'Assign a recovered rune from the collection below.', x + 14, 268);
+                            if (rune) drawButton(`rune-clear-${slot}`, 'CLEAR', x + 232, 276, 92, 22, '#ff6666', () => runeSystem.setLoadoutSlot(slot, null));
+                        });
+
+                        const inventory = runeSystem.getInventory().slice(0, 15);
+                        const fusionFirst = runeSystem.getRune(selectedRuneFusionIds[0]);
+                        const fusionCost = fusionFirst ? runeSystem.getFusionCost(fusionFirst) : null;
+                        ctx.fillStyle = '#75d8e7';
+                        ctx.font = 'bold 13px monospace';
+                        ctx.fillText(`COLLECTION // ${runeSystem.getInventory().length} RECOVERED // FUSION ${selectedRuneFusionIds.length}/3`, 52, 340);
+                        drawButton('rune-fuse', fusionCost === null ? 'FUSE 3 MATCHING RUNES' : `FUSE // ${fusionCost} CREDITS`, 860, 318, 284, 34, fusionCost !== null && gameState.score >= fusionCost && selectedRuneFusionIds.length === 3 ? '#00FF88' : '#526874', fuseSelectedRunes);
+
+                        if (inventory.length === 0) {
+                            ctx.fillStyle = '#8ea6b2';
+                            ctx.font = '16px Arial';
+                            ctx.fillText('No runes recovered yet. Hostile ships drop tier-1 runes slightly more often than equipment.', 52, 392);
+                        }
+                        inventory.forEach((rune, index) => {
+                            const column = index % 3;
+                            const row = Math.floor(index / 3);
+                            const x = 52 + column * 364;
+                            const y = 368 + row * 76;
+                            const definition = runeSystem.getDefinition(rune.runeId);
+                            const selected = selectedRuneFusionIds.includes(rune.id);
+                            ctx.fillStyle = selected ? '#173c4b' : '#0b1e2d';
+                            ctx.fillRect(x, y, 342, 66);
+                            ctx.strokeStyle = selected ? '#ffffff' : definition.color;
+                            ctx.strokeRect(x, y, 342, 66);
+                            ctx.fillStyle = definition.color;
+                            ctx.font = 'bold 12px Arial';
                             ctx.textAlign = 'left';
-                            ctx.fillText(describeCoreEffect(profile.id, profile.rank), 72, y + 54);
-                            const nextLabel = profile.nextCost === null ? 'MAX RANK' : `UPGRADE  ${profile.nextCost} CREDITS`;
-                            const canUpgrade = profile.nextCost !== null && gameState.score >= profile.nextCost;
-                            drawButton(`element-select-${profile.id}`, active ? 'ACTIVE' : 'SET ACTIVE', 760, y + 24, 128, 38, active ? '#ffffff' : profile.color, () => elementalCoreSystem.selectCore(profile.id));
-                            drawButton(`element-upgrade-${profile.id}`, nextLabel, 904, y + 24, 210, 38, profile.nextCost === null ? '#00FF88' : (canUpgrade ? profile.color : '#ff6666'), () => upgradeElementalCore(profile.id));
+                            ctx.fillText(`${definition.shortName} // T${rune.tier}`, x + 12, y + 20);
+                            ctx.fillStyle = '#dbe9ee';
+                            ctx.font = '11px Arial';
+                            ctx.fillText(runeSystem.getEffectSummary(rune), x + 12, y + 39);
+                            drawButton(`rune-select-${rune.id}`, selected ? 'SELECTED' : 'FUSE', x + 12, y + 45, 92, 17, selected ? '#ffffff' : definition.color, () => toggleRuneFusionSelection(rune.id));
+                            [0, 1, 2].forEach((slot) => drawButton(`rune-slot-${rune.id}-${slot}`, `S${slot + 1}`, x + 118 + slot * 68, y + 45, 58, 17, '#75d8e7', () => runeSystem.setLoadoutSlot(slot, rune.id)));
                         });
                         ctx.fillStyle = '#8ea6b2';
-                        ctx.font = '13px Arial';
-                        ctx.fillText('Black Hole and Chain Lightning have fixed identities: they do not consume or replace the active core.', 52, 760);
+                        ctx.font = '12px Arial';
+                        ctx.fillText('Only T1 runes drop. Combine 3 identical copies plus credits to create the next tier. Runes are tactical, not permanent stat purchases.', 52, 770);
                         drawShopFooter();
                     }
 
@@ -4315,26 +4364,19 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 // A user key press is a valid browser gesture for resuming the AudioContext.
                 if (!gameState.gameOver && !gameState.showLevelScreen && !gameState.isPaused) SoundSystem.startMusic();
 
-                // Weapon selection is locked to the Ready Room. During combat, 1–5 switch
-                // the active elemental core instead; Black Hole and Chain Lightning keep their
-                // fixed identities and deliberately ignore this switch.
+                // Weapon selection remains locked to the Ready Room. During combat, 1–3
+                // select the three prepared runes and begin a brief weapon calibration delay.
                 if (!gameState.gameOver && !gameState.showLevelScreen) {
                     if (inputManager.isActionPressed('tacticalAbility')) {
                         e.preventDefault();
                         if (!e.repeat) toggleTacticalAbility();
                         return;
                     }
-                    const coreDigit = /^Digit([1-5])$/.exec(e.code);
-                    const coreIndex = coreDigit ? Number(coreDigit[1]) - 1 : -1;
-                    if (!e.repeat && coreIndex >= 0 && coreIndex < ELEMENTAL_CORE_ORDER.length) {
+                    const runeDigit = /^Digit([1-3])$/.exec(e.code);
+                    const runeIndex = runeDigit ? Number(runeDigit[1]) - 1 : -1;
+                    if (!e.repeat && runeIndex >= 0) {
                         e.preventDefault();
-                        const core = ELEMENTAL_CORE_ORDER[coreIndex];
-                        elementalCoreSystem.selectCore(core);
-                        const profile = elementalCoreSystem.getProfile(core);
-                        testNoticeText = (player.weaponType === 'arc' || player.weaponType === 'void_lance')
-                            ? `${getWeaponDisplayName(weaponSystem.getCurrentWeapon()).toUpperCase()} // FIXED ELEMENT // CORE STORED: ${profile.name}`
-                            : `ELEMENT CORE // ${profile.name} // RANK ${profile.rank}`;
-                        testNoticeUntil = performance.now() + 1800;
+                        selectRuneSlot(runeIndex);
                         return;
                     }
                 }
@@ -4423,7 +4465,7 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                         finalCampaignVictoryConfirmed = false;
                         enemySpawner.reset();
                         weaponSystem.reset();
-                        elementalCoreSystem.reset();
+                        runeSystem.reset();
                         powerSystem.reset();
                         tacticalAbilitySystem.reset();
                         resetStageRuntime();
