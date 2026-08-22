@@ -25,10 +25,10 @@ const SHIP_DEFENSE_PROFILES: readonly ShipDefenseProfile[] = [
     { hullHealth: 820 * PLAYER_DURABILITY_MULTIPLIER, shieldCapacity: 170 * PLAYER_DURABILITY_MULTIPLIER, shieldRegenRate: 6.5 }  // Mk.6 Archon Flagship
 ];
 
-export const SHIELD_UPGRADE_CAPACITY = 12;
-export const SHIELD_UPGRADE_REGEN = 0.35;
-export const AEGIS_MASTERY_CAPACITY = 20;
-export const AEGIS_MASTERY_REGEN = 0.5;
+export const SHIELD_UPGRADE_CAPACITY = 12 * PLAYER_DURABILITY_MULTIPLIER;
+export const SHIELD_UPGRADE_REGEN = 0.35 * PLAYER_DURABILITY_MULTIPLIER;
+export const AEGIS_MASTERY_CAPACITY = 20 * PLAYER_DURABILITY_MULTIPLIER;
+export const AEGIS_MASTERY_REGEN = 0.5 * PLAYER_DURABILITY_MULTIPLIER;
 
 export function getShipDefenseProfile(shipId: number): ShipDefenseProfile {
     const safeId = Math.max(0, Math.min(SHIP_DEFENSE_PROFILES.length - 1, Math.floor(shipId)));
