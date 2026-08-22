@@ -7,11 +7,12 @@ describe('FinalBossAssembly presentation', () => {
         const assembly = new FinalBossAssembly(DifficultySystem.get('normal'));
         const parts = assembly.createParts();
         const core = parts.find((part) => part.partId === 'core')!;
-        const leftWing = parts.find((part) => part.partId === 'left-wing')!;
-        const rightWing = parts.find((part) => part.partId === 'right-wing')!;
+        const leftBattery = parts.find((part) => part.partId === 'rear-port')!;
+        const rightBattery = parts.find((part) => part.partId === 'rear-starboard')!;
 
+        expect(parts).toHaveLength(5);
         expect(core.x + core.width / 2).toBeCloseTo(600, 0);
-        expect(leftWing.x + leftWing.width).toBeGreaterThan(core.x);
-        expect(rightWing.x).toBeLessThan(core.x + core.width);
+        expect(leftBattery.x + leftBattery.width).toBeGreaterThan(core.x);
+        expect(rightBattery.x).toBeLessThan(core.x + core.width);
     });
 });

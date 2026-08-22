@@ -1,3 +1,5 @@
+import { PLAYER_DURABILITY_MULTIPLIER } from './CombatBalanceSystem';
+
 export interface ShipDefenseProfile {
     /** Durable, non-regenerating structure of the craft. */
     hullHealth: number;
@@ -15,12 +17,12 @@ export interface ShipDefenseProfile {
  * through and shield recovery pauses after a hit.
  */
 const SHIP_DEFENSE_PROFILES: readonly ShipDefenseProfile[] = [
-    { hullHealth: 220, shieldCapacity: 65, shieldRegenRate: 4.0 },  // Mk.1 Scout Vanguard
-    { hullHealth: 300, shieldCapacity: 80, shieldRegenRate: 4.5 },  // Mk.2 Interceptor
-    { hullHealth: 400, shieldCapacity: 100, shieldRegenRate: 5.0 }, // Mk.3 Corvette
-    { hullHealth: 520, shieldCapacity: 120, shieldRegenRate: 5.5 }, // Mk.4 Destroyer
-    { hullHealth: 660, shieldCapacity: 145, shieldRegenRate: 6.0 }, // Mk.5 Dreadnought
-    { hullHealth: 820, shieldCapacity: 170, shieldRegenRate: 6.5 }  // Mk.6 Archon Flagship
+    { hullHealth: 220 * PLAYER_DURABILITY_MULTIPLIER, shieldCapacity: 65 * PLAYER_DURABILITY_MULTIPLIER, shieldRegenRate: 4.0 },  // Mk.1 Scout Vanguard
+    { hullHealth: 300 * PLAYER_DURABILITY_MULTIPLIER, shieldCapacity: 80 * PLAYER_DURABILITY_MULTIPLIER, shieldRegenRate: 4.5 },  // Mk.2 Interceptor
+    { hullHealth: 400 * PLAYER_DURABILITY_MULTIPLIER, shieldCapacity: 100 * PLAYER_DURABILITY_MULTIPLIER, shieldRegenRate: 5.0 }, // Mk.3 Corvette
+    { hullHealth: 520 * PLAYER_DURABILITY_MULTIPLIER, shieldCapacity: 120 * PLAYER_DURABILITY_MULTIPLIER, shieldRegenRate: 5.5 }, // Mk.4 Destroyer
+    { hullHealth: 660 * PLAYER_DURABILITY_MULTIPLIER, shieldCapacity: 145 * PLAYER_DURABILITY_MULTIPLIER, shieldRegenRate: 6.0 }, // Mk.5 Dreadnought
+    { hullHealth: 820 * PLAYER_DURABILITY_MULTIPLIER, shieldCapacity: 170 * PLAYER_DURABILITY_MULTIPLIER, shieldRegenRate: 6.5 }  // Mk.6 Archon Flagship
 ];
 
 export const SHIELD_UPGRADE_CAPACITY = 12;

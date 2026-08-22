@@ -54,6 +54,9 @@ export class EnemySpawner {
 
     public update(_deltaTime: number, _entities: any[], level: number, stageElapsed = 0): EnemyAdvanced[] {
         const newEnemies: EnemyAdvanced[] = [];
+        // The Archon fight owns every reinforcement wave. Stage 101 must not receive
+        // normal sector spawns, otherwise unrelated small craft dilute the scripted battle.
+        if (level === 101) return newEnemies;
         const currentTime = performance.now() / 1000;
         const faction = this.getFactionForStage(level);
         const waveProfile = getFactionWaveProfile(faction);

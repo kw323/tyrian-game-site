@@ -10,7 +10,7 @@ import { LaserBullet } from '@/game/entities/LaserBullet';
 import { BlackHoleBullet } from '@/game/entities/BlackHoleBullet';
 import { ChainLightningBullet } from '@/game/entities/ChainLightningBullet';
 import { Enemy } from '@/game/entities/Enemy';
-import { EnemyAdvanced, EnemyShot } from '@/game/entities/EnemyAdvanced';
+import { EnemyAdvanced, EnemyMovementType, EnemyShot, EnemyType } from '@/game/entities/EnemyAdvanced';
 import { EnemyBullet } from '@/game/entities/EnemyBullet';
 import { Explosion } from '@/game/entities/Explosion';
 import { WeaponUpgradeSystem, WeaponType } from '@/game/core/WeaponUpgradeSystem';
@@ -730,12 +730,12 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     shipTier: shipSystem.getCurrentShipId(),
                     weaponType: selectedWeapon,
                     weaponLevel: Math.max(0, weaponSystem.getCurrentLevel(selectedWeapon)),
-                    // Sera mirrors the pilot's arsenal pattern, but not its full endgame
-                    // damage-per-second. She must survive a high-rank duel without deleting
-                    // the player in one short salvo.
-                    weaponFireRate: Math.max(2.8, (weaponStats?.fireRate ?? 6) * 0.52),
-                    weaponDamage: Math.max(6, Math.round((weaponStats?.damage ?? 10) * 0.42)),
+                    // The duel copies the weapon rank, firing cadence, projectile pattern,
+                    // damage and energy demand of the selected player weapon exactly.
+                    weaponFireRate: weaponStats?.fireRate ?? 6,
+                    weaponDamage: weaponStats?.damage ?? 10,
                     weaponCost: powerSystem.getWeaponCost(selectedWeapon, Math.max(0, weaponSystem.getCurrentLevel(selectedWeapon))),
+                    maxHull: player.maxHealth,
                     maxShield: player.maxShield,
                     shieldRegenRate: player.baseShieldRegenRate,
                     generatorLevel: powerSystem.generatorLevel,
@@ -843,12 +843,55 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                             dirX,
                             dirY,
                             color,
-                            style
+                            style,
+                            false
                         );
                         mirrorBullet.isFriendly = friendly;
                         game.addEntity(mirrorBullet);
                     }
                 });
+            };
+
+            let archonAlienWaveIndex = 0;
+            const spawnArchonAlienWave = (count: number): void => {
+                const archonCore = finalBossAssembly?.getParts().find((part) => part.role === 'core' && part.isActive);
+                if (!archonCore || count <= 0) return;
+                const patterns = [
+                    { type: EnemyType.SCOUT, movement: EnemyMovementType.ZIGZAG, color: '#b06cff' },
+                    { type: EnemyType.DRONE, movement: EnemyMovementType.SPIRAL, color: '#ff668f' },
+                    { type: EnemyType.ORBITER, movement: EnemyMovementType.CENTER_ORBIT, color: '#7cecff' }
+                ];
+                const pattern = patterns[archonAlienWaveIndex % patterns.length];
+                archonAlienWaveIndex++;
+                const originX = archonCore.x + archonCore.width / 2;
+                const originY = archonCore.y + archonCore.height * 0.7;
+                for (let index = 0; index < count; index++) {
+                    const column = index % 5;
+                    const row = Math.floor(index / 5);
+                    const alien = new EnemyAdvanced(
+                        originX + (column - 2) * 23,
+                        originY + row * 16,
+                        30,
+                        24,
+                        2.4 + (index % 3) * 0.18,
+                        720,
+                        pattern.movement,
+                        5,
+                        pattern.type,
+                        0,
+                        false,
+                        index,
+                        count,
+                        false,
+                        'aliens'
+                    );
+                    alien.color = pattern.color;
+                    alien.applyDifficulty(difficultyProfile);
+                    game.addEntity(alien);
+                    stageMasterySystem.recordEnemySpawn();
+                }
+                testNoticeText = `ARCHON HANGAR // ${count} ${pattern.type.toUpperCase()} INTERCEPTORS LAUNCHED`;
+                testNoticeUntil = performance.now() + 4200;
             };
 
             const spawnSeraAllyShots = (entity: SeraAllyShipEntity): void => {
@@ -1540,12 +1583,12 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     if (boss instanceof FinalBossPart) {
                         stageMasterySystem.recordEnemyDefeat();
                         game.addEntity(new Explosion(boss.x + boss.width / 2, boss.y + boss.height / 2, 58));
-                        if (boss.role === 'reactor' && finalBossAssembly?.isMeltdownActive()) {
-                            testNoticeText = 'VOID REACTOR DESTROYED // MELTDOWN INITIATED // SURVIVE 18 SECONDS';
+                        if (boss.role === 'core' && finalBossAssembly?.isMeltdownActive()) {
+                            testNoticeText = 'ARCHON COMMAND CORE DESTROYED // COLLAPSE INITIATED // HOLD POSITION';
                             testNoticeUntil = performance.now() + 6500;
                             SoundSystem.playCriticalComms('naomi', 'warning');
                         } else if (finalBossAssembly?.isReactorExposed()) {
-                            testNoticeText = 'ARCHON DEFENSE GRID BROKEN // VOID REACTOR EXPOSED';
+                            testNoticeText = 'ARCHON REAR DEFENSES BROKEN // COMMAND CORE EXPOSED';
                             testNoticeUntil = performance.now() + 4200;
                         }
                         return;
@@ -1934,6 +1977,24 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                     }
                 });
 
+                // Slow Archon missiles acquire the pilot gradually. Their low turning rate keeps
+                // them annoying enough to demand movement without becoming instant homing shots.
+                game['entities'].forEach((entity: any) => {
+                    if (entity instanceof EnemyBullet && entity.style === 'archon_missile' && entity.isActive) {
+                        const targetX = player.x + player.width / 2;
+                        const targetY = player.y + player.height / 2;
+                        const dx = targetX - (entity.x + entity.width / 2);
+                        const dy = targetY - (entity.y + entity.height / 2);
+                        const distance = Math.max(1, Math.hypot(dx, dy));
+                        const steer = Math.min(0.13, deltaTime * 1.8);
+                        const nextX = entity.dirX * (1 - steer) + (dx / distance) * steer;
+                        const nextY = entity.dirY * (1 - steer) + (dy / distance) * steer;
+                        const length = Math.max(0.001, Math.hypot(nextX, nextY));
+                        entity.dirX = nextX / length;
+                        entity.dirY = nextY / length;
+                    }
+                });
+
                 // Give the evasive hunter a read-only snapshot of current threats for dodging.
                 game['entities'].forEach((entity: any) => {
                     if (entity instanceof EnemyAdvanced && entity.isSpecial) {
@@ -2008,8 +2069,10 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 }
                 resolveStageHazardCollisions();
 
-                if (finalBossAssembly?.isMeltdownActive()) {
+                if (finalBossAssembly) {
                     finalBossAssembly.update(deltaTime);
+                    const alienWaveCount = finalBossAssembly.consumeAlienWaveRequest();
+                    if (alienWaveCount) spawnArchonAlienWave(alienWaveCount);
                     if (finalBossAssembly.isDefeated() && bossDefeatedAt === null) {
                         finalBossAssembly.getParts().forEach((part) => {
                             if (part.isActive) {
@@ -2694,10 +2757,15 @@ export function GameContainer({ touchControlsEnabled = true, mouseControlsEnable
                 if (gameState.level === 101) {
                     const destroyed = finalBossAssembly?.getDestroyedParts() ?? 0;
                     const outerDestroyed = finalBossAssembly?.getDestroyedOuterSystems() ?? 0;
+                    const phase = finalBossAssembly?.getPhase() ?? 1;
                     ctx.fillStyle = finalBossAssembly?.isMeltdownActive() ? '#ff4d6d' : '#ffb000';
                     const archonReadout = finalBossAssembly?.isMeltdownActive()
-                        ? `MELTDOWN COUNTDOWN: ${finalBossAssembly.getMeltdownRemaining().toFixed(1)}s  // SURVIVE`
-                        : `OUTER SYSTEMS: ${outerDestroyed}/3  // TOTAL DESTROYED: ${destroyed}/6`;
+                        ? `CORE COLLAPSE: ${finalBossAssembly.getMeltdownRemaining().toFixed(1)}s  // HOLD POSITION`
+                        : phase === 1
+                            ? `PHASE 1 // FORWARD BATTERIES: ${outerDestroyed}/2`
+                            : phase === 2
+                                ? `PHASE 2 // REAR BATTERIES: ${Math.max(0, outerDestroyed - 2)}/2`
+                                : `PHASE 3 // COMMAND CORE EXPOSED // TOTAL DESTROYED: ${destroyed}/5`;
                     ctx.fillText(archonReadout, 20, 122);
                 } else {
                     const timeRemaining = gameState.getLevelTimeRemaining();

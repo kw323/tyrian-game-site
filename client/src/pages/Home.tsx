@@ -141,6 +141,15 @@ export default function Home() {
         setLaunchMode('continue');
     };
 
+    const returnToCommandCenter = (): void => {
+        setInitialStage(null);
+        setTestMode(false);
+        setShowStageMapModal(false);
+        setShowLoadModal(false);
+        setLaunchMode(null);
+        setSaveRevision((revision) => revision + 1);
+    };
+
     const launchTestStage = (stage: number): void => {
         VoicePlaybackManager.primeFromGesture();
         setShowStageMapModal(false);
@@ -235,10 +244,10 @@ export default function Home() {
 
             {launchMode ? (
                 <main className={isNativeAndroid ? 'android-mission-shell' : 'command-main'}>
-                    {!isNativeAndroid && <div className="flex justify-between items-center gap-3 mb-3"><span className="status-tag">{initialStage ? `${testMode ? 'TEST STAGE' : 'CAMPAIGN STAGE'} // ${initialStage}` : launchMode === 'new' ? 'NEW MISSION // STAGE 1' : `CONTINUE MISSION // STAGE ${resumePreview?.level ?? 1}`}</span><button type="button" onClick={() => { setInitialStage(null); setTestMode(false); setLaunchMode(null); }} className="console-button console-button--muted">RETURN TO COMMAND CENTER</button></div>}
+                    {!isNativeAndroid && <div className="flex justify-between items-center gap-3 mb-3"><span className="status-tag">{initialStage ? `${testMode ? 'TEST STAGE' : 'CAMPAIGN STAGE'} // ${initialStage}` : launchMode === 'new' ? 'NEW MISSION // STAGE 1' : `CONTINUE MISSION // STAGE ${resumePreview?.level ?? 1}`}</span><button type="button" onClick={returnToCommandCenter} className="console-button console-button--muted">RETURN TO COMMAND CENTER</button></div>}
                     <section className={`launch-frame hud-frame ${isNativeAndroid ? 'launch-frame--android' : ''}`}>
                         {!isNativeAndroid && <div className="launch-frame__topline"><span>FLIGHT DECK // PILOT LINKED</span><span>FLIGHT INPUT: {flightControlMode === 'mouse' ? 'MOUSE // ARMED' : 'KEYBOARD // ARMED'} // TOUCH {touchControlsEnabled ? 'ARMED' : 'HIDDEN'}</span></div>}
-                        <div className="game-window"><GameContainer key={`${launchMode}-${initialStage ?? 'standard'}-${testMode ? 'test' : 'campaign'}-${graphicsQuality}`} touchControlsEnabled={touchControlsEnabled} mouseControlsEnabled={flightControlMode === 'mouse'} graphicsQuality={graphicsQuality} launchMode={launchMode} initialStage={initialStage ?? undefined} testMode={testMode} onReturnToTitle={() => { setInitialStage(null); setTestMode(false); setLaunchMode(null); }} /></div>
+                        <div className="game-window"><GameContainer key={`${launchMode}-${initialStage ?? 'standard'}-${testMode ? 'test' : 'campaign'}-${graphicsQuality}`} touchControlsEnabled={touchControlsEnabled} mouseControlsEnabled={flightControlMode === 'mouse'} graphicsQuality={graphicsQuality} launchMode={launchMode} initialStage={initialStage ?? undefined} testMode={testMode} onReturnToTitle={returnToCommandCenter} /></div>
                     </section>
                 </main>
             ) : (isNativeAndroid ? androidTitleScreen : commandCenter)}

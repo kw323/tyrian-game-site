@@ -1,4 +1,5 @@
 import { Entity } from '../core/Entity';
+import { ENEMY_PROJECTILE_DAMAGE_MULTIPLIER } from '../core/CombatBalanceSystem';
 
 export class EnemyBullet extends Entity {
     public speed: number;
@@ -11,10 +12,10 @@ export class EnemyBullet extends Entity {
     private speedMultiplier = 1;
     private gravitySpeedMultiplier = 1;
 
-    constructor(x: number, y: number, width: number, height: number, speed: number, damage: number, dirX: number = 0, dirY: number = 1, color: string = '#FF6666', style: string = 'orb') {
+    constructor(x: number, y: number, width: number, height: number, speed: number, damage: number, dirX: number = 0, dirY: number = 1, color: string = '#FF6666', style: string = 'orb', applyCampaignDamageMultiplier = true) {
         super(x, y, width, height);
         this.speed = speed;
-        this.damage = damage;
+        this.damage = Math.round(damage * (applyCampaignDamageMultiplier ? ENEMY_PROJECTILE_DAMAGE_MULTIPLIER : 1));
         this.color = color;
         this.dirX = dirX;
         this.dirY = dirY;

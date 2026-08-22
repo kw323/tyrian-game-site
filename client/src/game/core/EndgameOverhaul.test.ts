@@ -32,25 +32,41 @@ describe('Endgame combat overhaul', () => {
         expect(duelist.getCombatPhase()).toBe(2);
     });
 
-    it('locks the Archon reactor until three outer systems are destroyed, then triggers meltdown', () => {
+    it('unlocks Archon in the authored forward batteries, rear batteries, then command core sequence', () => {
         const assembly = new FinalBossAssembly(difficulty);
         const parts = assembly.createParts();
-        const reactor = parts.find((part) => part.role === 'reactor')!;
-        const outerSystems = parts.filter((part) => part.role !== 'reactor');
-        const reactorHealth = reactor.health;
-        reactor.takeDamage(1000000);
-        expect(reactor.health).toBe(reactorHealth);
+        const core = parts.find((part) => part.role === 'core')!;
+        const frontSystems = parts.filter((part) => part.role === 'front_cannon');
+        const rearSystems = parts.filter((part) => part.role === 'rear_battery');
 
-        outerSystems.slice(0, 3).forEach((part) => {
+        expect(parts).toHaveLength(5);
+        expect(assembly.getPhase()).toBe(1);
+        expect(assembly.isPartEnabled(core)).toBe(false);
+        expect(assembly.isPartEnabled(rearSystems[0])).toBe(false);
+        expect(assembly.isPartEnabled(frontSystems[0])).toBe(true);
+        const coreHealth = core.health;
+        core.takeDamage(1000000);
+        expect(core.health).toBe(coreHealth);
+
+        frontSystems.forEach((part) => {
             part.shield = 0;
             part.takeDamage(part.health + 1);
         });
+        expect(assembly.getPhase()).toBe(2);
+        expect(assembly.isPartEnabled(rearSystems[0])).toBe(true);
+        expect(assembly.isPartEnabled(core)).toBe(false);
+
+        rearSystems.forEach((part) => {
+            part.shield = 0;
+            part.takeDamage(part.health + 1);
+        });
+        expect(assembly.getPhase()).toBe(3);
         expect(assembly.isReactorExposed()).toBe(true);
 
-        reactor.shield = 0;
-        reactor.takeDamage(reactor.health + 1);
+        core.shield = 0;
+        core.takeDamage(core.health + 1);
         expect(assembly.isMeltdownActive()).toBe(true);
-        assembly.update(18);
+        assembly.update(6.5);
         expect(assembly.isDefeated()).toBe(true);
     });
 

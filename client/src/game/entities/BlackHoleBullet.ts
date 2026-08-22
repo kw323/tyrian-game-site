@@ -14,7 +14,8 @@ export class BlackHoleBullet extends Bullet {
     private impactPoint: { x: number; y: number } | null = null;
 
     constructor(x: number, y: number, damage: number, level: number, angle = 0) {
-        super(x, y, 10, 16, 7.4, damage, '#8b5cf6', angle);
+        // This artificial weapon singularity stays visibly compact beside a sector-scale GravityWell.
+        super(x, y, 8, 12, 7.4, damage, '#8b5cf6', angle);
         this.level = level;
         const profile = getWeaponRuntimeProfile('void_lance', level);
         this.speed = profile.voidProjectileSpeed ?? 7.4;
@@ -96,12 +97,12 @@ export class BlackHoleBullet extends Bullet {
         const pulse = 1 + Math.sin(performance.now() / 80) * 0.08;
         const center = this.getFieldCenter();
         const fieldRadius = this.getFieldRadius();
-        const coreRadius = 4.8 * pulse;
+        const coreRadius = 3.6 * pulse;
 
         ctx.save();
         ctx.globalCompositeOperation = 'lighter';
         ctx.strokeStyle = 'rgba(151, 91, 255, 0.16)';
-        ctx.lineWidth = 1.4;
+        ctx.lineWidth = 1.1;
         ctx.beginPath();
         ctx.arc(center.x, center.y, fieldRadius, 0, Math.PI * 2);
         ctx.stroke();
